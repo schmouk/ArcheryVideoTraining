@@ -23,8 +23,9 @@ SOFTWARE.
 """
 
 #=============================================================================
-from .view       import AVTWindowRef, View
-from .rgb_color  import RGBColor
+from .view           import AVTWindowRef, View
+from src.Shapes.rect import Rect
+from .rgb_color      import RGBColor
 
 
 #=============================================================================
@@ -36,13 +37,13 @@ class ViewProp( View ):
     (i.e. width and height).
     """
     #-------------------------------------------------------------------------
-    def __init__(self, parent  : AVTWindowRef,
-                       x       : float,
-                       y       : float,
-                       width   : float,
-                       height  : float,
-                       bg_color: RGBColor = RGBColor(32, 32, 32),
-                       parent_rect: Rect = None ) -> None:
+    def __init__(self, parent     : AVTWindowRef,
+                       x          : float       ,
+                       y          : float       ,
+                       width      : float       ,
+                       height     : float       ,
+                       bg_color   : RGBColor = RGBColor(32, 32, 32),
+                       parent_rect: Rect     = None                 ) -> None:
         '''Constructor.
         
         Args:
@@ -56,7 +57,7 @@ class ViewProp( View ):
                 must be included in [0.0, 1.0]
             width, height: float
                 The size of this view,  expressed as  percent-
-                ages of the embedding window sizes.
+                ages of the embedding window size.
             bg_color: RGBColor
                 The solid color of the background of this view
                 expressed  as RGB values in interval [0, 255].
@@ -65,7 +66,8 @@ class ViewProp( View ):
             parent_rect: Rect
                 A reference to the  rectangle  in  which  this
                 proportional  view takes place into the parent
-                window.
+                window.  If None,  the whole view size is used
+                instead. Defaults to None.
         
         Raises:
             ValueError:  Some  of  the  coordinates  or  sizes 
@@ -80,15 +82,15 @@ class ViewProp( View ):
         self.prop_y = y
         self.prop_width = width
         self.prop_height = height
-        self.parent = parent
+        self.rect = parent_rect or Rect( *parent.get_rect() )
 
-        print( f"creating ViewProp( {x:.3f}, {y:.3f}, {width:.3f}, {height:.3f} )" )
+        print( f"creating ViewProp( {x:.3f}, {y:.3f}, {width:.3f}, {height:.3f} ) over {str(self.rect)}" )
         
         super().__init__( parent,
-                          round( x * parent.width ), 
-                          round( y * parent.height ),
-                          round( width * parent.width),
-                          round( height * parent.height),
+                          round( x * self.rect.width  ), 
+                          round( y * self.rect.height ),
+                          round( width  * self.rect.width  ),
+                          round( height * self.rect.height ),
                           bg_color )
 
 #===============================================================================

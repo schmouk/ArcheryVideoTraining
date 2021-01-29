@@ -46,8 +46,8 @@ class CameraAcquisition( Thread ):
                 name will be given to the associated thread.
         '''
         if name is None:
-            name = f"cam-acq-thrd-{self._CAM_ACQ_THREADS_COUNT}"
-            self._CAM_ACQ_THREADS_COUNT += 1
+            name = f"cam-acq-thrd-{CameraAcquisition._CAM_ACQ_THREADS_COUNT}"
+            CameraAcquisition._CAM_ACQ_THREADS_COUNT += 1
         
         super().__init__( name=name )
         self.camera = camera
@@ -90,12 +90,17 @@ class CameraAcquisition( Thread ):
     def is_ok(self) -> bool:
         '''Returns True when status of this camera acquisition thread is ok, or False otherwise.
         '''
-        return self.camera is not None  and  self.camera.hw_default_width != 0
+        try:
+            return self.camera.hw_default_width != 0
+        except:
+            return False
 
     #-------------------------------------------------------------------------
     def run(self) -> None:
         '''The acquisition method once this thread has been started.
         '''
+        print( f"running {self.name}" )
+        
         frame_index = 0
         self._keep_on = self.is_ok()
         while self._keep_on:
@@ -105,12 +110,17 @@ class CameraAcquisition( Thread ):
             else:
                 self.buffer.set( IndexedFrame(frame_index, frame) )
             frame_index += 1
+        
+        print( f"finally stopping {self.name}" )
+        
         self.camera.release()
 
     #-------------------------------------------------------------------------
     def stop(self) -> None:
         '''Definitively stops this acquisition thread.
         '''
+        print( f"stopping {self.name}" )
+
         self._keep_on = False
 
     #-------------------------------------------------------------------------

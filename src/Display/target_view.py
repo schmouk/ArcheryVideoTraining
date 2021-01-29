@@ -23,9 +23,10 @@ SOFTWARE.
 """
 
 #=============================================================================
-from .view       import AVTWindowRef
-from .rgb_color  import RGBColor
-from .view_prop  import ViewProp
+from .view           import AVTWindowRef
+from src.Shapes.rect import Rect
+from .rgb_color      import RGBColor
+from .view_prop      import ViewProp
 
 
 #=============================================================================
@@ -37,6 +38,7 @@ class TargetView( ViewProp ):
                        y                  : float,
                        width              : float,
                        height             : float,
+                       parent_rect        : Rect = None,
                        b_periodically_hide: bool = False ) -> None:
         '''Constructor.
         
@@ -52,6 +54,11 @@ class TargetView( ViewProp ):
             width, height: float
                 The size of this view,  expressed as  percent-
                 ages of the embedding window sizes.
+            parent_rect: Rect
+                A reference to the  rectangle  in  which  this
+                proportional  view takes place into the parent
+                window.  If None,  the whole view size is used
+                instead. Defaults to None.
             b_periodically_hide: bool
                 Set this to True to get  it  displayed  for  a
                 prefixed  delay,  then for it to disappear for
@@ -61,7 +68,7 @@ class TargetView( ViewProp ):
             ValueError:  Some  of  the  coordinates  or  sizes 
                 values are outside interval [0.0, 1.0].
         '''
-        super().__init__( parent, x, y, width, height, RGBColor(241,241,241) )
+        super().__init__( parent, x, y, width, height, RGBColor(241,241,241), parent_rect )
         self.b_periodical = b_periodically_hide
 
     #-------------------------------------------------------------------------

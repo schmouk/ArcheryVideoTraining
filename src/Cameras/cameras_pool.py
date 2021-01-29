@@ -55,6 +55,13 @@ class CamerasPool( list ):
         self.evaluate_connected_cameras()
 
     #-------------------------------------------------------------------------
+    def __del__(self) -> None:
+        '''Releases all allocated resources.
+        '''
+        for camera in self:
+            del camera
+
+    #-------------------------------------------------------------------------
     def evaluate_connected_cameras(self) -> None:
         '''Evaluates all the connected cameras.
         
@@ -70,6 +77,7 @@ class CamerasPool( list ):
             if camera_acq.is_ok():
                 self.append( camera_acq )
             else:
+                del camera_acq
                 break
 
     #-------------------------------------------------------------------------
@@ -85,6 +93,8 @@ class CamerasPool( list ):
     def start_acquisitions(self) -> None:
         '''Starts the acquisition of all videos.
         '''
+        print( "cameras-pool starts acquisitions" )
+        
         for cam_acq in self:
             cam_acq.start()
 
@@ -96,7 +106,7 @@ class CamerasPool( list ):
         for cam_acq in self:
             cam_acq.stop()
         
-        # the joins them
+        # then joins them
         for cam_acq in self:
             cam_acq.join()
 
@@ -104,6 +114,8 @@ class CamerasPool( list ):
     def __enter__(self) -> CamerasPoolRef:
         '''Implementation of the Context Manager Protocol (1/2).
         '''
+        print( "entering cameras-pool" )
+        
         self.start_acquisitions()
         return self
 

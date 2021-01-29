@@ -25,12 +25,15 @@ SOFTWARE.
 #=============================================================================
 import cv2
 import numpy as np
+import time
+from typing import Tuple
 
 from src.App                     import __version__
 from .avt_window                 import AVTWindow
 from src.Cameras.cameras_pool    import CamerasPool
 from .camera_view                import CameraView
 from .control_view               import ControlView
+from src.Shapes.rect             import Rect
 from .target_view                import TargetView
 from .view                       import View
 
@@ -47,6 +50,7 @@ class MainWindow( AVTWindow):
         '''
         if self.__SINGLETON is None:
             # creates the Main Window for app AVT
+            print( f"creating MainWindow( 0, 0, {self.DEFAULT_WIDTH}, {self.DEFAULT_HEIGHT} )" )
             super().__init__( name="MainAVT",
                               title=f"Archery Video Training - {__version__}",
                               width=self.DEFAULT_WIDTH,
@@ -54,10 +58,21 @@ class MainWindow( AVTWindow):
             MainWindow.__SINGLETON = self
             
             # creates the embedded views, according to the pool of cameras
-            self.create_views( CamerasPool(), False )
+            print( "creates cameras-pool" )
+            self.cameras_pool = CamerasPool()
+            print( "creates main-window views" )
+            self.create_views( self.cameras_pool, False )
             
         else:
             self = MainWindow.__SINGLETON
+
+    #-------------------------------------------------------------------------
+    def __del__(self) -> None:
+        '''Destructor.
+        
+        Releases all allocated resources.
+        '''
+        del self.cameras_pool
 
     #-------------------------------------------------------------------------
     def create_views(self, cameras_pool : CamerasPool,
@@ -75,42 +90,46 @@ class MainWindow( AVTWindow):
         '''
         cameras_count = len( cameras_pool )
         
+        camera_views_width = self.width - ControlView.WIDTH
+        rect = Rect( 0, 0, camera_views_width, self.height )
+        
         if cameras_count == 0:
             self.views = [ ControlView( self ),
-                           TargetView( self, 0.0, 0.0, 1.0, 1.0 ) ]
-                
+                           TargetView( self, 0.0, 0.0, 1.0, 1.0, rect ) ]
+                  
         elif cameras_count == 1:
             if b_target_view:
                 self.views = [ ControlView( self ),
-                               CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 1.0 ),
-                               TargetView( self, 0.5, 0.5, 0.5, 1.0 )     ]
+                               CameraView( self, cameras_pool[0], 0.0, 0.0, 1.0, 0.5, rect ),
+                               TargetView( self, 0.5, 0.5, 0.5, 1.0, rect )     ]
             else:
                 self.views = [ ControlView( self ),
-                               CameraView( self, cameras_pool[0], 0.0, 0.0, 1.0, 1.0 ) ]
-                
+                               CameraView( self, cameras_pool[0], 0.0, 0.0, 1.0, 1.0, rect ) ]
+                  
         elif cameras_count == 2:
             self.views = [ ControlView( self ),
-                           CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5 ),
-                           CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5 )  ]
+                           CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
+                           CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect )  ]
             if b_target_view:
-                self.views.append( TargetView( self, 0.0, 0.5, 1.0, 0.5 ) )
-                
+                self.views.append( TargetView( self, 0.0, 0.5, 1.0, 0.5, rect ) )
+                  
         elif cameras_count == 3:
-            self.views = [ ControlView( self ),
-                           CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5 ),
-                           CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5 ),
-                           CameraView( self, cameras_pool[2], 0.0, 0.5, 0.5, 0.5 )  ]
+            print( "creates views for 3 cameras" )
+            self.views = [ ##ControlView( self ),
+                           CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
+                           CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect ),
+                           CameraView( self, cameras_pool[2], 0.0, 0.5, 0.5, 0.5, rect )  ]
             if b_target_view:
-                self.views.append( TargetView( self, 0.5, 0.5, 0.5, 0.5 ) )
-        
+                self.views.append( TargetView( self, 0.5, 0.5, 0.5, 0.5, rect ) )
+          
         elif cameras_count >= 4:
             self.views = [ ControlView( self ),
-                           CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5 ),
-                           CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5 ),
-                           CameraView( self, cameras_pool[2], 0.0, 0.5, 0.5, 0.5 ),
-                           CameraView( self, cameras_pool[3], 0.5, 0.5, 0.5, 0.5 )  ]
+                           CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
+                           CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect ),
+                           CameraView( self, cameras_pool[2], 0.0, 0.5, 0.5, 0.5, rect ),
+                           CameraView( self, cameras_pool[3], 0.5, 0.5, 0.5, 0.5, rect )  ]
             if b_target_view:
-                self.views.append( TargetView( self, 0.0, 0.0, 1.0, 1.0, True ) )
+                self.views.append( TargetView( self, 0.0, 0.0, 1.0, 1.0, rect, True ) )
 
     #-------------------------------------------------------------------------
     def draw(self) -> None:
@@ -121,10 +140,16 @@ class MainWindow( AVTWindow):
         super().draw()
 
     #-------------------------------------------------------------------------
+    def get_cameras_area_size(self) -> Tuple[int, int]:
+        '''Returns the (width, height) of the cameras displays size in this main window.
+        '''
+        dims = self.get_size()
+        return [ dims[0] - self.DEFAULT_CONTROL_WIDTH, dims[1] ]
+
+    #-------------------------------------------------------------------------
     # Class data
-    DEFAULT_CONTROL_WIDTH = 64
-    DEFAULT_WIDTH         = 2 * 640 + DEFAULT_CONTROL_WIDTH
-    DEFAULT_HEIGHT        = 2 * 480
+    DEFAULT_WIDTH  = 2 * 640 + ControlView.WIDTH
+    DEFAULT_HEIGHT = 2 * 480
 
     __SINGLETON = None
 

@@ -50,11 +50,12 @@ class ControlView( View ):
             ValueError:  Some  of  the  coordinates  or  sizes 
                 values are outside interval [0.0, 1.0].
         '''
+        print( f"creating ControlView( {parent.width - self.WIDTH}, {0}, {self.WIDTH}, {parent.height} )" )
         super().__init__( parent, parent.width - self.WIDTH, 0,
                                   self.WIDTH, parent.height     )
 
     #-------------------------------------------------------------------------
     # Class data
-    WIDTH = 64
+    WIDTH = 96
 
 #=====   end of   src.Display.cantrol_view   =====#

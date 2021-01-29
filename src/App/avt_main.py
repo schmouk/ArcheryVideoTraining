@@ -24,6 +24,7 @@ SOFTWARE.
 import cv2
 import time
 
+from src.Cameras.cameras_pool    import CamerasPool
 from src.Display.main_window     import MainWindow
 
 
@@ -34,93 +35,102 @@ def avt_main():
     
     #-- creates the main window
     main_window = MainWindow()
-    
+     
     #-- shows the main window
+    print( "draws main window content" )
     main_window.draw()
     
-    cv2.waitKey( 0 )
-    
+    #-- starts the cameras acquisition
+    with main_window.cameras_pool:
+        while True:
+            if cv2.waitKey( 20 ) == 27:
+                break
+     
+    #-- releases all allocated resources
+    ##del main_window
+    cv2.destroyAllWindows()
+     
     #===========================================================================
     # #-- let's create all cameras acquisition frameworks
     # with CamerasPool() as cameras_pool:
-    #             
+    #              
     #     #-- let's run now acquisitions, until application is stopped
     #     keep_on = True
     #     frames_count = 0
     #     start_time = time.perf_counter()
-    #     
+    #      
     #     first = True
     #     while keep_on:
-    #         
+    #          
     #         frames = cameras_pool.get_frames()
-    #         
+    #          
     #         ok = False
     #         for index, frame in enumerate(frames):
     #             if frame is not None:
     #                 ok = True
     #                 cv2.imshow( f"camera-{index}", frame.frame )
-    #         
+    #          
     #         if ok:
     #             frames_count += 1
     #             if first:
     #                 start_time = time.perf_counter()
     #                 first = False
-    #             
+    #              
     #         key = cv2.waitKey( 10 )
-    #         
+    #          
     #         keep_on = key != 27
-    #     
+    #      
     #     #-- finally, let's stop threads and release allocated resources
     #     end_time = time.perf_counter()
     #     print( f"frame rate = {(frames_count-1) / (end_time - start_time):.2f} fps" )
-    #     
+    #      
     #     cv2.destroyAllWindows()
-    #     
     #===========================================================================
+         
             
+     
     #===========================================================================
-    # 
     # #-- let's create all cameras acquisition frameworks
     # cameras_pool = CamerasPool()
-    #         
+    #          
     # #-- let's launch all the cameras acquisition frameworks
     # cameras_pool.start_acquisitions()
-    #         
+    #          
     # #-- let's run now on acquisitions until app is stopped
     # keep_on = True
     # frames_count = 0
     # start_time = time.perf_counter()
-    # 
+    #  
     # first = True
     # while keep_on:
-    #     
+    #      
     #     frames = cameras_pool.get_frames()
-    #     
+    #      
     #     ok = False
     #     for index, frame in enumerate(frames):
     #         if frame is not None:
     #             ok = True
     #             cv2.imshow( f"camera-{index}", frame.frame )
-    #     
+    #      
     #     if ok:
     #         frames_count += 1
     #         if first:
     #             start_time = time.perf_counter()
     #             first = False
-    #         
+    #          
     #     key = cv2.waitKey( 10 )
-    #     
+    #      
     #     keep_on = key != 27
-    # 
+    #  
     # #-- finally, let's stop threads and release allocated resources
     # end_time = time.perf_counter()
-    # 
+    #  
     # cv2.destroyAllWindows()
     # cameras_pool.stop()
-    # 
+    #  
     # print( f"frame rate = {(frames_count-1) / (end_time - start_time):.2f} fps" )
-    #     
     #===========================================================================
+         
     
     #===========================================================================
     # cam0 = cv2.VideoCapture( 0 )

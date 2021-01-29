@@ -27,6 +27,7 @@ from typing import Tuple
 
 #=============================================================================
 Frame      = np.ndarray
+Numeric    = Tuple[ int, float ]
 PixelColor = Tuple[ int, int, int ]
 
 

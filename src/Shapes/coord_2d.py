@@ -182,6 +182,6 @@ class Coord2D:
         else:
             val = round( val )
             return Coord2D( self._clipped(val - self.x),
-                            self._clipped((val - self.y) )
+                            self._clipped(val - self.y) )
 
 #=====   end of   src.Shapes.coord_2d   =====#

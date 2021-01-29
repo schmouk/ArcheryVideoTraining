@@ -25,6 +25,7 @@ SOFTWARE.
 #=============================================================================
 from .view                           import AVTWindowRef
 from src.Cameras.camera_acquisition  import CameraAcquisition
+from src.Shapes.rect                 import Rect
 from .rgb_color                      import RGBColor
 from .view_prop                      import ViewProp
 
@@ -33,12 +34,13 @@ from .view_prop                      import ViewProp
 class CameraView( ViewProp ):
     """The class description.
     """
-    def __init__(self, parent : AVTWindowRef,
-                       cam_acq: CameraAcquisition,
-                       x      : float,
-                       y      : float,
-                       width  : float,
-                       height : float ) -> None:
+    def __init__(self, parent     : AVTWindowRef,
+                       cam_acq    : CameraAcquisition,
+                       x          : float,
+                       y          : float,
+                       width      : float,
+                       height     : float,
+                       parent_rect: Rect = None ) -> None:
         '''Constructor.
         
         Args:
@@ -56,13 +58,18 @@ class CameraView( ViewProp ):
             width, height: float
                 The size of this view,  expressed as percentages 
                 of the embedding window sizes.
-        
+            parent_rect: Rect
+                A reference  to  the  rectangle  in  which  this
+                proportional  view  takes  place into the parent
+                window.  If None,  the whole view size  is  used
+                instead. Defaults to None.
+
         Raises:
             ValueError:  Some  of  the  coordinates  or  sizes 
                 values are outside interval [0.0, 1.0].
         '''
         print( f"creates camera view #{cam_acq.camera.cam_id}" )
-        super().__init__( parent, x, y, width, height, RGBColor(16,16,16) )
+        super().__init__( parent, x, y, width, height, RGBColor(16,16,16), parent_rect )
         self.camera_acq = cam_acq
 
     #-------------------------------------------------------------------------

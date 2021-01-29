@@ -192,4 +192,8 @@ class Rect:
         return ( self.x <= point.x <= self.right_x  and
                  self.y <= point.y <= self.bottom_y     )
 
+    #-------------------------------------------------------------------------
+    def __str__(self) -> str:
+        return f"({self.x}, {self.y}, {self.width}, {self.height})"
+    
 #=====   end of   src.Shapes.rect   =====#

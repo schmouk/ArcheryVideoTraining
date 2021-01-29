@@ -60,6 +60,7 @@ class Camera( cv2.VideoCapture ):
                 instead.  If set,  captures frames are resized
                 to this height before being delivered.
         '''
+        self.cam_id = cam_id
         super().__init__( cam_id )
         self._copy_default_hw_size()
         self.set_frames_size( width, height )
@@ -107,8 +108,8 @@ class Camera( cv2.VideoCapture ):
         hardware device. 
         
         Returns:
-            A reference to a captured image,  or  None  in 
-            case of any error.
+            A reference to the captured image,  or None in 
+            case of error.
         '''
         ok, frame = super().read()
         
@@ -129,7 +130,9 @@ class Camera( cv2.VideoCapture ):
         
         These values are used to resize delivered frames. See
         method  'read()'  to get an understanding of how they 
-        are used.
+        are used.  Both must be either set or None.  If None,
+        the  default  H /W  values are used instead - this is
+        something like a reset to the H/W values.
         
         Args:
             width: int
@@ -137,12 +140,21 @@ class Camera( cv2.VideoCapture ):
                 set to None,  the camera default value is used
                 instead.  If set,  captures frames are resized
                 to this width before being delivered.
-            height:int
+            height: int
                 The wished height for the acquired frames.  If
                 set to None,  the camera default value is used
                 instead.  If set,  captures frames are resized
                 to this height before being delivered.
+        
+        Raises:
+            AssertionError: width  and  height  are  not  both 
+                either set or None.
         '''
+        if width is None:
+            assert height is None, "both arguments must be None."
+        elif width is not None:
+            assert height is not None, "both arguments must be set."
+            
         self.width, self.height = width, height
 
     #-------------------------------------------------------------------------
@@ -196,4 +208,4 @@ class Camera( cv2.VideoCapture ):
         self.hw_default_width  = self.get_hw_width()
         self.hw_default_height = self.get_hw_height()
 
-#=====   end of   src.Cameras.camera   =====#
+#=====   end of   virginie    Cameras.camera   =====#
