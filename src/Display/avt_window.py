@@ -29,8 +29,8 @@ import numpy as np
 from threading   import Lock
 from typing      import Tuple
 
-from src.Utils.types import PixelColor
-from .view           import View
+from .rgb_color  import RGBColor
+from .view       import View
 
 
 #=============================================================================
@@ -42,7 +42,7 @@ class AVTWindow:
                        title : str = None,
                        width : int = None,
                        height: int = None,
-                       bg_color: PixelColor = (32, 32, 32),
+                       bg_color: RGBColor = RGBColor(32, 32, 32),
                        *,
                        full_screen: bool = False) -> None:
         '''Constructor.
@@ -66,8 +66,9 @@ class AVTWindow:
                 Is  not  set,  will  be displayed according to the
                 height of its content.  Ignored when 'full_screen'
                 is set to True. Defaults to not set.
-            bg_color: (int,int,int)
-                The background solid color for this window.
+            bg_color: RGBColor
+                A reference to he background solid color for  this 
+                window. Defaults to some dark gray.
             full_screen: bool
                 Set this to True to get a full  screen  displayed
                 window.  No title bar will then be displayed. This
@@ -110,7 +111,7 @@ class AVTWindow:
 
         self.set_title( f"AVT Window # {self.__WINDOWS_COUNT}" if title is None else title )
         
-        self.content = (np.zeros( (height, width, 3), dtype=np.uint8 ) + self.bg_color).astype( np.uint8 )
+        self.content = (np.zeros( (height, width, 3), dtype=np.uint8 ) + self.bg_color.color).astype( np.uint8 )
             
     #-------------------------------------------------------------------------
     def draw(self, hit_delay_ms: int = 1) -> int:
@@ -208,8 +209,7 @@ class AVTWindow:
         height = min( view.height, content_height - view.y )
         
         self.content[ view.y:view.y+height,
-                      view.x:view.x+width, : ] = view.content[ :height, :width, : ]
-        
+                      view.x:view.x+width, : ] = view.content[ :height, :width, : ] 
 
     #-------------------------------------------------------------------------
     def set_title(self, title: str) -> None:

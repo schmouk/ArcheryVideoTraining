@@ -23,8 +23,8 @@ SOFTWARE.
 """
 
 #=============================================================================
-from .view           import AVTWindowRef, View
-from src.Utils.types import PixelColor
+from .view       import AVTWindowRef, View
+from .rgb_color  import RGBColor
 
 
 #=============================================================================
@@ -41,7 +41,8 @@ class ViewProp( View ):
                        y       : float,
                        width   : float,
                        height  : float,
-                       bg_color: PixelColor = (32, 32, 32) ) -> None:
+                       bg_color: RGBColor = RGBColor(32, 32, 32),
+                       parent_rect: Rect = None ) -> None:
         '''Constructor.
         
         Args:
@@ -56,11 +57,15 @@ class ViewProp( View ):
             width, height: float
                 The size of this view,  expressed as  percent-
                 ages of the embedding window sizes.
-            bg_color: PixelColor
+            bg_color: RGBColor
                 The solid color of the background of this view
                 expressed  as RGB values in interval [0, 255].
                 Notice: values are clipped into this interval. 
-                Defaults to (32, 32, 32).
+                Defaults to dark gray (32, 32, 32).
+            parent_rect: Rect
+                A reference to the  rectangle  in  which  this
+                proportional  view takes place into the parent
+                window.
         
         Raises:
             ValueError:  Some  of  the  coordinates  or  sizes 
@@ -77,6 +82,8 @@ class ViewProp( View ):
         self.prop_height = height
         self.parent = parent
 
+        print( f"creating ViewProp( {x:.3f}, {y:.3f}, {width:.3f}, {height:.3f} )" )
+        
         super().__init__( parent,
                           round( x * parent.width ), 
                           round( y * parent.height ),

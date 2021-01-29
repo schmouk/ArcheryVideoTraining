@@ -24,6 +24,7 @@ SOFTWARE.
 
 #=============================================================================
 from .view       import AVTWindowRef
+from .rgb_color  import RGBColor
 from .view_prop  import ViewProp
 
 
@@ -60,7 +61,7 @@ class TargetView( ViewProp ):
             ValueError:  Some  of  the  coordinates  or  sizes 
                 values are outside interval [0.0, 1.0].
         '''
-        super().__init__( parent, x, y, width, height, (241,241,241) )
+        super().__init__( parent, x, y, width, height, RGBColor(241,241,241) )
         self.b_periodical = b_periodically_hide
 
     #-------------------------------------------------------------------------

@@ -23,43 +23,47 @@ SOFTWARE.
 """
 
 #=============================================================================
-from .view       import AVTWindowRef
-from .view_prop  import ViewProp
+from .view                           import AVTWindowRef
+from src.Cameras.camera_acquisition  import CameraAcquisition
+from .rgb_color                      import RGBColor
+from .view_prop                      import ViewProp
 
 
 #=============================================================================
 class CameraView( ViewProp ):
     """The class description.
     """
-    def __init__(self, parent: AVTWindowRef,
-                       cam_id: int,
-                       x     : float,
-                       y     : float,
-                       width : float,
-                       height: float ) -> None:
+    def __init__(self, parent : AVTWindowRef,
+                       cam_acq: CameraAcquisition,
+                       x      : float,
+                       y      : float,
+                       width  : float,
+                       height : float ) -> None:
         '''Constructor.
         
         Args:
             parent: AVTWindow
-                A reference to the AVT window that embeds this
+                A reference to the AVT window  that  embeds this
                 view.
-            cam_id: int
-                The camera identifier.
+            cam_acq: CameraAcquisition
+                A reference to the associated camera acquisition
+                instance.
             x, y: float
-                The coordinates of the top-left corner of this
-                view,  expressed as percentages of resp. width
-                and height of  the  embedding  window.  Values
-                must be included in [0.0, 1.0]
+                The coordinates of the top-left corner  of  this
+                view,  expressed  as  percentages of resp. width
+                and height of the embedding window.  Values must 
+                be included in [0.0, 1.0]
             width, height: float
-                The size of this view,  expressed as  percent-
-                ages of the embedding window sizes.
+                The size of this view,  expressed as percentages 
+                of the embedding window sizes.
         
         Raises:
             ValueError:  Some  of  the  coordinates  or  sizes 
                 values are outside interval [0.0, 1.0].
         '''
-        super().__init__( parent, x, y, width, height, (16,16,16) )
-        self.cam_id = cam_id
+        print( f"creates camera view #{cam_acq.camera.cam_id}" )
+        super().__init__( parent, x, y, width, height, RGBColor(16,16,16) )
+        self.camera_acq = cam_acq
 
     #-------------------------------------------------------------------------
 

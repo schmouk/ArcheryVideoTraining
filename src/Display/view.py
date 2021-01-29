@@ -26,7 +26,7 @@ SOFTWARE.
 import numpy as np
 from typing import ForwardRef
 
-from src.Utils.types import PixelColor
+from .rgb_color import RGBColor
 
 
 #=============================================================================
@@ -45,7 +45,7 @@ class View:
                        y       : int,
                        width   : int,
                        height  : int,
-                       bg_color: PixelColor = (32, 32, 32) ) -> None:
+                       bg_color: RGBColor = RGBColor(32, 32, 32) ) -> None:
         '''Constructor.
         
         Args:
@@ -59,11 +59,11 @@ class View:
             width, height: int
                 The size of this view,  expressed as pixels in
                 the main window coordinates.
-            bg_color: PixelColor
+            bg_color: RGBColor
                 The solid color of the background of this view
                 expressed  as RGB values in interval [0, 255].
                 Notice: values are clipped into this interval. 
-                Defaults to (32, 32, 32).
+                Defaults to dark gray (32, 32, 32).
         
         Raises:
             ValueError: coordinates get  negative  values,  or
@@ -77,7 +77,7 @@ class View:
         self.parent_window = parent
         self.x, self.y = x, y
         self.width, self.height = width, height
-        self.bg_color = [ 0 if c <= 0 else 255 if c >= 255 else round(c) for c in bg_color ]
+        self.bg_color = bg_color
         
         self._fill_background()
 
@@ -91,6 +91,6 @@ class View:
     def _fill_background(self) -> None:
         '''Fills the parent window content with the background solid color of this view.
         '''
-        self.content = np.tile( self.bg_color, (self.height, self.width, 1) )
+        self.content = np.tile( self.bg_color.color, (self.height, self.width, 1) )
 
 #=====   end of   src.Display.view   =====#
