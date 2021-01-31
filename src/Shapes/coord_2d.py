@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 #=============================================================================
-from typing import ForwardRef, Union
+from typing import ForwardRef, Tuple, Union
 
 from src.Utils.types import Numeric
 
@@ -60,6 +60,12 @@ class Coord2D:
         return Coord2D( self.x, self.y )
 
     #-------------------------------------------------------------------------
+    def to_tuple(self) -> Tuple[int, int]:
+        '''Returns a tuple containing the two coordinates, x first.
+        '''
+        return (self.x, self.y)
+
+    #-------------------------------------------------------------------------
     def _clip(self) -> None:
         '''Clips both coordinates.
         '''
@@ -75,7 +81,7 @@ class Coord2D:
     def __add__(self, val: Union[Numeric, Coord2DRef]) -> Coord2DRef:
         '''
         '''
-        if isinstance( val, Coord2DRef ):
+        if isinstance( val, Coord2D ):
             return Coord2D( self._clipped(self.x + val.x),
                             self._clipped(self.y + val.y) )
         else:
@@ -87,7 +93,7 @@ class Coord2D:
     def __iadd__(self, val: Union[Numeric, Coord2DRef]) -> Coord2DRef:
         '''
         '''
-        if isinstance( val, Coord2DRef ):
+        if isinstance( val, Coord2D ):
             self.x += round( val.x )
             self.y += round( val.y )
         else:
@@ -150,7 +156,7 @@ class Coord2D:
     def __sub__(self, val: Union[Numeric, Coord2DRef]) -> Coord2DRef:
         '''
         '''
-        if isinstance( val, Coord2DRef ):
+        if isinstance( val, Coord2D ):
             return Coord2D( self._clipped(self.x - val.x),
                             self._clipped(self.y - val.y) )
         else:
@@ -162,7 +168,7 @@ class Coord2D:
     def __isub__(self, val: Union[Numeric, Coord2DRef]) -> Coord2DRef:
         '''
         '''
-        if isinstance( val, Coord2DRef ):
+        if isinstance( val, Coord2D ):
             self.x -= round( val.x )
             self.y -= round( val.y )
         else:
@@ -176,7 +182,7 @@ class Coord2D:
     def __rsub__(self, val: Numeric) -> Coord2DRef:
         '''
         '''
-        if isinstance( val, Coord2DRef ):
+        if isinstance( val, Coord2D ):
             return Coord2D( self._clipped(val.x - self.x),
                             self._clipped(val.y - self.y) )
         else:

@@ -39,7 +39,10 @@ class Point( Coord2D ):
     Notice: 2D points are just 2D coordinates.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, x: int = 0, y: int = 0, *, copy: PointRef) -> None:
+    def __init__(self, x: int = 0,
+                       y: int = 0,
+                       *,
+                       copy: PointRef = None) -> None:
         '''Constructor.
         
         Args:

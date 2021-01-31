@@ -90,7 +90,7 @@ class Font:
         
         self.size = None
         self.color = color
-        self.gb_color = bg_color
+        self.bg_color = bg_color
         self.bold = bold
         self.italic = italic
         self.sans_serif = sans_serif
@@ -99,7 +99,7 @@ class Font:
         if italic:
             self.cv_font |= cv2.FONT_ITALIC
         
-        self.thickness = 3 if bold else 2
+        self.thickness = 2 if bold else 1
         
         self.set_size( size )
 
@@ -127,7 +127,7 @@ class Font:
                  
             view.content = cv2.putText( view.content,
                                         text,
-                                        pos + 1,
+                                        (pos + 1).to_tuple(),
                                         self.cv_font,
                                         self.font_scale,
                                         bg_color,
@@ -143,10 +143,10 @@ class Font:
             
         view.content = cv2.putText( view.content,
                                     text,
-                                    pos,
+                                    pos.to_tuple(),
                                     self.cv_font,
                                     self.font_scale,
-                                    self.color,
+                                    self.color.color,
                                     self.thickness,
                                     cv2.LINE_AA )
 
