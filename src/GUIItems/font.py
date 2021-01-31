@@ -56,6 +56,9 @@ class Font:
                        sans_serif: bool     = True  ) -> None:
         '''Constructor.
         
+        Notice: mode 'italic' is not available with 'sans-serif'
+                fonts. This is an Open_CV restriction.
+        
         Args:
             size: int
                 The size of the police.  Should be greater  than
