@@ -28,13 +28,15 @@ import numpy as np
 from threading import Thread
 import time
 
-from .avt_window             import AVTWindowRef
-from src.Cameras.camera      import Camera
-from src.Utils.indexed_frame import IndexedFrame
-from src.GUIItems.label      import Label
-from src.Shapes.rect         import Rect
-from .rgb_color              import RGBColor
-from .view_prop              import ViewProp
+from .avt_window                             import AVTWindowRef
+from src.Cameras.camera                      import Camera
+from src.GUIItems.font                       import Font
+from src.Buffers.frames_acquisition_buffer   import FramesAcquisitionBuffer
+from src.Utils.indexed_frame                 import IndexedFrame
+from src.GUIItems.label                      import Label
+from src.Shapes.rect                         import Rect
+from .rgb_color                              import RGBColor, YELLOW
+from .view_prop                              import ViewProp
   
 
 #=============================================================================
@@ -77,6 +79,8 @@ class CameraView( Thread, ViewProp ):
         print( f"creates camera view #{camera.cam_id}" )
         
         self.label = Label( self, f"Cam-{camera.cam_id}", 20, 40 )
+        self.fps_label = Label( self, "", 20, 70, None, Font(14, YELLOW) )
+        ##self.buffer = FramesAcquisitionBuffer()
         
         self.camera = camera
         name = f"camera-thrd-{CameraView._CAM_VIEWS_COUNT}"
@@ -88,9 +92,14 @@ class CameraView( Thread, ViewProp ):
         ##self.camera.set_hw_dims( width, height )
 
     #-------------------------------------------------------------------------
-    def draw(self) -> None:
+    def draw(self, frame_index: int) -> None:
         '''Draws the content of this view.
+        
+        Args:
+            frame_index: the index of current frame.
         '''
+        ##self.content = self.buffer.get_frame().copy()
+        self.draw_fps( time.perf_counter() - self.start_time, frame_index )
         self.label.draw()
         self.draw_borders()
         super().draw()
@@ -103,6 +112,17 @@ class CameraView( Thread, ViewProp ):
         self.content[ :, 0, : ] = 15
         self.content[ -1, 1:, : ] = 151
         self.content[ 1:, -1, : ] = 151
+
+    #-------------------------------------------------------------------------
+    def draw_fps(self, elapsed_time: float, frames_count: int) -> None:
+        '''Draws the frames per second rate.
+        '''
+        try:
+            fps = frames_count / elapsed_time
+            self.fps_label.text = f"{fps:.1f} fps"
+            self.fps_label.draw()
+        except:
+            pass
 
     #-------------------------------------------------------------------------
     def is_ok(self) -> bool:
@@ -122,6 +142,8 @@ class CameraView( Thread, ViewProp ):
         frame_index = 0
         self.keep_on = self.is_ok()
         
+        self.start_time = time.perf_counter()
+        
         while self.keep_on:
             frame = self.camera.read()
             if frame is None:
@@ -135,7 +157,9 @@ class CameraView( Thread, ViewProp ):
                     ratio_y = self.height / frame_height
                     ratio = min( ratio_x, ratio_y )
                     
-                    print( frame_index, ':', ratio_x, ratio_y, '/', ratio )
+                    #===========================================================
+                    # print( frame_index, ':', ratio_x, ratio_y, '/', ratio )
+                    #===========================================================
                     
                     frame = cv2.resize( frame, None, fx=ratio, fy=ratio, interpolation=cv2.INTER_LINEAR )
                     
@@ -148,14 +172,18 @@ class CameraView( Thread, ViewProp ):
                     x = (self.width - new_width) // 2
                     y = (self.height - new_height) // 2
                     
-                    self.content = np.zeros( (self.height, self.width, 3) ) + 16
-                    self.content[ y:y+new_height,
+                    view_content = np.zeros( (self.height, self.width, 3) ) + 16
+                    view_content[ y:y+new_height,
                                   x:x+new_width, : ] = frame[ :new_height, :new_width, : ] 
                 
                 else:
-                    self.content = frame
+                    view_content = frame
                 
-                self.draw()
+                ##print( f"-camera #{self.camera.cam_id} - setting buffer[{self.buffer._ndx}] with frame #{frame_index}" )
+                ##self.buffer.set( IndexedFrame(frame_index, view_content) )
+                self.content = cv2.flip( view_content, 1 )
+                
+                self.draw( frame_index )
                 ##self.buffer.set( IndexedFrame(frame_index, frame) )
             frame_index += 1
         
