@@ -33,11 +33,16 @@ SOFTWARE.
 
 #=============================================================================
 import cv2
+from typing import ForwardRef, Optional
 
 from src.Shapes.offset       import Offset
 from src.Shapes.point        import Point
 from src.Display.rgb_color   import RGBColor, WHITE
 from src.Display.view        import View
+
+
+#=============================================================================
+FontRef = ForwardRef( "Font" )
 
 
 #=============================================================================
@@ -107,6 +112,36 @@ class Font:
         self.set_size( size )
 
     #-------------------------------------------------------------------------
+    def copy(self, other: FontRef = None) -> Optional[ FontRef ]:
+        '''Copies a font.
+        
+        Args:
+            other: Font
+                Either a reference to a font to be copied in this
+                font,  or  None in which case a copy of this font
+                is returned.
+        
+        Returns:
+            Either nothing if 'other' is set, or a reference to a
+            new  instance  of Font initialized with the values of 
+            this font attributes.
+        '''
+        if other is None:
+            return Font( self.size,
+                         self.color,
+                         self.bg_color,
+                         self.bold,
+                         self.italic,
+                         self.sans_serif )
+        else:
+            self.size = other.size
+            self.color = other.color
+            self.bg_color = other.bg_color
+            self.bold = other.bold
+            self.italic = other.italic
+            self.sans_serif = other.sans_serif
+
+    #-------------------------------------------------------------------------
     def draw_text(self, view: View, pos: Point, text: str ) -> None:
         '''Draws specified text with this font.
         
@@ -126,11 +161,16 @@ class Font:
         if self.bg_color is None:
             # artifact to get readable chars in frames while transparency is on 
             color_lum = self.color.y
-            bg_color = (0,0,0) if color_lum > 96 else (255,255,255)
+            if color_lum > 96:
+                bg_color = (0,0,0)
+                offset = 1
+            else:
+                bg_color = (255,255,255)
+                offset = -1
                  
             view.content = cv2.putText( view.content,
                                         text,
-                                        (pos + 1).to_tuple(),
+                                        (pos + offset).to_tuple(),
                                         self.cv_font,
                                         self.font_scale,
                                         bg_color,
@@ -154,19 +194,23 @@ class Font:
                                     cv2.LINE_AA )
 
     #-------------------------------------------------------------------------
-    def set_size(self, size: int) -> None:
+    def set_size(self, size: int) -> FontRef:
         '''Changes the size of the police that is associated with this font. 
         
         Args:
             size: int
                 The size of the police.
+        
+        Returns:
+            A reference to this font.
         '''
         if self.size is None or size != self.size:
             self.size = size
             self.font_scale = cv2.getFontScaleFromHeight( self.cv_font,
                                                           size,
                                                           self.thickness )
-        
+        return self
+    
 
 #=============================================================================
 class BoldFont( Font ):
