@@ -23,8 +23,9 @@ SOFTWARE.
 """
 
 #=============================================================================
-from typing import ForwardRef, Optional
+from typing import ForwardRef, Optional, Union
 
+from .offset import Offset
 from .point  import Point
 from .size   import Size
 
@@ -140,7 +141,7 @@ class Rect:
     def top_left(self) -> Point:
         return Point( self.x, self.y )
     @top_left.setter
-    def top_left(self, pt: Point) -> None:
+    def top_left(self, pt: Union[Offset,Point]) -> None:
         self.x, self.y = pt.x, pt.y
     
     @property
@@ -150,6 +151,13 @@ class Rect:
     def bottom_right(self, pt: Point) -> None:
         self.right_x  = pt.x
         self.bottom_y = pt.y
+    
+    @property
+    def size(self) -> Size:
+        return Size( self.width, self.height )
+    @size.setter
+    def size(self, sz: Size) -> None:
+        self.width, self.height = sz.width, sz.height
     
     @property
     def surface(self) -> int:
@@ -175,25 +183,128 @@ class Rect:
         else:
             self.x, self.y = other.x, other.y
             self.width, self.height = other.width, other.height
+                
+    #-------------------------------------------------------------------------
+    def move(self, offset_or_dx: Union[Offset, int], dy: int = None) -> RectRef:
+        '''Relative moves of this rectangl"e according to some offset.
         
+        Args:
+            offset_or_dx: Offset or int
+                If this is an instance  of  class  Offset, 
+                argument  dy must be None.  It defines the 
+                offset to  be   applied  to  the  top-left 
+                position  of  this  rectangle.  If this is
+                an integer,  it  is  the  X-offset  to  be
+                applied  to  the top-left position of this 
+                rectangle and dy must be set.
+            dy: int
+                The Y-offset to be applied to the top-left
+                position of this rectangle. Must be set if
+                offset_or_dx is  an  integer.  Ignored  if
+                offset_or_dx  is  an  instance  of Offset.
+                Defaults to None.
+        
+        Returns:
+            A reference to this rectangle. This allows the
+            cascading of methods calls.
+        
+        Raises:
+            AssertionError:  dy is None while  first  arg-
+                ument is not.
+        '''
+        if isinstance( offset_or_dx, Offset ):
+            self.top_left += offset_or_dx
+        else:
+            assert dy is not None
+            self.x += offset_or_dx
+            self.y += dy
+        return self
+
+    #-------------------------------------------------------------------------
+    def resize(self, new_size_or_width: Size, new_height: int = None) -> RectRef:
+        '''Resizes this rectangle.
+        
+        Args:
+            new_size_or_width: Size or int
+                Either a reference to a Size instance, or
+                an  int  specifying the new width of this
+                rectangle.  If instance of Size, argument
+                height is ignored.  If integer,  argument
+                height must be set.
+            new_height: int 
+                The new value  for  the  height  of  this 
+                rectangle.  Must be set if frist argument
+                is an integer.  Ignored if first argument
+                is an instance of Size. Defaults to None.
+        
+        Returns:
+            A  reference  to  this rectangle. This allows 
+            the cascading of methods calls.
+        '''
+        if isinstance( new_size_or_width, Size ):
+            self.size = new_size_or_width
+        else:
+            assert new_height is not None
+            self.width, self.height = new_size_or_width, new_height
+
     #-------------------------------------------------------------------------
     def __contains__(self, point: Point) -> bool:
         '''Implementation of keyword 'in'.
         
         Args:
             point: Point
-                A reference to a point whose inclusion in this
-                rectangle is to be checked.
+                A reference to a point whose inclusion  in 
+                this rectangle is to be checked.
         
         Returns:
-            True if the specified point belongs to this  rect-
-            angle, or returns False otherwise.
+            True if the specified point  belongs  to  this 
+            rectangle, or returns False otherwise.
+        
+        Raises:
+            AssertionError:  ew_height is None while first
+                argument is not.
         '''
-        return ( self.x <= point.x <= self.right_x  and
-                 self.y <= point.y <= self.bottom_y     )
+        return ( self.left_x <= point.x <= self.right_x  and
+                 self.top_y  <= point.y <= self.bottom_y     )
+
+    #-------------------------------------------------------------------------
+    def __mul__(self, coeff: float) -> RectRef:
+        '''Scales this rectangle, in pos and size.
+        
+        Returns:
+            A reference to a new Rect.
+        '''
+        return Rect( round( coeff * self.x ),
+                     round( coeff * self.y ),
+                     round( coeff * self.width ),
+                     round( coeff * self.height ) )
+
+    #-------------------------------------------------------------------------
+    def __imul__(self, coeff: float) -> RectRef:
+        '''In-place scales this rectangle, in pos and size.
+        
+        Returns:
+            A reference to this rectangle.
+        '''
+        self.x = round( coeff * self.x )
+        self.y = round( coeff * self.y )
+        self.width = round( coeff * self.width )
+        self.height = round( coeff * self.height )
+        return self
+
+    #-------------------------------------------------------------------------
+    def __rmul__(self, coeff: float) -> RectRef:
+        '''Scales this rectangle, in pos and size.
+        
+        Returns:
+            A reference to a new Rect.
+        '''
+        return self.__mul__( coeff )
 
     #-------------------------------------------------------------------------
     def __str__(self) -> str:
+        '''Well, debug purposes...
+        '''
         return f"({self.x}, {self.y}, {self.width}, {self.height})"
     
 #=====   end of   src.Shapes.rect   =====#

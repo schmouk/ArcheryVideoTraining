@@ -28,7 +28,7 @@ from typing  import ForwardRef, List, Tuple, Type
 
 from src.App.avt_config      import AVTConfig
 from .camera                 import Camera
-from .camera_acquisition     import CameraAcquisition
+from src.Display.camera_view import CameraView
 from src.Utils.indexed_frame import IndexedFrame
 
 
@@ -39,11 +39,11 @@ ExceptionInfo     = Tuple[ BaseExceptionType, BaseException, TracebackType ]
 
 
 #=============================================================================
-class CamerasPool( list ):
+class  CamerasPool( list ):
     """The class of the pool of cameras.
     
-    The AVT application may involve many cameras. They all are
-    managed within a pool of cameras.
+    The AVT application may involve many  cameras. 
+    They all are managed within a pool of cameras.
     """
     #-------------------------------------------------------------------------
     def __init__(self) -> None:
@@ -65,95 +65,19 @@ class CamerasPool( list ):
     def evaluate_connected_cameras(self) -> None:
         '''Evaluates all the connected cameras.
         
-        Initializes the pool  of  cameras  according  to  the
-        currently connected ones. Sets attribute '.cams_pool'.
+        Initializes the pool of cameras according
+        to the currently connected ones.
         '''
         self.clear()
 
         for camera_index in range( AVTConfig.CAMERAS_MAX_COUNT ):
             
-            camera_acq = CameraAcquisition( Camera(camera_index) )
+            camera = Camera( camera_index )
             
-            if camera_acq.is_ok():
-                self.append( camera_acq )
+            if camera.is_ok():
+                self.append( camera )
             else:
-                del camera_acq
+                del camera
                 break
-
-    #-------------------------------------------------------------------------
-    def get_frames(self) -> List[IndexedFrame]:
-        '''Acquires next frames on all cameras.
-        
-        Returns:
-            A list of acquired frames.
-        '''
-        return [ cam_acq.get() for cam_acq in self ]
-
-    #-------------------------------------------------------------------------
-    def start_acquisitions(self) -> None:
-        '''Starts the acquisition of all videos.
-        '''
-        print( "cameras-pool starts acquisitions" )
-        
-        for cam_acq in self:
-            cam_acq.start()
-
-    #-------------------------------------------------------------------------
-    def stop(self) -> None:
-        '''Definitively stops the pool of cameras.
-        '''
-        # stops all cameras threads
-        for cam_acq in self:
-            cam_acq.stop()
-        
-        # then joins them
-        for cam_acq in self:
-            cam_acq.join()
-
-    #-------------------------------------------------------------------------
-    def __enter__(self) -> CamerasPoolRef:
-        '''Implementation of the Context Manager Protocol (1/2).
-        '''
-        print( "entering cameras-pool" )
-        
-        self.start_acquisitions()
-        return self
-
-    #-------------------------------------------------------------------------
-    def __exit__(self, except_type     : BaseExceptionType = None,
-                       except_value    : BaseException     = None,
-                       except_traceback: TracebackType     = None ) -> bool:
-        '''Implementation of the Context Manager Protocol (2/2).
-        
-        Args:
-            except_type: BaseExceptionType
-                A reference to the  type  of  caught  exception.
-                Defaults to None.
-            except_value: BaseException
-                A reference to the exception itself. Defaults to 
-                None.
-            except_traceback: TracebackType
-                A reference to the type of traceback  associated
-                with the caught exception. Defaults to None.
-        
-        Returns:
-            False as a default for raised exception to be raised 
-            again.
-        '''
-        try:
-            self.stop()
-            
-            if except_type is not None:
-                if except_value is not None:
-                    print( f"!!! {except_value}" )
-                else:
-                    print( "!!! Unknown exception raised" )
-                if except_traceback is not None:
-                    print( f"{except_traceback}" )
-                else:
-                    print( "    No traceback to print" )
-        
-        finally:
-            return False
 
 #=====   end of   src.Cameras.cameras_pool   =====#

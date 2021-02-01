@@ -41,13 +41,25 @@ def avt_main():
     main_window.draw()
     
     #-- starts the cameras acquisition
-    with main_window.cameras_pool:
-        while True:
-            if cv2.waitKey( 20 ) == 27:
-                break
+    main_window.run_views()
+    
+    #-- interactions w. mouse and keyboard
+    while True:
+        if cv2.waitKey( 20 ) == 27:
+            break
+    
+    #-- stops cameras acquisition
+    main_window.stop_views()
+    
+    #===========================================================================
+    # with main_window.cameras_pool:
+    #     # interactions with mouse & keyboard
+    #     while True:
+    #         if cv2.waitKey( 20 ) == 27:
+    #             break
+    #===========================================================================
      
     #-- releases all allocated resources
-    ##del main_window
     cv2.destroyAllWindows()
      
     #===========================================================================
@@ -130,31 +142,7 @@ def avt_main():
     #  
     # print( f"frame rate = {(frames_count-1) / (end_time - start_time):.2f} fps" )
     #===========================================================================
-         
-    
-    #===========================================================================
-    # cam0 = cv2.VideoCapture( 0 )
-    # fps = cam0.get( cv2.CAP_PROP_FPS )
-    # print( fps,
-    #        cam0.get(cv2.CAP_PROP_MODE),
-    #        cam0.get(cv2.CAP_PROP_FORMAT),
-    #        cam0.get(cv2.CAP_PROP_FOURCC),
-    #        cam0.get(cv2.CAP_PROP_FRAME_WIDTH),
-    #        cam0.get(cv2.CAP_PROP_FRAME_HEIGHT), sep='\n' )
-    # wait_ms = round( 1000 // fps if fps > 0 else 25 )
-    # keep_on, frame = cam0.read()
-    # n = 0
-    # while keep_on:
-    #     cv2.imshow( "cam 0", frame )
-    #     cv2.waitKey( wait_ms )
-    #     keep_on, frame = cam0.read()
-    #     n += 1
-    #     if keep_on:
-    #         keep_on = n < 100
-    # cam0.release()
-    # cv2.destroyAllWindows()
-    #===========================================================================
-    
+
     print( "\n-- done!" )
     
 #=====   end of   src.App.avt_main   =====#

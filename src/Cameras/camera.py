@@ -114,13 +114,12 @@ class Camera( cv2.VideoCapture ):
         ok, frame = super().read()
         
         if ok:
-            w = self.hw_default_width  if self.width  is None else self.width
-            h = self.hw_default_height if self.height is None else self.height
-                
-            if self.hw_default_width == w and self.hw_default_height == h:
+            if self.hw_default_width == self.width and self.hw_default_height == self.height:
                 return frame
             else:
-                return cv2.resize( frame, (w,h), interpolation=cv2.INTER_LINEAR )
+                return cv2.resize( frame,
+                                   (self.width, self.height),
+                                   interpolation=cv2.INTER_LINEAR )
         else:
             return None
 
@@ -152,10 +151,11 @@ class Camera( cv2.VideoCapture ):
         '''
         if width is None:
             assert height is None, "both arguments must be None."
-        elif width is not None:
+            self.width  = self.get_hw_width()
+            self.height = self.get_hw_height()
+        else:
             assert height is not None, "both arguments must be set."
-            
-        self.width, self.height = width, height
+            self.width, self.height = width, height
 
     #-------------------------------------------------------------------------
     def set_hw_dims(self, width: int = None, height: int = None) -> None:

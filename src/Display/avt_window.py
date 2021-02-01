@@ -25,12 +25,17 @@ SOFTWARE.
 #=============================================================================
 import cv2
 import numpy as np
+from typing import ForwardRef
 
 from threading   import Lock
 from typing      import Tuple
 
 from .rgb_color  import RGBColor
 from .view       import View
+
+
+#=============================================================================
+AVTWindowRef = ForwardRef( "AVTWindow" )
 
 
 #=============================================================================
@@ -151,7 +156,8 @@ class AVTWindow:
             width_ratio  = window_width  / content_width
             ratio = height_ratio if height_ratio <= width_ratio else width_ratio
         
-            if ratio != 1.0:
+        
+            if ratio != 1.0 and ratio > 0.0:
                 window_content = np.zeros( (window_height, window_width, 3), np.uint8 )
                 new_content = cv2.resize( self.content, None,
                                           fx=ratio, fy=ratio,
@@ -203,13 +209,14 @@ class AVTWindow:
                 A reference to the view from which the content
                 is to be inserted in this window content.
         '''
-        content_height, content_width = self.content.shape[:2]
-        
-        width  = min( view.width , content_width  - view.x )
-        height = min( view.height, content_height - view.y )
-        
-        self.content[ view.y:view.y+height,
-                      view.x:view.x+width, : ] = view.content[ :height, :width, : ] 
+        with self.lock:
+            content_height, content_width = self.content.shape[:2]
+            
+            width  = min( view.width , content_width  - view.x )
+            height = min( view.height, content_height - view.y )
+            
+            self.content[ view.y:view.y+height,
+                          view.x:view.x+width, : ] = view.content[ :height, :width, : ] 
 
     #-------------------------------------------------------------------------
     def set_title(self, title: str) -> None:

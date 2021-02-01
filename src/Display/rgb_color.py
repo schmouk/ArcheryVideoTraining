@@ -23,6 +23,29 @@ SOFTWARE.
 """
 
 #=============================================================================
+## This module defines:
+#
+#    class RGBColor
+#
+# and colors
+#    ANTHRACITE
+#    BLACK
+#    BLUE
+#    BROWN
+#    DARK_RED
+#    DEEP_GRAY
+#    DEEP_GREEN
+#    GRAY
+#    LIGHT_BLUE
+#    LIGHT_GRAY
+#    LIGHT_GREEN
+#    NAVY_BLUE
+#    ORANGE
+#    RED
+#    YELLOW 
+#    WHITE
+
+#=============================================================================
 from typing import ForwardRef
 
 
@@ -106,6 +129,37 @@ class RGBColor:
     def _clipped(cls, value: int) -> int:
         '''Returns the clipped value of a specified value.
         '''
-        return 0 if value <= 0 else 255 if value >= 255 else value  ## i.e. google
-    
+        return 0 if value <= 0 else 255 if value >= 255 else value
+
+    #-------------------------------------------------------------------------
+    def __eq__(self, other: RGBColorRef) -> bool:
+        '''Returns True if both colors have same color components.
+        '''
+        return self.color == other.color
+
+    #-------------------------------------------------------------------------
+    def __ne__(self, other: RGBColorRef) -> bool:
+        '''Returns True if any same color component differs in this and in other.
+        '''
+        return self.color != other.color
+
+
+#=============================================================================
+ANTHRACITE  = RGBColor( 32, 32, 32 )
+BLACK       = RGBColor( 0, 0, 0 )
+BLUE        = RGBColor( 0, 0, 255 )
+BROWN       = RGBColor( 96, 48, 0 )
+DARK_RED    = RGBColor( 128, 0, 0 )
+DEEP_GRAY   = RGBColor( 64, 64, 64 )
+DEEP_GREEN  = RGBColor( 0, 96, 0 )
+GRAY        = RGBColor( 128, 128, 128 )
+LIGHT_BLUE  = RGBColor( 0, 255, 255 )
+LIGHT_GRAY  = RGBColor( 192, 192, 192 )
+LIGHT_GREEN = RGBColor( 0, 255, 0 )
+NAVY_BLUE   = RGBColor( 0, 0, 64 )
+ORANGE      = RGBColor( 255, 128, 0 )
+RED         = RGBColor( 255, 0, 0 )
+YELLOW      = RGBColor( 255, 255, 0 )
+WHITE       = RGBColor( 255, 255, 255 )
+
 #=====   end of   src.Display.rgb_color   =====#

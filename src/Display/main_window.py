@@ -115,7 +115,7 @@ class MainWindow( AVTWindow):
                   
         elif cameras_count == 3:
             print( "creates views for 3 cameras" )
-            self.views = [ ##ControlView( self ),
+            self.views = [ ControlView( self ),
                            CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[2], 0.0, 0.5, 0.5, 0.5, rect )  ]
@@ -131,13 +131,15 @@ class MainWindow( AVTWindow):
             if b_target_view:
                 self.views.append( TargetView( self, 0.0, 0.0, 1.0, 1.0, rect, True ) )
 
-    #-------------------------------------------------------------------------
-    def draw(self) -> None:
-        '''Draws all the views that are contained in this window.
-        '''
-        for view in self.views:
-            view.draw()
-        super().draw()
+    #===========================================================================
+    # #-------------------------------------------------------------------------
+    # def draw(self) -> None:
+    #     '''Draws all the views that are contained in this window.
+    #     '''
+    #     for view in self.views:
+    #         view.draw()
+    #     super().draw()
+    #===========================================================================
 
     #-------------------------------------------------------------------------
     def get_cameras_area_size(self) -> Tuple[int, int]:
@@ -145,6 +147,20 @@ class MainWindow( AVTWindow):
         '''
         dims = self.get_size()
         return [ dims[0] - self.DEFAULT_CONTROL_WIDTH, dims[1] ]
+
+    #-------------------------------------------------------------------------
+    def run_views(self) -> None:
+        '''Runs the threads associated with views, if any.
+        '''
+        for view in self.views:
+            view.start()
+
+    #-------------------------------------------------------------------------
+    def stop_views(self) -> None:
+        '''Definitively stops the threads associated with views, if any.
+        '''
+        for view in self.views:
+            view.stop()
 
     #-------------------------------------------------------------------------
     # Class data
