@@ -31,6 +31,7 @@ import time
 from .avt_window             import AVTWindowRef
 from src.Cameras.camera      import Camera
 from src.Utils.indexed_frame import IndexedFrame
+from src.GUIItems.label      import Label
 from src.Shapes.rect         import Rect
 from .rgb_color              import RGBColor
 from .view_prop              import ViewProp
@@ -75,6 +76,8 @@ class CameraView( Thread, ViewProp ):
         '''
         print( f"creates camera view #{camera.cam_id}" )
         
+        self.label = Label( self, f"Cam-{camera.cam_id}", 20, 40 )
+        
         self.camera = camera
         name = f"camera-thrd-{CameraView._CAM_VIEWS_COUNT}"
         CameraView._CAM_VIEWS_COUNT += 1
@@ -83,6 +86,23 @@ class CameraView( Thread, ViewProp ):
         ViewProp.__init__( self, parent, x, y, width, height, RGBColor(16,16,16), parent_rect )
         
         ##self.camera.set_hw_dims( width, height )
+
+    #-------------------------------------------------------------------------
+    def draw(self) -> None:
+        '''Draws the content of this view.
+        '''
+        self.label.draw()
+        self.draw_borders()
+        super().draw()
+
+    #-------------------------------------------------------------------------
+    def draw_borders(self) -> None:
+        '''Draws lines on view borders.
+        '''
+        self.content[ 0, :, : ] = 15
+        self.content[ :, 0, : ] = 15
+        self.content[ -1, 1:, : ] = 151
+        self.content[ 1:, -1, : ] = 151
 
     #-------------------------------------------------------------------------
     def is_ok(self) -> bool:
@@ -134,7 +154,7 @@ class CameraView( Thread, ViewProp ):
                 
                 else:
                     self.content = frame
-                    
+                
                 self.draw()
                 ##self.buffer.set( IndexedFrame(frame_index, frame) )
             frame_index += 1
