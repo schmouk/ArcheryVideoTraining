@@ -54,7 +54,7 @@ class MainWindow( AVTWindow):
             
             # creates the embedded views, according to the pool of cameras
             self.cameras_pool = CamerasPool()
-            self.create_views( self.cameras_pool, False )
+            self.create_views( self.cameras_pool, b_target_view=False )
             
             self.last_frame_index = -1
             
