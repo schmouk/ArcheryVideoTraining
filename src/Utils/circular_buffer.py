@@ -108,7 +108,7 @@ class CirculaBuffer:
         
         Args:
             item: Any
-                The new item to be stored in  this  buffer. 
+                The new item to be stored in this  buffer. 
                 This  may be a reference to an instance of
                 any class.
         
