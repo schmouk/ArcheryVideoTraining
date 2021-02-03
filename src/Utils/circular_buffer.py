@@ -97,7 +97,7 @@ class CirculaBuffer:
         Returns:
             a reference to this circular buffer.
         '''
-        return self._iadd( item )
+        return self.__iadd__( item )
 
     #-------------------------------------------------------------------------
     def __iadd__(self, item: Any) -> CircularBufferRef:
