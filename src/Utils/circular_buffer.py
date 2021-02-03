@@ -146,8 +146,10 @@ class CirculaBuffer:
         '''
         if index < -self.max_count or index >= self.max_count:
             return None
+        elif self.count == 0:
+            return None
         else:
-            return self.buf[ (index + self.ndx - 1) % self.max_count ]
+            return self.buf[ (index + self.ndx - 1) % self.count ]
 
     #-------------------------------------------------------------------------
     def __len__(self) -> int:
