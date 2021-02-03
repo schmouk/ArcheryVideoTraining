@@ -78,8 +78,6 @@ class CameraView( Thread, ViewProp ):
             ValueError:  Some  of  the  coordinates  or  sizes 
                 values are outside interval [0.0, 1.0].
         '''
-        print( f"creates camera view #{camera.cam_id}" )
-        
         self.label = Label( self, f"Cam-{camera.cam_id}", 20, 40 )
         self.fps_label = Label( self, "", 20, 70, None, Font(14, YELLOW) )
         self.fps_rate = FPSRateFrames( 15 )
@@ -155,8 +153,6 @@ class CameraView( Thread, ViewProp ):
     def run(self) -> None:
         '''The acquisition method once this thread has been started.
         '''
-        print( f"running {self.name}" )
-        
         frame_index = 0
         self.keep_on = self.is_ok()
         
@@ -199,16 +195,12 @@ class CameraView( Thread, ViewProp ):
                 ##self.buffer.set( IndexedFrame(frame_index, frame) )
             frame_index += 1
         
-        print( f"finally stopping {self.name}" )
-        
         self.camera.release()
 
     #-------------------------------------------------------------------------
     def stop(self) -> None:
         '''Definitively stops this acquisition thread.
         '''
-        print( f"stopping {self.name}" )
-
         self.keep_on = False
 
     #-------------------------------------------------------------------------

@@ -36,7 +36,6 @@ def avt_main():
     main_window = MainWindow()
      
     #-- shows the main window
-    print( "draws main window content" )
     main_window.draw()
     
     #-- starts the cameras acquisition
