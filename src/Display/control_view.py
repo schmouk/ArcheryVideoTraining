@@ -23,11 +23,14 @@ SOFTWARE.
 """
 
 #=============================================================================
-from .view import AVTWindowRef, View
+from src.App.avt_config  import AVTConfig
+from .avt_view           import AVTView
+from .view               import AVTWindowRef
+from .rgb_color          import RGBColor
 
 
 #=============================================================================
-class ControlView( View ):
+class ControlView( AVTView ):
     """The class description.
     """
     def __init__(self, parent: AVTWindowRef) -> None:
@@ -50,8 +53,22 @@ class ControlView( View ):
             ValueError:  Some  of  the  coordinates  or  sizes 
                 values are outside interval [0.0, 1.0].
         '''
-        super().__init__( parent, parent.width - self.WIDTH, 0,
-                                  self.WIDTH, parent.height     )
+        super().__init__( parent,
+                          parent.width - self.WIDTH, 0,
+                          self.WIDTH, parent.height     )
+
+    #-------------------------------------------------------------------------
+    def draw(self) -> None:
+        '''Draws this view content within the parent window.
+        '''
+        self.draw_borders()
+        super().draw()
+
+    #-------------------------------------------------------------------------
+    def draw_borders(self) -> None:
+        '''Draws lines on this view borders.
+        '''
+        bg_color = RGBColor( *AVTConfig.DEFAULT_BACKGROUND.color )
 
     #-------------------------------------------------------------------------
     # Class data
