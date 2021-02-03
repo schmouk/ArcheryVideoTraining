@@ -85,9 +85,15 @@ class View:
         self.content = None
         self._fill_background()
 
+        self.draw()
+
     #-------------------------------------------------------------------------
     def draw(self) -> None:
         '''Draws this view content within the parent window.
+        
+        May be overwritten in inheriting classes. See class
+        'CameraView' or class 'ControlView' for examples of 
+        code.
         '''
         with self.lock:
             self.parent_window.insert_view_content( self )
@@ -97,8 +103,9 @@ class View:
     def start(self) -> None:
         '''Starts the thread that may be associated with this view.
         
-        Should be overwritten in inheriting classes
-        that inherits also from class Thread.
+        Should be overwritten in inheriting classes that 
+        inherits  also  from  class  Thread.  See  class 
+        'CameraView' for an example of code.
         '''
         pass
 
@@ -106,8 +113,9 @@ class View:
     def stop(self) -> None:
         '''Definitively stops the thread that may be associated with this view.
         
-        Should be overwritten in inheriting classes
-        that inherits also from class Thread.
+        Should be overwritten in inheriting classes that 
+        inherits  also  from  class  Thread.  See  class 
+        'CameraView' for an example of code.
         '''
         pass
 

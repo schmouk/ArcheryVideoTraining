@@ -24,54 +24,37 @@ SOFTWARE.
 
 #=============================================================================
 from src.App.avt_config  import AVTConfig
-from .avt_view           import AVTView
-from .view               import AVTWindowRef
-from .rgb_color          import RGBColor
+from .view               import AVTWindowRef, View
 
 
 #=============================================================================
-class ControlView( AVTView ):
-    """The class description.
+class AVTView( View ):
+    """The class of Views that are specific to application AVT.
     """
-    def __init__(self, parent: AVTWindowRef) -> None:
+    #-------------------------------------------------------------------------
+    def __init__(self, parent: AVTWindowRef,
+                       x     : int,
+                       y     : int,
+                       width : int,
+                       height: int ) -> None:
         '''Constructor.
         
         Args:
             parent: AVTWindow
                 A reference to the AVT window that embeds this
                 view.
-            x, y: float
+            x, y: int
                 The coordinates of the top-left corner of this
-                view,  expressed as percentages of resp. width
-                and height of  the  embedding  window.  Values
-                must be included in [0.0, 1.0]
-            width, height: float
-                The size of this view,  expressed as  percent-
-                ages of the embedding window sizes.
+                view,  expressed  as pixels in the main window
+                coordinates.
+            width, height: int
+                The size of this view,  expressed as pixels in
+                the main window coordinates.
         
         Raises:
-            ValueError:  Some  of  the  coordinates  or  sizes 
-                values are outside interval [0.0, 1.0].
+            ValueError: coordinates get  negative  values,  or
+                width or height get negative or null values.
         '''
-        super().__init__( parent,
-                          parent.width - self.WIDTH, 0,
-                          self.WIDTH, parent.height     )
+        super().__init__( parent, x, y, width, height, AVTConfig.DEFAULT_BACKGROUND )
 
-    #-------------------------------------------------------------------------
-    def draw(self) -> None:
-        '''Draws this view content within the parent window.
-        '''
-        self.draw_borders()
-        super().draw()
-
-    #-------------------------------------------------------------------------
-    def draw_borders(self) -> None:
-        '''Draws lines on this view borders.
-        '''
-        bg_color = RGBColor( *AVTConfig.DEFAULT_BACKGROUND.color )
-
-    #-------------------------------------------------------------------------
-    # Class data
-    WIDTH = 96
-
-#=====   end of   src.Display.cantrol_view   =====#
+#=====   end of   src.Display.avt_view   =====#
