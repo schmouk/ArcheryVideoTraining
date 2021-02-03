@@ -110,26 +110,26 @@ class Coord2D:
         return self.__add__( val )
 
     #-------------------------------------------------------------------------
-    def __div__(self, val: Numeric) -> Coord2DRef:
+    def __floordiv__(self, val: Numeric) -> Coord2DRef:
         '''
         '''
-        return Coord2D( self._clipped(round(self.x / val)),
-                        self._clipped(round(self.y / val)) )
+        return Coord2D( self._clipped(int(self.x / val)),
+                        self._clipped(int(self.y / val)) )
         
     #-------------------------------------------------------------------------
-    def __idiv__(self, val: Numeric) -> Coord2DRef:
+    def __ifloordiv__(self, val: Numeric) -> Coord2DRef:
         '''
         '''
-        self.x = self._clipped( round(self.x / val) )
-        self.y = self._clipped( round(self.y / val) )
+        self.x = self._clipped( int(self.x / val) )
+        self.y = self._clipped( int(self.y / val) )
         return self
 
     #-------------------------------------------------------------------------
-    def __rdiv__(self, val: Numeric) -> Coord2DRef:
+    def __rfloordiv__(self, val: Numeric) -> Coord2DRef:
         '''
         '''
-        return Coord2D( self._clipped(round(val / self.x)),
-                        self._clipped(round(val / self.y)) )
+        return Coord2D( self._clipped(int(val / self.x)),
+                        self._clipped(int(val / self.y)) )
 
     #-------------------------------------------------------------------------
     def __mul__(self, val: Numeric) -> Coord2DRef:
@@ -189,5 +189,27 @@ class Coord2D:
             val = round( val )
             return Coord2D( self._clipped(val - self.x),
                             self._clipped(val - self.y) )
+
+    #-------------------------------------------------------------------------
+    def __truediv__(self, val: Numeric) -> Coord2DRef:
+        '''
+        '''
+        return Coord2D( self._clipped(round(self.x / val)),
+                        self._clipped(round(self.y / val)) )
+        
+    #-------------------------------------------------------------------------
+    def __itruediv__(self, val: Numeric) -> Coord2DRef:
+        '''
+        '''
+        self.x = self._clipped( round(self.x / val) )
+        self.y = self._clipped( round(self.y / val) )
+        return self
+
+    #-------------------------------------------------------------------------
+    def __rtruediv__(self, val: Numeric) -> Coord2DRef:
+        '''
+        '''
+        return Coord2D( self._clipped(round(val / self.x)),
+                        self._clipped(round(val / self.y)) )
 
 #=====   end of   src.Shapes.coord_2d   =====#

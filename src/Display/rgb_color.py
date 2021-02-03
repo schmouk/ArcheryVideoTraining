@@ -46,7 +46,7 @@ SOFTWARE.
 #    WHITE
 
 #=============================================================================
-from typing import ForwardRef
+from typing import ForwardRef, Union
 
 
 #=============================================================================
@@ -142,6 +142,50 @@ class RGBColor:
         '''Returns True if any same color component differs in this and in other.
         '''
         return self.color != other.color
+
+    #-------------------------------------------------------------------------
+    def __floordiv__(self, den: Union[int,float]) -> RGBColorRef:
+        '''
+        '''
+        return RGBColor( int(self.r / den), int(self.g / den), int(self.b / den) )
+
+    #-------------------------------------------------------------------------
+    def __ifloordiv__(self, den: Union[int,float]) -> RGBColorRef:
+        '''
+        '''
+        self.set( int(self.r / den), int(self.g / den), int(self.b / den) )
+
+    #-------------------------------------------------------------------------
+    def __mul__(self, coeff: Union[int,float]) -> RGBColorRef:
+        '''
+        '''
+        return RGBColor( round(self.r * coeff), round(self.g * coeff), round(self.b * coeff) )
+
+    #-------------------------------------------------------------------------
+    def __imul__(self, coeff: Union[int,float]) -> RGBColorRef:
+        '''
+        '''
+        self.set( round(self.r * coeff), round(self.g * coeff), round(self.b * coeff) )
+        return self
+
+    #-------------------------------------------------------------------------
+    def __rmul__(self, coeff: Union[int,float]) -> RGBColorRef:
+        '''
+        '''
+        return RGBColor( round(self.r * coeff), round(self.g * coeff), round(self.b * coeff) )
+
+    #-------------------------------------------------------------------------
+    def __truediv__(self, den: Union[int,float]) -> RGBColorRef:
+        '''
+        '''
+        return RGBColor( round(self.r / den), round(self.g / den), round(self.b / den) )
+
+    #-------------------------------------------------------------------------
+    def __itruediv__(self, den: Union[int,float]) -> RGBColorRef:
+        '''
+        '''
+        self.set( round(self.r / den), round(self.g / den), round(self.b / den) )
+        return self
 
 
 #=============================================================================

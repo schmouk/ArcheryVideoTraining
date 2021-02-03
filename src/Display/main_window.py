@@ -63,6 +63,8 @@ class MainWindow( AVTWindow):
             print( "creates main-window views" )
             self.create_views( self.cameras_pool, False )
             
+            self.last_frame_index = -1
+            
         else:
             self = MainWindow.__SINGLETON
 
@@ -131,15 +133,11 @@ class MainWindow( AVTWindow):
             if b_target_view:
                 self.views.append( TargetView( self, 0.0, 0.0, 1.0, 1.0, rect, True ) )
 
-    #===========================================================================
-    # #-------------------------------------------------------------------------
-    # def draw(self) -> None:
-    #     '''Draws all the views that are contained in this window.
-    #     '''
-    #     for view in self.views:
-    #         view.draw()
-    #     super().draw()
-    #===========================================================================
+    #-------------------------------------------------------------------------
+    def draw(self) -> None:
+        '''Draws all the views that are contained in this window.
+        '''
+        super().draw()
 
     #-------------------------------------------------------------------------
     def get_cameras_area_size(self) -> Tuple[int, int]:
@@ -164,8 +162,8 @@ class MainWindow( AVTWindow):
 
     #-------------------------------------------------------------------------
     # Class data
-    DEFAULT_WIDTH  = 2 * 640 + ControlView.WIDTH
-    DEFAULT_HEIGHT = 2 * 480
+    DEFAULT_WIDTH  = 2 * 640 + ControlView.WIDTH   ##640 + ControlView.WIDTH   ##
+    DEFAULT_HEIGHT = 2 * 480   ##480   ##
 
     __SINGLETON = None
 

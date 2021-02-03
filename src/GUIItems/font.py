@@ -167,7 +167,7 @@ class Font:
             else:
                 bg_color = (255,255,255)
                 offset = -1
-                 
+
             view.content = cv2.putText( view.content,
                                         text,
                                         (pos + offset).to_tuple(),

@@ -25,6 +25,7 @@ SOFTWARE.
 #=============================================================================
 import numpy as np
 from typing import ForwardRef
+from threading import Lock
 
 from .rgb_color import RGBColor
 
@@ -74,6 +75,8 @@ class View:
         if width <= 0 or height <= 0:
             raise ValueError( f"sizes ({width}, {height}) must be greater than 0.")
         
+        self.lock = Lock()
+        
         self.parent_window = parent
         self.x, self.y = x, y
         self.width, self.height = width, height
@@ -86,7 +89,8 @@ class View:
     def draw(self) -> None:
         '''Draws this view content within the parent window.
         '''
-        self.parent_window.insert_view_content( self )
+        with self.lock:
+            self.parent_window.insert_view_content( self )
         self.parent_window.draw()
 
     #-------------------------------------------------------------------------
@@ -111,6 +115,6 @@ class View:
     def _fill_background(self) -> None:
         '''Fills the parent window content with the background solid color of this view.
         '''
-        self.content = np.tile( self.bg_color.color, (self.height, self.width, 1) ).astype( np.uint8 )
+        self.content = np.zeros( (self.height, self.width, 3), np.uint8 ) + self.bg_color.color
 
 #=====   end of   src.Display.view   =====#
