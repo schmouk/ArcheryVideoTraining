@@ -22,7 +22,6 @@ SOFTWARE.
 
 #=============================================================================
 from threading import Lock
-import time
 
 from src.Utils.types         import Frame
 from src.Utils.indexed_frame import IndexedFrame

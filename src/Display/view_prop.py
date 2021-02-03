@@ -93,23 +93,4 @@ class ViewProp( View ):
                           round( height * self.rect.height ),
                           bg_color )
 
-#===============================================================================
-#     #-------------------------------------------------------------------------
-#     @property
-#     def height(self) -> int:
-#         return round( self.parent.height * self.prop_height )
-# 
-#     @property
-#     def width(self) -> int:
-#         return round( self.parent.width * self.prop_width )
-# 
-#     @property
-#     def x(self) -> int:
-#         return round( self.parent.width * self.prop_x )
-# 
-#     @property
-#     def y(self) -> int:
-#         return round( self.parent.height * self.prop_y )
-#===============================================================================
-
 #=====   end of   src.Display.view_prop   =====#
