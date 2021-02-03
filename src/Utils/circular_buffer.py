@@ -149,7 +149,7 @@ class CirculaBuffer:
         elif self.count == 0:
             return None
         else:
-            return self.buf[ (index + self.ndx - 1) % self.count ]
+            return self.buf[ (index + self.ndx) % self.count ]
 
     #-------------------------------------------------------------------------
     def __len__(self) -> int:
