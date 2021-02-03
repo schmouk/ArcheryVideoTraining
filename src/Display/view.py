@@ -85,6 +85,8 @@ class View:
         self.content = None
         self._fill_background()
 
+        self.draw()
+
     #-------------------------------------------------------------------------
     def draw(self) -> None:
         '''Draws this view content within the parent window.

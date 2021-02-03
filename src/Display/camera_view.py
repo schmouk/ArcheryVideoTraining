@@ -89,9 +89,10 @@ class CameraView( Thread, AVTViewProp ):
 
         Thread.__init__( self, name=name )
         AVTViewProp.__init__( self, parent, x, y, width, height, parent_rect )
-        ##ViewProp.__init__( self, parent, x, y, width, height, RGBColor(16,16,16), parent_rect )
         
         ##self.camera.set_hw_dims( width, height )
+
+        self.draw()
 
     #-------------------------------------------------------------------------
     def draw(self) -> None:
@@ -118,15 +119,15 @@ class CameraView( Thread, AVTViewProp ):
         self.content[  :,  1 ] = bg_color.color
         self.content[  :, -1 ] = bg_color.color
         self.content[  :, -2 ] = bg_color.color
-        
+
         self.content[ 2, 2:-1 ]  = (bg_color / 1.5).color
-        self.content[ 2:-1, 2 ]  = (bg_color / 1.5).color
-        self.content[ -2, 3:-1 ] = (bg_color * 1.5).color
-        self.content[ 3:-1, -2 ] = (bg_color * 1.5).color
+        self.content[ 2:-2, 2 ]  = (bg_color / 1.5).color
+        self.content[ -3, 3:-1 ] = (bg_color * 3).color
+        self.content[ 3:-3, -2 ] = (bg_color * 3).color
         self.content[ 3, 3:-2 ]  = (bg_color / 2).color
-        self.content[ 4:-2, 3 ]  = (bg_color / 2).color
-        self.content[ -3, 4:-2 ] = (bg_color * 3).color
-        self.content[ 4:-3, -3 ] = (bg_color * 3).color
+        self.content[ 4:-3, 3 ]  = (bg_color / 2).color
+        self.content[ -4, 4:-2 ] = (bg_color * 1.5).color
+        self.content[ 4:-3, -3 ] = (bg_color * 1.5).color
 
     #-------------------------------------------------------------------------
     def draw_fps(self) -> None:
@@ -158,7 +159,8 @@ class CameraView( Thread, AVTViewProp ):
         self.fps_rate.start()
         
         while self.keep_on:
-            frame = self.camera.read()
+            frame = cv2.flip( self.camera.read(), 1 )  # notice: we're mirroring the frame
+            
             if frame is None:
                 time.sleep( 0.020 )
             else:
@@ -180,14 +182,12 @@ class CameraView( Thread, AVTViewProp ):
                     x = (self.width - new_width) // 2
                     y = (self.height - new_height) // 2
                     
-                    view_content = np.zeros( (self.height, self.width, 3) ) + 16
-                    view_content[ y:y+new_height,
+                    self.content = np.zeros( (self.height, self.width, 3), np.uint8 ) + 16
+                    self.content[ y:y+new_height,
                                   x:x+new_width, : ] = frame[ :new_height, :new_width, : ] 
                 
                 else:
-                    view_content = frame
-                
-                self.content = cv2.flip( view_content, 1 )
+                    self.content = frame
                 
                 self.draw()
                 ##self.buffer.set( IndexedFrame(frame_index, frame) )
