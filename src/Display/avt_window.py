@@ -25,13 +25,14 @@ SOFTWARE.
 #=============================================================================
 import cv2
 import numpy as np
-from typing import ForwardRef
 
+from typing      import ForwardRef, Tuple
 from threading   import Lock
-from typing      import Tuple
 
-from .rgb_color  import RGBColor
-from .view       import View
+from src.App.avt_config  import AVTConfig
+
+from .rgb_color          import RGBColor
+from .view               import View
 
 
 #=============================================================================
@@ -43,11 +44,11 @@ class AVTWindow:
     """The base class for all windows in Archery Video Training application.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, name  : str = None,
-                       title : str = None,
-                       width : int = None,
-                       height: int = None,
-                       bg_color: RGBColor = RGBColor(32, 32, 32),
+    def __init__(self, name    : str = None,
+                       title   : str = None,
+                       width   : int = None,
+                       height  : int = None,
+                       bg_color: RGBColor = AVTConfig.DEFAULT_BACKGROUND,
                        *,
                        full_screen: bool = False) -> None:
         '''Constructor.
@@ -143,42 +144,43 @@ class AVTWindow:
             displaying   this  content,   or  -1 if no key was
             hit after expressed delay.
         '''
-        if not self.fixed_size:
-            #-- the window size adapts itself to the content size
-            cv2.imshow( self.name, self.content )
-
-        else:
-            #-- the content size adapts itself to the window size
-            content_height, content_width = self.content.shape[:2]
-            window_width, window_height = self.get_size()
-            
-            height_ratio = window_height / content_height
-            width_ratio  = window_width  / content_width
-            ratio = height_ratio if height_ratio <= width_ratio else width_ratio
-        
-        
-            if ratio != 1.0 and ratio > 0.0:
-                window_content = np.zeros( (window_height, window_width, 3), np.uint8 )
-                new_content = cv2.resize( self.content, None,
-                                          fx=ratio, fy=ratio,
-                                          interpolation=cv2.INTER_LINEAR )
-                
-                new_height, new_width = new_content.shape[:2]
-                if new_width > window_width:
-                    new_width = window_width
-                if new_height > window_height:
-                    new_height = window_height
-                    
-                x = (window_width - new_width) // 2
-                y = (window_height - new_height) // 2
-                
-                window_content[ y:y+new_height,
-                                x:x+new_width, : ] = new_content[ :new_height, :new_width, : ] 
-                
-                cv2.imshow( self.name, window_content )
-            
-            else:
+        with self.lock:
+            if not self.fixed_size:
+                #-- the window size adapts itself to the content size
                 cv2.imshow( self.name, self.content )
+    
+            else:
+                #-- the content size adapts itself to the window size
+                content_height, content_width = self.content.shape[:2]
+                window_width, window_height = self.get_size()
+                
+                height_ratio = window_height / content_height
+                width_ratio  = window_width  / content_width
+                ratio = height_ratio if height_ratio <= width_ratio else width_ratio
+            
+            
+                if ratio != 1.0 and ratio > 0.0:
+                    window_content = np.zeros( (window_height, window_width, 3), np.uint8 )
+                    new_content = cv2.resize( self.content, None,
+                                              fx=ratio, fy=ratio,
+                                              interpolation=cv2.INTER_LINEAR )
+                    
+                    new_height, new_width = new_content.shape[:2]
+                    if new_width > window_width:
+                        new_width = window_width
+                    if new_height > window_height:
+                        new_height = window_height
+                        
+                    x = (window_width - new_width) // 2
+                    y = (window_height - new_height) // 2
+                    
+                    window_content[ y:y+new_height,
+                                    x:x+new_width, : ] = new_content[ :new_height, :new_width, : ] 
+                    
+                    cv2.imshow( self.name, window_content )
+                
+                else:
+                    cv2.imshow( self.name, self.content )
         
         return cv2.waitKey( hit_delay_ms )
 

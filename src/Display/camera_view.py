@@ -28,12 +28,17 @@ import numpy as np
 from threading import Thread
 import time
 
-from .avt_window             import AVTWindowRef
-from src.Cameras.camera      import Camera
-from src.Utils.indexed_frame import IndexedFrame
-from src.Shapes.rect         import Rect
-from .rgb_color              import RGBColor
-from .view_prop              import ViewProp
+from src.App.avt_config                      import AVTConfig
+from .avt_window                             import AVTWindowRef
+from src.Cameras.camera                      import Camera
+from src.GUIItems.font                       import Font
+from src.Display.fps_rate                    import FPSRateFrames
+from src.Buffers.frames_acquisition_buffer   import FramesAcquisitionBuffer
+from src.Utils.indexed_frame                 import IndexedFrame
+from src.GUIItems.label                      import Label
+from src.Shapes.rect                         import Rect
+from .rgb_color                              import RGBColor, YELLOW
+from .view_prop                              import ViewProp
   
 
 #=============================================================================
@@ -75,6 +80,11 @@ class CameraView( Thread, ViewProp ):
         '''
         print( f"creates camera view #{camera.cam_id}" )
         
+        self.label = Label( self, f"Cam-{camera.cam_id}", 20, 40 )
+        self.fps_label = Label( self, "", 20, 70, None, Font(14, YELLOW) )
+        self.fps_rate = FPSRateFrames( 15 )
+        ##self.buffer = FramesAcquisitionBuffer()
+        
         self.camera = camera
         name = f"camera-thrd-{CameraView._CAM_VIEWS_COUNT}"
         CameraView._CAM_VIEWS_COUNT += 1
@@ -83,6 +93,54 @@ class CameraView( Thread, ViewProp ):
         ViewProp.__init__( self, parent, x, y, width, height, RGBColor(16,16,16), parent_rect )
         
         ##self.camera.set_hw_dims( width, height )
+
+    #-------------------------------------------------------------------------
+    def draw(self, frame_index: int) -> None:
+        '''Draws the content of this view.
+        
+        Args:
+            frame_index: the index of current frame.
+        '''
+        ##self.content = self.buffer.get_frame().copy()
+        
+        self.draw_fps( time.perf_counter() - self.start_time, frame_index )
+        self.label.draw()
+        self.draw_borders()
+        super().draw()
+
+    #-------------------------------------------------------------------------
+    def draw_borders(self) -> None:
+        '''Draws lines on view borders.
+        '''
+        bg_color = RGBColor( *AVTConfig.DEFAULT_BACKGROUND.color )
+        
+        self.content[  0,  : ] = bg_color.color
+        self.content[  1,  : ] = bg_color.color
+        self.content[ -1,  : ] = bg_color.color
+        self.content[ -2,  : ] = bg_color.color
+        self.content[  :,  0 ] = bg_color.color
+        self.content[  :,  1 ] = bg_color.color
+        self.content[  :, -1 ] = bg_color.color
+        self.content[  :, -2 ] = bg_color.color
+        
+        self.content[ 2, 2:-1 ]  = (bg_color / 1.5).color
+        self.content[ 2:-1, 2 ]  = (bg_color / 1.5).color
+        self.content[ -2, 3:-1 ] = (bg_color * 1.5).color
+        self.content[ 3:-1, -2 ] = (bg_color * 1.5).color
+        self.content[ 3, 3:-2 ]  = (bg_color / 2).color
+        self.content[ 4:-2, 3 ]  = (bg_color / 2).color
+        self.content[ -3, 4:-2 ] = (bg_color * 3).color
+        self.content[ 4:-3, -3 ] = (bg_color * 3).color
+
+    #-------------------------------------------------------------------------
+    def draw_fps(self, elapsed_time: float, frames_count: int) -> None:
+        '''Draws the frames per second rate.
+        '''
+        self.fps_rate.new_frame()
+        fps_text = self.fps_rate.get_text()
+        if fps_text != '':
+            self.fps_label.text = f"{fps_text} fps"
+            self.fps_label.draw()
 
     #-------------------------------------------------------------------------
     def is_ok(self) -> bool:
@@ -102,6 +160,9 @@ class CameraView( Thread, ViewProp ):
         frame_index = 0
         self.keep_on = self.is_ok()
         
+        self.start_time = time.perf_counter()
+        self.fps_rate.start()
+        
         while self.keep_on:
             frame = self.camera.read()
             if frame is None:
@@ -113,10 +174,7 @@ class CameraView( Thread, ViewProp ):
                     
                     ratio_x = self.width / frame_width
                     ratio_y = self.height / frame_height
-                    ratio = min( ratio_x, ratio_y )
-                    
-                    print( frame_index, ':', ratio_x, ratio_y, '/', ratio )
-                    
+                    ratio = min( ratio_x, ratio_y )                    
                     frame = cv2.resize( frame, None, fx=ratio, fy=ratio, interpolation=cv2.INTER_LINEAR )
                     
                     new_height, new_width = frame.shape[:2]
@@ -128,14 +186,16 @@ class CameraView( Thread, ViewProp ):
                     x = (self.width - new_width) // 2
                     y = (self.height - new_height) // 2
                     
-                    self.content = np.zeros( (self.height, self.width, 3) ) + 16
-                    self.content[ y:y+new_height,
+                    view_content = np.zeros( (self.height, self.width, 3) ) + 16
+                    view_content[ y:y+new_height,
                                   x:x+new_width, : ] = frame[ :new_height, :new_width, : ] 
                 
                 else:
-                    self.content = frame
-                    
-                self.draw()
+                    view_content = frame
+                
+                self.content = cv2.flip( view_content, 1 )
+                
+                self.draw( frame_index )
                 ##self.buffer.set( IndexedFrame(frame_index, frame) )
             frame_index += 1
         

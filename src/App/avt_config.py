@@ -21,7 +21,7 @@ SOFTWARE.
 """
 
 #=============================================================================
-# no imports.
+from src.Display.rgb_color import ANTHRACITE
 
 
 #=============================================================================
@@ -31,5 +31,6 @@ class AVTConfig:
 
     #-------------------------------------------------------------------------
     CAMERAS_MAX_COUNT = 4
+    DEFAULT_BACKGROUND = ANTHRACITE
 
 #=====   end of   src.App.avt_config   =====#
