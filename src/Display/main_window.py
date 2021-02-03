@@ -23,9 +23,6 @@ SOFTWARE.
 """
 
 #=============================================================================
-import cv2
-import numpy as np
-import time
 from typing import Tuple
 
 from src.App                     import __version__
@@ -35,7 +32,6 @@ from .camera_view                import CameraView
 from .control_view               import ControlView
 from src.Shapes.rect             import Rect
 from .target_view                import TargetView
-from .view                       import View
 
 
 #=============================================================================
@@ -50,7 +46,6 @@ class MainWindow( AVTWindow):
         '''
         if self.__SINGLETON is None:
             # creates the Main Window for app AVT
-            print( f"creating MainWindow( 0, 0, {self.DEFAULT_WIDTH}, {self.DEFAULT_HEIGHT} )" )
             super().__init__( name="MainAVT",
                               title=f"Archery Video Training - {__version__}",
                               width=self.DEFAULT_WIDTH,
@@ -58,10 +53,8 @@ class MainWindow( AVTWindow):
             MainWindow.__SINGLETON = self
             
             # creates the embedded views, according to the pool of cameras
-            print( "creates cameras-pool" )
             self.cameras_pool = CamerasPool()
-            print( "creates main-window views" )
-            self.create_views( self.cameras_pool, False )
+            self.create_views( self.cameras_pool, b_target_view=False )
             
             self.last_frame_index = -1
             
@@ -116,7 +109,6 @@ class MainWindow( AVTWindow):
                 self.views.append( TargetView( self, 0.0, 0.5, 1.0, 0.5, rect ) )
                   
         elif cameras_count == 3:
-            print( "creates views for 3 cameras" )
             self.views = [ ControlView( self ),
                            CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect ),
@@ -162,8 +154,8 @@ class MainWindow( AVTWindow):
 
     #-------------------------------------------------------------------------
     # Class data
-    DEFAULT_WIDTH  = 2 * 640 + ControlView.WIDTH   ##640 + ControlView.WIDTH   ##
-    DEFAULT_HEIGHT = 2 * 480   ##480   ##
+    DEFAULT_WIDTH  = 2 * 640 + ControlView.WIDTH
+    DEFAULT_HEIGHT = 2 * 480
 
     __SINGLETON = None
 
