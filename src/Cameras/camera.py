@@ -22,12 +22,13 @@ SOFTWARE.
 
 #=============================================================================
 import cv2
+from typing import Any
 
 from src.Utils.types import Frame
 
 
 #=============================================================================
-class Camera( cv2.VideoCapture ):
+class Camera:
     """The class of camera instances.
     
     This is based on OpenCV capturing mechanism.
@@ -61,7 +62,7 @@ class Camera( cv2.VideoCapture ):
                 to this height before being delivered.
         '''
         self.cam_id = cam_id
-        super().__init__( cam_id )
+        self.hndl = cv2.VideoCapture( cam_id )
         self._copy_default_hw_size()
         self.set_frames_size( width, height )
 
@@ -75,19 +76,19 @@ class Camera( cv2.VideoCapture ):
     def get_fps(self) -> float:
         '''Returns the frame rate of this video capturing device.
         '''
-        return self.get( cv2.CAP_PROP_FPS ) 
+        return self.hndl.get( cv2.CAP_PROP_FPS ) 
 
     #-------------------------------------------------------------------------
     def get_hw_height(self) -> int:
         '''Returns the height of rames as set in the H/W device.
         '''
-        return int( self.get(cv2.CAP_PROP_FRAME_HEIGHT) )
+        return int( self.hndl.get(cv2.CAP_PROP_FRAME_HEIGHT) )
 
     #-------------------------------------------------------------------------
     def get_hw_width(self) -> int:
         '''Returns the width of rames as set in the H/W device.
         '''
-        return int( self.get(cv2.CAP_PROP_FRAME_WIDTH) )
+        return int( self.hndl.get(cv2.CAP_PROP_FRAME_WIDTH) )
 
     #-------------------------------------------------------------------------
     def is_ok(self) -> bool:
@@ -111,7 +112,7 @@ class Camera( cv2.VideoCapture ):
             A reference to the captured image,  or None in 
             case of error.
         '''
-        ok, frame = super().read()
+        ok, frame = self.hndl.read()
         
         if ok:
             if self.hw_default_width == self.width and self.hw_default_height == self.height:
@@ -122,6 +123,12 @@ class Camera( cv2.VideoCapture ):
                                    interpolation=cv2.INTER_LINEAR )
         else:
             return None
+
+    #-------------------------------------------------------------------------
+    def release(self) -> None:
+        '''Releases all resources that have been allocated with this camera.
+        '''
+        self.hndl.release()
 
     #-------------------------------------------------------------------------
     def set_frames_size(self, width: int = None, height: int = None) -> None:
@@ -186,16 +193,42 @@ class Camera( cv2.VideoCapture ):
         '''
         if width is None:
             assert height is None
-            self.set( cv2.CAP_PROP_FRAME_WIDTH , self.hw_default_width  )
-            self.set( cv2.CAP_PROP_FRAME_HEIGHT, self.hw_default_height )
+            self.hndl.set( cv2.CAP_PROP_FRAME_WIDTH , self.hw_default_width  )
+            self.hndl.set( cv2.CAP_PROP_FRAME_HEIGHT, self.hw_default_height )
         
         else:
             assert height is not None
             if width <= 0 or height <= 0:
                 raise ValueError( 'Dimensions must be greater than zero.' )
-            self.set( cv2.CAP_PROP_FRAME_WIDTH , width  )
-            self.set( cv2.CAP_PROP_FRAME_HEIGHT, height )
+            self.hndl.set( cv2.CAP_PROP_FRAME_WIDTH , width  )
+            self.hndl.set( cv2.CAP_PROP_FRAME_HEIGHT, height )
             self._copy_default_hw_size()  # this call is mandatory because passed arguments may be wrong according to the device H/W
+ 
+    #-------------------------------------------------------------------------
+    def __getattr__(self, name: str) -> Any:
+        '''Gets the value of the cv2.VideoCapture named attribute.
+        
+        This is a convenient wrapper to  all  attributes  of
+        class  cv2.VideoCapture which is used by composition
+        in the definition of cameras.
+        
+        Args:
+            name: str
+                The name of a cv2.VideoCapture attribute for
+                which the value is ti get back.
+        
+        Returns:
+            The value of the  specified  attribute,  if  the
+            specified name does exist. See Raises below.
+        
+        Raises:
+            AttributeError:  the specified attribute name is
+                not an attribute of cv2.VideoCapture.
+        '''
+        try:
+            return self.hndl.__getattribute__( name )
+        except:
+            raise AttributeError( f"'{name}' is not an attribute of OpenCV VideoCapture cameras.")
  
     #-------------------------------------------------------------------------
     def _copy_default_hw_size(self)-> None:
