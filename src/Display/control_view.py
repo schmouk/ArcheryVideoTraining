@@ -23,6 +23,8 @@ SOFTWARE.
 """
 
 #=============================================================================
+import cv2
+
 from src.App.avt_config  import AVTConfig
 from .avt_view           import AVTView
 from .view               import AVTWindowRef
@@ -68,7 +70,34 @@ class ControlView( AVTView ):
     def draw_borders(self) -> None:
         '''Draws lines on this view borders.
         '''
-        bg_color = RGBColor( *AVTConfig.DEFAULT_BACKGROUND.color )
+        bg_color = self.bg_color
+        self.content = cv2.rectangle( self.content,
+                                      (4, 4), (self.width-2, self.height-2),
+                                      (bg_color / 2).color,
+                                      1, cv2.LINE_4 )
+        self.content = cv2.rectangle( self.content,
+                                      (5, 5), (self.width-3, self.height-3),
+                                      (bg_color / 2).color,
+                                      1, cv2.LINE_4 )
+
+        self.content = cv2.rectangle( self.content,
+                                      (2, 2), (self.width-4, self.height-4),
+                                      (bg_color * 2).color,
+                                      1, cv2.LINE_4 )
+        self.content = cv2.rectangle( self.content,
+                                      (3, 3), (self.width-5, self.height-5),
+                                      (bg_color * 2).color,
+                                      1, cv2.LINE_4 )
+#=======================================================================
+        # self.content = cv2.rectangle( self.content,
+        #                               (4, 4), (self.width-3, self.height-3),
+        #                               (bg_color / 2).color,
+        #                               2, cv2.LINE_4 )
+        # self.content = cv2.rectangle( self.content,
+        #                               (2, 2), (self.width-5, self.height-5),
+        #                               (bg_color * 2).color,
+        #                               2, cv2.LINE_4 )
+        #=======================================================================
 
     #-------------------------------------------------------------------------
     # Class data
