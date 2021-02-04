@@ -96,7 +96,7 @@ class MainWindow( AVTWindow):
             if b_target_view:
                 self.views = [ ControlView( self ),
                                CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
-                               TargetView( self, 0.5, 0.5, 0.5, 1.0, rect )     ]
+                               TargetView( self, 0.5, 0.5, 0.5, 1.0, rect ) ]
             else:
                 self.views = [ ControlView( self ),
                                CameraView( self, cameras_pool[0], 0.0, 0.0, 1.0, 1.0, rect ) ]
@@ -124,6 +124,7 @@ class MainWindow( AVTWindow):
                            CameraView( self, cameras_pool[3], 0.5, 0.5, 0.5, 0.5, rect )  ]
             if b_target_view:
                 self.views.append( TargetView( self, 0.0, 0.0, 1.0, 1.0, rect, True ) )
+        # Notice: not more than 4 cameras in current version of AVT
 
     #-------------------------------------------------------------------------
     def draw(self) -> None:

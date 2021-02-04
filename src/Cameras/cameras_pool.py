@@ -24,12 +24,10 @@ SOFTWARE.
 
 #=============================================================================
 from types   import TracebackType
-from typing  import ForwardRef, List, Tuple, Type
+from typing  import ForwardRef, Tuple, Type
 
 from src.App.avt_config      import AVTConfig
 from .camera                 import Camera
-from src.Display.camera_view import CameraView
-from src.Utils.indexed_frame import IndexedFrame
 
 
 #=============================================================================
