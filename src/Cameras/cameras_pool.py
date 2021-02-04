@@ -75,7 +75,7 @@ class  CamerasPool( list ):
             if camera.is_ok():
                 self.append( camera )
             else:
-                ##del camera
+                del camera
                 break
 
 #=====   end of   src.Cameras.cameras_pool   =====#
