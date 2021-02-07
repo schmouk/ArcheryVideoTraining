@@ -100,6 +100,24 @@ class View:
         self.parent_window.draw()
 
     #-------------------------------------------------------------------------
+    def get_view_content(self) -> np.ndarray:
+        '''Returns a reference to this view content, or None if not yet created.
+        '''
+        try:
+            return self.content
+        except:
+            return None
+
+    #-------------------------------------------------------------------------
+    def join(self) -> None:
+        '''Joins this view, even if it does not inherits from Thread.
+        '''
+        try:
+            super().join()
+        except:
+            pass
+
+    #-------------------------------------------------------------------------
     def start(self) -> None:
         '''Starts the thread that may be associated with this view.
         
