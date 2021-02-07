@@ -142,11 +142,14 @@ class Font:
             self.sans_serif = other.sans_serif
 
     #-------------------------------------------------------------------------
-    def draw_text(self, view: View, pos: Point, text: str ) -> None:
+    def draw_text(self, view    : View ,
+                        pos     : Point,
+                        text    : str  ,
+                        b_shadow: bool = True) -> None:
         '''Draws specified text with this font.
         
         Notice: next version could propose transparency for
-                background  and blurring background also if
+                background and blurring background also  if
                 no background rectangle is set.
         
         Args:
@@ -157,25 +160,33 @@ class Font:
                 the specified view.
             text: str
                 The text to be drawn.
+            b_shadow: bool
+                Set this to True to get a shadowing of  the
+                text, or False otherwise. Defaults to True.
         '''
         if self.bg_color is None:
-            # artifact to get readable chars in frames while transparency is on 
-            color_lum = self.color.y
-            if color_lum > 96:
+            if b_shadow:
+                # artifact to get readable chars in frames while transparency is on 
+                color_lum = self.color.y
                 bg_color = (0,0,0)
                 offset = 1
-            else:
-                bg_color = (255,255,255)
-                offset = -1
-
-            view.content = cv2.putText( view.content,
-                                        text,
-                                        (pos + offset).to_tuple(),
-                                        self.cv_font,
-                                        self.font_scale,
-                                        bg_color,
-                                        self.thickness,
-                                        cv2.LINE_AA )
+                #===============================================================
+                # if color_lum > 96:
+                #     bg_color = (0,0,0)
+                #     offset = 1
+                # else:
+                #     bg_color = (255,255,255)
+                #     offset = -1
+                #===============================================================
+    
+                view.content = cv2.putText( view.content,
+                                            text,
+                                            (pos + offset).to_tuple(),
+                                            self.cv_font,
+                                            self.font_scale,
+                                            bg_color,
+                                            self.thickness,
+                                            cv2.LINE_AA )
         else:
             # put chars over background solid color
             text_size, baseline = cv2.getTextSize( text, self.cv_font, self.font_scale, self.thickness )

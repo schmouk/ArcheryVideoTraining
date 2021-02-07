@@ -98,8 +98,6 @@ class CameraView( Thread, AVTViewProp ):
     def draw(self) -> None:
         '''Draws the content of this view.
         '''
-        ##self.content = self.buffer.get_frame().copy()
-        
         self.draw_fps()
         self.label.draw()
         self.draw_borders()
@@ -159,7 +157,7 @@ class CameraView( Thread, AVTViewProp ):
         self.fps_rate.start()
         
         while self.keep_on:
-            frame = cv2.flip( self.camera.read(), 1 )  # notice: we're mirroring the frame
+            frame = cv2.flip( self.camera.read(), 1 )  # notice: we're mirroring the captured frame
             
             if frame is None:
                 time.sleep( 0.020 )
@@ -187,7 +185,7 @@ class CameraView( Thread, AVTViewProp ):
                                   x:x+new_width, : ] = frame[ :new_height, :new_width, : ] 
                 
                 else:
-                    self.content = frame
+                    self.content = frame.copy()
                 
                 self.draw()
                 ##self.buffer.set( IndexedFrame(frame_index, frame) )

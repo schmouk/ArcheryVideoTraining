@@ -89,27 +89,27 @@ class MainWindow( AVTWindow):
         rect = Rect( 0, 0, camera_views_width, self.height )
         
         if cameras_count == 0:
-            self.views = [ ControlView( self ),
+            self.views = [ ControlView( self, cameras_pool ),
                            TargetView( self, 0.0, 0.0, 1.0, 1.0, rect ) ]
                   
         elif cameras_count == 1:
             if b_target_view:
-                self.views = [ ControlView( self ),
+                self.views = [ ControlView( self, cameras_pool ),
                                CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
                                TargetView( self, 0.5, 0.5, 0.5, 1.0, rect ) ]
             else:
-                self.views = [ ControlView( self ),
+                self.views = [ ControlView( self, cameras_pool ),
                                CameraView( self, cameras_pool[0], 0.0, 0.0, 1.0, 1.0, rect ) ]
                   
         elif cameras_count == 2:
-            self.views = [ ControlView( self ),
+            self.views = [ ControlView( self, cameras_pool ),
                            CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect )  ]
             if b_target_view:
                 self.views.append( TargetView( self, 0.0, 0.5, 1.0, 0.5, rect ) )
                   
         elif cameras_count == 3:
-            self.views = [ ControlView( self ),
+            self.views = [ ControlView( self, cameras_pool ),
                            CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[2], 0.0, 0.5, 0.5, 0.5, rect )  ]
@@ -117,7 +117,7 @@ class MainWindow( AVTWindow):
                 self.views.append( TargetView( self, 0.5, 0.5, 0.5, 0.5, rect ) )
           
         elif cameras_count >= 4:
-            self.views = [ ControlView( self ),
+            self.views = [ ControlView( self, cameras_pool ),
                            CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[2], 0.0, 0.5, 0.5, 0.5, rect ),
@@ -130,6 +130,13 @@ class MainWindow( AVTWindow):
     def draw(self) -> None:
         '''Draws all the views that are contained in this window.
         '''
+        #=======================================================================
+        # try:
+        #     for view in self.views:
+        #         view.draw()
+        # except:
+        #     pass
+        #=======================================================================
         super().draw()
 
     #-------------------------------------------------------------------------
@@ -152,6 +159,8 @@ class MainWindow( AVTWindow):
         '''
         for view in self.views:
             view.stop()
+        for view in self.views:
+            view.join()
 
     #-------------------------------------------------------------------------
     # Class data

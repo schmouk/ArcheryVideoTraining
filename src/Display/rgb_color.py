@@ -99,7 +99,7 @@ class RGBColor:
 
     @property
     def y(self) -> int:
-        return 0.299 * self.color[2] + 0.587 * self.color[1] + 0.114 * self.color[0]
+        return round( 0.299 * self.color[2] + 0.587 * self.color[1] + 0.114 * self.color[0] )
     @y.setter
     def y(self, value: int) -> None:
         comp = self._clipped( value )
