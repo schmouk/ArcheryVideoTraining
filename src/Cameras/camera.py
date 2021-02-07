@@ -21,6 +21,14 @@ SOFTWARE.
 """
 
 #=============================================================================
+## This module defines:
+#
+#    class Camera
+#    class NullCamera
+#
+
+
+#=============================================================================
 import cv2
 from typing import Any
 
@@ -128,7 +136,10 @@ class Camera:
     def release(self) -> None:
         '''Releases all resources that have been allocated with this camera.
         '''
-        self.hndl.release()
+        try:
+            self.hndl.release()
+        except:
+            pass
 
     #-------------------------------------------------------------------------
     def set_frames_size(self, width: int = None, height: int = None) -> None:
@@ -241,4 +252,36 @@ class Camera:
         self.hw_default_width  = self.get_hw_width()
         self.hw_default_height = self.get_hw_height()
 
-#=====   end of   virginie    Cameras.camera   =====#
+
+#=============================================================================
+class NullCamera( Camera ):
+    '''The class of NULL cameras.
+    
+    Null cameras are used to set as not enabled the controls
+    that are related with not connected cameras.
+    '''
+    
+    #-------------------------------------------------------------------------
+    def __init__(self, cam_id: int) -> None:
+        '''Constructor.
+        
+        Args:
+            cam_id: int
+                The identifier of this camera. Identifiers are 
+                integers,  as specified by OpenCV, which start
+                with index 0 (embedded web cam on laptops, for
+                instance)  and grows up. Providing an index for
+                which no hardware video  capturing  device  is
+                connected  leads to a faulty camera mode whose
+                status  'is_ok()'  returns  False.   Connected
+                cameras get their status as being True. 
+        '''
+        self.cam_id = cam_id   
+
+    #-------------------------------------------------------------------------
+    def is_ok(self) -> bool:
+        '''Returns True when status of this camera is ok, or False otherwise.
+        '''
+        return False
+
+#=====   end of   src.Cameras.camera   =====#
