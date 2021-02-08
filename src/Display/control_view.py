@@ -494,13 +494,14 @@ class ControlView( Thread, AVTView ):
             if self.enabled:
                 img = self._ICON_ACTIVE if self.is_active else self._ICON_INACTIVE
             else:
-                img = self._ICON_GRAY // 4
+                img = self._ICON_DISABLED
             view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
             
         #---------------------------------------------------------------------
         _SIZE = 31
-        _ICON_ACTIVE = cv2.imread( '../picts/controls/target.png' )
+        _ICON_ACTIVE = cv2.imread( '../picts/controls/target-active.png' )
         _ICON_INACTIVE = cv2.imread( '../picts/controls/target-inactive.png' )
+        _ICON_DISABLED = cv2.imread( '../picts/controls/target-disabled.png' )
 
 
 #=====   end of   src.Display.cantrol_view   =====#
