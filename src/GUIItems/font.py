@@ -35,10 +35,10 @@ SOFTWARE.
 import cv2
 from typing import ForwardRef, Optional
 
-from src.Shapes.offset       import Offset
-from src.Shapes.point        import Point
-from src.Display.rgb_color   import RGBColor, WHITE
-from src.Display.view        import View
+from src.Shapes.offset   import Offset
+from src.Shapes.point    import Point
+from src.Utils.rgb_color import RGBColor, WHITE
+from src.Display.view    import View
 
 
 #=============================================================================
