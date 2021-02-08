@@ -32,8 +32,7 @@ class GUIControlBase:
     """The base class for all GUI controls.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, parent_view: View,
-                       x          : int  = None,
+    def __init__(self, x          : int  = None,
                        y          : int  = None,
                        width      : int  = None,
                        height     : int  = None,
@@ -44,8 +43,8 @@ class GUIControlBase:
                        pos        : Point = None,
                        ) -> None:
         '''Constructor.
-            parent_view: View 
-                A reference to the containing view.
+        
+        Args:
             x, y : int
                 The position of this label in the view.This
                 is  the position of the top-left corner  of 
@@ -85,8 +84,6 @@ class GUIControlBase:
             AssertionError:  if 'pos' is not set,  both  'x' 
                 and 'y' must be and are not both set.
         '''
-        self.parent_view = parent_view
-
         if pos is None:
             assert x is not None and y is not None
             pos = Point( x, y )
@@ -144,7 +141,7 @@ class GUIControlBase:
         self.refresh()
 
     #-------------------------------------------------------------------------
-    def draw(self, forced: bool = False) -> None:
+    def draw(self, view: View, forced: bool = False) -> None:
         '''Draws this control in its parent view.
         
         This method internally calls protected method '_draw()'
@@ -153,6 +150,8 @@ class GUIControlBase:
         See related method '_draw()'.
         
         Args:
+            view: View
+                A reference to the embedding view.
             forced: bool
                 Set this to True to get this control  drawn
                 whatever  its refresh status is.  Set it to
@@ -160,7 +159,7 @@ class GUIControlBase:
                 refresh status is True. Defaults to False.
         '''
         if forced or self.b_refresh:
-            self._draw( self.parent_view )
+            self._draw( view )
             self.b_refresh = False
             
     #-------------------------------------------------------------------------

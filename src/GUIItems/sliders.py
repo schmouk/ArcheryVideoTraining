@@ -32,6 +32,7 @@ SOFTWARE.
 
 #=============================================================================
 import cv2
+from typing import List, Tuple
 
 from src.Utils.rgb_color import DARK_RED, GRAY, RGBColor, WHITE
 from src.GUIItems.font   import Font
@@ -46,8 +47,7 @@ class SliderBase( GUIControlBase ):
     """The base class for all control sliders.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, parent_view  : View,
-                       x            : int      = None,
+    def __init__(self, x            : int      = None,
                        y            : int      = None,
                        width        : int      = None,
                        height       : int      = None,
@@ -64,8 +64,8 @@ class SliderBase( GUIControlBase ):
                        *,          
                        pos          : Point    = None) -> None:
         '''Constructor.
-            parent_view: View 
-                A reference to the containing view.
+        
+        Args:
             x, y : int
                 The position of this label in the view.This
                 is  the position of the top-left corner  of 
@@ -131,8 +131,7 @@ class SliderBase( GUIControlBase ):
         if not (min_value <= current_value <= max_value):
             raise ValueError( f"current_value ({current_value}) is out of interval [{min_value}, {max_value}]." )
         
-        super().__init__( parent_view,
-                          x, y,
+        super().__init__( x, y,
                           width  if width  > 3 else 3,
                           height if height > 3 else 3,
                           visible, enabled, active, pos=pos )
@@ -143,9 +142,7 @@ class SliderBase( GUIControlBase ):
         
         self.bar_color = bar_color
         self.cursor_color = cursor_color
-        self.enabled_font = text_font
-        self.disabled_font = text_font.copy()
-        self.disabled_font.color //= 2
+        self.set_font( text_font )
         self.shadow_height = shadow_height
 
     #-------------------------------------------------------------------------
@@ -159,6 +156,19 @@ class SliderBase( GUIControlBase ):
         '''Returns True if this slider is vertical.
         '''
         return not self.is_horizontal()
+
+    #-------------------------------------------------------------------------
+    def set_font(self, text_font: Font) -> None:
+        '''Sets the font for the text associated with this slider.
+        
+        Args:
+            text_font: Font
+                A reference to the font to be used, mostly
+                to put numbers near the slider.
+        '''
+        self.enabled_font = text_font if text_font is not None else self.DEFAULT_FONT
+        self.disabled_font = self.enabled_font.copy()
+        self.disabled_font.color //= 2.5
 
     #-------------------------------------------------------------------------
     def _draw(self, view: View) -> None:
@@ -193,33 +203,31 @@ class SliderBase( GUIControlBase ):
             color = self.bar_color
         else:
             color = self.bar_color // 2
+        bright_color = color * 1.40
+        dark_color = color // 3
             
         cv2.rectangle( view.content,
                        (self.x+1, self.y+1),
-                       (self.x + self.width-2, self.y + self.height-2),
+                       (self.x + self.width-1, self.y + self.height-1),
                        color.color, cv2.FILLED, cv2.LINE_AA )
         cv2.line( view.content,
                   (self.x, self.y),
-                  (self.x + self.width, self.y),
-                  color.color * 2, 1, cv2.LINE_AA )
+                  (self.x + self.width - 1, self.y),
+                  bright_color.color, 1, cv2.LINE_AA )
         cv2.line( view.content,
                   (self.x, self.y+1),
-                  (self.x, self.y + self.height),
-                  color.color * 2, 1, cv2.LINE_AA )
+                  (self.x, self.y + self.height - 1),
+                  bright_color.color, 1, cv2.LINE_AA )
         cv2.line( view.content,
-                  (self.x, self.y),
-                  (self.x + self.width, self.y),
-                  color.color * 2, 1, cv2.LINE_AA )
-        cv2.line( view.content,
-                  (self.x+1, self.y+self.height),
+                  (self.x, self.y+self.height),
                   (self.x + self.width, self.y + self.height),
-                  color.color // 2, 1, cv2.LINE_AA )
+                  dark_color.color, 1, cv2.LINE_AA )
         cv2.line( view.content,
-                  (self.x + self.width, self.y + 1),
+                  (self.x + self.width, self.y),
                   (self.x + self.width, self.y + self.height - 1),
-                  color.color // 2, 1, cv2.LINE_AA )
+                  dark_color.color, 1, cv2.LINE_AA )
 
-        self._draw_ticks()
+        self._draw_ticks( view )
         
     #-------------------------------------------------------------------------
     def _draw_cursor(self, view: View) -> None:
@@ -231,29 +239,55 @@ class SliderBase( GUIControlBase ):
                 this control. 
         '''
         if self.enabled:
-            color = self.cursor_color if self.active else WHITE
+            color = self.cursor_color if self.active else self.cursor_color // 1.5
         else:
             color = self.bar_color // 2
         
+        x, y = self._evaluate_cursor_pos()
+        
         if self.is_horizontal():
             # horizontal slider
-            x = self.x + round( self.value * self.width / (self.max_value - self.min_value) ) - self.CURSOR_WIDTH // 2
-            y = self.y - 2
-            
             cv2.rectangle( view.content,
-                           (x, y),
-                           (x + self.CURSOR_WIDTH, y + self.height + 2),
+                           (x - self.CURSOR_WIDTH // 2, y),
+                           (x + self.CURSOR_WIDTH // 2, y + self.height + 3),
                            color.color, cv2.FILLED, cv2.LINE_AA )
+            cv2.line( view.content, (x,y+2), (x,y+self.height+1), WHITE.color, 1, cv2.LINE_AA )
         else:
             # vertical slider
-            x = self.x - 2
-            y = self.y + round( self.value * self.height / (self.max_value - self.min_value) ) - self.CURSOR_WIDTH // 2
-            
             cv2.rectangle( view.content,
                            (x, y),
-                           (x + self.width + 2, y + self.CURSOR_WIDTH),
+                           (x + self.width + 3, y + self.CURSOR_WIDTH),
                            color.color, cv2.FILLED, cv2.LINE_AA )
+            cv2.line( view.content, (x+2,y), (x+self.width+1,y), WHITE.color, 1, cv2.LINE_AA )
+
+    #-------------------------------------------------------------------------
+    def _draw_cursor_value(self, view     : View,
+                                 text_font: Font,
+                                 value    : str  ) -> None:
+        '''Internal drawing of values under ticks.
         
+        Args:
+            view: View
+                A reference to the embedding view.
+            text_font: Font
+                A reference to the font to be used to draw
+                ticks values.
+            value: str
+                The text of the cursor value.
+        '''
+        width = text_font.get_text_width( value )
+        x, y = self._evaluate_cursor_pos()
+        
+        if self.is_horizontal():
+            # horizontal slider
+            text_font.draw_text( view,
+                                 Point(x - width // 2,
+                                       y + self.height + 5 + text_font.size),
+                                 value )
+        else:
+            # vertical slider
+            text_font.draw_text( view, Point(x + 2, y + text_font.size // 2), value )
+
     #-------------------------------------------------------------------------
     def _draw_shadow(self, view: View) -> None:
         '''Draws the shadow of this slider cast on the view background.
@@ -316,6 +350,57 @@ class SliderBase( GUIControlBase ):
         raise NotImplementedError( f"method '_draw_ticks()' is not implemented in class {self.__class__.__name__}" )            
 
     #-------------------------------------------------------------------------
+    def _draw_ticks_values(self, view     : View,
+                                 text_font: Font,
+                                 min_val  : str ,
+                                 max_val  : str  ) -> None:
+        '''Internal drawing of values under ticks.
+        
+        Args:
+            view: View
+                A reference to the embedding view.
+            text_font: Font
+                A reference to the font ti be used to draw
+                ticks values.
+            min_val: str
+                The text of the minimum  value  (left-most 
+                or bottom_most tick in slider).
+            max_val: str
+                The text of the maximum value  (right-most 
+                or top_most tick in slider).
+        '''
+        min_width = text_font.get_text_width( min_val )      
+        max_width = text_font.get_text_width( max_val )
+        
+        self.list_ticks = self._evaluate_ticks_pos( view )
+        min_x, min_y = self.list_ticks[0][0]
+        max_x, max_y = self.list_ticks[-1][0]
+        
+        min_x = max( 5, min_x - min_width // 2 )
+        max_x = min( view.width - max_width - 5, max_x - max_width // 2 )
+        
+        text_font.draw_text( view, Point(min_x, min_y + self.height + text_font.size + 2), min_val )
+        text_font.draw_text( view, Point(max_x, max_y + self.height + text_font.size + 2), max_val )
+
+    #-------------------------------------------------------------------------
+    def _evaluate_cursor_pos(self) -> Tuple[int, int]:
+        '''Evaluates the current position of this slider cursor.
+        
+        The returned position is the central position of the
+        cursor on the slider.
+        '''
+        if self.is_horizontal():
+            # horizontal slider
+            x = self.x + round( (self.value - self.min_value) * self.width / (self.max_value - self.min_value) )
+            y = self.y - 2
+        else:
+            # vertical slider
+            x = self.x - 2
+            y = self.y + round( self.value * self.height / (self.max_value - self.min_value) )
+
+        return (x, y)
+
+    #-------------------------------------------------------------------------
     def _evaluate_text_font(self) -> Font:
         '''Internally evaluates the final font for associated text.
         
@@ -323,20 +408,41 @@ class SliderBase( GUIControlBase ):
             A reference to the finally evaluated font.
         '''
         return self.enabled_font if self.enabled else self.disabled_font
+              
+    #-------------------------------------------------------------------------
+    def _evaluate_ticks_pos(self, view: View) -> List[ Tuple[ Tuple[int,int], Tuple[int,int] ] ]:
+        '''Evaluates the ticks positions within this slider.
         
+        Args:
+            view: View
+                This is a reference to the parent view of 
+                this control.
+        '''
+        main_size = max( self.width, self.height ) - 4
+        ticks_count = self.max_value - self.min_value + 1
+        if 10 * (ticks_count - 1) > main_size:
+            ticks_count = main_size // 10 + 1
+        step = main_size / (ticks_count - 1)
+        
+        if self.is_horizontal():
+            return [ ( (self.x + 2 + round(i * step), self.y + 1),
+                       (self.x + 2 + round(i * step), self.y + self.height - 1) ) for i in range( ticks_count ) ]
+        else:
+            return [ ( (self.x + 1, self.y + 2 + round(i * step)),
+                       (self.x + self.width - 1,self.y + 2 + round(i * step)) ) for i in range( ticks_count ) ]
+
     #-------------------------------------------------------------------------
     # Class data
     CURSOR_WIDTH = 9
-    DEFAULT_FONT = Font( 12, GRAY )
+    DEFAULT_FONT = Font( 8, GRAY )
 
 
 #=============================================================================
-class IntSliderBase( SliderBase ):
+class IntSlider( SliderBase ):
     """The class of control sliders with integer values.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, parent_view  : View,
-                       x            : int      = None,
+    def __init__(self, x            : int      = None,
                        y            : int      = None,
                        width        : int      = None,
                        height       : int      = None,
@@ -353,8 +459,8 @@ class IntSliderBase( SliderBase ):
                        *,          
                        pos          : Point    = None) -> None:
         '''Constructor.
-            parent_view: View 
-                A reference to the containing view.
+
+        Args:
             x, y : int
                 The position of this label in the view.This
                 is  the position of the top-left corner  of 
@@ -415,8 +521,7 @@ class IntSliderBase( SliderBase ):
                 'min_value'  or  'current_value'  is outside
                 bounds.
         '''
-        super().__init__( parent_view           ,
-                          x                     ,
+        super().__init__( x                     ,
                           y                     ,
                           width                 ,
                           height                ,
@@ -430,8 +535,30 @@ class IntSliderBase( SliderBase ):
                           visible               ,
                           enabled               ,
                           active                ,
-                          pos                     )
+                          pos=pos                 )
                     
+    #-------------------------------------------------------------------------
+    def _draw_text(self, view: View, text_font: Font) -> None:
+        '''Draws the text associated with this slider.
+        
+        Args:
+            view: View
+                This is a reference to the parent view of 
+                this control.
+            text_font: Font
+                A reference to the font for the  text  to
+                be drawn.  Notice: this font is evaluated
+                outside this method.
+        '''
+        # draws min and max values centered on ticks
+        min_val = f"{self.min_value:d}"  
+        max_val = f"{self.max_value:d}"
+        self._draw_ticks_values( view, text_font, min_val, max_val )
+
+        # then, draws cursor value centered on cursor tick
+        value = f"{self.value:d}"            
+        self._draw_cursor_value( view, text_font, value )
+        
     #-------------------------------------------------------------------------
     def _draw_ticks(self, view: View) -> None:
         '''Draws ticks within this slider.
@@ -441,32 +568,18 @@ class IntSliderBase( SliderBase ):
                 This is a reference to the parent view of 
                 this control.
         '''
-        main_size = max( self.width, self.height ) - 4
-        ticks_count = self.max_value - self.min_value + 1
-        if 10 * (ticks_count - 1) > main_size:
-            ticks_count = 11
-        step = main_size / (ticks_count - 1)
-        
-        if self.is_horizontal():
-            y = self.y + 2
-            for i in range( ticks_count + 1 ):
-                x = self.x + round( i * step )
-                cv2.line( view.content, (x, y), (x, y+self.height-2), (self.bar_color // 1.5).color, 1, cv2.LINE_AA )
-        else:
-            x = self.x + 2
-            for i in range( ticks_count + 1 ):
-                y = self.y + round( i * step )
-                cv2.line( view.content, (x, y), (x+self.width-2, y), (self.bar_color // 1.5).color, 1, cv2.LINE_AA )
-                
+        self.ticks_pos = self._evaluate_ticks_pos( view )
+
+        for pos in self.ticks_pos:
+            cv2.line( view.content, pos[0], pos[1], (self.bar_color // 2.5).color, 1, cv2.LINE_AA )
 
 
 #=============================================================================
-class FloatSliderBase( SliderBase ):
+class FloatSlider( SliderBase ):
     """The class of control sliders with float values.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, parent_view  : View,
-                       x            : int      = None,
+    def __init__(self, x            : int      = None,
                        y            : int      = None,
                        width        : int      = None,
                        height       : int      = None,
@@ -483,8 +596,8 @@ class FloatSliderBase( SliderBase ):
                        *,          
                        pos          : Point    = None) -> None:
         '''Constructor.
-            parent_view: View 
-                A reference to the containing view.
+
+        Args:
             x, y : int
                 The position of this label in the view.This
                 is  the position of the top-left corner  of 
@@ -545,8 +658,7 @@ class FloatSliderBase( SliderBase ):
                 'min_value'  or  'current_value'  is outside
                 bounds.
         '''
-        super().__init__( parent_view  ,
-                          x            ,
+        super().__init__( x            ,
                           y            ,
                           width        ,
                           height       ,
@@ -560,8 +672,35 @@ class FloatSliderBase( SliderBase ):
                           visible      ,
                           enabled      ,
                           active       ,
-                          pos            )
+                          pos=pos        )
                     
+    #-------------------------------------------------------------------------
+    def _draw_text(self, view: View, text_font: Font) -> None:
+        '''Draws the text associated with this slider.
+        
+        Args:
+            view: View
+                This is a reference to the parent view of 
+                this control.
+            text_font: Font
+                A reference to the font for the  text  to
+                be drawn.  Notice: this font is evaluated
+                outside this method.
+        '''
+        min_val = f"{self.min_value:.1f}"            
+        max_val = f"{self.max_value:.1f}"
+        
+        min_width = text_font.get_text_width( min_val )      
+        max_width = text_font.get_text_width( max_val )
+        
+        self.list_ticks = self._evaluate_ticks_pos( view )
+        min_x, min_y = self.list_ticks[0][0]
+        max_x, max_y = self.list_ticks[-1][0]
+        max_x -= max_width
+        
+        text_font.draw_text( view, Point(min_x, min_y + self.height + 5), min_val )
+        text_font.draw_text( view, Point(max_x, max_y + self.height + 5), max_val )
+
     #-------------------------------------------------------------------------
     def _draw_ticks(self, view: View) -> None:
         '''Draws ticks within this slider.
