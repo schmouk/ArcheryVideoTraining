@@ -126,7 +126,7 @@ def create_targets() -> None:
         img = cv2.line( img, (301,299), (301,303), TARGET_BLACK.color, 1, cv2.LINE_AA )
         cv2.imwrite( '../../../../picts/targets/target-spot-60.png', img )
 
-        # 40 cm  target
+        # 40 cm target
         img = np.zeros( (403,403,3), np.uint8 ) + 255
         img = cv2.circle( img, (201,201), 200, TARGET_BLACK.color, 1, cv2.LINE_AA )
         img = cv2.circle( img, (201,201), 200-20, TARGET_BLACK.color, 1, cv2.LINE_AA )
@@ -228,6 +228,18 @@ def create_targets() -> None:
         img = cv2.line( img, (201,199), (201,203), TARGET_BLACK.color, 1, cv2.LINE_AA )
         cv2.imwrite( '../../../../picts/targets/target-compound-spot-40.png', img )
 
+        # 40 cm NFAA spot target
+        img = np.zeros( (403,403,3), np.uint8 ) + 225
+        img = cv2.circle( img, (201,201), 200-120, TARGET_BLUE_NFAA.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (201,201), 200-120, TARGET_WHITE.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (201,201), 200-140, TARGET_WHITE.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (201,201), 200-160, TARGET_WHITE.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (201,201), 200-160, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (201,201), 200-180, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.line( img, (195,195), (207,207), TARGET_BLUE_NFAA.color, 2, cv2.LINE_AA )
+        img = cv2.line( img, (207,195), (195,207), TARGET_BLUE_NFAA.color, 2, cv2.LINE_AA )
+        cv2.imwrite( '../../../../picts/targets/target-nfaa-spot-40.png', img )
+
         # 80 cm field target
         img = np.zeros( (803,803,3), np.uint8 ) + 255
         img = cv2.circle( img, (401,401), 400, TARGET_BLACK.color, cv2.FILLED, cv2.LINE_AA )
@@ -283,10 +295,10 @@ def create_targets() -> None:
     
     
 #-------------------------------------------------------------------------
-def prepare_camera_button() -> None:
+def prepare_switch_buttons() -> None:
     '''Preparation of the camera buttons.
     '''
-    print( 'camera button: ', end='' )
+    print( 'switch buttons: ', end='' )
     try:
         img = cv2.imread( '../../../../picts/controls/raw/switch-off.png' )
         gray_comp = 96
@@ -294,8 +306,11 @@ def prepare_camera_button() -> None:
             for x in range(104,134):
                 if img[y][x][0] >= gray_comp:
                     img[y][x] //= 2
-        img = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
-        cv2.imwrite( f'../../../../picts/controls/switch-off.png', img )
+        img_ = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-off.png', img_ )
+        
+        img_ = cv2.resize( img, (37,15), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-off-40.png', img_ )
 
         img = cv2.imread( '../../../../picts/controls/raw/switch-on.png' )
         gray_comp = 96
@@ -303,8 +318,11 @@ def prepare_camera_button() -> None:
             for x in range(38,63):
                 if img[y][x][0] >= gray_comp:
                     img[y][x] //= 2
-        img = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
-        cv2.imwrite( f'../../../../picts/controls/switch-on.png', img )
+        img_ = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-on.png', img_ )
+
+        img_ = cv2.resize( img, (37,15), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-on-40.png', img_ )
 
         img = cv2.imread( '../../../../picts/controls/raw/switch-off.png' )
         gray_comp = 96
@@ -316,8 +334,11 @@ def prepare_camera_button() -> None:
             for x in range(32,54):
                 if img[y][x][0] >= gray_comp:
                     img[y][x] //= 5
-        img = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
-        cv2.imwrite( f'../../../../picts/controls/switch-disabled.png', img )
+        img_ = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-disabled.png', img_ )
+
+        img_ = cv2.resize( img, (37,15), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-disabled-40.png', img_ )
 
         print( ' ok' )
 
@@ -414,7 +435,7 @@ if __name__ == '__main__':
     """
     #-------------------------------------------------------------------------
     create_targets()
-    prepare_camera_button()
+    prepare_switch_buttons()
     prepare_exit_button()
     prepare_target_button()
 
