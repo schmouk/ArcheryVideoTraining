@@ -31,7 +31,7 @@ from threading   import Lock
 
 from src.App.avt_config  import AVTConfig
 
-from .rgb_color          import RGBColor
+from src.Utils.rgb_color          import RGBColor
 from .view               import View
 
 

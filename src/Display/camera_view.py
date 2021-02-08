@@ -38,7 +38,7 @@ from src.Buffers.frames_acquisition_buffer   import FramesAcquisitionBuffer
 from src.Utils.indexed_frame                 import IndexedFrame
 from src.GUIItems.label                      import Label
 from src.Shapes.rect                         import Rect
-from .rgb_color                              import RGBColor, YELLOW
+from src.Utils.rgb_color                              import RGBColor, YELLOW
   
 
 #=============================================================================

@@ -24,7 +24,6 @@ SOFTWARE.
 
 #=============================================================================
 import cv2
-import numpy as np
 import time
 from threading import Thread
 
@@ -35,7 +34,7 @@ from src.GUIItems.font           import BoldFont, Font
 from src.Cameras.camera          import Camera, NullCamera
 from src.Cameras.cameras_pool    import CamerasPool
 from src.Shapes.point            import Point
-from .rgb_color                  import ANTHRACITE, BLUE, DEEP_GRAY, GRAY, YELLOW
+from src.Utils.rgb_color         import ANTHRACITE, DEEP_GRAY, GRAY, YELLOW
 
 
 #=============================================================================
@@ -74,21 +73,27 @@ class ControlView( Thread, AVTView ):
                 A reference to the pool of cameras that have
                 been detected as connected to the AVT app.
         '''
-        self.delay_ctrl    = self._CtrlDelay( 5,  15 )
-        self.replay_ctrl   = self._CtrlReplay( 5,  55 )
-        self.lines_ctrl    = self._CtrlLines( 5,  95 )
+        y = 15
+        self.delay_ctrl  = self._CtrlDelay( 5,  y + 0 * self.ICON_HEIGHT )
+        self.replay_ctrl = self._CtrlReplay( 5, y + 1 * self.ICON_HEIGHT )
+        self.lines_ctrl  = self._CtrlLines( 5, y + 2 * self.ICON_HEIGHT )
+        
+        y += 3 * self.ICON_HEIGHT
         self.cameras_ctrls = [ self._CtrlCamera(camera,
                                                 None,
-                                                135+self.ICON_HEIGHT*camera.cam_id) for camera in cameras_pool ]
+                                                y + self.ICON_HEIGHT*camera.cam_id) for camera in cameras_pool ]
         for cam_id in range( len(cameras_pool), AVTConfig.CAMERAS_MAX_COUNT ):
             self.cameras_ctrls.append( self._CtrlCamera( NullCamera( cam_id ),
                                                          None,
-                                                         135+self.ICON_HEIGHT*cam_id ) )
-        y = 135 + self.ICON_HEIGHT * AVTConfig.CAMERAS_MAX_COUNT
-        self.target_ctrl   = self._CtrlTarget( 5, y + 0 * self.ICON_HEIGHT)
-        self.contrast_ctrl = self._CtrlContrast( 5, y + 1 * self.ICON_HEIGHT )
-        self.record_ctrl   = self._CtrlRecord( 5, y + 2 * self.ICON_HEIGHT, False, False )
-        self.overlays_ctrl = self._CtrlOverlays( 5, y + 3 * self.ICON_HEIGHT, False, False)
+                                                         y + self.ICON_HEIGHT*cam_id ) )
+        
+        y += AVTConfig.CAMERAS_MAX_COUNT * self.ICON_HEIGHT
+        self.target_ctrl   = self._CtrlTarget(   5, y + 0 * self.ICON_HEIGHT, True, False )
+        self.match_ctrl    = self._CtrlMatch(    5, y + 1 * self.ICON_HEIGHT, False, False )
+        self.contrast_ctrl = self._CtrlContrast( 5, y + 2 * self.ICON_HEIGHT )
+        self.record_ctrl   = self._CtrlRecord(   5, y + 3 * self.ICON_HEIGHT, False, False )
+        self.overlays_ctrl = self._CtrlOverlays( 5, y + 4 * self.ICON_HEIGHT, False, False )
+        
         self.exit_ctrl     = self._CtrlExit( self.width, self.height )
         
         self.controls_list = [ self.delay_ctrl   ,
@@ -96,8 +101,9 @@ class ControlView( Thread, AVTView ):
                                self.lines_ctrl   ,
                               *self.cameras_ctrls,
                                self.target_ctrl  ,
+                               self.match_ctrl   ,
                                self.contrast_ctrl,
-                               self.record_ctrl,
+                               self.record_ctrl  ,
                                self.overlays_ctrl,
                                self.exit_ctrl      ]
         
@@ -138,7 +144,6 @@ class ControlView( Thread, AVTView ):
         '''
         try:
             for ctrl in self.controls_list:
-                print( 'drawing', ctrl )
                 ctrl.draw( self )
         except:
             pass
@@ -224,8 +229,6 @@ class ControlView( Thread, AVTView ):
                 view: View
                     A reference to the embedding view.
             '''
-            print( 'default control drawing' )
-            print( self.text_pos, self.__class__.__name__[5:] )
             # default behavior: put end of class name in view
             try:
                 if self.enabled:
@@ -415,6 +418,21 @@ class ControlView( Thread, AVTView ):
         
 
     #-------------------------------------------------------------------------
+    class _CtrlMatch( _CtrlBase ):
+        '''The match simulation control.
+        '''
+        #---------------------------------------------------------------------
+        def draw(self, view: View) -> None:
+            '''Draws a control in its embedding content.
+
+            Args:
+                view: View
+                    A reference to the embedding view.
+            '''
+            super().draw( view )
+    
+
+    #-------------------------------------------------------------------------
     class _CtrlOverlays( _CtrlBase ):
         '''The video overlays control.
         '''
@@ -471,6 +489,18 @@ class ControlView( Thread, AVTView ):
                 view: View
                     A reference to the embedding view.
             '''
-            super().draw( view )
+            x = (ControlView.WIDTH  - self._SIZE) // 2
+            y = self.y + (ControlView.ICON_HEIGHT - self._SIZE) // 2
+            if self.enabled:
+                img = self._ICON_ACTIVE if self.is_active else self._ICON_INACTIVE
+            else:
+                img = self._ICON_GRAY // 4
+            view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
+            
+        #---------------------------------------------------------------------
+        _SIZE = 31
+        _ICON_ACTIVE = cv2.imread( '../picts/controls/target.png' )
+        _ICON_INACTIVE = cv2.imread( '../picts/controls/target-inactive.png' )
+
 
 #=====   end of   src.Display.cantrol_view   =====#

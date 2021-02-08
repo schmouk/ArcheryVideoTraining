@@ -23,11 +23,11 @@ SOFTWARE.
 """
 
 #=============================================================================
-from .avt_fonts              import AVTDefaultFont
-from .font                   import Font
-from src.Shapes.point        import Point
-from src.Display.rgb_color   import RGBColor
-from src.Display.view        import View
+from .avt_fonts          import AVTDefaultFont
+from .font               import Font
+from src.Shapes.point    import Point
+from src.Utils.rgb_color import RGBColor
+from src.Display.view    import View
 
 
 #=============================================================================

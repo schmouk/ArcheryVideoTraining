@@ -27,7 +27,7 @@ import numpy as np
 from typing import ForwardRef
 from threading import Lock
 
-from .rgb_color import RGBColor
+from src.Utils.rgb_color import RGBColor
 
 
 #=============================================================================

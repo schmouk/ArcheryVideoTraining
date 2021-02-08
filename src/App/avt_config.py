@@ -21,7 +21,7 @@ SOFTWARE.
 """
 
 #=============================================================================
-from src.Display.rgb_color import ANTHRACITE
+from src.Utils.rgb_color import ANTHRACITE
 
 
 #=============================================================================

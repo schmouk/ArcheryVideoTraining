@@ -44,6 +44,14 @@ SOFTWARE.
 #    RED
 #    YELLOW 
 #    WHITE
+#
+#    TARGET_WHITE
+#    TARGET_BLACK
+#    TARGET_BLUE
+#    TARGET_RED
+#    TARGET_GOLD
+#    TARGET_BLUE_6
+#
 
 #=============================================================================
 from typing import ForwardRef, Union
@@ -206,4 +214,12 @@ RED         = RGBColor( 255, 0, 0 )
 YELLOW      = RGBColor( 255, 255, 0 )
 WHITE       = RGBColor( 255, 255, 255 )
 
-#=====   end of   src.Display.rgb_color   =====#
+TARGET_WHITE = RGBColor( 255, 255, 255 )
+TARGET_BLACK = RGBColor(   0,   0,   0 )
+TARGET_BLUE  = RGBColor(  65, 181, 200 )
+TARGET_RED   = RGBColor( 255,  37,  21 )
+TARGET_GOLD  = RGBColor( 255, 245,  55 )
+
+TARGET_BLUE_6 = RGBColor( 17, 165, 255 )
+
+#=====   end of   src.Utils.rgb_color   =====#
