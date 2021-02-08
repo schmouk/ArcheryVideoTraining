@@ -77,22 +77,56 @@ def create_targets() -> None:
         cv2.imwrite( '../../../../picts/targets/target-80.png', img )
 
         # 80 cm compound target
-        img = np.zeros( (803,803,3), np.uint8 ) + 255
-        img = cv2.circle( img, (401,401), 400-160, TARGET_BLUE_6.color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (401,401), 400-160, TARGET_BLACK.color, 1, cv2.LINE_AA )
-        img = cv2.circle( img, (401,401), 400-200, TARGET_BLACK.color, 1, cv2.LINE_AA )
-        img = cv2.circle( img, (401,401), 400-240, TARGET_RED.color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (401,401), 400-240, TARGET_BLACK.color, 1, cv2.LINE_AA )
-        img = cv2.circle( img, (401,401), 400-280, TARGET_BLACK.color, 1, cv2.LINE_AA )
-        img = cv2.circle( img, (401,401), 400-320, TARGET_GOLD.color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (401,401), 400-320, TARGET_BLACK.color, 1, cv2.LINE_AA )
-        img = cv2.circle( img, (401,401), 400-360, TARGET_BLACK.color, 1, cv2.LINE_AA )
-        img = cv2.circle( img, (401,401), 400-380, TARGET_BLACK.color, 1, cv2.LINE_AA )
-        img = cv2.line( img, (398,401), (404,401), TARGET_BLACK.color, 1, cv2.LINE_AA )
-        img = cv2.line( img, (401,398), (401,404), TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = np.zeros( (483,483,3), np.uint8 ) + 255
+        img = cv2.circle( img, (241,241), 240, TARGET_BLUE_6.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (241,241), 240, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (241,241), 240-40, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (241,241), 240-80, TARGET_RED.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (241,241), 240-80, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (241,241), 240-120, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (241,241), 240-160, TARGET_GOLD.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (241,241), 240-160, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (241,241), 240-200, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (241,241), 240-220, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.line( img, (238,241), (244,241), TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.line( img, (241,238), (241,244), TARGET_BLACK.color, 1, cv2.LINE_AA )
         cv2.imwrite( '../../../../picts/targets/target-compoud-80.png', img )
 
-        # 40 cm  target
+        # 60 cm target
+        img = np.zeros( (603,603,3), np.uint8 ) + 255
+        img = cv2.circle( img, (301,301), 300, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-30, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-60, TARGET_BLACK.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-90, TARGET_WHITE.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-120, TARGET_BLUE.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-150, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-180, TARGET_RED.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-180, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-210, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-240, TARGET_GOLD.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-240, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-270, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-285, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.line( img, (299,301), (303,301), TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.line( img, (301,299), (301,303), TARGET_BLACK.color, 1, cv2.LINE_AA )
+        cv2.imwrite( '../../../../picts/targets/target-60.png', img )
+
+        # 60 cm spot target
+        img = np.zeros( (603,603,3), np.uint8 ) + 255
+        img = cv2.circle( img, (301,301), 300-150, TARGET_BLUE.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-150, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-180, TARGET_RED.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-180, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-210, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-240, TARGET_GOLD.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-240, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-270, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (301,301), 300-285, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.line( img, (299,301), (303,301), TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.line( img, (301,299), (301,303), TARGET_BLACK.color, 1, cv2.LINE_AA )
+        cv2.imwrite( '../../../../picts/targets/target-spot-60.png', img )
+
+        # 40 cm target
         img = np.zeros( (403,403,3), np.uint8 ) + 255
         img = cv2.circle( img, (201,201), 200, TARGET_BLACK.color, 1, cv2.LINE_AA )
         img = cv2.circle( img, (201,201), 200-20, TARGET_BLACK.color, 1, cv2.LINE_AA )
@@ -194,6 +228,18 @@ def create_targets() -> None:
         img = cv2.line( img, (201,199), (201,203), TARGET_BLACK.color, 1, cv2.LINE_AA )
         cv2.imwrite( '../../../../picts/targets/target-compound-spot-40.png', img )
 
+        # 40 cm NFAA spot target
+        img = np.zeros( (403,403,3), np.uint8 ) + 225
+        img = cv2.circle( img, (201,201), 200-120, TARGET_BLUE_NFAA.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (201,201), 200-120, TARGET_WHITE.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (201,201), 200-140, TARGET_WHITE.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (201,201), 200-160, TARGET_WHITE.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (201,201), 200-160, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (201,201), 200-180, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.line( img, (195,195), (207,207), TARGET_BLUE_NFAA.color, 2, cv2.LINE_AA )
+        img = cv2.line( img, (207,195), (195,207), TARGET_BLUE_NFAA.color, 2, cv2.LINE_AA )
+        cv2.imwrite( '../../../../picts/targets/target-nfaa-spot-40.png', img )
+
         # 80 cm field target
         img = np.zeros( (803,803,3), np.uint8 ) + 255
         img = cv2.circle( img, (401,401), 400, TARGET_BLACK.color, cv2.FILLED, cv2.LINE_AA )
@@ -249,10 +295,10 @@ def create_targets() -> None:
     
     
 #-------------------------------------------------------------------------
-def prepare_camera_button() -> None:
+def prepare_switch_buttons() -> None:
     '''Preparation of the camera buttons.
     '''
-    print( 'camera button: ', end='' )
+    print( 'switch buttons: ', end='' )
     try:
         img = cv2.imread( '../../../../picts/controls/raw/switch-off.png' )
         gray_comp = 96
@@ -260,8 +306,11 @@ def prepare_camera_button() -> None:
             for x in range(104,134):
                 if img[y][x][0] >= gray_comp:
                     img[y][x] //= 2
-        img = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
-        cv2.imwrite( f'../../../../picts/controls/switch-off.png', img )
+        img_ = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-off.png', img_ )
+        
+        img_ = cv2.resize( img, (37,15), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-off-40.png', img_ )
 
         img = cv2.imread( '../../../../picts/controls/raw/switch-on.png' )
         gray_comp = 96
@@ -269,8 +318,11 @@ def prepare_camera_button() -> None:
             for x in range(38,63):
                 if img[y][x][0] >= gray_comp:
                     img[y][x] //= 2
-        img = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
-        cv2.imwrite( f'../../../../picts/controls/switch-on.png', img )
+        img_ = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-on.png', img_ )
+
+        img_ = cv2.resize( img, (37,15), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-on-40.png', img_ )
 
         img = cv2.imread( '../../../../picts/controls/raw/switch-off.png' )
         gray_comp = 96
@@ -282,8 +334,11 @@ def prepare_camera_button() -> None:
             for x in range(32,54):
                 if img[y][x][0] >= gray_comp:
                     img[y][x] //= 5
-        img = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
-        cv2.imwrite( f'../../../../picts/controls/switch-disabled.png', img )
+        img_ = cv2.resize( img, (86,35), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-disabled.png', img_ )
+
+        img_ = cv2.resize( img, (37,15), interpolation=cv2.INTER_CUBIC )
+        cv2.imwrite( f'../../../../picts/controls/switch-disabled-40.png', img_ )
 
         print( ' ok' )
 
@@ -352,12 +407,12 @@ def prepare_target_button() -> None:
         img = cv2.circle( img, (15,15), 15-6, TARGET_BLUE.color, cv2.FILLED, cv2.LINE_AA )
         img = cv2.circle( img, (15,15), 15-9, TARGET_RED.color, cv2.FILLED, cv2.LINE_AA )
         img = cv2.circle( img, (15,15), 15-12, TARGET_GOLD.color, cv2.FILLED, cv2.LINE_AA )
-        cv2.imwrite( '../../../../picts/controls/target.png', img )
+        cv2.imwrite( '../../../../picts/controls/target-active.png', img )
 
-        img = cv2.circle( img, (15,15), 15, (TARGET_WHITE // 3).color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (15,15), 15-3, (TARGET_BLACK // 3).color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (15,15), 15-6, (TARGET_BLUE // 3).color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (15,15), 15-9, (TARGET_RED // 3).color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (15,15), 15, (TARGET_WHITE // 2.5).color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (15,15), 15-3, (TARGET_BLACK // 2.5).color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (15,15), 15-6, (TARGET_BLUE // 2.5).color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (15,15), 15-9, (TARGET_RED // 2.5).color, cv2.FILLED, cv2.LINE_AA )
         img = cv2.circle( img, (15,15), 15-12, (TARGET_GOLD // 1.5).color, cv2.FILLED, cv2.LINE_AA )
         cv2.imwrite( '../../../../picts/controls/target-inactive.png', img )
 
@@ -380,7 +435,7 @@ if __name__ == '__main__':
     """
     #-------------------------------------------------------------------------
     create_targets()
-    prepare_camera_button()
+    prepare_switch_buttons()
     prepare_exit_button()
     prepare_target_button()
 

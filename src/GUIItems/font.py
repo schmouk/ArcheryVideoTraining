@@ -128,15 +128,15 @@ class Font:
         '''
         if other is None:
             return Font( self.size,
-                         self.color,
-                         self.bg_color,
+                         self.color.copy(),
+                         self.bg_color.copy() if self.bg_color is not None else None,
                          self.bold,
                          self.italic,
                          self.sans_serif )
         else:
             self.size = other.size
-            self.color = other.color
-            self.bg_color = other.bg_color
+            self.color = other.color[:]
+            self.bg_color = other.bg_color[:]
             self.bold = other.bold
             self.italic = other.italic
             self.sans_serif = other.sans_serif
@@ -203,6 +203,24 @@ class Font:
                                     self.color.color,
                                     self.thickness,
                                     cv2.LINE_AA )
+
+    #-------------------------------------------------------------------------
+    def get_text_height(self, text: str) -> int:
+        '''Returns the width (pixels) of the specified text.
+        '''
+        return self.get_text_size( text )[ 1 ]
+
+    #-------------------------------------------------------------------------
+    def get_text_size(self, text: str) -> int:
+        '''Returns the width (pixels) of the specified text.
+        '''
+        return cv2.getTextSize( text, self.cv_font, self.font_scale, self.thickness )[ 0 ]
+
+    #-------------------------------------------------------------------------
+    def get_text_width(self, text: str) -> int:
+        '''Returns the width (pixels) of the specified text.
+        '''
+        return self.get_text_size( text )[ 0 ]
 
     #-------------------------------------------------------------------------
     def set_size(self, size: int) -> FontRef:

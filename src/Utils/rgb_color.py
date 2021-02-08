@@ -51,10 +51,11 @@ SOFTWARE.
 #    TARGET_RED
 #    TARGET_GOLD
 #    TARGET_BLUE_6
+#    TARGET_BLUE_NFAA
 #
 
 #=============================================================================
-from typing import ForwardRef, Union
+from typing import ForwardRef, Optional, Union
 
 
 #=============================================================================
@@ -112,6 +113,26 @@ class RGBColor:
     def y(self, value: int) -> None:
         comp = self._clipped( value )
         self.color = [ comp, comp, comp ]
+        
+    #-------------------------------------------------------------------------
+    def copy(self, other: RGBColorRef = None) -> Optional[ RGBColorRef ]:
+        '''Copies an RGB color.
+        
+        Args:
+            other: RGBColor
+                Either a reference to an RGB color to  be  copied 
+                in  this  color,  or None in which case a copy of 
+                this color is returned.
+        
+        Returns:
+            Either nothing if 'other' is set, or a reference to a
+            new  instance of RGBColor initialized with the values 
+            of this color attributes.
+        '''
+        if other is None:
+            return RGBColor( self.r, self.g, self.b )
+        else:
+            self.set( other.r, other.g, other.b )
         
     #-------------------------------------------------------------------------
     def set(self, r: int, g: int, b: int) -> None:
@@ -221,5 +242,6 @@ TARGET_RED   = RGBColor( 255,  37,  21 )
 TARGET_GOLD  = RGBColor( 255, 245,  55 )
 
 TARGET_BLUE_6 = RGBColor( 17, 165, 255 )
+TARGET_BLUE_NFAA = RGBColor( 63, 63,  95 )
 
 #=====   end of   src.Utils.rgb_color   =====#

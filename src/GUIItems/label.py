@@ -24,6 +24,7 @@ SOFTWARE.
 
 #=============================================================================
 from .avt_fonts          import AVTDefaultFont
+from .gui_control_base   import GUIControlBase
 from .font               import Font
 from src.Shapes.point    import Point
 from src.Utils.rgb_color import RGBColor
@@ -31,7 +32,7 @@ from src.Display.view    import View
 
 
 #=============================================================================
-class Label:
+class Label( GUIControlBase ):
     """The class of labels items used with the GUI.
     
     Notice: current version is a first draft one.
