@@ -334,9 +334,9 @@ class ControlView( Thread, AVTView ):
             '''
             self.is_on = not self.is_on
         #---------------------------------------------------------------------
-        _FONT_NOT_OK   = BoldFont( 14, ANTHRACITE )
-        _FONT_OFF      = BoldFont( 14, GRAY )
-        _FONT_ON       = BoldFont( 14, YELLOW )
+        _FONT_NOT_OK   = BoldFont( 13, ANTHRACITE )
+        _FONT_OFF      = BoldFont( 13, GRAY )
+        _FONT_ON       = BoldFont( 13, YELLOW )
         _ICON_OFF      = cv2.imread( '../picts/controls/switch-off.png' )
         _ICON_ON       = cv2.imread( '../picts/controls/switch-on.png' )
         _ICON_DISABLED = cv2.imread( '../picts/controls/switch-disabled.png' )
@@ -383,7 +383,7 @@ class ControlView( Thread, AVTView ):
             super().__init__( x, y, enabled, active, pos=pos )
             self.slider = IntSlider( x = (x if x else pos.x) + 5,
                                      y = (y if y is not None else pos.y) + self._FONT_SIZE + 10,
-                                     width = ControlView.WIDTH - 10*2,
+                                     width = ControlView.WIDTH - 12*2,
                                      height = 5,
                                      min_value = 5,
                                      max_value = 12,
@@ -406,10 +406,8 @@ class ControlView( Thread, AVTView ):
             '''
             if self.enabled:
                 font = self._FONT_ACTIVE if self.is_active else self._FONT_ENABLED
-                ##icon_img = self._ICON_ON if self.is_active else self._ICON_OFF
             else:
                 font = self._FONT_DISABLED
-                ##icon_img = self._ICON_DISABLED
                 
             font.draw_text( view, Point(self.x + 5, self.y + self._FONT_SIZE), 'Delay' )
             self.slider.draw( view )
@@ -471,8 +469,35 @@ class ControlView( Thread, AVTView ):
                 view: View
                     A reference to the embedding view.
             '''
-            super().draw( view )
-        
+            if self.enabled:
+                color = YELLOW if self.is_active else GRAY
+            else:
+                color = ANTHRACITE // 2
+            
+            x = self.x + 13
+            y = self.y + view.ICON_HEIGHT // 2
+            cv2.line( view.content,
+                      (x+1, y+1),
+                      (x+1 + self._LINE_LENGTH, y+1),
+                      (color//2).color, self._LINE_THICKNESS, cv2.LINE_AA )
+            cv2.line( view.content,
+                      (x, y),
+                      (x + self._LINE_LENGTH, y),
+                      color.color, self._LINE_THICKNESS, cv2.LINE_AA )
+
+            x = (view.WIDTH + x + self._LINE_LENGTH) // 2
+            y = self.y + (view.ICON_HEIGHT - self._LINE_LENGTH) // 2
+            cv2.line( view.content,
+                      (x+1, y+1),
+                      (x+1, y+1 + self._LINE_LENGTH),
+                      (color//2).color, self._LINE_THICKNESS, cv2.LINE_AA )
+            cv2.line( view.content,
+                      (x, y),
+                      (x, y + self._LINE_LENGTH),
+                      color.color, self._LINE_THICKNESS, cv2.LINE_AA )
+        #---------------------------------------------------------------------
+        _LINE_LENGTH = 35
+        _LINE_THICKNESS = 9
 
     #-------------------------------------------------------------------------
     class _CtrlMatch( _CtrlBase ):
@@ -555,10 +580,10 @@ class ControlView( Thread, AVTView ):
             view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
             
         #---------------------------------------------------------------------
-        _SIZE = 31
         _ICON_ACTIVE = cv2.imread( '../picts/controls/target-active.png' )
         _ICON_INACTIVE = cv2.imread( '../picts/controls/target-inactive.png' )
         _ICON_DISABLED = cv2.imread( '../picts/controls/target-disabled.png' )
+        _SIZE = _ICON_ACTIVE.shape[0]
 
 
 #=====   end of   src.Display.cantrol_view   =====#
