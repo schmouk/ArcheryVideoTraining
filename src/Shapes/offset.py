@@ -39,7 +39,7 @@ class Offset( Coord2D ):
     Notice: offset coordinates are '.dx' and '.dy'.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, dx: int = 0, dy: int = 0, *, copy: OffsetRef) -> None:
+    def __init__(self, dx: int = 0, dy: int = 0, *, copy: OffsetRef = None) -> None:
         '''Constructor.
         
         Args:

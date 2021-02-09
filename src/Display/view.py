@@ -141,6 +141,6 @@ class View:
     def _fill_background(self) -> None:
         '''Fills the parent window content with the background solid color of this view.
         '''
-        self.content = np.zeros( (self.height, self.width, 3), np.uint8 ) + self.bg_color.color
+        self.content = (np.zeros( (self.height, self.width, 3) ) + self.bg_color.color).astype( np.uint8 )
 
 #=====   end of   src.Display.view   =====#

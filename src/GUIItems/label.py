@@ -134,7 +134,7 @@ class Label( GUIControlBase ):
         if color != self.font.bg_color:
             if self.font is AVTDefaultFont:
                 self.font = AVTDefaultFont.copy()
-            self.font.bg_color = color
+            self.font.bg_color = color.copy()
 
     #-------------------------------------------------------------------------
     def set_color(self, color: RGBColor) -> None:
@@ -148,7 +148,7 @@ class Label( GUIControlBase ):
         if color != self.font.color:
             if self.font is AVTDefaultFont:
                 self.font = AVTDefaultFont.copy()
-            self.font.color = color
+            self.font.color = color.copy()
 
     #-------------------------------------------------------------------------
     def set_font(self, font: Font = None, size: int = None) -> None:
@@ -167,7 +167,7 @@ class Label( GUIControlBase ):
         '''
         if font is None:
             if size is None or size == AVTDefaultFont.size:
-                self.font = AVTDefaultFont
+                self.font = AVTDefaultFont.copy()
             else:
                 self.font = AVTDefaultFont.copy().set_size( size )
         else:
