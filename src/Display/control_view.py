@@ -474,7 +474,7 @@ class ControlView( Thread, AVTView ):
             else:
                 color = ANTHRACITE // 2
             
-            x = self.x + 15
+            x = self.x + 13
             y = self.y + view.ICON_HEIGHT // 2
             cv2.line( view.content,
                       (x+1, y+1),
@@ -580,10 +580,10 @@ class ControlView( Thread, AVTView ):
             view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
             
         #---------------------------------------------------------------------
-        _SIZE = 31
         _ICON_ACTIVE = cv2.imread( '../picts/controls/target-active.png' )
         _ICON_INACTIVE = cv2.imread( '../picts/controls/target-inactive.png' )
         _ICON_DISABLED = cv2.imread( '../picts/controls/target-disabled.png' )
+        _SIZE = _ICON_ACTIVE.shape[0]
 
 
 #=====   end of   src.Display.cantrol_view   =====#
