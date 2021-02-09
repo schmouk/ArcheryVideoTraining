@@ -56,8 +56,6 @@ class MainWindow( AVTWindow):
             self.cameras_pool = CamerasPool()
             self.create_views( self.cameras_pool, b_target_view=False )
             
-            self.last_frame_index = -1
-            
         else:
             self = MainWindow.__SINGLETON
 
@@ -130,13 +128,6 @@ class MainWindow( AVTWindow):
     def draw(self) -> None:
         '''Draws all the views that are contained in this window.
         '''
-        #=======================================================================
-        # try:
-        #     for view in self.views:
-        #         view.draw()
-        # except:
-        #     pass
-        #=======================================================================
         super().draw()
 
     #-------------------------------------------------------------------------

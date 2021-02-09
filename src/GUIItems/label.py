@@ -24,7 +24,7 @@ SOFTWARE.
 
 #=============================================================================
 from .avt_fonts          import AVTDefaultFont
-from .gui_control_base   import GUIControlBase
+from src.GUIItems.Controls.gui_control_base   import GUIControlBase
 from .font               import Font
 from src.Shapes.point    import Point
 from src.Utils.rgb_color import RGBColor

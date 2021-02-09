@@ -27,15 +27,15 @@ import cv2
 import time
 from threading import Thread
 
-from src.Utils.rgb_color         import ANTHRACITE, DEEP_GRAY, GRAY, LIGHT_GRAY, YELLOW
-from src.App.avt_config          import AVTConfig
-from .avt_view                   import AVTView
-from .view                       import AVTWindowRef, View
-from src.GUIItems.font           import BoldFont, Font
-from src.Cameras.camera          import Camera, NullCamera
-from src.Cameras.cameras_pool    import CamerasPool
-from src.Shapes.point            import Point
-from src.GUIItems.sliders        import IntSlider
+from src.Utils.rgb_color             import ANTHRACITE, DEEP_GRAY, GRAY, GrayColor, LIGHT_GRAY, RED, YELLOW
+from src.App.avt_config              import AVTConfig
+from .avt_view                       import AVTView
+from .view                           import AVTWindowRef, View
+from src.GUIItems.font               import BoldFont, Font
+from src.Cameras.camera              import Camera, NullCamera
+from src.Cameras.cameras_pool        import CamerasPool
+from src.Shapes.point                import Point
+from src.GUIItems.Controls.sliders   import IntSlider
 
 
 #=============================================================================
@@ -388,7 +388,7 @@ class ControlView( Thread, AVTView ):
                                      max_value = 12,
                                      current_value = 7,
                                      bar_color = GRAY,
-                                     cursor_color = LIGHT_GRAY,
+                                     cursor_color = GrayColor( 211 ),
                                      text_font = self._TICKS_FONT_ENABLED,
                                      shadow_height = 0,
                                      visible = True,
