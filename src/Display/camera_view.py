@@ -34,11 +34,9 @@ from .avt_window                             import AVTWindowRef
 from src.Cameras.camera                      import Camera
 from src.GUIItems.font                       import Font
 from src.Display.fps_rate                    import FPSRateFrames
-from src.Buffers.frames_acquisition_buffer   import FramesAcquisitionBuffer
-from src.Utils.indexed_frame                 import IndexedFrame
+from src.Utils.rgb_color                     import GrayColor, RGBColor, YELLOW
 from src.GUIItems.label                      import Label
 from src.Shapes.rect                         import Rect
-from src.Utils.rgb_color                              import RGBColor, YELLOW
   
 
 #=============================================================================

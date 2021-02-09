@@ -135,11 +135,14 @@ class Font:
                          self.sans_serif )
         else:
             self.size = other.size
-            self.color = other.color[:]
-            self.bg_color = other.bg_color[:]
+            self.color = other.color.copy()
+            self.bg_color = other.bg_color.copy()
             self.bold = other.bold
             self.italic = other.italic
             self.sans_serif = other.sans_serif
+            self.cv_font = other.cv_font
+            self.thickness = other.thickness
+            self.font_scale = other.font_scale
 
     #-------------------------------------------------------------------------
     def draw_text(self, view    : View ,

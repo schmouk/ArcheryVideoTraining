@@ -27,13 +27,14 @@ import cv2
 import time
 from threading import Thread
 
-from src.Utils.rgb_color             import ANTHRACITE, DEEP_GRAY, GRAY, GrayColor, LIGHT_GRAY, RED, YELLOW
+from src.Utils.rgb_color             import ANTHRACITE, DEEP_GRAY, GRAY, GrayColor, LIGHT_GRAY, YELLOW
 from src.App.avt_config              import AVTConfig
 from .avt_view                       import AVTView
 from .view                           import AVTWindowRef, View
 from src.GUIItems.font               import BoldFont, Font
 from src.Cameras.camera              import Camera, NullCamera
 from src.Cameras.cameras_pool        import CamerasPool
+from src.GUIItems.label              import Label
 from src.Shapes.point                import Point
 from src.GUIItems.Controls.sliders   import IntSlider
 
@@ -340,7 +341,7 @@ class ControlView( Thread, AVTView ):
         _ICON_ON       = cv2.imread( '../picts/controls/switch-on.png' )
         _ICON_DISABLED = cv2.imread( '../picts/controls/switch-disabled.png' )
         _HEIGHT, _WIDTH = _ICON_ON.shape[ :2 ]
-
+        
 
     #-------------------------------------------------------------------------
     class _CtrlDelay( _CtrlBase ):
