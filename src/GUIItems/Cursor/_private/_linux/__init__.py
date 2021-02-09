@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Copyright (c) 2021 Philippe Schmouker
 
@@ -21,14 +23,15 @@ SOFTWARE.
 """
 
 #=============================================================================
-import numpy as np
-from typing import Union, Tuple
+from .._cursor_base import _CursorBase
 
 
 #=============================================================================
-Frame      = np.ndarray
-Numeric    = Union[ int, float ]
-PixelColor = Tuple[ int, int, int ]
-
-
-#=====   end of   src.Utils.types   =====#
+class _Cursor( _CursorBase ):
+    """The class of system cursor for platform Linux.
+    """
+    #-------------------------------------------------------------------------
+    # TODO: implement this class
+    ...
+    
+#=====   end of   src.GUIItems.Cursor._private._linux.__init__   =====#

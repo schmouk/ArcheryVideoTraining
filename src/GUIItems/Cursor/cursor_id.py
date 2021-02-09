@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Copyright (c) 2021 Philippe Schmouker
 
@@ -21,14 +23,31 @@ SOFTWARE.
 """
 
 #=============================================================================
-import numpy as np
-from typing import Union, Tuple
+# no imports.
 
 
 #=============================================================================
-Frame      = np.ndarray
-Numeric    = Union[ int, float ]
-PixelColor = Tuple[ int, int, int ]
+class CursorID:
+    """The 'enuemration' class of cursors identifiers.
+    """
+    NORMAL          =  0
+    CROSSHAIR       =  1
+    HAND            =  2
+    HELP            =  3
+    NO              =  4
+    SIZE            =  5
+    SIZE_DOWN       =  6
+    SIZE_DOWN_LEFT  =  7
+    SIZE_DOWN_RIGHT =  8
+    SIZE_LEFT       =  9
+    SIZE_LEFT_RIGHT = 10
+    SIZE_RIGHT      = 11
+    SIZE_UP         = 12
+    SIZE_UP_DOWN    = 13
+    SIZE_UP_LEFT    = 14
+    SIZE_UP_RIGHT   = 15
+    TEXT            = 16
+    WAIT            = 17
+    WAIT_ARROW      = 18
 
-
-#=====   end of   src.Utils.types   =====#
+#=====   end of   src.GUIItems.Cursor.cursors_id   =====#

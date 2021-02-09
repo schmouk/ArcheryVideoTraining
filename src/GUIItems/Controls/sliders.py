@@ -34,12 +34,12 @@ SOFTWARE.
 import cv2
 from typing import List, Tuple
 
-from src.Utils.rgb_color import DARK_RED, GRAY, RGBColor, WHITE
-from src.GUIItems.font   import Font
-from .gui_control_base   import GUIControlBase
-from src.Utils.types     import Numeric
-from src.Shapes.point    import Point
-from src.Display.view    import View 
+from src.Utils.rgb_color                     import DARK_RED, GRAY, RGBColor, WHITE
+from src.GUIItems.font                       import Font
+from src.GUIItems.Controls.gui_control_base  import GUIControlBase
+from src.Utils.types                         import Numeric
+from src.Shapes.point                        import Point
+from src.Display.view                        import View 
 
 
 #=============================================================================
@@ -714,4 +714,4 @@ class FloatSlider( SliderBase ):
         '''
         pass
     
-#=====   end of   src.GUIItems.sliders   =====#
+#=====   end of   src.GUIItems.Controls.sliders   =====#

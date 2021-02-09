@@ -226,4 +226,4 @@ class GUIControlBase:
         self.visible = True
         self.refresh()
 
-#=====   end of   src.GUIItems.gui_control_base   =====#
+#=====   end of   src.GUIItems.Controls.gui_control_base   =====#

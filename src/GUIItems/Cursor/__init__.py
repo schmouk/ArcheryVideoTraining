@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Copyright (c) 2021 Philippe Schmouker
 
@@ -21,14 +23,23 @@ SOFTWARE.
 """
 
 #=============================================================================
-import numpy as np
-from typing import Union, Tuple
+from src.Utils.system import System
 
 
-#=============================================================================
-Frame      = np.ndarray
-Numeric    = Union[ int, float ]
-PixelColor = Tuple[ int, int, int ]
+if System.is_windows():
+    from ._private._win import _Cursor
+
+elif System.is_linux():
+    from ._private._linux import _Cursor
+
+elif System.is_macos():
+    from ._private._macos import _Cursor
+
+elif System.is_java():
+    from ._private._java import _Cursor
+
+else:
+    from ._private._other_os import _Cursor
 
 
-#=====   end of   src.Utils.types   =====#
+#=====   end of   src.GUIItems.Cursor.__init__   =====#

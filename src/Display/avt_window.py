@@ -29,10 +29,10 @@ import numpy as np
 from typing      import ForwardRef, Tuple
 from threading   import Lock
 
-from src.App.avt_config  import AVTConfig
-
-from src.Utils.rgb_color          import RGBColor
-from .view               import View
+from src.App.avt_config          import AVTConfig
+from src.GUIItems.Cursor.cursor  import Cursor_NORMAL
+from src.Utils.rgb_color         import RGBColor
+from .view                       import View
 
 
 #=============================================================================
@@ -114,6 +114,7 @@ class AVTWindow:
             cv2.namedWindow( self.name, cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO | cv2.WINDOW_GUI_EXPANDED )
             cv2.resizeWindow( self.name, width, height )
             self.height, self.width = height, width
+            Cursor_NORMAL.activate()
 
         self.set_title( f"AVT Window # {self.__WINDOWS_COUNT}" if title is None else title )
         
