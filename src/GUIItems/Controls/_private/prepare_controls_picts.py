@@ -344,10 +344,41 @@ def prepare_exit_button() -> None:
 
     
 #-------------------------------------------------------------------------
-def prepare_overlay_icons() -> None:
-    '''Preparation of the icon for overlays.
+def prepare_match_icons() -> None:
+    '''Preparation of the icons for matches.
     '''
-    print( 'overlays icon: ', end='' )
+    print( 'match icons: ', end='' )
+    try:
+        img = cv2.imread( '../../../../picts/controls/raw/cup-48.png' )
+        img[ img < 64 ] = 32
+        
+        cv2.circle( img, (23,24), 21, WHITE.color, 2, cv2.LINE_AA )
+        cv2.line( img, (20,0), (27,0), WHITE.color, 2, cv2.LINE_AA )
+        cv2.line( img, (37,2), (44,8), WHITE.color, 2, cv2.LINE_AA )
+        
+        cup_img = img.copy()
+        cup_img[ cup_img > 32 ] //= 3
+        cv2.imwrite( '../../../../picts/controls/match-disabled.png', cup_img )
+        
+        cup_img = img.copy().astype( np.float )
+        cup_img[ cup_img > 32 ] //= 1.19
+        cv2.imwrite( '../../../../picts/controls/match-off.png', cup_img.round().astype(np.uint8) )
+        
+        cup_img = img.copy()
+        cup_img[:,:,0][ cup_img[:,:,0] > 32 ] = 0
+        cv2.imwrite( '../../../../picts/controls/match-on.png', cup_img )
+                
+        print( ' ok' )
+
+    except Exception as e:
+        print( 'failed due to exception', str(e) )
+
+    
+#-------------------------------------------------------------------------
+def prepare_overlay_icons() -> None:
+    '''Preparation of the icons for overlays.
+    '''
+    print( 'overlay icons: ', end='' )
     try:
         archer_img = 255 - cv2.imread( '../../../../picts/controls/raw/archer.png' )
 
@@ -361,12 +392,12 @@ def prepare_overlay_icons() -> None:
 
         cv2.imwrite( '../../../../picts/controls/raw/overlays_icon.png', img )
         
-        _img = img.copy().astype( np.float )
-        _img[ _img > 32 ] //= 4.1
-        cv2.imwrite( '../../../../picts/controls/overlays-disabled.png', _img.round().astype(np.uint8) )
+        _img = img.copy()
+        _img[ _img > 32 ] //= 4
+        cv2.imwrite( '../../../../picts/controls/overlays-disabled.png', _img )
         
         _img = img.copy().astype( np.float )
-        _img[ _img > 32 ] //= 1.33
+        _img[ _img > 32 ] //= 1.19
         cv2.imwrite( '../../../../picts/controls/overlays-off.png', _img.round().astype(np.uint8) )
         
         _img = img.copy()
@@ -472,6 +503,7 @@ if __name__ == '__main__':
     #-------------------------------------------------------------------------
     create_targets()
     prepare_exit_button()
+    prepare_match_icons()
     prepare_overlay_icons()
     prepare_switch_buttons()
     prepare_target_button()
