@@ -86,28 +86,28 @@ class ControlView( Thread, AVTView ):
                                                          y + self.ICON_HEIGHT*cam_id ) )
         
         y += AVTConfig.CAMERAS_MAX_COUNT * self.ICON_HEIGHT
-        self.target_ctrl   = self._CtrlTarget(   5, y + 0 * self.ICON_HEIGHT, False, False )
+        self.target_ctrl   = self._CtrlTarget(   5, y, False, False )
         
-        y += self.ICON_PADDING
-        self.delay_ctrl    = self._CtrlDelay(    5, y + 1 * self.ICON_HEIGHT, False, False )
+        y += self.ICON_PADDING + self.ICON_HEIGHT
+        self.delay_ctrl    = self._CtrlDelay(    5, y , False, False )
         
-        y += self.ICON_PADDING * 2
-        self.record_ctrl   = self._CtrlRecord(   5, y + 2 * self.ICON_HEIGHT, False, False )
+        y += self.ICON_PADDING * 2 + self.ICON_HEIGHT
+        self.record_ctrl   = self._CtrlRecord(   5, y, False, False )
         
-        y += self.ICON_PADDING
-        self.replay_ctrl   = self._CtrlReplay(   5, y + 3 * self.ICON_HEIGHT, False, False )
+        y += self.ICON_PADDING + self.ICON_HEIGHT
+        self.replay_ctrl   = self._CtrlReplay(   5, y, False, False )
         
-        y += self.ICON_PADDING
-        self.overlays_ctrl = self._CtrlOverlays( 5, y + 4 * self.ICON_HEIGHT, False, False )
+        y += self.ICON_PADDING + self.ICON_HEIGHT
+        self.overlays_ctrl = self._CtrlOverlays( 5, y, False, False )
         
-        y += (self.overlays_ctrl._SIZE - self.ICON_HEIGHT) + self.ICON_PADDING
-        self.lines_ctrl    = self._CtrlLines(    5, y + 5 * self.ICON_HEIGHT, False, False )
+        y += (self.overlays_ctrl._SIZE - self.ICON_HEIGHT) + self.ICON_PADDING + self.ICON_HEIGHT
+        self.lines_ctrl    = self._CtrlLines(    5, y, False, False )
 
-        y += self.ICON_PADDING
-        self.timer_ctrl    = self._CtrlTimer(    5, y + 6 * self.ICON_HEIGHT, False, False )
+        y += self.ICON_PADDING + self.ICON_HEIGHT
+        self.timer_ctrl    = self._CtrlTimer(    5, y, False, False )
 
-        y += self.ICON_PADDING
-        self.match_ctrl    = self._CtrlMatch(    5, y + 7 * self.ICON_HEIGHT, False, False )
+        y += self.ICON_PADDING + self.ICON_HEIGHT
+        self.match_ctrl    = self._CtrlMatch(    5, y, False, False )
 
         self.exit_ctrl     = self._CtrlExit( self.width, self.height )
         
