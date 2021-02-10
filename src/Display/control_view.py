@@ -511,8 +511,20 @@ class ControlView( Thread, AVTView ):
                 view: View
                     A reference to the embedding view.
             '''
-            super().draw( view )
-    
+            x = (view.WIDTH - self._SIZE) // 2
+            y = self.y + 1
+            if self.enabled:
+                img = self._ICON_ON if self.is_active else self._ICON_OFF
+            else:
+                img = self._ICON_DISABLED
+            view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
+
+        #---------------------------------------------------------------------
+        _ICON_DISABLED = cv2.imread( '../picts/controls/match-disabled.png' )
+        _ICON_OFF      = cv2.imread( '../picts/controls/match-off.png' )
+        _ICON_ON       = cv2.imread( '../picts/controls/match-on.png' )
+        _SIZE = _ICON_ON.shape[ 0 ]
+
 
     #-------------------------------------------------------------------------
     class _CtrlOverlays( _CtrlBase ):
