@@ -86,17 +86,17 @@ class ControlView( Thread, AVTView ):
                                                          y + self.ICON_HEIGHT*cam_id ) )
         
         y += AVTConfig.CAMERAS_MAX_COUNT * self.ICON_HEIGHT
-        self.target_ctrl   = self._CtrlTarget(   5, y + 0 * self.ICON_HEIGHT, True, False )
+        self.target_ctrl   = self._CtrlTarget(   5, y + 0 * self.ICON_HEIGHT, False, False )
         
         y += self.ICON_PADDING
-        self.delay_ctrl    = self._CtrlDelay(    5, y + 1 * self.ICON_HEIGHT, True, False )
+        self.delay_ctrl    = self._CtrlDelay(    5, y + 1 * self.ICON_HEIGHT, False, False )
         
         y += self.ICON_PADDING
         self.record_ctrl   = self._CtrlRecord(   5, y + 2 * self.ICON_HEIGHT, False, False )
         self.replay_ctrl   = self._CtrlReplay(   5, y + 3 * self.ICON_HEIGHT, False, False )
         self.overlays_ctrl = self._CtrlOverlays( 5, y + 4 * self.ICON_HEIGHT, False, False )
         
-        y += self.ICON_PADDING
+        y += (self.overlays_ctrl._SIZE - self.ICON_HEIGHT) + self.ICON_PADDING
         self.lines_ctrl    = self._CtrlLines(    5, y + 5 * self.ICON_HEIGHT, False, False )
 
         y += self.ICON_PADDING
@@ -324,7 +324,7 @@ class ControlView( Thread, AVTView ):
                               self.x:self.x+self._WIDTH , : ] = img[ :, :, : ]
                 font.draw_text( view,
                                 Point(x_id, self.y + self._HEIGHT//2 + font.size//2),
-                                str(self.camera.cam_id),
+                                str(self.camera.get_id()),
                                 b_shadow=self.camera.is_ok() )
             except Exception as e:
                 print( 'caught exception', str(e) )
@@ -393,8 +393,8 @@ class ControlView( Thread, AVTView ):
                                      text_font = self._TICKS_FONT_ENABLED,
                                      shadow_height = 0,
                                      visible = True,
-                                     enabled = True,
-                                     active = False   )
+                                     enabled = enabled,
+                                     active = active   )
             
         #---------------------------------------------------------------------
         def draw(self, view: View) -> None:
@@ -526,8 +526,19 @@ class ControlView( Thread, AVTView ):
                 view: View
                     A reference to the embedding view.
             '''
-            super().draw( view )
+            x = (view.WIDTH - self._SIZE) // 2
+            y = self.y + 5
+            if self.enabled:
+                img = self._ICON_ON if self.is_active else self._ICON_OFF
+            else:
+                img = self._ICON_DISABLED
+            view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
 
+        #---------------------------------------------------------------------
+        _ICON_DISABLED = cv2.imread( '../picts/controls/overlays-disabled.png' )
+        _ICON_OFF      = cv2.imread( '../picts/controls/overlays-off.png' )
+        _ICON_ON       = cv2.imread( '../picts/controls/overlays-on.png' )
+        _SIZE = _ICON_ON.shape[ 0 ]
 
     #-------------------------------------------------------------------------
     class _CtrlRecord( _CtrlBase ):
