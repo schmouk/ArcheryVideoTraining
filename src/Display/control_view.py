@@ -91,9 +91,13 @@ class ControlView( Thread, AVTView ):
         y += self.ICON_PADDING
         self.delay_ctrl    = self._CtrlDelay(    5, y + 1 * self.ICON_HEIGHT, False, False )
         
-        y += self.ICON_PADDING
+        y += self.ICON_PADDING * 2
         self.record_ctrl   = self._CtrlRecord(   5, y + 2 * self.ICON_HEIGHT, False, False )
+        
+        y += self.ICON_PADDING
         self.replay_ctrl   = self._CtrlReplay(   5, y + 3 * self.ICON_HEIGHT, False, False )
+        
+        y += self.ICON_PADDING
         self.overlays_ctrl = self._CtrlOverlays( 5, y + 4 * self.ICON_HEIGHT, False, False )
         
         y += (self.overlays_ctrl._SIZE - self.ICON_HEIGHT) + self.ICON_PADDING
@@ -386,7 +390,7 @@ class ControlView( Thread, AVTView ):
             '''
             super().__init__( x, y, enabled, active, pos=pos )
             self.slider = IntSlider( x = (x if x else pos.x) + 5,
-                                     y = (y if y is not None else pos.y) + self._FONT_SIZE + 10,
+                                     y = (y if y is not None else pos.y) + self._SIZE + 8,
                                      width = ControlView.WIDTH - 12*2,
                                      height = 5,
                                      min_value = 5,
@@ -408,15 +412,22 @@ class ControlView( Thread, AVTView ):
                 view: View
                     A reference to the embedding view.
             '''
+            x = (view.WIDTH - self._SIZE) // 2
+            y = self.y + 1
             if self.enabled:
-                font = self._FONT_ACTIVE if self.is_active else self._FONT_ENABLED
+                img = self._ICON_ON if self.is_active else self._ICON_OFF
             else:
-                font = self._FONT_DISABLED
+                img = self._ICON_DISABLED
+            view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
                 
-            font.draw_text( view, Point(self.x + 5, self.y + self._FONT_SIZE), 'Delay' )
+            ##font.draw_text( view, Point(self.x + 5, self.y + self._FONT_SIZE), 'Delay' )
             self.slider.draw( view )
 
         #---------------------------------------------------------------------
+        _ICON_DISABLED = cv2.imread( '../picts/controls/delay-disabled.png' )
+        _ICON_OFF      = cv2.imread( '../picts/controls/delay-off.png' )
+        _ICON_ON       = cv2.imread( '../picts/controls/delay-on.png' )
+        _SIZE = _ICON_ON.shape[ 0 ]
         _TICKS_FONT_SIZE = 8
         _TICKS_FONT_ENABLED = Font( _TICKS_FONT_SIZE, LIGHT_GRAY )
 
