@@ -495,6 +495,40 @@ def prepare_target_button() -> None:
     except Exception as e:
         print( 'failed due to exception', str(e) )
 
+    
+#-------------------------------------------------------------------------
+def prepare_timer_icons() -> None:
+    '''Preparation of the icons for matches.
+    '''
+    print( 'match icons: ', end='' )
+    try:
+        img = (np.zeros( (48,48,3) ) + 32).astype( np.uint8 )
+        
+        cv2.circle( img, (23,24), 21, WHITE.color, 2, cv2.LINE_AA )
+        cv2.circle( img, (24,25), 2, BLACK.color, cv2.FILLED, cv2.LINE_AA )
+        cv2.circle( img, (23,24), 2, WHITE.color, cv2.FILLED, cv2.LINE_AA )
+        cv2.line( img, (20,0), (27,0), WHITE.color, 2, cv2.LINE_AA )
+        cv2.line( img, (37,2), (44,8), WHITE.color, 2, cv2.LINE_AA )
+        cv2.line( img, (24,25), (28,9), BLACK.color, 1, cv2.LINE_AA )
+        cv2.line( img, (23,24), (27, 8), WHITE.color, 1, cv2.LINE_AA )
+        
+        timer_img = img.copy()
+        timer_img[ timer_img > 32 ] //= 3
+        cv2.imwrite( '../../../../picts/controls/timer-disabled.png', timer_img )
+        
+        timer_img = img.copy().astype( np.float )
+        timer_img[ timer_img > 32 ] //= 1.19
+        cv2.imwrite( '../../../../picts/controls/timer-off.png', timer_img.round().astype(np.uint8) )
+        
+        timer_img = img.copy()
+        timer_img[:,:,0][ timer_img[:,:,0] > 32 ] = 0
+        cv2.imwrite( '../../../../picts/controls/timer-on.png', timer_img )
+                
+        print( ' ok' )
+
+    except Exception as e:
+        print( 'failed due to exception', str(e) )
+
 
 #=============================================================================
 if __name__ == '__main__':
@@ -507,5 +541,6 @@ if __name__ == '__main__':
     prepare_overlay_icons()
     prepare_switch_buttons()
     prepare_target_button()
+    prepare_timer_icons()
 
 #=====   end of   src.GUIItems.Controls._private.prepare_controls_picts   =====#
