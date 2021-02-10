@@ -100,7 +100,10 @@ class ControlView( Thread, AVTView ):
         self.lines_ctrl    = self._CtrlLines(    5, y + 5 * self.ICON_HEIGHT, False, False )
 
         y += self.ICON_PADDING
-        self.match_ctrl    = self._CtrlMatch(    5, y + 6 * self.ICON_HEIGHT, False, False )
+        self.timer_ctrl    = self._CtrlTimer(    5, y + 6 * self.ICON_HEIGHT, False, False )
+
+        y += self.ICON_PADDING
+        self.match_ctrl    = self._CtrlMatch(    5, y + 7 * self.ICON_HEIGHT, False, False )
 
         self.exit_ctrl     = self._CtrlExit( self.width, self.height )
         
@@ -111,6 +114,7 @@ class ControlView( Thread, AVTView ):
                                 self.replay_ctrl  ,
                                 self.overlays_ctrl,
                                 self.lines_ctrl   ,
+                                self.timer_ctrl   ,
                                 self.match_ctrl   ,
                                 self.exit_ctrl      ]
         
@@ -607,6 +611,32 @@ class ControlView( Thread, AVTView ):
         _ICON_INACTIVE = cv2.imread( '../picts/controls/target-inactive.png' )
         _ICON_DISABLED = cv2.imread( '../picts/controls/target-disabled.png' )
         _SIZE = _ICON_ACTIVE.shape[0]
+
+    #-------------------------------------------------------------------------
+    class _CtrlTimer( _CtrlBase ):
+        '''The timer control.
+        '''
+        #---------------------------------------------------------------------
+        def draw(self, view: View) -> None:
+            '''Draws a control in its embedding content.
+
+            Args:
+                view: View
+                    A reference to the embedding view.
+            '''
+            x = (view.WIDTH - self._SIZE) // 2
+            y = self.y + 1
+            if self.enabled:
+                img = self._ICON_ON if self.is_active else self._ICON_OFF
+            else:
+                img = self._ICON_DISABLED
+            view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
+
+        #---------------------------------------------------------------------
+        _ICON_DISABLED = cv2.imread( '../picts/controls/timer-disabled.png' )
+        _ICON_OFF      = cv2.imread( '../picts/controls/timer-off.png' )
+        _ICON_ON       = cv2.imread( '../picts/controls/timer-on.png' )
+        _SIZE = _ICON_ON.shape[ 0 ]
 
 
 #=====   end of   src.Display.cantrol_view   =====#
