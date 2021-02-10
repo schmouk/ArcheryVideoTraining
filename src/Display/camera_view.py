@@ -76,7 +76,7 @@ class CameraView( Thread, AVTViewProp ):
             ValueError:  Some  of  the  coordinates  or  sizes 
                 values are outside interval [0.0, 1.0].
         '''
-        self.label = Label( self, f"Cam-{camera.cam_id}", 20, 40 )
+        self.label = Label( self, f"Cam-{camera.get_id()}", 20, 40 )
         self.fps_label = Label( self, "", 20, 70, None, Font(14, YELLOW) )
         self.fps_rate = FPSRateFrames( 15 )
         ##self.buffer = FramesAcquisitionBuffer()

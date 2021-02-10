@@ -292,7 +292,171 @@ def create_targets() -> None:
 
     except Exception as e:
         print( 'failed due to exception', str(e) )
+
     
+#-------------------------------------------------------------------------
+def prepare_delay_icons() -> None:
+    '''Preparation of the icons for matches.
+    '''
+    print( 'delay icons: ', end='' )
+    try:
+        icon_img = cv2.imread( '../../../../picts/controls/raw/delay_icon-48.png' )
+        
+        for y, raw in enumerate( icon_img ):
+            for x, pxl in enumerate( raw ):
+                g = pxl[1]
+                if pxl[0] != g or pxl[2] != g:
+                    icon_img[y][x] = (g, g, g)
+        
+        img = icon_img.copy()
+        img[img > 32 ] //= 3
+        cv2.imwrite( '../../../../picts/controls/delay-disabled.png', img )
+          
+        img = icon_img.copy().astype( np.float )
+        img[ img > 32 ] //= 1.19
+        cv2.imwrite( '../../../../picts/controls/delay-off.png', img.round().astype(np.uint8) )
+          
+        img = icon_img.copy()
+        img[:,:,0][ img[:,:,0] > 32 ] = 0
+        cv2.imwrite( '../../../../picts/controls/delay-on.png', img )
+                
+        print( ' ok' )
+
+    except Exception as e:
+        print( 'failed due to exception', str(e) )
+
+    
+#-------------------------------------------------------------------------
+def prepare_exit_button() -> None:
+    '''Preparation of the exit button.
+    '''
+    print( 'exit button: ', end='' )
+    try:
+        comp_yellow = 225  ##115  ##
+        comp_blue   = 135
+        exit_img = cv2.imread( '../../../../picts/controls/raw/exit.png' )
+        exit_img[ exit_img > comp_yellow ] = comp_yellow
+        
+        exit_img[ exit_img[ :,:,0 ] > comp_yellow-20, 0 ] = comp_blue
+
+        if exit_img.shape[0] != exit_img.shape[1]:
+            # lets square this image
+            height, width = exit_img.shape[:2]
+            if height < width:
+                img = np.zeros( (width, width, 3), np.uint8 ) + 32
+            else:
+                img = np.zeros( (height, height, 3), np.uint8 ) + 32
+            dx = (img.shape[1] - width) // 2
+            dy = (img.shape[0] - height) // 2
+            img[ dy:dy+height, dx:dx+width, : ] = exit_img[:,:,:]
+        else:
+            img = exit_img
+            
+        cv2.imwrite( f'../../../../picts/controls/exit-{img.shape[0]}.png', img )
+        
+        img_64 = cv2.resize( img, (64,64), interpolation=cv2.INTER_CUBIC )
+        img_64 = cv2.circle( img_64, (31,31), 26, (comp_blue, comp_yellow, comp_yellow), 2, cv2.LINE_AA )
+        img_64 = cv2.circle( img_64, (31,31), 28, (0,0,0), 2, cv2.LINE_AA )
+        cv2.imwrite( '../../../../picts/controls/exit-64.png', img_64 )
+        
+        img_48 = cv2.resize( img, (48,48), interpolation=cv2.INTER_CUBIC )
+        img_48 = cv2.circle( img_48, (23,23), 20, (comp_blue, comp_yellow, comp_yellow), 2, cv2.LINE_AA )
+        img_48 = cv2.circle( img_48, (23,23), 22, (0,0,0), 2, cv2.LINE_AA )
+        cv2.imwrite( '../../../../picts/controls/exit-48.png', img_48 )
+        
+        img_32 = cv2.resize( img, (32,32), interpolation=cv2.INTER_CUBIC )
+        img_32 = cv2.circle( img_32, (15,15), 13, (comp_blue, comp_yellow, comp_yellow), 1, cv2.LINE_AA )
+        img_32 = cv2.circle( img_32, (15,15), 14, (0,0,0), 1, cv2.LINE_AA )
+        cv2.imwrite( '../../../../picts/controls/exit-32.png', img_32 )
+
+        print( ' ok' )
+
+    except Exception as e:
+        print( 'failed due to exception', str(e) )
+
+    
+#-------------------------------------------------------------------------
+def prepare_match_icons() -> None:
+    '''Preparation of the icons for matches.
+    '''
+    print( 'match icons: ', end='' )
+    try:
+        img = cv2.imread( '../../../../picts/controls/raw/cup-48.png' )
+        #=======================================================================
+        # img[:,:,1][ img[:,:,1] < 32 ] = 96
+        # img[:,:,2][ img[:,:,2] < 32 ] = 96
+        # img[ img < 64 ] = 32
+        #=======================================================================
+        img[ img < 35 ] = 32
+        
+        cv2.circle( img, (23,24), 21, WHITE.color, 2, cv2.LINE_AA )
+        cv2.line( img, (20,0), (27,0), WHITE.color, 2, cv2.LINE_AA )
+        cv2.line( img, (37,2), (44,8), WHITE.color, 2, cv2.LINE_AA )
+        
+        cup_img = img.copy()
+        cup_img[ cup_img > 32 ] //= 3
+        cv2.imwrite( '../../../../picts/controls/match-disabled.png', cup_img )
+        
+        cup_img = img.copy().astype( np.float )
+        cup_img[ cup_img > 32 ] //= 1.19
+        cv2.imwrite( '../../../../picts/controls/match-off.png', cup_img.round().astype(np.uint8) )
+        
+        cup_img = img.copy()
+        cup_img[:,:,0][ cup_img[:,:,0] > 32 ] = 0
+        img_size = img.shape[0]
+        r2 = 18 * 18
+        for y in range(img_size):
+            y2 = (y-24) * (y-24)
+            dy =  round( 3.5 * abs( y - 15 ) )
+            for x in range(img_size):
+                x2 = (x-23) * (x-23)
+                if x2 + y2 <= r2 and cup_img[y][x][1] < 255-96:
+                    dx = 2 * abs( x - 20 )
+                    cup_img[y][x][1] += 107 - dy - dx
+                    cup_img[y][x][2] += 107 - dy - dx
+        cv2.imwrite( '../../../../picts/controls/match-on.png', cup_img )
+                
+        print( ' ok' )
+
+    except Exception as e:
+        print( 'failed due to exception', str(e) )
+
+    
+#-------------------------------------------------------------------------
+def prepare_overlay_icons() -> None:
+    '''Preparation of the icons for overlays.
+    '''
+    print( 'overlay icons: ', end='' )
+    try:
+        archer_img = 255 - cv2.imread( '../../../../picts/controls/raw/archer.png' )
+
+        archer_img[ archer_img == 254 ] = 32
+        img_64_2 = cv2.resize( archer_img, (64,64), interpolation=cv2.INTER_LINEAR ) // 2
+        
+        offset = 3
+        img = np.zeros( (64 + offset, 64 + offset, 3), np.uint8 )
+        img[ :64, :64, : ]  = img_64_2[ :, :, : ]
+        img[ offset:, offset:, : ] += img_64_2[ :, :, : ]
+
+        cv2.imwrite( '../../../../picts/controls/raw/overlays_icon.png', img )
+        
+        _img = img.copy()
+        _img[ _img > 32 ] //= 4
+        cv2.imwrite( '../../../../picts/controls/overlays-disabled.png', _img )
+        
+        _img = img.copy().astype( np.float )
+        _img[ _img > 32 ] //= 1.19
+        cv2.imwrite( '../../../../picts/controls/overlays-off.png', _img.round().astype(np.uint8) )
+        
+        _img = img.copy()
+        _img[:,:,0][ _img[:,:,0] >= 96 ] = 0
+        cv2.imwrite( '../../../../picts/controls/overlays-on.png', _img )
+                
+        print( ' ok' )
+
+    except Exception as e:
+        print( 'failed due to exception', str(e) )
+
     
 #-------------------------------------------------------------------------
 def prepare_switch_buttons() -> None:
@@ -344,55 +508,6 @@ def prepare_switch_buttons() -> None:
 
     except Exception as e:
         print( 'failed due to exception', str(e) )
-    
-    
-#-------------------------------------------------------------------------
-def prepare_exit_button() -> None:
-    '''Preparation of the exit button.
-    '''
-    print( 'exit button: ', end='' )
-    try:
-        comp_yellow = 225  ##115  ##
-        comp_blue   = 135
-        exit_img = cv2.imread( '../../../../picts/controls/raw/exit.png' )
-        exit_img[ exit_img > comp_yellow ] = comp_yellow
-        
-        exit_img[ exit_img[ :,:,0 ] > comp_yellow-20, 0 ] = comp_blue
-
-        if exit_img.shape[0] != exit_img.shape[1]:
-            # lets square this image
-            height, width = exit_img.shape[:2]
-            if height < width:
-                img = np.zeros( (width, width, 3), np.uint8 ) + 32
-            else:
-                img = np.zeros( (height, height, 3), np.uint8 ) + 32
-            dx = (img.shape[1] - width) // 2
-            dy = (img.shape[0] - height) // 2
-            img[ dy:dy+height, dx:dx+width, : ] = exit_img[:,:,:]
-        else:
-            img = exit_img
-            
-        cv2.imwrite( f'../../../../picts/controls/exit-{img.shape[0]}.png', img )
-        
-        img_64 = cv2.resize( img, (64,64), interpolation=cv2.INTER_CUBIC )
-        img_64 = cv2.circle( img_64, (31,31), 26, (comp_blue, comp_yellow, comp_yellow), 2, cv2.LINE_AA )
-        img_64 = cv2.circle( img_64, (31,31), 28, (0,0,0), 2, cv2.LINE_AA )
-        cv2.imwrite( '../../../../picts/controls/exit-64.png', img_64 )
-        
-        img_48 = cv2.resize( img, (48,48), interpolation=cv2.INTER_CUBIC )
-        img_48 = cv2.circle( img_48, (23,23), 20, (comp_blue, comp_yellow, comp_yellow), 2, cv2.LINE_AA )
-        img_48 = cv2.circle( img_48, (23,23), 22, (0,0,0), 2, cv2.LINE_AA )
-        cv2.imwrite( '../../../../picts/controls/exit-48.png', img_48 )
-        
-        img_32 = cv2.resize( img, (32,32), interpolation=cv2.INTER_CUBIC )
-        img_32 = cv2.circle( img_32, (15,15), 13, (comp_blue, comp_yellow, comp_yellow), 1, cv2.LINE_AA )
-        img_32 = cv2.circle( img_32, (15,15), 14, (0,0,0), 1, cv2.LINE_AA )
-        cv2.imwrite( '../../../../picts/controls/exit-32.png', img_32 )
-
-        print( ' ok' )
-
-    except Exception as e:
-        print( 'failed due to exception', str(e) )
 
 
 #-------------------------------------------------------------------------
@@ -401,28 +516,69 @@ def prepare_target_button() -> None:
     '''
     print( 'target button: ', end='' )
     try:
-        img = (np.zeros( (33,33,3)) + AVTConfig.DEFAULT_BACKGROUND.color).astype( np.uint8  )
-        img = cv2.circle( img, (16,16), 15, TARGET_WHITE.color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-3, TARGET_BLACK.color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-6, TARGET_BLUE.color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-9, TARGET_RED.color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-12, TARGET_GOLD.color, cv2.FILLED, cv2.LINE_AA )
+        img = (np.zeros( (45,45,3)) + AVTConfig.DEFAULT_BACKGROUND.color).astype( np.uint8  )
+        img = cv2.circle( img, (22,22), 20, TARGET_WHITE.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (22,22), 20-4, TARGET_BLACK.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (22,22), 20-8, TARGET_BLUE.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (22,22), 20-12, TARGET_RED.color, cv2.FILLED, cv2.LINE_AA )
+        img = cv2.circle( img, (22,22), 20-16, TARGET_GOLD.color, cv2.FILLED, cv2.LINE_AA )
+        img[ 22, 22 ] = (191, 191, 0)
+
+        cv2.imwrite( '../../../../picts/controls/target-inactive.png', (img // 1.5).astype(np.uint8) )
+
+        cv2.imwrite( '../../../../picts/controls/target-disabled.png', (img // 5).astype(np.uint8) )
+
+        img[:,:,0][ img[:,:,0] > 32 ] -= 96
+        img[:,:,2][ img[:,:,1] < 32 ] += 96
+        img[:,:,1][ img[:,:,1] < 32 ] += 96
+        img = cv2.circle( img, (22,22), 22, (YELLOW - 31).color, 1, cv2.LINE_AA )
         cv2.imwrite( '../../../../picts/controls/target-active.png', img )
 
-        img = cv2.circle( img, (16,16), 15, (TARGET_WHITE // 2.5).color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-3, (TARGET_BLACK // 2.5).color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-6, (TARGET_BLUE // 2.5).color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-9, (TARGET_RED // 2.5).color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-12, (TARGET_GOLD // 1.5).color, cv2.FILLED, cv2.LINE_AA )
-        cv2.imwrite( '../../../../picts/controls/target-inactive.png', img )
+        print( ' ok' )
 
-        img = cv2.circle( img, (16,16), 15, (TARGET_WHITE // 5).color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-3, (TARGET_BLACK // 5).color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-6, (TARGET_BLUE // 5).color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-9, (TARGET_RED // 5).color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (16,16), 15-12, (TARGET_GOLD // 5).color, cv2.FILLED, cv2.LINE_AA )
-        cv2.imwrite( '../../../../picts/controls/target-disabled.png', img )
+    except Exception as e:
+        print( 'failed due to exception', str(e) )
 
+    
+#-------------------------------------------------------------------------
+def prepare_timer_icons() -> None:
+    '''Preparation of the icons for matches.
+    '''
+    print( 'match icons: ', end='' )
+    try:
+        img = (np.zeros( (48,48,3) ) + 32).astype( np.uint8 )
+        
+        cv2.circle( img, (23,24), 21, WHITE.color, 2, cv2.LINE_AA )
+        cv2.circle( img, (24,25), 2, BLACK.color, cv2.FILLED, cv2.LINE_AA )
+        cv2.circle( img, (23,24), 2, WHITE.color, cv2.FILLED, cv2.LINE_AA )
+        cv2.line( img, (20,0), (27,0), WHITE.color, 2, cv2.LINE_AA )
+        cv2.line( img, (37,2), (44,8), WHITE.color, 2, cv2.LINE_AA )
+        cv2.line( img, (24,25), (28,9), BLACK.color, 1, cv2.LINE_AA )
+        cv2.line( img, (23,24), (27, 8), WHITE.color, 1, cv2.LINE_AA )
+        
+        timer_img = img.copy()
+        timer_img[ timer_img > 32 ] //= 3
+        cv2.imwrite( '../../../../picts/controls/timer-disabled.png', timer_img )
+        
+        timer_img = img.copy().astype( np.float )
+        timer_img[ timer_img > 32 ] //= 1.19
+        cv2.imwrite( '../../../../picts/controls/timer-off.png', timer_img.round().astype(np.uint8) )
+        
+        timer_img = img.copy()
+        timer_img[:,:,0][ timer_img[:,:,0] > 32 ] = 0
+        img_size = img.shape[0]
+        r2 = 18 * 18
+        for y in range(img_size):
+            y2 = (y-24) * (y-24)
+            dy =  round( 3.5 * abs( y - 15 ) )
+            for x in range(img_size):
+                x2 = (x-23) * (x-23)
+                if x2 + y2 <= r2 and timer_img[y][x][1] < 255-96:
+                    dx = 3 * abs( x - 20 )
+                    timer_img[y][x][1] += 137 - dy - dx
+                    timer_img[y][x][2] += 137 - dy - dx
+        cv2.imwrite( '../../../../picts/controls/timer-on.png', timer_img )
+                
         print( ' ok' )
 
     except Exception as e:
@@ -435,8 +591,12 @@ if __name__ == '__main__':
     """
     #-------------------------------------------------------------------------
     create_targets()
-    prepare_switch_buttons()
+    prepare_delay_icons()
     prepare_exit_button()
+    prepare_match_icons()
+    prepare_overlay_icons()
+    prepare_switch_buttons()
     prepare_target_button()
+    prepare_timer_icons()
 
 #=====   end of   src.GUIItems.Controls._private.prepare_controls_picts   =====#

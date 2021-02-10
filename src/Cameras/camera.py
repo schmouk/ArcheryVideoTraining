@@ -87,6 +87,12 @@ class Camera:
         return self.hndl.get( cv2.CAP_PROP_FPS ) 
 
     #-------------------------------------------------------------------------
+    def get_id(self) -> int:
+        '''Returns the identifier of this camera, starting at index 1.
+        '''
+        return self.cam_id + 1
+    
+    #-------------------------------------------------------------------------
     def get_hw_height(self) -> int:
         '''Returns the height of rames as set in the H/W device.
         '''

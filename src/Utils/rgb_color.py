@@ -230,6 +230,7 @@ class RGBColor:
         '''
         '''
         self.set( int(self.r / den), int(self.g / den), int(self.b / den) )
+        return self
 
     #-------------------------------------------------------------------------
     def __mul__(self, coeff: Numeric) -> RGBColorRef:
