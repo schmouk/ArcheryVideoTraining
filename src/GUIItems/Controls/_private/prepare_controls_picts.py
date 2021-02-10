@@ -292,7 +292,39 @@ def create_targets() -> None:
 
     except Exception as e:
         print( 'failed due to exception', str(e) )
+
+    
+#-------------------------------------------------------------------------
+def prepare_delay_icons() -> None:
+    '''Preparation of the icons for matches.
+    '''
+    print( 'delay icons: ', end='' )
+    try:
+        icon_img = cv2.imread( '../../../../picts/controls/raw/delay_icon-48.png' )
         
+        for y, raw in enumerate( icon_img ):
+            for x, pxl in enumerate( raw ):
+                g = pxl[1]
+                if pxl[0] != g or pxl[2] != g:
+                    icon_img[y][x] = (g, g, g)
+        
+        img = icon_img.copy()
+        img[img > 32 ] //= 3
+        cv2.imwrite( '../../../../picts/controls/delay-disabled.png', img )
+          
+        img = icon_img.copy().astype( np.float )
+        img[ img > 32 ] //= 1.19
+        cv2.imwrite( '../../../../picts/controls/delay-off.png', img.round().astype(np.uint8) )
+          
+        img = icon_img.copy()
+        img[:,:,0][ img[:,:,0] > 32 ] = 0
+        cv2.imwrite( '../../../../picts/controls/delay-on.png', img )
+                
+        print( ' ok' )
+
+    except Exception as e:
+        print( 'failed due to exception', str(e) )
+
     
 #-------------------------------------------------------------------------
 def prepare_exit_button() -> None:
@@ -388,7 +420,7 @@ def prepare_overlay_icons() -> None:
         offset = 3
         img = np.zeros( (64 + offset, 64 + offset, 3), np.uint8 )
         img[ :64, :64, : ]  = img_64_2[ :, :, : ]
-        img[ offset:, offset:, :   ] += img_64_2[ :, :, : ]
+        img[ offset:, offset:, : ] += img_64_2[ :, :, : ]
 
         cv2.imwrite( '../../../../picts/controls/raw/overlays_icon.png', img )
         
@@ -536,6 +568,7 @@ if __name__ == '__main__':
     """
     #-------------------------------------------------------------------------
     create_targets()
+    prepare_delay_icons()
     prepare_exit_button()
     prepare_match_icons()
     prepare_overlay_icons()
