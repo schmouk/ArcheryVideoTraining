@@ -36,7 +36,7 @@ from src.Cameras.camera              import Camera, NullCamera
 from src.Cameras.cameras_pool        import CamerasPool
 from src.GUIItems.label              import Label
 from src.Shapes.point                import Point
-from src.GUIItems.Controls.sliders   import IntSlider
+from src.GUIItems.Controls.sliders   import IntSlider, FloatSlider
 
 
 #=============================================================================
@@ -136,20 +136,20 @@ class ControlView( Thread, AVTView ):
         '''
         bg_color = self.bg_color
         self.content = cv2.rectangle( self.content,
-                                      (4, 4), (self.width-2, self.height-2),
+                                      (3, 3), (self.width-2, self.height-2),
                                       (bg_color / 2).color,
                                       1, cv2.LINE_4 )
         self.content = cv2.rectangle( self.content,
-                                      (5, 5), (self.width-3, self.height-3),
+                                      (4, 4), (self.width-3, self.height-3),
                                       (bg_color / 2).color,
                                       1, cv2.LINE_4 )
 
         self.content = cv2.rectangle( self.content,
-                                      (2, 2), (self.width-4, self.height-4),
+                                      (1, 1), (self.width-4, self.height-4),
                                       (bg_color * 2).color,
                                       1, cv2.LINE_4 )
         self.content = cv2.rectangle( self.content,
-                                      (3, 3), (self.width-5, self.height-5),
+                                      (2, 2), (self.width-5, self.height-5),
                                       (bg_color * 2).color,
                                       1, cv2.LINE_4 )
 
@@ -512,7 +512,7 @@ class ControlView( Thread, AVTView ):
                       color.color, self._LINE_THICKNESS, cv2.LINE_AA )
         #---------------------------------------------------------------------
         _LINE_LENGTH = 35
-        _LINE_THICKNESS = 9
+        _LINE_THICKNESS = 7
 
     #-------------------------------------------------------------------------
     class _CtrlMatch( _CtrlBase ):
@@ -572,6 +572,56 @@ class ControlView( Thread, AVTView ):
         '''The video recording control.
         '''
         #---------------------------------------------------------------------
+        def __init__(self, x: int = None,
+                           y: int = None,
+                           enabled: bool = True,
+                           active : bool = False,
+                           *,
+                           pos: Point = None) -> None:
+            '''Constructor
+            
+            Args:
+                x, y: int
+                    The top-left position of  this  control  in
+                    the  ControlView.  Ignored if 'pos' is set.
+                    Must be set if 'pos' is  None.  Defaults to
+                    None (i.e. 'pos' should be set instead).
+                enabled: bool
+                    Set this to True to get this control enabl-
+                    ed  or set it to False otherwise.  Defaults
+                    to False.
+                active: bool
+                    Set this to True to get this control active
+                    or  set  it  to  False  to get it inactive.
+                    Defaults to False.
+                pos: Point
+                    The top-left position of  this  control  in
+                    the ControlView.  Takes precedence over 'x'
+                    and 'y' if set. This argument must be named
+                    if set. Defaults to None.
+                    
+            Raises:
+                AssertionError:  x, y and pos are all None, or
+                    pos is None and either x or y is None also.
+            '''
+            super().__init__( x, y, enabled, active, pos=pos )
+            self.slider = FloatSlider( x = (x if x else pos.x) + 5,
+                                       y = (y if y is not None else pos.y) + self._ICON_SIZE + 8,
+                                       width = ControlView.WIDTH - 12*2,
+                                       height = 5,
+                                       min_value = 20,
+                                       max_value = 130,
+                                       current_value = 60,
+                                       bar_color = GRAY,
+                                       cursor_color = GrayColor( 211 ),
+                                       text_font = self._TICKS_FONT_ENABLED,
+                                       shadow_height = 0,
+                                       visible = True,
+                                       enabled = enabled,
+                                       active = active,
+                                       show_cursor_text = False )
+            
+        #---------------------------------------------------------------------
         def draw(self, view: View) -> None:
             '''Draws a control in its embedding content.
 
@@ -579,7 +629,42 @@ class ControlView( Thread, AVTView ):
                 view: View
                     A reference to the embedding view.
             '''
-            super().draw( view )
+            if self.enabled:
+                if self.is_active:
+                    img = self._ICON_ON
+                    font = self._FONT_ON
+                else:
+                    img = self._ICON_OFF
+                    font = self._FONT_OFF
+            else:
+                img = self._ICON_DISABLED
+                font = self._FONT_DISABLED
+                
+            x = (view.WIDTH - self._ICON_SIZE) // 2
+            y = self.y + 1
+            
+            view.content[ y:y+self._ICON_SIZE, x:x+self._ICON_SIZE, : ] = img[ :, :, : ]
+            
+            cursor_text = str( self.slider.value )
+            cursor_text_width = font.get_text_width( cursor_text )
+            x += cursor_text_width // 2 + 2
+            y = self.y - 1 + (self._ICON_SIZE + self._FONT_SIZE) // 2
+            font.draw_text( view, Point(x,y), cursor_text, True )
+                
+            ##font.draw_text( view, Point(self.x + 5, self.y + self._FONT_SIZE), 'Delay' )
+            self.slider.draw( view )
+
+        #---------------------------------------------------------------------
+        _FONT_SIZE          = 12
+        _FONT_DISABLED      = Font( _FONT_SIZE, GRAY )
+        _FONT_OFF           = Font( _FONT_SIZE, LIGHT_GRAY )
+        _FONT_ON            = Font( _FONT_SIZE, YELLOW )
+        _ICON_DISABLED      = cv2.imread( '../picts/controls/record-disabled.png' )
+        _ICON_OFF           = cv2.imread( '../picts/controls/record-off.png' )
+        _ICON_ON            = cv2.imread( '../picts/controls/record-on.png' )
+        _ICON_SIZE          = _ICON_ON.shape[ 0 ]
+        _TICKS_FONT_SIZE    = 8
+        _TICKS_FONT_ENABLED = Font( _TICKS_FONT_SIZE, LIGHT_GRAY )
 
 
     #-------------------------------------------------------------------------
@@ -618,8 +703,8 @@ class ControlView( Thread, AVTView ):
             view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
             
         #---------------------------------------------------------------------
-        _ICON_ACTIVE = cv2.imread( '../picts/controls/target-active.png' )
-        _ICON_INACTIVE = cv2.imread( '../picts/controls/target-inactive.png' )
+        _ICON_ACTIVE = cv2.imread( '../picts/controls/target-on.png' )
+        _ICON_INACTIVE = cv2.imread( '../picts/controls/target-off.png' )
         _ICON_DISABLED = cv2.imread( '../picts/controls/target-disabled.png' )
         _SIZE = _ICON_ACTIVE.shape[0]
 

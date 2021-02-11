@@ -97,8 +97,8 @@ class Font:
         assert size > 5
         
         self.size = None
-        self.color = color
-        self.bg_color = bg_color
+        self.color = color.copy()
+        self.bg_color = bg_color.copy() if bg_color is not None else None
         self.bold = bold
         self.italic = italic
         self.sans_serif = sans_serif
@@ -136,7 +136,7 @@ class Font:
         else:
             self.size = other.size
             self.color = other.color.copy()
-            self.bg_color = other.bg_color.copy()
+            self.bg_color = other.bg_color.copy() if other.bg_color is not None else None,
             self.bold = other.bold
             self.italic = other.italic
             self.sans_serif = other.sans_serif
@@ -170,17 +170,8 @@ class Font:
         if self.bg_color is None:
             if b_shadow:
                 # artifact to get readable chars in frames while transparency is on 
-                color_lum = self.color.y
                 bg_color = (0,0,0)
                 offset = 1
-                #===============================================================
-                # if color_lum > 96:
-                #     bg_color = (0,0,0)
-                #     offset = 1
-                # else:
-                #     bg_color = (255,255,255)
-                #     offset = -1
-                #===============================================================
     
                 view.content = cv2.putText( view.content,
                                             text,
