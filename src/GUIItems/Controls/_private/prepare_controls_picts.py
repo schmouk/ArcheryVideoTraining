@@ -296,7 +296,7 @@ def create_targets() -> None:
     
 #-------------------------------------------------------------------------
 def prepare_delay_icons() -> None:
-    '''Preparation of the icons for matches.
+    '''Preparation of the icons for delaying video display.
     '''
     print( 'delay icons: ', end='' )
     try:
@@ -307,17 +307,17 @@ def prepare_delay_icons() -> None:
                 g = pxl[1]
                 if pxl[0] != g or pxl[2] != g:
                     icon_img[y][x] = (g, g, g)
-        
+
         img = icon_img.copy()
-        img[img > 32 ] //= 3
+        img[img != 32 ] //= 3
         cv2.imwrite( '../../../../picts/controls/delay-disabled.png', img )
           
         img = icon_img.copy().astype( np.float )
-        img[ img > 32 ] //= 1.19
+        img[ img != 32 ] //= 1.19
         cv2.imwrite( '../../../../picts/controls/delay-off.png', img.round().astype(np.uint8) )
           
         img = icon_img.copy()
-        img[:,:,0][ img[:,:,0] > 32 ] = 0
+        img[:,:,0][ img[:,:,0] != 32 ] = 0
         cv2.imwrite( '../../../../picts/controls/delay-on.png', img )
                 
         print( ' ok' )
@@ -382,13 +382,28 @@ def prepare_match_icons() -> None:
     print( 'match icons: ', end='' )
     try:
         img = cv2.imread( '../../../../picts/controls/raw/cup-48.png' )
-        #=======================================================================
-        # img[:,:,1][ img[:,:,1] < 32 ] = 96
-        # img[:,:,2][ img[:,:,2] < 32 ] = 96
-        # img[ img < 64 ] = 32
-        #=======================================================================
         img[ img < 35 ] = 32
-        
+
+        img_size = img.shape[0]
+        x0 = 23
+        y0 = 24
+        r2 = 18 * 18
+        _img = img.copy().astype( np.int32 )
+        for y in range(img_size):
+            y2 = (y-y0) * (y-y0)
+            dy =  round( 3.5 * abs( y - 15 ) )
+            for x in range(img_size):
+                x2 = (x-x0) * (x-x0)
+                if x2 + y2 <= r2:
+                    dx = 2 * abs( x - 20 )
+                    offset_color = 137 - dy - dx
+                    _img[y,x,0] = max( _img[y,x,0] + offset_color, 0 )
+                    _img[y,x,1] = max( _img[y,x,1] + offset_color, 0 )
+                    _img[y,x,2] = max( _img[y,x,2] + offset_color, 0 )
+        _img[ _img > 255 ] = 255
+        ##img[:,:,:] = (min( _img[:,:,:], 255 )).astype( np.uint8 )
+        img = _img.copy().astype( np.uint8 )
+
         cv2.circle( img, (23,24), 21, WHITE.color, 2, cv2.LINE_AA )
         cv2.line( img, (20,0), (27,0), WHITE.color, 2, cv2.LINE_AA )
         cv2.line( img, (37,2), (44,8), WHITE.color, 2, cv2.LINE_AA )
@@ -398,7 +413,7 @@ def prepare_match_icons() -> None:
         cv2.imwrite( '../../../../picts/controls/match-disabled.png', cup_img )
         
         cup_img = img.copy().astype( np.float )
-        cup_img[ cup_img > 32 ] //= 1.19
+        cup_img[ cup_img > 32 ] //= 1.25
         cv2.imwrite( '../../../../picts/controls/match-off.png', cup_img.round().astype(np.uint8) )
         
         cup_img = img.copy()
@@ -407,14 +422,12 @@ def prepare_match_icons() -> None:
         r2 = 18 * 18
         for y in range(img_size):
             y2 = (y-24) * (y-24)
-            dy =  round( 3.5 * abs( y - 15 ) )
             for x in range(img_size):
                 x2 = (x-23) * (x-23)
-                if x2 + y2 <= r2 and cup_img[y][x][1] < 255-96:
-                    dx = 2 * abs( x - 20 )
-                    cup_img[y][x][1] += 107 - dy - dx
-                    cup_img[y][x][2] += 107 - dy - dx
+                if x2 + y2 <= r2 and cup_img[y,x,1] < 255-96:
+                    cup_img[y,x,0] = 0
         cv2.imwrite( '../../../../picts/controls/match-on.png', cup_img )
+
                 
         print( ' ok' )
 
@@ -451,6 +464,38 @@ def prepare_overlay_icons() -> None:
         _img = img.copy()
         _img[:,:,0][ _img[:,:,0] >= 96 ] = 0
         cv2.imwrite( '../../../../picts/controls/overlays-on.png', _img )
+                
+        print( ' ok' )
+
+    except Exception as e:
+        print( 'failed due to exception', str(e) )
+
+    
+#-------------------------------------------------------------------------
+def prepare_record_icons() -> None:
+    '''Preparation of the icons for recording.
+    '''
+    print( 'record icons: ', end='' )
+    try:
+        icon_img = cv2.imread( '../../../../picts/controls/raw/record_icon-48.png' )
+        
+        for y, raw in enumerate( icon_img ):
+            for x, pxl in enumerate( raw ):
+                g = pxl[1]
+                if pxl[0] != g or pxl[2] != g:
+                    icon_img[y][x] = (g, g, g)
+        
+        img = icon_img.copy()
+        img[img != 32 ] //= 3
+        cv2.imwrite( '../../../../picts/controls/record-disabled.png', img )
+          
+        img = icon_img.copy().astype( np.float )
+        img[ img != 32 ] //= 1.19
+        cv2.imwrite( '../../../../picts/controls/record-off.png', img.round().astype(np.uint8) )
+          
+        img = icon_img.copy()
+        img[:,:,0][ img[:,:,0] != 32 ] = 0
+        cv2.imwrite( '../../../../picts/controls/record-on.png', img )
                 
         print( ' ok' )
 
@@ -516,23 +561,51 @@ def prepare_target_button() -> None:
     '''
     print( 'target button: ', end='' )
     try:
-        img = (np.zeros( (45,45,3)) + AVTConfig.DEFAULT_BACKGROUND.color).astype( np.uint8  )
-        img = cv2.circle( img, (22,22), 20, TARGET_WHITE.color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (22,22), 20-4, TARGET_BLACK.color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (22,22), 20-8, TARGET_BLUE.color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (22,22), 20-12, TARGET_RED.color, cv2.FILLED, cv2.LINE_AA )
-        img = cv2.circle( img, (22,22), 20-16, TARGET_GOLD.color, cv2.FILLED, cv2.LINE_AA )
-        img[ 22, 22 ] = (191, 191, 0)
+        target_img = (np.zeros( (47,47,3)) + AVTConfig.DEFAULT_BACKGROUND.color ).astype( np.uint8  )
+        
+        img_size = target_img.shape[0]
+        x0 = y0 = img_size // 2
+        
+        target_img = cv2.circle( target_img, (x0,y0), 21, TARGET_BLACK.color, 1, cv2.LINE_AA )
+        target_img = cv2.circle( target_img, (x0,y0), 20, TARGET_WHITE.color, cv2.FILLED, cv2.LINE_AA )
+        target_img = cv2.circle( target_img, (x0,y0), 20-4, TARGET_BLACK.color, cv2.FILLED, cv2.LINE_AA )
+        target_img = cv2.circle( target_img, (x0,y0), 20-8, TARGET_BLUE.color, cv2.FILLED, cv2.LINE_AA )
+        target_img = cv2.circle( target_img, (x0,y0), 20-12, TARGET_RED.color, cv2.FILLED, cv2.LINE_AA )
+        target_img = cv2.circle( target_img, (x0,y0), 20-16, TARGET_GOLD.color, cv2.FILLED, cv2.LINE_AA )
+        target_img[ 23, 23 ] = (191, 191, 0)
 
-        cv2.imwrite( '../../../../picts/controls/target-inactive.png', (img // 1.5).astype(np.uint8) )
+        img = target_img.astype( np.int32 )
+        r2 = (img_size-1) * (img_size-1)
+        for y in range(img_size):
+            y2 = (y-y0) * (y-y0)
+            dy =  round( 3.5 * abs( y - 15 ) )
+            for x in range(img_size):
+                x2 = (x-x0) * (x-x0)
+                dx = 3 * abs( x - 20 )
+                if x2 + y2 <= r2 and target_img[y,x,1] != 32:
+                    img[y,x,:] += 157 - dy - dx
+        img[ img > 255 ] = 255
+        target_img = img.astype( np.uint8 )
+        
+        img = target_img.copy().astype( np.float )
+        img[ img != 32 ] //= 1.5
+        cv2.imwrite( '../../../../picts/controls/target-off.png', img.round().astype(np.uint8) )
 
-        cv2.imwrite( '../../../../picts/controls/target-disabled.png', (img // 5).astype(np.uint8) )
+        img = target_img.copy().astype( np.float )
+        img[ img != 32 ] //= 5.0
+        cv2.imwrite( '../../../../picts/controls/target-disabled.png', img.round().astype(np.uint8) )
 
-        img[:,:,0][ img[:,:,0] > 32 ] -= 96
-        img[:,:,2][ img[:,:,1] < 32 ] += 96
-        img[:,:,1][ img[:,:,1] < 32 ] += 96
-        img = cv2.circle( img, (22,22), 22, (YELLOW - 31).color, 1, cv2.LINE_AA )
-        cv2.imwrite( '../../../../picts/controls/target-active.png', img )
+        img = target_img.copy().astype( np.int32 )
+        for y in range( img_size ):
+            for x in range( img_size ):
+                if img[y,x,0] != 32:
+                    offset_color =32
+                    img[y,x,0] -= offset_color
+                    img[y,x,1] += offset_color
+                    img[y,x,2] += offset_color
+        img[ img > 255 ] = 255
+        img = cv2.circle( img.astype(np.uint8), (23,23), 22, (YELLOW - 31).color, 2, cv2.LINE_AA )
+        cv2.imwrite( '../../../../picts/controls/target-on.png', img )
 
         print( ' ok' )
 
@@ -544,10 +617,9 @@ def prepare_target_button() -> None:
 def prepare_timer_icons() -> None:
     '''Preparation of the icons for matches.
     '''
-    print( 'match icons: ', end='' )
+    print( 'timer icons: ', end='' )
     try:
         img = (np.zeros( (48,48,3) ) + 32).astype( np.uint8 )
-        
         cv2.circle( img, (23,24), 21, WHITE.color, 2, cv2.LINE_AA )
         cv2.circle( img, (24,25), 2, BLACK.color, cv2.FILLED, cv2.LINE_AA )
         cv2.circle( img, (23,24), 2, WHITE.color, cv2.FILLED, cv2.LINE_AA )
@@ -555,28 +627,37 @@ def prepare_timer_icons() -> None:
         cv2.line( img, (37,2), (44,8), WHITE.color, 2, cv2.LINE_AA )
         cv2.line( img, (24,25), (28,9), BLACK.color, 1, cv2.LINE_AA )
         cv2.line( img, (23,24), (27, 8), WHITE.color, 1, cv2.LINE_AA )
-        
+
+        img_size = img.shape[0]
+        x0 = 23
+        y0 = 24
+        r2 = 18 * 18
+        _img = img.copy().astype( np.int32 )
+        for y in range(img_size):
+            y2 = (y-y0) * (y-y0)
+            dy =  round( 3.5 * abs( y - 15 ) )
+            for x in range(img_size):
+                x2 = (x-x0) * (x-x0)
+                if x2 + y2 <= r2:
+                    dx = 2 * abs( x - 20 )
+                    offset_color = 137 - dy - dx
+                    _img[y,x,0] = max( _img[y,x,0] + offset_color, 0 )
+                    _img[y,x,1] = max( _img[y,x,1] + offset_color, 0 )
+                    _img[y,x,2] = max( _img[y,x,2] + offset_color, 0 )
+        _img[ _img > 255 ] = 255
+        ##img[:,:,:] = (min( _img[:,:,:], 255 )).astype( np.uint8 )
+        img = _img.copy().astype( np.uint8 )
+
         timer_img = img.copy()
         timer_img[ timer_img > 32 ] //= 3
         cv2.imwrite( '../../../../picts/controls/timer-disabled.png', timer_img )
-        
+         
         timer_img = img.copy().astype( np.float )
         timer_img[ timer_img > 32 ] //= 1.19
         cv2.imwrite( '../../../../picts/controls/timer-off.png', timer_img.round().astype(np.uint8) )
-        
+         
         timer_img = img.copy()
         timer_img[:,:,0][ timer_img[:,:,0] > 32 ] = 0
-        img_size = img.shape[0]
-        r2 = 18 * 18
-        for y in range(img_size):
-            y2 = (y-24) * (y-24)
-            dy =  round( 3.5 * abs( y - 15 ) )
-            for x in range(img_size):
-                x2 = (x-23) * (x-23)
-                if x2 + y2 <= r2 and timer_img[y][x][1] < 255-96:
-                    dx = 3 * abs( x - 20 )
-                    timer_img[y][x][1] += 137 - dy - dx
-                    timer_img[y][x][2] += 137 - dy - dx
         cv2.imwrite( '../../../../picts/controls/timer-on.png', timer_img )
                 
         print( ' ok' )
@@ -595,6 +676,7 @@ if __name__ == '__main__':
     prepare_exit_button()
     prepare_match_icons()
     prepare_overlay_icons()
+    prepare_record_icons()
     prepare_switch_buttons()
     prepare_target_button()
     prepare_timer_icons()

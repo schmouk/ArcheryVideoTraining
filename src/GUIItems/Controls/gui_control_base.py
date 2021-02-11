@@ -153,10 +153,10 @@ class GUIControlBase:
             view: View
                 A reference to the embedding view.
             forced: bool
-                Set this to True to get this control  drawn
-                whatever  its refresh status is.  Set it to
-                False to get this control drawn only if its
-                refresh status is True. Defaults to False.
+                Set this to True  to  get  this  control  drawn 
+                whatever its refresh status is. Set it to False 
+                to get this control drawn only if  its  refresh 
+                status is True. Defaults to False.
         '''
         if forced or self.b_refresh:
             self._draw( view )

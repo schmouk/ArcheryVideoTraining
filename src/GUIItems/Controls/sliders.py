@@ -47,22 +47,23 @@ class SliderBase( GUIControlBase ):
     """The base class for all control sliders.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, x            : int      = None,
-                       y            : int      = None,
-                       width        : int      = None,
-                       height       : int      = None,
-                       min_value    : Numeric  =   0 ,
-                       max_value    : Numeric  = 100 ,
-                       current_value: Numeric  =  50 ,
-                       bar_color    : RGBColor = GRAY,
-                       cursor_color : RGBColor = DARK_RED,
-                       text_font    : Font     = None,
-                       shadow_height: int      =   0 ,
-                       visible      : bool     = True,
-                       enabled      : bool     = True,
-                       active       : bool     = True,
+    def __init__(self, x               : int      = None,
+                       y               : int      = None,
+                       width           : int      = None,
+                       height          : int      = None,
+                       min_value       : Numeric  =   0 ,
+                       max_value       : Numeric  = 100 ,
+                       current_value   : Numeric  =  50 ,
+                       bar_color       : RGBColor = GRAY,
+                       cursor_color    : RGBColor = DARK_RED,
+                       text_font       : Font     = None,
+                       shadow_height   : int      =   0 ,
+                       visible         : bool     = True,
+                       enabled         : bool     = True,
+                       active          : bool     = True,
+                       show_cursor_text: bool     = True,
                        *,          
-                       pos          : Point    = None) -> None:
+                       pos             : Point    = None) -> None:
         '''Constructor.
         
         Args:
@@ -113,6 +114,11 @@ class SliderBase( GUIControlBase ):
                 Set this to True to  get  this  control  as
                 being active.  Set it to False to get it as
                 being inactive. Defaults to True.
+            show_cursor_text: bool
+                Set this to True to get  the  cursor  value 
+                displayed at predefined position, or set it
+                to False to not get it displayed.  Defaults
+                to True.
             pos: Point
                 If set, takes precedence over x and y. This 
                 is  the  position of the top-left corner of 
@@ -142,6 +148,7 @@ class SliderBase( GUIControlBase ):
         
         self.bar_color = bar_color
         self.cursor_color = cursor_color
+        self.show_cursor_text = show_cursor_text
         self.set_font( text_font )
         self.shadow_height = shadow_height
 
@@ -168,7 +175,7 @@ class SliderBase( GUIControlBase ):
         '''
         self.enabled_font = text_font if text_font is not None else self.DEFAULT_FONT
         self.disabled_font = self.enabled_font.copy()
-        self.disabled_font.color //= 2.5
+        self.disabled_font.color //= 3
 
     #-------------------------------------------------------------------------
     def _draw(self, view: View) -> None:
@@ -376,8 +383,8 @@ class SliderBase( GUIControlBase ):
         min_x, min_y = self.list_ticks[0][0]
         max_x, max_y = self.list_ticks[-1][0]
         
-        min_x = max( 5, min_x - min_width // 2 )
-        max_x = min( view.width - max_width - 5, max_x - max_width // 2 )
+        min_x = max( 1, min_x - min_width // 2 )
+        max_x = min( view.width - max_width - 1, max_x - max_width // 2 )
         
         text_font.draw_text( view, Point(min_x, min_y + self.height + text_font.size + 2), min_val )
         text_font.draw_text( view, Point(max_x, max_y + self.height + text_font.size + 2), max_val )
@@ -456,6 +463,7 @@ class IntSlider( SliderBase ):
                        visible      : bool     = True,
                        enabled      : bool     = True,
                        active       : bool     = True,
+                       show_cursor_text: bool  = True,
                        *,          
                        pos          : Point    = None) -> None:
         '''Constructor.
@@ -508,6 +516,11 @@ class IntSlider( SliderBase ):
                 Set this to True to  get  this  control  as
                 being active.  Set it to False to get it as
                 being inactive. Defaults to True.
+            show_cursor_text: bool
+                Set this to True to get  the  cursor  value 
+                displayed at predefined position, or set it
+                to False to not get it displayed.  Defaults
+                to True.
             pos: Point
                 If set, takes precedence over x and y. This 
                 is  the  position of the top-left corner of 
@@ -535,6 +548,7 @@ class IntSlider( SliderBase ):
                           visible               ,
                           enabled               ,
                           active                ,
+                          show_cursor_text      ,
                           pos=pos                 )
                     
     #-------------------------------------------------------------------------
@@ -556,8 +570,9 @@ class IntSlider( SliderBase ):
         self._draw_ticks_values( view, text_font, min_val, max_val )
 
         # then, draws cursor value centered on cursor tick
-        value = f"{self.value:d}"            
-        self._draw_cursor_value( view, text_font, value )
+        if self.show_cursor_text:
+            value = f"{self.value:d}"            
+            self._draw_cursor_value( view, text_font, value )
         
     #-------------------------------------------------------------------------
     def _draw_ticks(self, view: View) -> None:
@@ -579,22 +594,23 @@ class FloatSlider( SliderBase ):
     """The class of control sliders with float values.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, x            : int      = None,
-                       y            : int      = None,
-                       width        : int      = None,
-                       height       : int      = None,
-                       min_value    : float    = 0.0 ,
-                       max_value    : float    = 1.0 ,
-                       current_value: float    = 0.5 ,
-                       bar_color    : RGBColor = GRAY,
-                       cursor_color : RGBColor = DARK_RED,
-                       text_font    : Font     = None,
-                       shadow_height: int      =   0 ,
-                       visible      : bool     = True,
-                       enabled      : bool     = True,
-                       active       : bool     = True,
+    def __init__(self, x               : int      = None,
+                       y               : int      = None,
+                       width           : int      = None,
+                       height          : int      = None,
+                       min_value       : float    = 0.0 ,
+                       max_value       : float    = 1.0 ,
+                       current_value   : float    = 0.5 ,
+                       bar_color       : RGBColor = GRAY,
+                       cursor_color    : RGBColor = DARK_RED,
+                       text_font       : Font     = None,
+                       shadow_height   : int      =   0 ,
+                       visible         : bool     = True,
+                       enabled         : bool     = True,
+                       active          : bool     = True,
+                       show_cursor_text: bool     = True,
                        *,          
-                       pos          : Point    = None) -> None:
+                       pos             : Point    = None) -> None:
         '''Constructor.
 
         Args:
@@ -645,6 +661,11 @@ class FloatSlider( SliderBase ):
                 Set this to True to  get  this  control  as
                 being active.  Set it to False to get it as
                 being inactive. Defaults to True.
+            show_cursor_text: bool
+                Set this to True to get  the  cursor  value 
+                displayed at predefined position, or set it
+                to False to not get it displayed.  Defaults
+                to True.
             pos: Point
                 If set, takes precedence over x and y. This 
                 is  the  position of the top-left corner of 
@@ -658,21 +679,22 @@ class FloatSlider( SliderBase ):
                 'min_value'  or  'current_value'  is outside
                 bounds.
         '''
-        super().__init__( x            ,
-                          y            ,
-                          width        ,
-                          height       ,
-                          min_value    ,
-                          max_value    ,
-                          current_value,
-                          bar_color    ,
-                          cursor_color ,
-                          text_font    ,
-                          shadow_height,
-                          visible      ,
-                          enabled      ,
-                          active       ,
-                          pos=pos        )
+        super().__init__( x               ,
+                          y               ,
+                          width           ,
+                          height          ,
+                          min_value       ,
+                          max_value       ,
+                          current_value   ,
+                          bar_color       ,
+                          cursor_color    ,
+                          text_font       ,
+                          shadow_height   ,
+                          visible         ,
+                          enabled         ,
+                          active          ,
+                          show_cursor_text,
+                          pos=pos           )
                     
     #-------------------------------------------------------------------------
     def _draw_text(self, view: View, text_font: Font) -> None:
@@ -687,8 +709,8 @@ class FloatSlider( SliderBase ):
                 be drawn.  Notice: this font is evaluated
                 outside this method.
         '''
-        min_val = f"{self.min_value:.1f}"            
-        max_val = f"{self.max_value:.1f}"
+        min_val = f"{self.min_value:.1f}".rstrip( '0' ).rstrip( '.' )
+        max_val = f"{self.max_value:.1f}".rstrip( '0' ).rstrip( '.' )
         
         min_width = text_font.get_text_width( min_val )      
         max_width = text_font.get_text_width( max_val )
@@ -696,10 +718,13 @@ class FloatSlider( SliderBase ):
         self.list_ticks = self._evaluate_ticks_pos( view )
         min_x, min_y = self.list_ticks[0][0]
         max_x, max_y = self.list_ticks[-1][0]
-        max_x -= max_width
+
+        min_x = max( 1, min_x - min_width // 2 )
+        max_x = min( view.width - max_width - 1, max_x - max_width // 2 )
         
-        text_font.draw_text( view, Point(min_x, min_y + self.height + 5), min_val )
-        text_font.draw_text( view, Point(max_x, max_y + self.height + 5), max_val )
+        text_font.draw_text( view, Point(min_x, min_y + self.height + text_font.size + 2), min_val )
+        text_font.draw_text( view, Point(max_x, max_y + self.height + text_font.size + 2), max_val )
+
 
     #-------------------------------------------------------------------------
     def _draw_ticks(self, view: View) -> None:
