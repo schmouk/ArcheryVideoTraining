@@ -173,9 +173,10 @@ class SliderBase( GUIControlBase ):
                 A reference to the font to be used, mostly
                 to put numbers near the slider.
         '''
-        self.enabled_font = text_font if text_font is not None else self.DEFAULT_FONT
-        self.disabled_font = self.enabled_font.copy()
-        self.disabled_font.color //= 3
+        self.enabled_font  = text_font if text_font is not None else self.DEFAULT_FONT
+        self.inactive_font = text_font.copy().set_color( self.bar_color )
+        self.disabled_font = self.inactive_font.copy()
+        self.disabled_font.color //= 1.5
 
     #-------------------------------------------------------------------------
     def _draw(self, view: View) -> None:
@@ -207,7 +208,10 @@ class SliderBase( GUIControlBase ):
                 this control. 
         '''
         if self.enabled:
-            color = self.bar_color
+            if self.active:
+                color = self.enabled_font.color
+            else:
+                color = self.bar_color
         else:
             color = self.bar_color // 2
         bright_color = color * 1.40
@@ -246,7 +250,7 @@ class SliderBase( GUIControlBase ):
                 this control. 
         '''
         if self.enabled:
-            color = self.cursor_color if self.active else self.cursor_color // 1.5
+            color = self.cursor_color if self.active else self.bar_color // 1.5
         else:
             color = self.bar_color // 2
         
@@ -414,7 +418,10 @@ class SliderBase( GUIControlBase ):
         Returns:
             A reference to the finally evaluated font.
         '''
-        return self.enabled_font if self.enabled else self.disabled_font
+        if self.enabled:
+            return self.enabled_font if self.active else self.inactive_font
+        else:
+            return self.disabled_font
               
     #-------------------------------------------------------------------------
     def _evaluate_ticks_pos(self, view: View) -> List[ Tuple[ Tuple[int,int], Tuple[int,int] ] ]:

@@ -502,7 +502,123 @@ def prepare_record_icons() -> None:
     except Exception as e:
         print( 'failed due to exception', str(e) )
 
-    
+#-------------------------------------------------------------------------
+def prepare_replay_icons() -> None:
+    '''Preparation of the icons for playing recorded video sequences.
+    '''
+    #---------------------------------------------------------------------
+    def not_in_icon(x: int, y: int, icons_pos: list) -> bool:
+        '''returns True if coordinates are not in any icon disk.
+        '''
+        for icn_pos in icons_pos:
+            if icn_pos[0] <= x <= icn_pos[1]:
+                if icn_pos[2] <= y <= icn_pos[3]:
+                    radius = (icn_pos[1] - icn_pos[0]) // 2 - 1
+                    x0 = (icn_pos[1] + icn_pos[0]) // 2
+                    y0 = (icn_pos[3] + icn_pos[2]) // 2
+                    x_ = x - x0
+                    y_ = y - y0
+                    if x_*x_ + y_*y_ <= radius*radius:
+                        return False
+        return True
+    #---------------------------------------------------------------------
+    def create_icons(from_img: np.ndarray,
+                     icons_pos: list,
+                     icons_index: dict,
+                     icon_name: str) -> None:
+        '''creates the disabled, off and on icons for specified button.
+        '''
+        index = icons_index[ icon_name ]
+        x_min, x_max, y_min, y_max = icons_pos[ index ]
+        icon_img = from_img[ y_min:y_max+1, x_min:x_max+1, : ]
+                
+        img = icon_img.copy()
+        img[img != 32 ] //= 3
+        cv2.imwrite( f'../../../../picts/controls/{icon_name}-48-disabled.png',
+                     cv2.resize(img, (48,48), interpolation=cv2.INTER_CUBIC ) )
+        img = cv2.resize( img, (25,25), interpolation=cv2.INTER_CUBIC )
+        img = cv2.circle( img, (12,12), 12, BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (12,12), 11, (WHITE//3).color, 1, cv2.LINE_AA )
+        cv2.imwrite( f'../../../../picts/controls/{icon_name}-25-disabled.png', img )
+                   
+        img = icon_img.copy().astype( np.float )
+        coeff_div = 1.55
+        img[ img != 32 ] //= coeff_div
+        cv2.imwrite( f'../../../../picts/controls/{icon_name}-48-off.png',
+                     cv2.resize( img.round().astype(np.uint8), (48,48), interpolation=cv2.INTER_CUBIC ) )
+        img = cv2.resize( img.round().astype(np.uint8), (25,25), interpolation=cv2.INTER_CUBIC )
+        img = cv2.circle( img, (12,12), 12, BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (12,12), 11, (WHITE // coeff_div).color, 1, cv2.LINE_AA )
+        cv2.imwrite( f'../../../../picts/controls/{icon_name}-25-off.png', img )
+
+        img = icon_img.copy()
+        img[:,:,0][ img[:,:,0] != 32 ] = 0
+        cv2.imwrite( f'../../../../picts/controls/{icon_name}-48-on.png',
+                     cv2.resize(img, (48,48), interpolation=cv2.INTER_CUBIC ) )
+        img = cv2.resize( img, (25,25), interpolation=cv2.INTER_CUBIC )
+        img = cv2.circle( img, (12,12), 12, BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (12,12), 11, YELLOW.color, 1, cv2.LINE_AA )
+        cv2.imwrite( f'../../../../picts/controls/{icon_name}-25-on.png', img )
+
+
+    #---------------------------------------------------------------------
+
+    print( 'replay icons: ', end='' )
+    try:
+        initial_img = cv2.imread( '../../../../picts/controls/raw/replay-buttons.png' )
+        
+        # evaluate positions of icons in this initial image
+        binary_img = initial_img.copy()[ :, :, 0 ]
+        binary_img[ binary_img <  64 ] = 1
+        binary_img[ binary_img >= 64 ] = 0
+        contours = cv2.findContours( binary_img, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE )[ 0 ]
+
+        icons_pos = []
+        for cntr in contours:
+            min_x = min( cntr[:,0,0] )
+            max_x = max( cntr[:,0,0] )
+            min_y = min( cntr[:,0,1] )
+            max_y = max( cntr[:,0,1] )
+            icons_pos.append( (min_x, max_x, min_y, max_y) )
+        
+        # prepares colors
+        img = initial_img.copy()
+        img[ img < 40 ] = 0
+        height, width = img.shape[ :2 ]
+        for y in range( height ):
+            for x in range( width ):
+                if not_in_icon( x, y, icons_pos ) and img[y,x,0] > 40:
+                    img[y,x] = (32, 32, 32)
+        
+        # creates icons
+        icons_index = {
+            'sound': 0,
+            'pause': 1,
+            'record_on': 2,
+            'record_pause': 3,
+            'replay': 4,
+            'record': 5,
+            'step-fw': 6,
+            'step-bw': 7,
+            'switch': 8,
+            'ffw': 9,
+            'fbw': 10,
+            'play': 11,
+        }
+        
+        create_icons( img, icons_pos, icons_index, 'sound' )
+        create_icons( img, icons_pos, icons_index, 'pause' )
+        create_icons( img, icons_pos, icons_index, 'step-fw' )
+        create_icons( img, icons_pos, icons_index, 'step-bw' )
+        create_icons( img, icons_pos, icons_index, 'ffw' )
+        create_icons( img, icons_pos, icons_index, 'fbw' )
+        create_icons( img, icons_pos, icons_index, 'play' )
+        
+        print( ' ok' )
+
+    except Exception as e:
+        print( 'failed due to exception', str(e) )
+
 #-------------------------------------------------------------------------
 def prepare_switch_buttons() -> None:
     '''Preparation of the camera buttons.
@@ -677,8 +793,11 @@ if __name__ == '__main__':
     prepare_match_icons()
     prepare_overlay_icons()
     prepare_record_icons()
+    prepare_replay_icons()
     prepare_switch_buttons()
     prepare_target_button()
     prepare_timer_icons()
+    
+    print( "\n-- done!" )
 
 #=====   end of   src.GUIItems.Controls._private.prepare_controls_picts   =====#

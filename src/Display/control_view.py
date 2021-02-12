@@ -85,28 +85,28 @@ class ControlView( Thread, AVTView ):
                                                          None,
                                                          y + self.ICON_HEIGHT*cam_id ) )
         
-        y += AVTConfig.CAMERAS_MAX_COUNT * self.ICON_HEIGHT
+        y += AVTConfig.CAMERAS_MAX_COUNT * self.ICON_HEIGHT + 6
         self.target_ctrl   = self._CtrlTarget(   5, y, False, False )
         
-        y += self.ICON_PADDING + self.ICON_HEIGHT
+        y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
+        self.lines_ctrl    = self._CtrlLines(    5, y, False, False )
+        
+        y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
         self.delay_ctrl    = self._CtrlDelay(    5, y , False, False )
         
         y += self.ICON_PADDING * 2 + self.ICON_HEIGHT
-        self.record_ctrl   = self._CtrlRecord(   5, y, False, False )
+        self.record_ctrl   = self._CtrlRecord(   5, y, True, True )
         
         y += self.ICON_PADDING + self.ICON_HEIGHT
-        self.replay_ctrl   = self._CtrlReplay(   5, y, False, False )
+        self.replay_ctrl   = self._CtrlReplay(   5, y, True, True )
         
-        y += self.ICON_PADDING + self.ICON_HEIGHT
+        y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
         self.overlays_ctrl = self._CtrlOverlays( 5, y, False, False )
-        
-        y += (self.overlays_ctrl._SIZE - self.ICON_HEIGHT) + self.ICON_PADDING + self.ICON_HEIGHT
-        self.lines_ctrl    = self._CtrlLines(    5, y, False, False )
 
-        y += self.ICON_PADDING + self.ICON_HEIGHT
+        y += (self.overlays_ctrl._SIZE - self.ICON_HEIGHT) + 2 * self.ICON_PADDING + self.ICON_HEIGHT
         self.timer_ctrl    = self._CtrlTimer(    5, y, False, False )
 
-        y += self.ICON_PADDING + self.ICON_HEIGHT
+        y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
         self.match_ctrl    = self._CtrlMatch(    5, y, False, False )
 
         self.exit_ctrl     = self._CtrlExit( self.width, self.height )
@@ -397,7 +397,7 @@ class ControlView( Thread, AVTView ):
                                      max_value = 12,
                                      current_value = 7,
                                      bar_color = GRAY,
-                                     cursor_color = GrayColor( 211 ),
+                                     cursor_color = self._TICKS_FONT_ENABLED.color,
                                      text_font = self._TICKS_FONT_ENABLED,
                                      shadow_height = 0,
                                      visible = True,
@@ -429,7 +429,7 @@ class ControlView( Thread, AVTView ):
         _ICON_ON       = cv2.imread( '../picts/controls/delay-on.png' )
         _SIZE = _ICON_ON.shape[ 0 ]
         _TICKS_FONT_SIZE = 8
-        _TICKS_FONT_ENABLED = Font( _TICKS_FONT_SIZE, LIGHT_GRAY )
+        _TICKS_FONT_ENABLED = Font( _TICKS_FONT_SIZE, YELLOW // 1.33 )
 
 
     #-------------------------------------------------------------------------
@@ -455,6 +455,7 @@ class ControlView( Thread, AVTView ):
             self.height, self.width = self._ICON_EXIT.shape[:2]
             super().__init__( (view_width - self.width) // 2,
                               view_height - self.height - 12  )
+            
         #---------------------------------------------------------------------
         def draw(self, view: View) -> None:
             '''Draws a control in its embedding content.
@@ -468,6 +469,7 @@ class ControlView( Thread, AVTView ):
                               self.x:self.x+self.width , : ] = self._ICON_EXIT[ :, :, : ]
             except:
                 pass
+            
         #---------------------------------------------------------------------
         _ICON_EXIT = cv2.imread( '../picts/controls/exit-48.png' )
 
@@ -510,6 +512,7 @@ class ControlView( Thread, AVTView ):
                       (x, y),
                       (x, y + self._LINE_LENGTH),
                       color.color, self._LINE_THICKNESS, cv2.LINE_AA )
+            
         #---------------------------------------------------------------------
         _LINE_LENGTH = 35
         _LINE_THICKNESS = 7
@@ -567,6 +570,7 @@ class ControlView( Thread, AVTView ):
         _ICON_ON       = cv2.imread( '../picts/controls/overlays-on.png' )
         _SIZE = _ICON_ON.shape[ 0 ]
 
+
     #-------------------------------------------------------------------------
     class _CtrlRecord( _CtrlBase ):
         '''The video recording control.
@@ -613,7 +617,7 @@ class ControlView( Thread, AVTView ):
                                        max_value = 130,
                                        current_value = 60,
                                        bar_color = GRAY,
-                                       cursor_color = GrayColor( 211 ),
+                                       cursor_color = self._TICKS_FONT_ENABLED.color,
                                        text_font = self._TICKS_FONT_ENABLED,
                                        shadow_height = 0,
                                        visible = True,
@@ -629,42 +633,47 @@ class ControlView( Thread, AVTView ):
                 view: View
                     A reference to the embedding view.
             '''
+            cursor_text = str( self.slider.value )
+
             if self.enabled:
                 if self.is_active:
                     img = self._ICON_ON
-                    font = self._FONT_ON
+                    font = self._FONT_2_ON if len(cursor_text) < 3 else self._FONT_3_ON
                 else:
                     img = self._ICON_OFF
-                    font = self._FONT_OFF
+                    font = self._FONT_2_OFF if len(cursor_text) < 3 else self._FONT_3_OFF
             else:
                 img = self._ICON_DISABLED
-                font = self._FONT_DISABLED
+                font = self._FONT_2_DISABLED if len(cursor_text) < 3 else self._FONT_3_DISABLED
                 
             x = (view.WIDTH - self._ICON_SIZE) // 2
             y = self.y + 1
             
             view.content[ y:y+self._ICON_SIZE, x:x+self._ICON_SIZE, : ] = img[ :, :, : ]
             
-            cursor_text = str( self.slider.value )
             cursor_text_width = font.get_text_width( cursor_text )
-            x += cursor_text_width // 2 + 2
-            y = self.y - 1 + (self._ICON_SIZE + self._FONT_SIZE) // 2
+            x = (view.WIDTH - cursor_text_width ) // 2 + 1
+            y = self.y + (self._ICON_SIZE + self._FONT_SIZE) // 2 - (2 if len(cursor_text) < 3 else 4)
             font.draw_text( view, Point(x,y), cursor_text, True )
                 
             ##font.draw_text( view, Point(self.x + 5, self.y + self._FONT_SIZE), 'Delay' )
             self.slider.draw( view )
 
         #---------------------------------------------------------------------
-        _FONT_SIZE          = 12
-        _FONT_DISABLED      = Font( _FONT_SIZE, GRAY )
-        _FONT_OFF           = Font( _FONT_SIZE, LIGHT_GRAY )
-        _FONT_ON            = Font( _FONT_SIZE, YELLOW )
+        _FONT_3_SIZE        = 8
+        _FONT_2_SIZE        = 11
+        _FONT_3_DISABLED    = Font( _FONT_3_SIZE, GRAY )
+        _FONT_3_OFF         = Font( _FONT_3_SIZE, LIGHT_GRAY )
+        _FONT_3_ON          = Font( _FONT_3_SIZE, YELLOW )
+        _FONT_2_DISABLED    = Font( _FONT_2_SIZE, GRAY )
+        _FONT_2_OFF         = Font( _FONT_2_SIZE, LIGHT_GRAY )
+        _FONT_2_ON          = Font( _FONT_2_SIZE, YELLOW )
         _ICON_DISABLED      = cv2.imread( '../picts/controls/record-disabled.png' )
         _ICON_OFF           = cv2.imread( '../picts/controls/record-off.png' )
         _ICON_ON            = cv2.imread( '../picts/controls/record-on.png' )
         _ICON_SIZE          = _ICON_ON.shape[ 0 ]
         _TICKS_FONT_SIZE    = 8
-        _TICKS_FONT_ENABLED = Font( _TICKS_FONT_SIZE, LIGHT_GRAY )
+        _TICKS_FONT_ENABLED = Font( _TICKS_FONT_SIZE, YELLOW // 1.33 )
 
 
     #-------------------------------------------------------------------------
@@ -679,7 +688,68 @@ class ControlView( Thread, AVTView ):
                 view: View
                     A reference to the embedding view.
             '''
-            super().draw( view )
+            if self.enabled:
+                if self.is_active:
+                    icons = (self._ICON_STEP_BW_ON,
+                             self._ICON_STEP_FW_ON,
+                             self._ICON_PLAY_ON,
+                             self._ICON_FBW_ON,
+                             self._ICON_FFW_ON)
+                else:
+                    icons = (self._ICON_STEP_BW_OFF,
+                             self._ICON_STEP_FW_OFF,
+                             self._ICON_PLAY_OFF,
+                             self._ICON_FBW_OFF,
+                             self._ICON_FFW_OFF)
+            else:
+                icons = (self._ICON_STEP_BW_DISABLED,
+                         self._ICON_STEP_FW_DISABLED,
+                         self._ICON_PLAY_DISABLED,
+                         self._ICON_FBW_DISABLED,
+                         self._ICON_FFW_DISABLED)
+
+            x0 = self.x + 5
+            y0 = self.y + 23
+            x1 = x0 + self._SIZE
+            x2 = x1 + self._SIZE
+            y1 = y0 + self._SIZE // 2 + 2
+            y2 = y0 + self._SIZE + 3
+            
+            view.content[ y0:y0+self._SIZE,
+                          x0:x0+self._SIZE, : ] = icons[0][:,:,:]
+
+            view.content[ y0:y0+self._SIZE,
+                          x2:x2+self._SIZE, : ] = icons[1][:,:,:]
+
+            view.content[ y1:y1+self._SIZE,
+                          x1:x1+self._SIZE, : ] = icons[2][:,:,:]            
+            
+            view.content[ y2:y2+self._SIZE,
+                          x0:x0+self._SIZE, : ] = icons[3][:,:,:]
+
+            view.content[ y2:y2+self._SIZE,
+                          x2:x2+self._SIZE, : ] = icons[4][:,:,:]
+                                         
+        #---------------------------------------------------------------------
+        _ICON_FBW_DISABLED     = cv2.imread( '../picts/controls/fbw-25-disabled.png' )
+        _ICON_FBW_OFF          = cv2.imread( '../picts/controls/fbw-25-off.png' )
+        _ICON_FBW_ON           = cv2.imread( '../picts/controls/fbw-25-on.png' )
+        _ICON_FFW_DISABLED     = cv2.imread( '../picts/controls/ffw-25-disabled.png' )
+        _ICON_FFW_OFF          = cv2.imread( '../picts/controls/ffw-25-off.png' )
+        _ICON_FFW_ON           = cv2.imread( '../picts/controls/ffw-25-on.png' )
+        _ICON_PAUSE_DISABLED   = cv2.imread( '../picts/controls/pause-25-disabled.png' )
+        _ICON_PAUSE_OFF        = cv2.imread( '../picts/controls/pause-25-off.png' )
+        _ICON_PAUSE_ON         = cv2.imread( '../picts/controls/pause-25-on.png' )
+        _ICON_PLAY_DISABLED    = cv2.imread( '../picts/controls/play-25-disabled.png' )
+        _ICON_PLAY_OFF         = cv2.imread( '../picts/controls/play-25-off.png' )
+        _ICON_PLAY_ON          = cv2.imread( '../picts/controls/play-25-on.png' )
+        _ICON_STEP_BW_DISABLED = cv2.imread( '../picts/controls/step-bw-25-disabled.png' )
+        _ICON_STEP_BW_OFF      = cv2.imread( '../picts/controls/step-bw-25-off.png' )
+        _ICON_STEP_BW_ON       = cv2.imread( '../picts/controls/step-bw-25-on.png' )
+        _ICON_STEP_FW_DISABLED = cv2.imread( '../picts/controls/step-fw-25-disabled.png' )
+        _ICON_STEP_FW_OFF      = cv2.imread( '../picts/controls/step-fw-25-off.png' )
+        _ICON_STEP_FW_ON       = cv2.imread( '../picts/controls/step-fw-25-on.png' )
+        _SIZE = 25 ##_ICON_PLAY_ON.shape[0]
         
 
     #-------------------------------------------------------------------------
@@ -707,6 +777,7 @@ class ControlView( Thread, AVTView ):
         _ICON_INACTIVE = cv2.imread( '../picts/controls/target-off.png' )
         _ICON_DISABLED = cv2.imread( '../picts/controls/target-disabled.png' )
         _SIZE = _ICON_ACTIVE.shape[0]
+
 
     #-------------------------------------------------------------------------
     class _CtrlTimer( _CtrlBase ):
