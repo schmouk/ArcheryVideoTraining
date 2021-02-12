@@ -23,15 +23,16 @@ SOFTWARE.
 """
 
 #=============================================================================
-from .avt_fonts              import AVTDefaultFont
-from .font                   import Font
-from src.Shapes.point        import Point
-from src.Display.rgb_color   import RGBColor
-from src.Display.view        import View
+from .avt_fonts          import AVTDefaultFont
+from src.GUIItems.Controls.gui_control_base   import GUIControlBase
+from .font               import Font
+from src.Shapes.point    import Point
+from src.Utils.rgb_color import RGBColor
+from src.Display.view    import View
 
 
 #=============================================================================
-class Label:
+class Label( GUIControlBase ):
     """The class of labels items used with the GUI.
     
     Notice: current version is a first draft one.
@@ -133,7 +134,7 @@ class Label:
         if color != self.font.bg_color:
             if self.font is AVTDefaultFont:
                 self.font = AVTDefaultFont.copy()
-            self.font.bg_color = color
+            self.font.bg_color = color.copy()
 
     #-------------------------------------------------------------------------
     def set_color(self, color: RGBColor) -> None:
@@ -147,7 +148,7 @@ class Label:
         if color != self.font.color:
             if self.font is AVTDefaultFont:
                 self.font = AVTDefaultFont.copy()
-            self.font.color = color
+            self.font.color = color.copy()
 
     #-------------------------------------------------------------------------
     def set_font(self, font: Font = None, size: int = None) -> None:
@@ -166,7 +167,7 @@ class Label:
         '''
         if font is None:
             if size is None or size == AVTDefaultFont.size:
-                self.font = AVTDefaultFont
+                self.font = AVTDefaultFont.copy()
             else:
                 self.font = AVTDefaultFont.copy().set_size( size )
         else:

@@ -25,7 +25,7 @@ SOFTWARE.
 #=============================================================================
 from .view           import AVTWindowRef
 from src.Shapes.rect import Rect
-from .rgb_color      import RGBColor
+from src.Utils.rgb_color      import RGBColor
 from .view_prop      import ViewProp
 
 

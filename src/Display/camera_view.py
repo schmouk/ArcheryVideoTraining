@@ -29,20 +29,18 @@ from threading import Thread
 import time
 
 from src.App.avt_config                      import AVTConfig
+from .avt_view_prop                          import AVTViewProp
 from .avt_window                             import AVTWindowRef
 from src.Cameras.camera                      import Camera
 from src.GUIItems.font                       import Font
 from src.Display.fps_rate                    import FPSRateFrames
-from src.Buffers.frames_acquisition_buffer   import FramesAcquisitionBuffer
-from src.Utils.indexed_frame                 import IndexedFrame
+from src.Utils.rgb_color                     import GrayColor, RGBColor, YELLOW
 from src.GUIItems.label                      import Label
 from src.Shapes.rect                         import Rect
-from .rgb_color                              import RGBColor, YELLOW
-from .view_prop                              import ViewProp
   
 
 #=============================================================================
-class CameraView( Thread, ViewProp ):
+class CameraView( Thread, AVTViewProp ):
     """The class description.
     """
     def __init__(self, parent     : AVTWindowRef,
@@ -78,9 +76,7 @@ class CameraView( Thread, ViewProp ):
             ValueError:  Some  of  the  coordinates  or  sizes 
                 values are outside interval [0.0, 1.0].
         '''
-        print( f"creates camera view #{camera.cam_id}" )
-        
-        self.label = Label( self, f"Cam-{camera.cam_id}", 20, 40 )
+        self.label = Label( self, f"Cam-{camera.get_id()}", 20, 40 )
         self.fps_label = Label( self, "", 20, 70, None, Font(14, YELLOW) )
         self.fps_rate = FPSRateFrames( 15 )
         ##self.buffer = FramesAcquisitionBuffer()
@@ -90,27 +86,24 @@ class CameraView( Thread, ViewProp ):
         CameraView._CAM_VIEWS_COUNT += 1
 
         Thread.__init__( self, name=name )
-        ViewProp.__init__( self, parent, x, y, width, height, RGBColor(16,16,16), parent_rect )
+        AVTViewProp.__init__( self, parent, x, y, width, height, parent_rect )
         
         ##self.camera.set_hw_dims( width, height )
 
+        self.draw()
+
     #-------------------------------------------------------------------------
-    def draw(self, frame_index: int) -> None:
+    def draw(self) -> None:
         '''Draws the content of this view.
-        
-        Args:
-            frame_index: the index of current frame.
         '''
-        ##self.content = self.buffer.get_frame().copy()
-        
-        self.draw_fps( time.perf_counter() - self.start_time, frame_index )
+        self.draw_fps()
         self.label.draw()
         self.draw_borders()
         super().draw()
 
     #-------------------------------------------------------------------------
     def draw_borders(self) -> None:
-        '''Draws lines on view borders.
+        '''Draws lines on this view borders.
         '''
         bg_color = RGBColor( *AVTConfig.DEFAULT_BACKGROUND.color )
         
@@ -122,18 +115,18 @@ class CameraView( Thread, ViewProp ):
         self.content[  :,  1 ] = bg_color.color
         self.content[  :, -1 ] = bg_color.color
         self.content[  :, -2 ] = bg_color.color
-        
+
         self.content[ 2, 2:-1 ]  = (bg_color / 1.5).color
-        self.content[ 2:-1, 2 ]  = (bg_color / 1.5).color
-        self.content[ -2, 3:-1 ] = (bg_color * 1.5).color
-        self.content[ 3:-1, -2 ] = (bg_color * 1.5).color
+        self.content[ 2:-2, 2 ]  = (bg_color / 1.5).color
+        self.content[ -3, 3:-1 ] = (bg_color * 3).color
+        self.content[ 3:-3, -2 ] = (bg_color * 3).color
         self.content[ 3, 3:-2 ]  = (bg_color / 2).color
-        self.content[ 4:-2, 3 ]  = (bg_color / 2).color
-        self.content[ -3, 4:-2 ] = (bg_color * 3).color
-        self.content[ 4:-3, -3 ] = (bg_color * 3).color
+        self.content[ 4:-3, 3 ]  = (bg_color / 2).color
+        self.content[ -4, 4:-2 ] = (bg_color * 1.5).color
+        self.content[ 4:-3, -3 ] = (bg_color * 1.5).color
 
     #-------------------------------------------------------------------------
-    def draw_fps(self, elapsed_time: float, frames_count: int) -> None:
+    def draw_fps(self) -> None:
         '''Draws the frames per second rate.
         '''
         self.fps_rate.new_frame()
@@ -155,8 +148,6 @@ class CameraView( Thread, ViewProp ):
     def run(self) -> None:
         '''The acquisition method once this thread has been started.
         '''
-        print( f"running {self.name}" )
-        
         frame_index = 0
         self.keep_on = self.is_ok()
         
@@ -164,7 +155,8 @@ class CameraView( Thread, ViewProp ):
         self.fps_rate.start()
         
         while self.keep_on:
-            frame = self.camera.read()
+            frame = cv2.flip( self.camera.read(), 1 )  # notice: we're mirroring the captured frame
+            
             if frame is None:
                 time.sleep( 0.020 )
             else:
@@ -186,20 +178,17 @@ class CameraView( Thread, ViewProp ):
                     x = (self.width - new_width) // 2
                     y = (self.height - new_height) // 2
                     
-                    view_content = np.zeros( (self.height, self.width, 3) ) + 16
-                    view_content[ y:y+new_height,
+                    self.content = np.zeros( (self.height, self.width, 3), np.uint8 ) + 16
+                    self.content[ y:y+new_height,
                                   x:x+new_width, : ] = frame[ :new_height, :new_width, : ] 
                 
                 else:
-                    view_content = frame
+                    self.content = frame.copy()
                 
-                self.content = cv2.flip( view_content, 1 )
-                
-                self.draw( frame_index )
+                self.draw()
                 ##self.buffer.set( IndexedFrame(frame_index, frame) )
+                
             frame_index += 1
-        
-        print( f"finally stopping {self.name}" )
         
         self.camera.release()
 
@@ -207,8 +196,6 @@ class CameraView( Thread, ViewProp ):
     def stop(self) -> None:
         '''Definitively stops this acquisition thread.
         '''
-        print( f"stopping {self.name}" )
-
         self.keep_on = False
 
     #-------------------------------------------------------------------------

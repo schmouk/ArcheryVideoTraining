@@ -26,6 +26,7 @@ SOFTWARE.
 ## This module defines:
 #
 #    class RGBColor
+#    class GrayColor
 #
 # and colors
 #    ANTHRACITE
@@ -44,13 +45,25 @@ SOFTWARE.
 #    RED
 #    YELLOW 
 #    WHITE
+#
+#    TARGET_WHITE
+#    TARGET_BLACK
+#    TARGET_BLUE
+#    TARGET_RED
+#    TARGET_GOLD
+#    TARGET_BLUE_6
+#    TARGET_BLUE_NFAA
+#
 
 #=============================================================================
-from typing import ForwardRef, Union
+from typing import ForwardRef, Optional, Union
+
+from .types import Numeric, PixelColor
 
 
 #=============================================================================
 RGBColorRef = ForwardRef( "RGBColor" )
+Color = Union[ Numeric, PixelColor, RGBColorRef ]
 
 
 #=============================================================================
@@ -99,11 +112,31 @@ class RGBColor:
 
     @property
     def y(self) -> int:
-        return 0.299 * self.color[2] + 0.587 * self.color[1] + 0.114 * self.color[0]
+        return round( 0.299 * self.color[2] + 0.587 * self.color[1] + 0.114 * self.color[0] )
     @y.setter
     def y(self, value: int) -> None:
         comp = self._clipped( value )
         self.color = [ comp, comp, comp ]
+        
+    #-------------------------------------------------------------------------
+    def copy(self, other: RGBColorRef = None) -> Optional[ RGBColorRef ]:
+        '''Copies an RGB color.
+        
+        Args:
+            other: RGBColor
+                Either a reference to an RGB color to  be  copied 
+                in  this  color,  or None in which case a copy of 
+                this color is returned.
+        
+        Returns:
+            Either nothing if 'other' is set, or a reference to a
+            new  instance of RGBColor initialized with the values 
+            of this color attributes.
+        '''
+        if other is None:
+            return RGBColor( self.r, self.g, self.b )
+        else:
+            self.set( other.r, other.g, other.b )
         
     #-------------------------------------------------------------------------
     def set(self, r: int, g: int, b: int) -> None:
@@ -132,60 +165,160 @@ class RGBColor:
         return 0 if value <= 0 else 255 if value >= 255 else value
 
     #-------------------------------------------------------------------------
-    def __eq__(self, other: RGBColorRef) -> bool:
+    def __eq__(self, other: Color) -> bool:
         '''Returns True if both colors have same color components.
         '''
-        return self.color == other.color
+        try:
+            return self.color == other.color
+        except:
+            try:
+                return self.color == other
+            except:
+                return self.color == (other, other, other)
 
     #-------------------------------------------------------------------------
-    def __ne__(self, other: RGBColorRef) -> bool:
+    def __ne__(self, other: Color) -> bool:
         '''Returns True if any same color component differs in this and in other.
         '''
-        return self.color != other.color
+        try:
+            return self.color != other.color
+        except:
+            try:
+                return self.color != other
+            except:
+                return self.color != (other, other, other)
 
     #-------------------------------------------------------------------------
-    def __floordiv__(self, den: Union[int,float]) -> RGBColorRef:
+    def __add__(self, other: Color) -> RGBColorRef:
+        '''
+        '''
+        try:
+            return RGBColor( self.r + other.r, self.g + other.g, self.r + other.b )
+        except:
+            try:
+                return RGBColor( self.r + other[0], self.g + other[1], self.b + other[2] )
+            except:
+                return RGBColor( self.r + other, self.g + other, self.b + other )
+
+    #-------------------------------------------------------------------------
+    def __iadd__(self, other: Color) -> RGBColorRef:
+        '''
+        '''
+        try:
+            self.set( self.r + other.r, self.g + other.g, self.r + other.b )
+        except:
+            try:
+                self.set( self.r + other[0], self.g + other[1], self.b + other[2] )
+            except:
+                self.set( self.r + other, self.g + other, self.b + other )
+        return self
+
+    #-------------------------------------------------------------------------
+    def __radd__(self, other: Color) -> RGBColorRef:
+        '''
+        '''
+        return self.add( other )
+
+    #-------------------------------------------------------------------------
+    def __floordiv__(self, den: Numeric) -> RGBColorRef:
         '''
         '''
         return RGBColor( int(self.r / den), int(self.g / den), int(self.b / den) )
 
     #-------------------------------------------------------------------------
-    def __ifloordiv__(self, den: Union[int,float]) -> RGBColorRef:
+    def __ifloordiv__(self, den: Numeric) -> RGBColorRef:
         '''
         '''
         self.set( int(self.r / den), int(self.g / den), int(self.b / den) )
+        return self
 
     #-------------------------------------------------------------------------
-    def __mul__(self, coeff: Union[int,float]) -> RGBColorRef:
+    def __mul__(self, coeff: Numeric) -> RGBColorRef:
         '''
         '''
         return RGBColor( round(self.r * coeff), round(self.g * coeff), round(self.b * coeff) )
 
     #-------------------------------------------------------------------------
-    def __imul__(self, coeff: Union[int,float]) -> RGBColorRef:
+    def __imul__(self, coeff: Numeric) -> RGBColorRef:
         '''
         '''
         self.set( round(self.r * coeff), round(self.g * coeff), round(self.b * coeff) )
         return self
 
     #-------------------------------------------------------------------------
-    def __rmul__(self, coeff: Union[int,float]) -> RGBColorRef:
+    def __rmul__(self, coeff: Numeric) -> RGBColorRef:
         '''
         '''
         return RGBColor( round(self.r * coeff), round(self.g * coeff), round(self.b * coeff) )
 
     #-------------------------------------------------------------------------
-    def __truediv__(self, den: Union[int,float]) -> RGBColorRef:
+    def __sub__(self, other: Color) -> RGBColorRef:
+        '''
+        '''
+        try:
+            return RGBColor( self.r - other.r, self.g - other.g, self.r - other.b )
+        except:
+            try:
+                return RGBColor( self.r - other[0], self.g - other[1], self.b - other[2] )
+            except:
+                return RGBColor( self.r - other, self.g - other, self.b - other )
+
+    #-------------------------------------------------------------------------
+    def __isub__(self, other: Color) -> RGBColorRef:
+        '''
+        '''
+        try:
+            self.set( self.r - other.r, self.g - other.g, self.r - other.b )
+        except:
+            try:
+                self.set( self.r - other[0], self.g - other[1], self.b - other[2] )
+            except:
+                self.set( self.r - other, self.g - other, self.b - other )
+        return self
+
+    #-------------------------------------------------------------------------
+    def __rsub__(self, other: Color) -> RGBColorRef:
+        '''
+        '''
+        try:
+            return RGBColor( other.r - self.r, other.g - self.g, other.b - self.b  )
+        except:
+            try:
+                return RGBColor( other[0] - self.r, other[1] - self.g, other[2] - self.b )
+            except:
+                return RGBColor( other - self.r, other - self.g, other- self.b )
+
+    #-------------------------------------------------------------------------
+    def __truediv__(self, den: Numeric) -> RGBColorRef:
         '''
         '''
         return RGBColor( round(self.r / den), round(self.g / den), round(self.b / den) )
 
     #-------------------------------------------------------------------------
-    def __itruediv__(self, den: Union[int,float]) -> RGBColorRef:
+    def __itruediv__(self, den: Numeric) -> RGBColorRef:
         '''
         '''
         self.set( round(self.r / den), round(self.g / den), round(self.b / den) )
         return self
+
+
+#=============================================================================
+class GrayColor( RGBColor ):
+    """The class of RGB gray colors.
+    
+    """
+    #-------------------------------------------------------------------------
+    def __init__(self, comp: int) -> None:
+        '''Constructor.
+        
+        Args:
+            comp: int
+                The value of the gray level of this gray color,
+                clipped within interval [0, 255].
+                Notice:  value 0 stands for  black,  value  255
+                stands for white.
+        '''
+        super().__init__( comp, comp, comp )
 
 
 #=============================================================================
@@ -206,4 +339,13 @@ RED         = RGBColor( 255, 0, 0 )
 YELLOW      = RGBColor( 255, 255, 0 )
 WHITE       = RGBColor( 255, 255, 255 )
 
-#=====   end of   src.Display.rgb_color   =====#
+TARGET_WHITE = RGBColor( 255, 255, 255 )
+TARGET_BLACK = RGBColor(   0,   0,   0 )
+TARGET_BLUE  = RGBColor(  65, 181, 200 )
+TARGET_RED   = RGBColor( 255,  37,  21 )
+TARGET_GOLD  = RGBColor( 255, 245,  55 )
+
+TARGET_BLUE_6 = RGBColor( 17, 165, 255 )
+TARGET_BLUE_NFAA = RGBColor( 63, 63,  95 )
+
+#=====   end of   src.Utils.rgb_color   =====#

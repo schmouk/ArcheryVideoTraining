@@ -22,7 +22,6 @@ SOFTWARE.
 
 #=============================================================================
 import cv2
-import time
 
 from src.Display.main_window     import MainWindow
 
@@ -36,7 +35,6 @@ def avt_main():
     main_window = MainWindow()
      
     #-- shows the main window
-    print( "draws main window content" )
     main_window.draw()
     
     #-- starts the cameras acquisition
@@ -49,14 +47,6 @@ def avt_main():
     
     #-- stops cameras acquisition
     main_window.stop_views()
-    
-    #===========================================================================
-    # with main_window.cameras_pool:
-    #     # interactions with mouse & keyboard
-    #     while True:
-    #         if cv2.waitKey( 20 ) == 27:
-    #             break
-    #===========================================================================
      
     #-- releases all allocated resources
     cv2.destroyAllWindows()

@@ -35,10 +35,10 @@ SOFTWARE.
 import cv2
 from typing import ForwardRef, Optional
 
-from src.Shapes.offset       import Offset
-from src.Shapes.point        import Point
-from src.Display.rgb_color   import RGBColor, WHITE
-from src.Display.view        import View
+from src.Shapes.offset   import Offset
+from src.Shapes.point    import Point
+from src.Utils.rgb_color import RGBColor, WHITE
+from src.Display.view    import View
 
 
 #=============================================================================
@@ -97,8 +97,8 @@ class Font:
         assert size > 5
         
         self.size = None
-        self.color = color
-        self.bg_color = bg_color
+        self.set_color( color )
+        self.bg_color = bg_color.copy() if bg_color is not None else None
         self.bold = bold
         self.italic = italic
         self.sans_serif = sans_serif
@@ -129,24 +129,30 @@ class Font:
         if other is None:
             return Font( self.size,
                          self.color,
-                         self.bg_color,
+                         self.bg_color if self.bg_color is not None else None,
                          self.bold,
                          self.italic,
                          self.sans_serif )
         else:
             self.size = other.size
-            self.color = other.color
-            self.bg_color = other.bg_color
+            self.set_color( other.color )
+            self.bg_color = other.bg_color.copy() if other.bg_color is not None else None,
             self.bold = other.bold
             self.italic = other.italic
             self.sans_serif = other.sans_serif
+            self.cv_font = other.cv_font
+            self.thickness = other.thickness
+            self.font_scale = other.font_scale
 
     #-------------------------------------------------------------------------
-    def draw_text(self, view: View, pos: Point, text: str ) -> None:
+    def draw_text(self, view    : View ,
+                        pos     : Point,
+                        text    : str  ,
+                        b_shadow: bool = True) -> None:
         '''Draws specified text with this font.
         
         Notice: next version could propose transparency for
-                background  and blurring background also if
+                background and blurring background also  if
                 no background rectangle is set.
         
         Args:
@@ -157,25 +163,24 @@ class Font:
                 the specified view.
             text: str
                 The text to be drawn.
+            b_shadow: bool
+                Set this to True to get a shadowing of  the
+                text, or False otherwise. Defaults to True.
         '''
         if self.bg_color is None:
-            # artifact to get readable chars in frames while transparency is on 
-            color_lum = self.color.y
-            if color_lum > 96:
+            if b_shadow:
+                # artifact to get readable chars in frames while transparency is on 
                 bg_color = (0,0,0)
                 offset = 1
-            else:
-                bg_color = (255,255,255)
-                offset = -1
-
-            view.content = cv2.putText( view.content,
-                                        text,
-                                        (pos + offset).to_tuple(),
-                                        self.cv_font,
-                                        self.font_scale,
-                                        bg_color,
-                                        self.thickness,
-                                        cv2.LINE_AA )
+    
+                view.content = cv2.putText( view.content,
+                                            text,
+                                            (pos + offset).to_tuple(),
+                                            self.cv_font,
+                                            self.font_scale,
+                                            bg_color,
+                                            self.thickness,
+                                            cv2.LINE_AA )
         else:
             # put chars over background solid color
             text_size, baseline = cv2.getTextSize( text, self.cv_font, self.font_scale, self.thickness )
@@ -192,6 +197,38 @@ class Font:
                                     self.color.color,
                                     self.thickness,
                                     cv2.LINE_AA )
+
+    #-------------------------------------------------------------------------
+    def get_text_height(self, text: str) -> int:
+        '''Returns the width (pixels) of the specified text.
+        '''
+        return self.get_text_size( text )[ 1 ]
+
+    #-------------------------------------------------------------------------
+    def get_text_size(self, text: str) -> int:
+        '''Returns the width (pixels) of the specified text.
+        '''
+        return cv2.getTextSize( text, self.cv_font, self.font_scale, self.thickness )[ 0 ]
+
+    #-------------------------------------------------------------------------
+    def get_text_width(self, text: str) -> int:
+        '''Returns the width (pixels) of the specified text.
+        '''
+        return self.get_text_size( text )[ 0 ]
+
+    #-------------------------------------------------------------------------
+    def set_color(self, new_color: RGBColor) -> FontRef:
+        '''Changes the color of this font.
+        
+        Args:
+            new_color: RGBColor
+                A reference to the new color.
+        
+        Returns:
+            A reference to this instance of Font.
+        '''
+        self.color = new_color.copy()
+        return self
 
     #-------------------------------------------------------------------------
     def set_size(self, size: int) -> FontRef:

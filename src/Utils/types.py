@@ -22,12 +22,12 @@ SOFTWARE.
 
 #=============================================================================
 import numpy as np
-from typing import Tuple
+from typing import Union, Tuple
 
 
 #=============================================================================
 Frame      = np.ndarray
-Numeric    = Tuple[ int, float ]
+Numeric    = Union[ int, float ]
 PixelColor = Tuple[ int, int, int ]
 
 

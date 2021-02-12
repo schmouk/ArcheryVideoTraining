@@ -23,8 +23,8 @@ SOFTWARE.
 """
 
 #=============================================================================
-from .font                   import BoldFont
-from src.Display.rgb_color   import YELLOW
+from .font               import BoldFont
+from src.Utils.rgb_color import YELLOW
 
 
 #=============================================================================

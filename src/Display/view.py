@@ -27,7 +27,7 @@ import numpy as np
 from typing import ForwardRef
 from threading import Lock
 
-from .rgb_color import RGBColor
+from src.Utils.rgb_color import RGBColor
 
 
 #=============================================================================
@@ -85,20 +85,45 @@ class View:
         self.content = None
         self._fill_background()
 
+        self.draw()
+
     #-------------------------------------------------------------------------
     def draw(self) -> None:
         '''Draws this view content within the parent window.
+        
+        May be overwritten in inheriting classes. See class
+        'CameraView' or class 'ControlView' for examples of 
+        code.
         '''
         with self.lock:
             self.parent_window.insert_view_content( self )
         self.parent_window.draw()
 
     #-------------------------------------------------------------------------
+    def get_view_content(self) -> np.ndarray:
+        '''Returns a reference to this view content, or None if not yet created.
+        '''
+        try:
+            return self.content
+        except:
+            return None
+
+    #-------------------------------------------------------------------------
+    def join(self) -> None:
+        '''Joins this view, even if it does not inherits from Thread.
+        '''
+        try:
+            super().join()
+        except:
+            pass
+
+    #-------------------------------------------------------------------------
     def start(self) -> None:
         '''Starts the thread that may be associated with this view.
         
-        Should be overwritten in inheriting classes
-        that inherits also from class Thread.
+        Should be overwritten in inheriting classes that 
+        inherits  also  from  class  Thread.  See  class 
+        'CameraView' for an example of code.
         '''
         pass
 
@@ -106,8 +131,9 @@ class View:
     def stop(self) -> None:
         '''Definitively stops the thread that may be associated with this view.
         
-        Should be overwritten in inheriting classes
-        that inherits also from class Thread.
+        Should be overwritten in inheriting classes that 
+        inherits  also  from  class  Thread.  See  class 
+        'CameraView' for an example of code.
         '''
         pass
 
@@ -115,6 +141,6 @@ class View:
     def _fill_background(self) -> None:
         '''Fills the parent window content with the background solid color of this view.
         '''
-        self.content = np.zeros( (self.height, self.width, 3), np.uint8 ) + self.bg_color.color
+        self.content = (np.zeros( (self.height, self.width, 3) ) + self.bg_color.color).astype( np.uint8 )
 
 #=====   end of   src.Display.view   =====#

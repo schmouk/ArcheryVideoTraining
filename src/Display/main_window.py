@@ -23,9 +23,6 @@ SOFTWARE.
 """
 
 #=============================================================================
-import cv2
-import numpy as np
-import time
 from typing import Tuple
 
 from src.App                     import __version__
@@ -35,7 +32,6 @@ from .camera_view                import CameraView
 from .control_view               import ControlView
 from src.Shapes.rect             import Rect
 from .target_view                import TargetView
-from .view                       import View
 
 
 #=============================================================================
@@ -50,7 +46,6 @@ class MainWindow( AVTWindow):
         '''
         if self.__SINGLETON is None:
             # creates the Main Window for app AVT
-            print( f"creating MainWindow( 0, 0, {self.DEFAULT_WIDTH}, {self.DEFAULT_HEIGHT} )" )
             super().__init__( name="MainAVT",
                               title=f"Archery Video Training - {__version__}",
                               width=self.DEFAULT_WIDTH,
@@ -58,12 +53,8 @@ class MainWindow( AVTWindow):
             MainWindow.__SINGLETON = self
             
             # creates the embedded views, according to the pool of cameras
-            print( "creates cameras-pool" )
             self.cameras_pool = CamerasPool()
-            print( "creates main-window views" )
-            self.create_views( self.cameras_pool, False )
-            
-            self.last_frame_index = -1
+            self.create_views( self.cameras_pool, b_target_view=False )
             
         else:
             self = MainWindow.__SINGLETON
@@ -96,28 +87,27 @@ class MainWindow( AVTWindow):
         rect = Rect( 0, 0, camera_views_width, self.height )
         
         if cameras_count == 0:
-            self.views = [ ControlView( self ),
+            self.views = [ ControlView( self, cameras_pool ),
                            TargetView( self, 0.0, 0.0, 1.0, 1.0, rect ) ]
                   
         elif cameras_count == 1:
             if b_target_view:
-                self.views = [ ControlView( self ),
-                               CameraView( self, cameras_pool[0], 0.0, 0.0, 1.0, 0.5, rect ),
-                               TargetView( self, 0.5, 0.5, 0.5, 1.0, rect )     ]
+                self.views = [ ControlView( self, cameras_pool ),
+                               CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
+                               TargetView( self, 0.5, 0.5, 0.5, 1.0, rect ) ]
             else:
-                self.views = [ ControlView( self ),
+                self.views = [ ControlView( self, cameras_pool ),
                                CameraView( self, cameras_pool[0], 0.0, 0.0, 1.0, 1.0, rect ) ]
                   
         elif cameras_count == 2:
-            self.views = [ ControlView( self ),
+            self.views = [ ControlView( self, cameras_pool ),
                            CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect )  ]
             if b_target_view:
                 self.views.append( TargetView( self, 0.0, 0.5, 1.0, 0.5, rect ) )
                   
         elif cameras_count == 3:
-            print( "creates views for 3 cameras" )
-            self.views = [ ControlView( self ),
+            self.views = [ ControlView( self, cameras_pool ),
                            CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[2], 0.0, 0.5, 0.5, 0.5, rect )  ]
@@ -125,13 +115,14 @@ class MainWindow( AVTWindow):
                 self.views.append( TargetView( self, 0.5, 0.5, 0.5, 0.5, rect ) )
           
         elif cameras_count >= 4:
-            self.views = [ ControlView( self ),
+            self.views = [ ControlView( self, cameras_pool ),
                            CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[2], 0.0, 0.5, 0.5, 0.5, rect ),
                            CameraView( self, cameras_pool[3], 0.5, 0.5, 0.5, 0.5, rect )  ]
             if b_target_view:
                 self.views.append( TargetView( self, 0.0, 0.0, 1.0, 1.0, rect, True ) )
+        # Notice: not more than 4 cameras in current version of AVT
 
     #-------------------------------------------------------------------------
     def draw(self) -> None:
@@ -159,11 +150,13 @@ class MainWindow( AVTWindow):
         '''
         for view in self.views:
             view.stop()
+        for view in self.views:
+            view.join()
 
     #-------------------------------------------------------------------------
     # Class data
-    DEFAULT_WIDTH  = 2 * 640 + ControlView.WIDTH   ##640 + ControlView.WIDTH   ##
-    DEFAULT_HEIGHT = 2 * 480   ##480   ##
+    DEFAULT_WIDTH  = 2 * 640 + ControlView.WIDTH
+    DEFAULT_HEIGHT = 2 * 480
 
     __SINGLETON = None
 

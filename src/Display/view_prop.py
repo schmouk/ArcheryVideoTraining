@@ -25,7 +25,7 @@ SOFTWARE.
 #=============================================================================
 from .view           import AVTWindowRef, View
 from src.Shapes.rect import Rect
-from .rgb_color      import RGBColor
+from src.Utils.rgb_color      import RGBColor
 
 
 #=============================================================================
@@ -84,8 +84,6 @@ class ViewProp( View ):
         self.prop_height = height
         self.rect = parent_rect or Rect( *parent.get_rect() )
 
-        print( f"creating ViewProp( {x:.3f}, {y:.3f}, {width:.3f}, {height:.3f} ) over {str(self.rect)}" )
-        
         super().__init__( parent,
                           round( x * self.rect.width  ), 
                           round( y * self.rect.height ),
