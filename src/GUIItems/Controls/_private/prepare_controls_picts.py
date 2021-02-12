@@ -536,22 +536,29 @@ def prepare_replay_icons() -> None:
         img[img != 32 ] //= 3
         cv2.imwrite( f'../../../../picts/controls/{icon_name}-48-disabled.png',
                      cv2.resize(img, (48,48), interpolation=cv2.INTER_CUBIC ) )
-        cv2.imwrite( f'../../../../picts/controls/{icon_name}-24disabled.png',
-                     cv2.resize(img, (24,24), interpolation=cv2.INTER_CUBIC ) )
+        img = cv2.resize( img, (25,25), interpolation=cv2.INTER_CUBIC )
+        img = cv2.circle( img, (12,12), 12, BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (12,12), 11, (WHITE//3).color, 1, cv2.LINE_AA )
+        cv2.imwrite( f'../../../../picts/controls/{icon_name}-25-disabled.png', img )
                    
         img = icon_img.copy().astype( np.float )
-        img[ img != 32 ] //= 1.19
+        coeff_div = 1.55
+        img[ img != 32 ] //= coeff_div
         cv2.imwrite( f'../../../../picts/controls/{icon_name}-48-off.png',
                      cv2.resize( img.round().astype(np.uint8), (48,48), interpolation=cv2.INTER_CUBIC ) )
-        cv2.imwrite( f'../../../../picts/controls/{icon_name}-24-off.png',
-                     cv2.resize( img.round().astype(np.uint8), (24,24), interpolation=cv2.INTER_CUBIC ) )
+        img = cv2.resize( img.round().astype(np.uint8), (25,25), interpolation=cv2.INTER_CUBIC )
+        img = cv2.circle( img, (12,12), 12, BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (12,12), 11, (WHITE // coeff_div).color, 1, cv2.LINE_AA )
+        cv2.imwrite( f'../../../../picts/controls/{icon_name}-25-off.png', img )
 
         img = icon_img.copy()
         img[:,:,0][ img[:,:,0] != 32 ] = 0
         cv2.imwrite( f'../../../../picts/controls/{icon_name}-48-on.png',
                      cv2.resize(img, (48,48), interpolation=cv2.INTER_CUBIC ) )
-        cv2.imwrite( f'../../../../picts/controls/{icon_name}-24-on.png',
-                     cv2.resize(img, (24,24), interpolation=cv2.INTER_CUBIC ) )
+        img = cv2.resize( img, (25,25), interpolation=cv2.INTER_CUBIC )
+        img = cv2.circle( img, (12,12), 12, BLACK.color, 1, cv2.LINE_AA )
+        img = cv2.circle( img, (12,12), 11, YELLOW.color, 1, cv2.LINE_AA )
+        cv2.imwrite( f'../../../../picts/controls/{icon_name}-25-on.png', img )
 
 
     #---------------------------------------------------------------------
@@ -582,10 +589,6 @@ def prepare_replay_icons() -> None:
             for x in range( width ):
                 if not_in_icon( x, y, icons_pos ) and img[y,x,0] > 40:
                     img[y,x] = (32, 32, 32)
-        #=======================================================================
-        # cv2.imshow( "test", cv2.resize( img, None, fx=2, fy=2 )  )
-        # cv2.waitKey( 0 )
-        #=======================================================================
         
         # creates icons
         icons_index = {
@@ -595,8 +598,8 @@ def prepare_replay_icons() -> None:
             'record_pause': 3,
             'replay': 4,
             'record': 5,
-            'step_fw': 6,
-            'step_bw': 7,
+            'step-fw': 6,
+            'step-bw': 7,
             'switch': 8,
             'ffw': 9,
             'fbw': 10,
@@ -605,8 +608,8 @@ def prepare_replay_icons() -> None:
         
         create_icons( img, icons_pos, icons_index, 'sound' )
         create_icons( img, icons_pos, icons_index, 'pause' )
-        create_icons( img, icons_pos, icons_index, 'step_fw' )
-        create_icons( img, icons_pos, icons_index, 'step_bw' )
+        create_icons( img, icons_pos, icons_index, 'step-fw' )
+        create_icons( img, icons_pos, icons_index, 'step-bw' )
         create_icons( img, icons_pos, icons_index, 'ffw' )
         create_icons( img, icons_pos, icons_index, 'fbw' )
         create_icons( img, icons_pos, icons_index, 'play' )
@@ -794,5 +797,7 @@ if __name__ == '__main__':
     prepare_switch_buttons()
     prepare_target_button()
     prepare_timer_icons()
+    
+    print( "\n-- done!" )
 
 #=====   end of   src.GUIItems.Controls._private.prepare_controls_picts   =====#

@@ -97,7 +97,7 @@ class Font:
         assert size > 5
         
         self.size = None
-        self.color = color.copy()
+        self.set_color( color )
         self.bg_color = bg_color.copy() if bg_color is not None else None
         self.bold = bold
         self.italic = italic
@@ -128,14 +128,14 @@ class Font:
         '''
         if other is None:
             return Font( self.size,
-                         self.color.copy(),
-                         self.bg_color.copy() if self.bg_color is not None else None,
+                         self.color,
+                         self.bg_color if self.bg_color is not None else None,
                          self.bold,
                          self.italic,
                          self.sans_serif )
         else:
             self.size = other.size
-            self.color = other.color.copy()
+            self.set_color( other.color )
             self.bg_color = other.bg_color.copy() if other.bg_color is not None else None,
             self.bold = other.bold
             self.italic = other.italic
@@ -215,6 +215,20 @@ class Font:
         '''Returns the width (pixels) of the specified text.
         '''
         return self.get_text_size( text )[ 0 ]
+
+    #-------------------------------------------------------------------------
+    def set_color(self, new_color: RGBColor) -> FontRef:
+        '''Changes the color of this font.
+        
+        Args:
+            new_color: RGBColor
+                A reference to the new color.
+        
+        Returns:
+            A reference to this instance of Font.
+        '''
+        self.color = new_color.copy()
+        return self
 
     #-------------------------------------------------------------------------
     def set_size(self, size: int) -> FontRef:
