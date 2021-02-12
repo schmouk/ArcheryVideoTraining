@@ -28,15 +28,15 @@ import numpy as np
 from threading import Thread
 import time
 
-from src.App.avt_config                      import AVTConfig
-from .avt_view_prop                          import AVTViewProp
-from .avt_window                             import AVTWindowRef
-from src.Cameras.camera                      import Camera
-from src.GUIItems.font                       import Font
-from src.Display.fps_rate                    import FPSRateFrames
-from src.Utils.rgb_color                     import GrayColor, RGBColor, YELLOW
-from src.GUIItems.label                      import Label
-from src.Shapes.rect                         import Rect
+from src.App.avt_config      import AVTConfig
+from .avt_view_prop          import AVTViewProp
+from .avt_window             import AVTWindowRef
+from src.Cameras.camera      import Camera
+from src.GUIItems.font       import Font
+from src.Display.fps_rate    import FPSRateFrames
+from src.Utils.rgb_color     import RGBColor, YELLOW
+from src.GUIItems.label      import Label
+from src.Shapes.rect         import Rect
   
 
 #=============================================================================
