@@ -23,9 +23,9 @@ SOFTWARE.
 """
 
 #=============================================================================
-from .view           import AVTWindowRef, View
-from src.Shapes.rect import Rect
-from src.Utils.rgb_color      import RGBColor
+from .view               import AVTWindowRef, View
+from src.Shapes.rect     import Rect
+from src.Utils.rgb_color import RGBColor
 
 
 #=============================================================================

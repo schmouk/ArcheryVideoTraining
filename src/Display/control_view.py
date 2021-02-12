@@ -95,10 +95,10 @@ class ControlView( Thread, AVTView ):
         self.delay_ctrl    = self._CtrlDelay(    5, y , False, False )
         
         y += self.ICON_PADDING * 2 + self.ICON_HEIGHT
-        self.record_ctrl   = self._CtrlRecord(   5, y, True, True )
+        self.record_ctrl   = self._CtrlRecord(   5, y, False, False )
         
         y += self.ICON_PADDING + self.ICON_HEIGHT
-        self.replay_ctrl   = self._CtrlReplay(   5, y, True, True )
+        self.replay_ctrl   = self._CtrlReplay(   5, y, False, False )
         
         y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
         self.overlays_ctrl = self._CtrlOverlays( 5, y, False, False )
