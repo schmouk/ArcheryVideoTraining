@@ -32,16 +32,15 @@ class GUIControlBase:
     """The base class for all GUI controls.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, x          : int  = None,
-                       y          : int  = None,
-                       width      : int  = None,
-                       height     : int  = None,
-                       visible    : bool = True,
-                       enabled    : bool = False,
-                       active     : bool = False,
+    def __init__(self, x      : int  = None,
+                       y      : int  = None,
+                       width  : int  = None,
+                       height : int  = None,
+                       visible: bool = True,
+                       enabled: bool = False,
+                       active : bool = False,
                        *,
-                       pos        : Point = None,
-                       ) -> None:
+                       pos    : Point = None ) -> None:
         '''Constructor.
         
         Args:
