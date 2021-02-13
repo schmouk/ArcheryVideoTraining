@@ -54,7 +54,7 @@ class MainWindow( AVTWindow):
             
             # creates the embedded views, according to the pool of cameras
             self.cameras_pool = CamerasPool()
-            self.create_views( self.cameras_pool, b_target_view=False )
+            self.create_views( self.cameras_pool, b_target_view=True )  ##False )  ##
             
         else:
             self = MainWindow.__SINGLETON
@@ -67,6 +67,49 @@ class MainWindow( AVTWindow):
         '''
         del self.cameras_pool
 
+    #-------------------------------------------------------------------------
+    @property
+    def camera1_view(self) -> CameraView:
+        try:
+            return self.views[ 1 ] if isinstance(self.views[1], CameraView) else None
+        except:
+            return None
+
+    @property
+    def camera2_view(self) -> CameraView:
+        try:
+            return self.views[ 2 ] if isinstance(self.views[2], CameraView) else None
+        except:
+            return None
+
+    @property
+    def camera3_view(self) -> CameraView:
+        try:
+            return self.views[ 3 ] if isinstance(self.views[3], CameraView) else None
+        except:
+            return None
+
+    @property
+    def camera4_view(self) -> CameraView:
+        try:
+            return self.views[ 4 ] if isinstance(self.views[4], CameraView) else None
+        except:
+            return None
+
+    @property
+    def control_view(self) -> ControlView:
+        try:
+            return self.views[ 0 ]
+        except:
+            return None
+
+    @property
+    def target_view(self) -> TargetView:
+        try:
+            return self.views[ -1 ] if isinstance(self.views[-1], TargetView) else None
+        except:
+            return None
+        
     #-------------------------------------------------------------------------
     def create_views(self, cameras_pool : CamerasPool,
                            b_target_view: bool = False) -> None:
