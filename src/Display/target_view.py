@@ -24,7 +24,6 @@ SOFTWARE.
 
 #=============================================================================
 from threading import Thread
-import tkinter
 
 from src.App.avt_config  import AVTConfig
 from .avt_view_prop      import AVTViewProp
@@ -75,14 +74,11 @@ class TargetView( Thread, AVTViewProp ):
         self.b_periodical = b_periodically_hide
         self.b_shown = True
         
-        self.simulated_dist = None
-        self.true_dist      = None
-        self.display_ratio  = None
-        self.target         = None
+        self.simulated_dist  = None
+        self.true_dist       = None
+        self.displayed_ratio = None
+        self.target          = None
         
-        tk_root = tkinter.Tk()
-        self._dots_per_cm = tk_root.winfo_fpixels('1c')
-
         Thread.__init__( self, name='target-thrd' )
         AVTViewProp.__init__( self, parent, x, y, width, height, parent_rect )
 
@@ -123,8 +119,11 @@ class TargetView( Thread, AVTViewProp ):
     def draw_target(self) -> None:
         '''Draws the previously selected target with its selected size also.
         '''
-        if self.target is not None:
-            ...
+        if self.target is not None and self.displayed_ratio is not None:
+            # evaluate dimensions of displayed target
+            self.target.draw( self, self.ratio )
+        else:
+            self.fill_background()
 
     #-------------------------------------------------------------------------
     def hide(self) -> None:
@@ -138,13 +137,14 @@ class TargetView( Thread, AVTViewProp ):
     def select_distances(self) -> None:
         '''Selects the simulated and the true distances.
         
-        The simulated distance is the distance the archer wants
-        to simulate with the selected target.
-        The true distance is the distance of the display screen
-        from the archer.
+        The simulated distance is the distance that the archer 
+        wants to simulate with the selected target.
+        The  true distance is the distance between the display 
+        screen and the archer.
         '''
         self.simulated_dist = None
         self.true_dist      = None
+        self._evaluate_display_ratio()
 
     #-------------------------------------------------------------------------
     def select_target(self) -> None:
@@ -168,11 +168,9 @@ class TargetView( Thread, AVTViewProp ):
         This ratio is a function of:
             - the simulated distance
             - the true distance
-            - and the dpi of the used display.
+            - and the dpi of the used display - which is also
+              a function of the display resolution.
         '''
-        self.display_ratio = None
-
-    #-------------------------------------------------------------------------
-
+        self.displayed_ratio = None
 
 #=====   end of   src.Display.target_view   =====#

@@ -33,8 +33,8 @@ class Monitors:
     
     This is a singleton. It will be instantiated only once.
     Once instantiated, it provides access to methods:
-        - get_dpi()
-        - get_dpcm()
+        - get_dpi() , i.e. dots per inch
+        - get_dpcm(), i.e. dots per cm
     """
     #-------------------------------------------------------------------------
     def __init__(self) -> None:

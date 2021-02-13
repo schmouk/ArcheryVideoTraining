@@ -60,44 +60,44 @@ class Target:
         self.file_path = img_path
 
     #-------------------------------------------------------------------------
-    def draw(self, view: View, new_size_cm: int ) -> None:
+    def draw(self, view: View, ratio: float) -> None:
         '''Draws this target resized in specified view.
         
         Args:
             view: View
                 A reference to the embedding view.
-            new_size_cm: int
-                The size for the resizing  of  the 
-                picture of this target.
+            ratio: float
+                The ratio to apply for the resizing 
+                of the picture of this target.
         '''
-        target_pict = self.get_resized( new_size_cm )
+        target_size = round( self.size_cm * ratio )
         
         # evaluates x-offsets
-        if new_size_cm < view.width:
-            view_x = (view.width - new_size_cm) // 2
+        if target_size < view.width:
+            view_x = (view.width - target_size) // 2
             targ_x = 0
-            width = new_size_cm
+            width = target_size
         else:
             view_x = 0
-            targ_x = (new_size_cm - view.width) // 2
+            targ_x = (target_size - view.width) // 2
             width = view.width
         
         # evaluates y-offsets
-        if new_size_cm < view.height:
-            view_y = (view.height - new_size_cm) // 2
+        if target_size < view.height:
+            view_y = (view.height - target_size) // 2
             targ_y = 0
-            height = new_size_cm
+            height = target_size
         else:
             view_y = 0
-            targ_y = (new_size_cm - view.height) // 2
+            targ_y = (target_size - view.height) // 2
             height = view.height
         
         # insertion of target picture in view content
-        if new_size_cm < view.width or new_size_cm < view.height:
+        if target_size < view.width or target_size < view.height:
             view.fill_background()
         view.content[ view_y:view_y+height,
-                      view_x:view_x+width , : ] = target_pict[ targ_y:targ_y+height,
-                                                               targ_x:targ_x+width , : ]
+                      view_x:view_x+width , : ] = self.resized_picture[ targ_y:targ_y+height,
+                                                                        targ_x:targ_x+width , : ]
         
     #-------------------------------------------------------------------------
     def get_picture(self) -> np.ndarray:
@@ -116,13 +116,16 @@ class Target:
         return cv2.imread( self.file_path )
 
     #-------------------------------------------------------------------------
-    def get_resized(self, new_size_cm: int) -> np.ndarray:
+    def get_resized(self, ratio: float) -> np.ndarray:
         '''Returns a resized picture of this target.
         
+        Internally modifies also the resized target content
+        which is the internally used for its drawing.
+        
         Args:
-            new_size_cm: int
-                The size for the resizing of the picture of
-                this target.
+            ratio: float
+                The ratio to apply for the resizing of  the 
+                picture of this target.
         
         Returns:
             A reference to a numpy array which contains the
@@ -134,10 +137,10 @@ class Target:
             PermissionError: access cannot be granted to the
                 file that contains this target picture.
         '''
-        ratio = new_size_cm / self.size_cm
-        return cv2.resize( self.get_picture(), 
-                           None, 
-                           fx=ratio, fy=ratio, 
-                           interpolation=cv2.INTER_CUBIC )
+        self.resized_picture = cv2.resize( self.get_picture(), 
+                                           None, 
+                                           fx=ratio, fy=ratio, 
+                                           interpolation=cv2.INTER_CUBIC )
+        return self.self.resized_picture
 
 #=====   end of   src.Display.target   =====#
