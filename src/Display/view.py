@@ -83,7 +83,7 @@ class View:
         self.bg_color = bg_color
         
         self.content = None
-        self._fill_background()
+        self.fill_background()
 
         self.draw()
 
@@ -138,7 +138,7 @@ class View:
         pass
 
     #-------------------------------------------------------------------------
-    def _fill_background(self) -> None:
+    def fill_background(self) -> None:
         '''Fills the parent window content with the background solid color of this view.
         '''
         self.content = (np.zeros( (self.height, self.width, 3) ) + self.bg_color.color).astype( np.uint8 )
