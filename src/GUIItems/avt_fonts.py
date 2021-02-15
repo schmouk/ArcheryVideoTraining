@@ -23,12 +23,14 @@ SOFTWARE.
 """
 
 #=============================================================================
-from .font               import BoldFont
+from .font               import BoldFont, Font
 from src.Utils.rgb_color import YELLOW
 
 
 #=============================================================================
 AVTDefaultFont = BoldFont( 20, YELLOW )
+AVTConsoleFont  = Font( 14, YELLOW )
+
 """The class of the default font for application AVT.
 """
 

@@ -23,12 +23,14 @@ SOFTWARE.
 """
 
 #=============================================================================
-import cv2
+import time
 from types   import TracebackType
 from typing  import ForwardRef, Tuple, Type
 
 from src.App.avt_config      import AVTConfig
+from src.GUIItems.avt_fonts  import AVTConsoleFont
 from .camera                 import Camera
+from src.Shapes.point        import Point
 
 
 #=============================================================================
@@ -80,18 +82,28 @@ class  CamerasPool( list ):
         '''
         self.clear()
 
+        x, y = 20, 40
+        y_offset = 24
+        
         for camera_index in range( AVTConfig.CAMERAS_MAX_COUNT ):
             
-            print( f"testing connection of camera #{camera_index+1}: ", end='', flush=True )
+            AVTConsoleFont.draw_text( parent_window, Point(x, y),
+                                      f"testing connection of camera #{camera_index+1} " )
+            parent_window.draw()
             
             camera = Camera( camera_index )
              
             if camera.is_ok():
-                print( "ok!" )
                 self.append( camera )
+
             else:
-                print( "not connected or not found." )
+                AVTConsoleFont.draw_text( parent_window, Point(x, y+y_offset),
+                                          f"camera #{camera_index+1} not connected or not found" )
+                parent_window.draw()
+                time.sleep( 1.750 )
                 del camera
                 break
+            
+            y += y_offset
         
 #=====   end of   src.Cameras.cameras_pool   =====#
