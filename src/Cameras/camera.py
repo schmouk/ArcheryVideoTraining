@@ -84,7 +84,10 @@ class Camera:
     def get_fps(self) -> float:
         '''Returns the frame rate of this video capturing device.
         '''
-        return self.hndl.get( cv2.CAP_PROP_FPS ) 
+        try:
+            return self.hndl.get( cv2.CAP_PROP_FPS )
+        except:
+            return 0.0 
 
     #-------------------------------------------------------------------------
     def get_id(self) -> int:
@@ -96,13 +99,19 @@ class Camera:
     def get_hw_height(self) -> int:
         '''Returns the height of rames as set in the H/W device.
         '''
-        return int( self.hndl.get(cv2.CAP_PROP_FRAME_HEIGHT) )
+        try:
+            return int( self.hndl.get(cv2.CAP_PROP_FRAME_HEIGHT) )
+        except:
+            return 0
 
     #-------------------------------------------------------------------------
     def get_hw_width(self) -> int:
         '''Returns the width of rames as set in the H/W device.
         '''
-        return int( self.hndl.get(cv2.CAP_PROP_FRAME_WIDTH) )
+        try:
+            return int( self.hndl.get(cv2.CAP_PROP_FRAME_WIDTH) )
+        except:
+            return 0
 
     #-------------------------------------------------------------------------
     def is_ok(self) -> bool:

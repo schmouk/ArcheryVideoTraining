@@ -44,20 +44,20 @@ class MainWindow( AVTWindow):
     def __init__(self) -> None:
         '''Constructor.
         '''
-        if self.__SINGLETON is None:
+        if self.__ME is None:
             # creates the Main Window for app AVT
             super().__init__( name="MainAVT",
                               title=f"Archery Video Training - {__version__}",
                               width=self.DEFAULT_WIDTH,
                               height=self.DEFAULT_HEIGHT )
-            MainWindow.__SINGLETON = self
+            MainWindow.__ME = self
             
             # creates the embedded views, according to the pool of cameras
-            self.cameras_pool = CamerasPool()
-            self.create_views( self.cameras_pool, b_target_view=True )  ##False )  ##
+            self.cameras_pool = CamerasPool( self )
+            self.create_views( self.cameras_pool, b_target_view=False )  ##True )  ##
             
         else:
-            self = MainWindow.__SINGLETON
+            self = MainWindow.__ME
 
     #-------------------------------------------------------------------------
     def __del__(self) -> None:
@@ -201,6 +201,6 @@ class MainWindow( AVTWindow):
     DEFAULT_WIDTH  = 2 * 640 + ControlView.WIDTH
     DEFAULT_HEIGHT = 2 * 480
 
-    __SINGLETON = None
+    __ME = None
 
 #=====   end of   src.Display.main_window   =====#

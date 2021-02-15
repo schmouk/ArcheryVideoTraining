@@ -27,7 +27,7 @@ import cv2
 import numpy as np
 import time
 
-from threading import Event, Thread
+from threading import Event, Lock, Thread
 from typing    import ForwardRef
 
 from src.App.avt_config                      import AVTConfig
@@ -240,13 +240,15 @@ class CameraView( AVTViewProp ):
                     
                 else:
                     if frame_index == 0:
-                        self.start_time = time.perf_counter()
                         self.fps_rate.start()
+
+                    print( f"{self.name} + {frame_index:6d} / {time.perf_counter():.3f} s")
                         
                     self.frames_buffer.set( IndexedFrame(frame_index, cv2.flip( frame, 1 )) )  # notice: we're mirroring the captured frame
                     self.sync_event.set()
-                    frame_index += 1
             
+                    frame_index += 1
+                    
         #---------------------------------------------------------------------
         def stop(self) -> None:
             '''Definitively stops this thread.
@@ -291,9 +293,26 @@ class CameraView( AVTViewProp ):
             '''
             self.keep_on = self.parent_view.is_ok()
             
+            #===================================================================
+            # last_frame_index = -1
+            #===================================================================
+            
             while self.keep_on:
                 self.sync_event.wait()
                 indexed_frame = self.frames_buffer.get()
+                
+                if indexed_frame is None:
+                    time.sleep( 0.020 )
+                    continue
+                
+                #===============================================================
+                # if indexed_frame.index == last_frame_index:
+                #     time.sleep( 0.005 )
+                #     continue
+                # else:
+                #     last_frame_index = indexed_frame.index
+                #===============================================================
+
                 self.sync_event.clear()
                 
                 frame = indexed_frame.frame
@@ -321,6 +340,7 @@ class CameraView( AVTViewProp ):
                 else:
                     self.parent_view.content = frame.copy()
                 
+                print( f"{self.name} - {indexed_frame.index:6d} / {time.perf_counter():.3f} s")
                 self.parent_view.draw()
         
         #---------------------------------------------------------------------

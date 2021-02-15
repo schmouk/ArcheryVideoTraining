@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 #=============================================================================
+import cv2
 from types   import TracebackType
 from typing  import ForwardRef, Tuple, Type
 
@@ -34,6 +35,7 @@ from .camera                 import Camera
 BaseExceptionType = Type[ BaseException ]
 CamerasPoolRef    = ForwardRef( "CamerasPool" )
 ExceptionInfo     = Tuple[ BaseExceptionType, BaseException, TracebackType ]
+MainWindowRef     = ForwardRef( "MainWindow" )
 
 
 #=============================================================================
@@ -44,13 +46,18 @@ class  CamerasPool( list ):
     They all are managed within a pool of cameras.
     """
     #-------------------------------------------------------------------------
-    def __init__(self) -> None:
+    def __init__(self, parent_window: MainWindowRef) -> None:
         '''Constructor.
         
         Instantiates the pool of cameras.
+        
+        Args:
+            parent_window: MainWindowRef
+                A reference to the containing main window.
+                Used to display progress messages.
         '''
         super().__init__()
-        self.evaluate_connected_cameras()
+        self.evaluate_connected_cameras( parent_window )
 
     #-------------------------------------------------------------------------
     def __del__(self) -> None:
@@ -60,22 +67,31 @@ class  CamerasPool( list ):
             del camera
 
     #-------------------------------------------------------------------------
-    def evaluate_connected_cameras(self) -> None:
+    def evaluate_connected_cameras(self, parent_window: MainWindowRef) -> None:
         '''Evaluates all the connected cameras.
         
-        Initializes the pool of cameras according
-        to the currently connected ones.
+        Initializes the pool of cameras according to  the 
+        currently connected ones.
+        
+        Args:
+            parent_window: MainWindowRef
+                A reference to the containing main window.
+                Used to display progress messages.
         '''
         self.clear()
 
         for camera_index in range( AVTConfig.CAMERAS_MAX_COUNT ):
             
-            camera = Camera( camera_index )
+            print( f"testing connection of camera #{camera_index+1}: ", end='', flush=True )
             
+            camera = Camera( camera_index )
+             
             if camera.is_ok():
+                print( "ok!" )
                 self.append( camera )
             else:
+                print( "not connected or not found." )
                 del camera
                 break
-
+        
 #=====   end of   src.Cameras.cameras_pool   =====#
