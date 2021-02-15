@@ -218,8 +218,11 @@ class AVTWindow:
             width  = min( view.width , content_width  - view.x )
             height = min( view.height, content_height - view.y )
             
-            self.content[ view.y:view.y+height,
-                          view.x:view.x+width, : ] = view.content[ :height, :width, : ] 
+            try:
+                self.content[ view.y:view.y+height,
+                              view.x:view.x+width, : ] = view.content[ :height, :width, : ]
+            except:
+                pass 
 
     #-------------------------------------------------------------------------
     def set_title(self, title: str) -> None:

@@ -63,7 +63,8 @@ class FramesAcquisitionBuffer:
             the  newly  acquired  frame or None if timeout
             happened.
         '''
-        return self._buf[ self._flipflop_index() ]
+        with self._lock:
+            return self._buf[ self._flipflop_index() ]
         
     #-------------------------------------------------------------------------
     def get_frame(self) -> Frame:

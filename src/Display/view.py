@@ -25,7 +25,6 @@ SOFTWARE.
 #=============================================================================
 import numpy as np
 from typing import ForwardRef
-from threading import Lock
 
 from src.Utils.rgb_color import RGBColor
 
@@ -75,8 +74,6 @@ class View:
         if width <= 0 or height <= 0:
             raise ValueError( f"sizes ({width}, {height}) must be greater than 0.")
         
-        self.lock = Lock()
-        
         self.parent_window = parent
         self.x, self.y = x, y
         self.width, self.height = width, height
@@ -95,8 +92,7 @@ class View:
         'CameraView' or class 'ControlView' for examples of 
         code.
         '''
-        with self.lock:
-            self.parent_window.insert_view_content( self )
+        self.parent_window.insert_view_content( self )
         self.parent_window.draw()
 
     #-------------------------------------------------------------------------
