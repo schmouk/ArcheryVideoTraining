@@ -27,7 +27,7 @@ import cv2
 import numpy as np
 import time
 
-from threading import Event, Lock, Thread
+from threading import Event, Thread
 from typing    import ForwardRef
 
 from src.App.avt_config                      import AVTConfig
@@ -242,7 +242,7 @@ class CameraView( AVTViewProp ):
                     if frame_index == 0:
                         self.fps_rate.start()
 
-                    print( f"{self.name} + {frame_index:6d} / {time.perf_counter():.3f} s")
+                    ##print( f"{self.name} + {frame_index:6d} / {time.perf_counter():.3f} s")
                         
                     self.frames_buffer.set( IndexedFrame(frame_index, cv2.flip( frame, 1 )) )  # notice: we're mirroring the captured frame
                     self.sync_event.set()
@@ -340,7 +340,7 @@ class CameraView( AVTViewProp ):
                 else:
                     self.parent_view.content = frame.copy()
                 
-                print( f"{self.name} - {indexed_frame.index:6d} / {time.perf_counter():.3f} s")
+                ##print( f"{self.name} - {indexed_frame.index:6d} / {time.perf_counter():.3f} s")
                 self.parent_view.draw()
         
         #---------------------------------------------------------------------

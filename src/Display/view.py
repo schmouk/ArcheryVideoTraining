@@ -26,7 +26,8 @@ SOFTWARE.
 import numpy as np
 from typing import ForwardRef
 
-from src.Utils.rgb_color import RGBColor
+from src.Utils.rgb_color     import RGBColor
+from src.GUIItems.viewable   import Viewable
 
 
 #=============================================================================
@@ -34,7 +35,7 @@ AVTWindowRef = ForwardRef( "AVTWindow" )
 
 
 #=============================================================================
-class View:
+class View( Viewable ):
     """The base class for views that are embedded in the main window.
     
     Notice: for simplification purposes, views are rectangular.
@@ -75,12 +76,8 @@ class View:
             raise ValueError( f"sizes ({width}, {height}) must be greater than 0.")
         
         self.parent_window = parent
-        self.x, self.y = x, y
-        self.width, self.height = width, height
-        self.bg_color = bg_color
-        
-        self.content = None
-        self.fill_background()
+
+        super().__init__( x, y, width, height, bg_color )
 
         self.draw()
 
@@ -132,11 +129,13 @@ class View:
         'CameraView' for an example of code.
         '''
         pass
-
-    #-------------------------------------------------------------------------
-    def fill_background(self) -> None:
-        '''Fills the parent window content with the background solid color of this view.
-        '''
-        self.content = (np.zeros( (self.height, self.width, 3) ) + self.bg_color.color).astype( np.uint8 )
+#===============================================================================
+# 
+#     #-------------------------------------------------------------------------
+#     def fill_background(self) -> None:
+#         '''Fills the parent window content with the background solid color of this view.
+#         '''
+#         self.content = (np.zeros( (self.height, self.width, 3) ) + self.bg_color.color).astype( np.uint8 )
+#===============================================================================
 
 #=====   end of   src.Display.view   =====#

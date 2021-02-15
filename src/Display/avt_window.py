@@ -33,6 +33,7 @@ from src.App.avt_config          import AVTConfig
 from src.GUIItems.Cursor.cursor  import Cursor_NORMAL
 from src.Utils.rgb_color         import RGBColor
 from .view                       import View
+from src.GUIItems.viewable       import Viewable
 
 
 #=============================================================================
@@ -40,7 +41,7 @@ AVTWindowRef = ForwardRef( "AVTWindow" )
 
 
 #=============================================================================
-class AVTWindow:
+class AVTWindow( Viewable ):
     """The base class for all windows in Archery Video Training application.
     """
     #-------------------------------------------------------------------------
@@ -104,7 +105,6 @@ class AVTWindow:
                 raise ValueError( 'args width and height must be both None or both set.' )
             cv2.namedWindow( self.name, cv2.WINDOW_AUTOSIZE | cv2.WINDOW_KEEPRATIO | cv2.WINDOW_GUI_EXPANDED )
             self.fixed_size = False
-            self.height, self.width = self.get_size()
             
         else:
             if width is None:
@@ -113,12 +113,12 @@ class AVTWindow:
                 raise ValueError ( f"width and height ({width}, {height}) must be both greater than 0" )
             cv2.namedWindow( self.name, cv2.WINDOW_NORMAL | cv2.WINDOW_KEEPRATIO | cv2.WINDOW_GUI_EXPANDED )
             cv2.resizeWindow( self.name, width, height )
-            self.height, self.width = height, width
             Cursor_NORMAL.activate()
 
         self.set_title( f"AVT Window # {self.__WINDOWS_COUNT}" if title is None else title )
-        
-        self.content = (np.zeros( (height, width, 3), dtype=np.uint8 ) + self.bg_color.color).astype( np.uint8 )
+
+        width, height = self.get_size()
+        super().__init__( 0, 0, width, height, bg_color )
             
     #-------------------------------------------------------------------------
     def draw(self, hit_delay_ms: int = 1) -> int:
