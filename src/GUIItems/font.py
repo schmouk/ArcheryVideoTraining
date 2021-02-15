@@ -146,10 +146,11 @@ class Font:
             self.font_scale = other.font_scale
 
     #-------------------------------------------------------------------------
-    def draw_text(self, view    : Viewable   ,
-                        pos     : Point      ,
-                        text    : str        ,
-                        b_shadow: bool = True ) -> None:
+    def draw_text(self, view    : Viewable    ,
+                        pos     : Point       ,
+                        text    : str         ,
+                        b_shadow: bool = True ,
+                        b_forced: bool = False ) -> None:
         '''Draws specified text with this font.
         
         Notice: next version could propose transparency for
@@ -167,6 +168,10 @@ class Font:
             b_shadow: bool
                 Set this to True to get a shadowing of  the
                 text, or False otherwise. Defaults to True.
+            b_forced: bool
+                Set this to True to force  the  drawing  of
+                the text within the specified viewable. Set
+                it to False otherwise. Defaults to False.
         '''
         if self.bg_color is None:
             if b_shadow:
@@ -198,6 +203,32 @@ class Font:
                                     self.color.color,
                                     self.thickness,
                                     cv2.LINE_AA )
+        if b_forced:
+            view.draw()
+
+    #-------------------------------------------------------------------------
+    def forced_draw_text(self, view    : Viewable   ,
+                               pos     : Point      ,
+                               text    : str        ,
+                               b_shadow: bool = True ) -> None:
+        '''Draws specified text with this font.
+        
+        The drawing  is  forced.  Internally  calls  method
+        '.draw_text()'.
+        
+        Args:
+            view: Viewable
+                A reference to the embedding view.
+            pos: Point
+                The absolute (x, y) position of the text in 
+                the specified view.
+            text: str
+                The text to be drawn.
+            b_shadow: bool
+                Set this to True to get a shadowing of  the
+                text, or False otherwise. Defaults to True.
+        '''
+        self.draw_text( view, pos, text, b_shadow, True )
 
     #-------------------------------------------------------------------------
     def get_text_height(self, text: str) -> int:

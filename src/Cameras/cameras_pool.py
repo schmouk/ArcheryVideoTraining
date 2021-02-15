@@ -87,19 +87,16 @@ class  CamerasPool( list ):
         
         for camera_index in range( AVTConfig.CAMERAS_MAX_COUNT ):
             
-            AVTConsoleFont.draw_text( parent_window, Point(x, y),
-                                      f"testing connection of camera #{camera_index+1} " )
-            parent_window.draw()
-            
+            AVTConsoleFont.forced_draw_text( parent_window, Point(x, y),
+                                             f"testing connection of camera #{camera_index+1} " )            
             camera = Camera( camera_index )
              
             if camera.is_ok():
                 self.append( camera )
 
             else:
-                AVTConsoleFont.draw_text( parent_window, Point(x, y+y_offset),
-                                          f"camera #{camera_index+1} not connected or not found" )
-                parent_window.draw()
+                AVTConsoleFont.forced_draw_text( parent_window, Point(x, y+y_offset),
+                                                 f"camera #{camera_index+1} not connected or not found" )
                 time.sleep( 1.750 )
                 del camera
                 break
