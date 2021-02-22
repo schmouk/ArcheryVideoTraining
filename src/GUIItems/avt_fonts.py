@@ -29,9 +29,11 @@ from src.Utils.rgb_color import YELLOW
 
 #=============================================================================
 AVTDefaultFont = BoldFont( 20, YELLOW )
-AVTConsoleFont  = Font( 14, YELLOW )
+'''The class of the default font for application AVT.
+'''
 
-"""The class of the default font for application AVT.
-"""
+AVTConsoleFont = Font( 13, YELLOW-16 )
+'''The class of the "console" font for application AVT.
+'''
 
 #=====   end of   src.GUIItems.avt_fonts   =====#
