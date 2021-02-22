@@ -25,7 +25,7 @@ SOFTWARE.
 #=============================================================================
 from typing import Union
 
-from .circular_buffer import CirculaBuffer
+from .circular_buffer import CircularBuffer
 
 
 #=============================================================================
@@ -33,7 +33,7 @@ Numeric = Union[ int, float ]
 
 
 #=============================================================================
-class SummedCircularBuffer( CirculaBuffer ):
+class SummedCircularBuffer( CircularBuffer ):
     """The class of summed circular buffers.
     
     Summed buffers are circular buffers Which contain scalar 

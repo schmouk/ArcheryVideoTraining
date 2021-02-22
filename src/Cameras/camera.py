@@ -29,10 +29,13 @@ SOFTWARE.
 
 
 #=============================================================================
-import cv2
 from typing import Any
+import cv2
+import time
 
-from src.Utils.types import Frame
+from src.Utils.circular_buffer   import CircularBuffer
+from src.Utils.types             import Frame
+from src.Utils.indexed_frame     import IndexedFrame
 
 
 #=============================================================================
@@ -73,6 +76,10 @@ class Camera:
         self.hndl = cv2.VideoCapture( cam_id )
         self._copy_default_hw_size()
         self.set_frames_size( width, height )
+        ##self.frames_buffer = CircularBuffer( 3 )
+        if self.is_ok():
+            self.period = 1.0 / self.get_fps()
+        ##self.last_index = -1
 
     #-------------------------------------------------------------------------
     def __del__(self) -> None:
@@ -84,7 +91,10 @@ class Camera:
     def get_fps(self) -> float:
         '''Returns the frame rate of this video capturing device.
         '''
-        return self.hndl.get( cv2.CAP_PROP_FPS ) 
+        try:
+            return self.hndl.get( cv2.CAP_PROP_FPS )
+        except:
+            return 0.0 
 
     #-------------------------------------------------------------------------
     def get_id(self) -> int:
@@ -96,13 +106,19 @@ class Camera:
     def get_hw_height(self) -> int:
         '''Returns the height of rames as set in the H/W device.
         '''
-        return int( self.hndl.get(cv2.CAP_PROP_FRAME_HEIGHT) )
+        try:
+            return int( self.hndl.get(cv2.CAP_PROP_FRAME_HEIGHT) )
+        except:
+            return 0
 
     #-------------------------------------------------------------------------
     def get_hw_width(self) -> int:
         '''Returns the width of rames as set in the H/W device.
         '''
-        return int( self.hndl.get(cv2.CAP_PROP_FRAME_WIDTH) )
+        try:
+            return int( self.hndl.get(cv2.CAP_PROP_FRAME_WIDTH) )
+        except:
+            return 0
 
     #-------------------------------------------------------------------------
     def is_ok(self) -> bool:
@@ -114,30 +130,17 @@ class Camera:
     def read(self) -> Frame:
         '''Reads next frame.
         
-        This is an overloaded version of inherited method, 
-        since it only returns a reference to the  acquired 
+        This is an overwritten version of inherited method, 
+        since it only returns a reference to  the  acquired 
         frame or None if no frame has been acquired.
         
-        Notice: in the case of cameras, the acquisition is
-        synchronized with the frame rate per second of the
-        hardware device. 
-        
         Returns:
-            A reference to the captured image,  or None in 
+            A reference to the captured image,  or None  in 
             case of error.
         '''
         ok, frame = self.hndl.read()
+        return frame if ok else None
         
-        if ok:
-            if self.hw_default_width == self.width and self.hw_default_height == self.height:
-                return frame
-            else:
-                return cv2.resize( frame,
-                                   (self.width, self.height),
-                                   interpolation=cv2.INTER_LINEAR )
-        else:
-            return None
-
     #-------------------------------------------------------------------------
     def release(self) -> None:
         '''Releases all resources that have been allocated with this camera.

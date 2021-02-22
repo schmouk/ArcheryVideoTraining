@@ -25,23 +25,31 @@ SOFTWARE.
 #=============================================================================
 import cv2
 import numpy as np
-from threading import Thread
-import time
 
-from src.App.avt_config      import AVTConfig
-from .avt_view_prop          import AVTViewProp
-from .avt_window             import AVTWindowRef
-from src.Cameras.camera      import Camera
-from src.GUIItems.font       import Font
-from src.Display.fps_rate    import FPSRateFrames
-from src.Utils.rgb_color     import RGBColor, YELLOW
-from src.GUIItems.label      import Label
-from src.Shapes.rect         import Rect
+from threading import Event
+from typing    import ForwardRef
+
+from src.App.avt_config                      import AVTConfig
+from .avt_view_prop                          import AVTViewProp
+from .avt_window                             import AVTWindowRef
+from src.Cameras.camera                      import Camera
+from src.Cameras.camera_acquisition          import CameraAcquisition
+from src.Cameras.camera_direct_display       import CameraDirectDisplay
+from src.GUIItems.font                       import Font
+from src.Utils.types                         import Frame
+from src.Display.fps_rate                    import FPSRateFrames
+from src.Utils.rgb_color                     import RGBColor, YELLOW
+from src.GUIItems.label                      import Label
+from src.Shapes.rect                         import Rect
   
 
 #=============================================================================
-class CameraView( Thread, AVTViewProp ):
-    """The class description.
+CameraViewRef = ForwardRef( "CameraView" )
+
+
+#=============================================================================
+class CameraView( AVTViewProp ):
+    """The class of the cameras views.
     """
     def __init__(self, parent     : AVTWindowRef,
                        camera     : Camera,
@@ -76,20 +84,22 @@ class CameraView( Thread, AVTViewProp ):
             ValueError:  Some  of  the  coordinates  or  sizes 
                 values are outside interval [0.0, 1.0].
         '''
-        self.label = Label( self, f"Cam-{camera.get_id()}", 20, 40 )
+        self.view_name = f"Cam-{camera.get_id()}"
+        self.label = Label( self, self.view_name, 20, 40 )
         self.fps_label = Label( self, "", 20, 70, None, Font(14, YELLOW) )
         self.fps_rate = FPSRateFrames( 15 )
-        ##self.buffer = FramesAcquisitionBuffer()
+        self.joined = False
         
         self.camera = camera
-        name = f"camera-thrd-{CameraView._CAM_VIEWS_COUNT}"
         CameraView._CAM_VIEWS_COUNT += 1
 
-        Thread.__init__( self, name=name )
-        AVTViewProp.__init__( self, parent, x, y, width, height, parent_rect )
+        self.sync_event = Event()
         
-        ##self.camera.set_hw_dims( width, height )
+        super().__init__( parent, x, y, width, height, parent_rect )
 
+        self.acq_thread  = CameraAcquisition( self.camera )
+        self.disp_thread = CameraDirectDisplay( self.acq_thread, self )
+        
         self.draw()
 
     #-------------------------------------------------------------------------
@@ -136,6 +146,37 @@ class CameraView( Thread, AVTViewProp ):
             self.fps_label.draw()
 
     #-------------------------------------------------------------------------
+    def draw_frame(self, frame: Frame) -> None:
+        '''Draws a new frame within this camera view
+        '''
+        frame_height, frame_width = frame.shape[:2]
+        
+        if frame_width != self.width or frame_height != self.height:
+            
+            ratio_x = self.width / frame_width
+            ratio_y = self.height / frame_height
+            ratio = min( ratio_x, ratio_y )                    
+            frame = cv2.resize( frame, None, fx=ratio, fy=ratio, interpolation=cv2.INTER_LINEAR )
+            
+            new_height, new_width = frame.shape[:2]
+            if new_width > self.width:
+                new_width = self.width
+            if new_height > self.height:
+                new_height = self.height
+                
+            x = (self.width - new_width) // 2
+            y = (self.height - new_height) // 2
+            
+            self.content = np.zeros( (self.height, self.width, 3), np.uint8 ) + 16
+            self.content[ y:y+new_height,
+                          x:x+new_width, : ] = frame[ :new_height, :new_width, : ] 
+        
+        else:
+            self.content = frame
+        
+        self.draw()
+
+    #-------------------------------------------------------------------------
     def is_ok(self) -> bool:
         '''Returns True when status of this camera acquisition thread is ok, or False otherwise.
         '''
@@ -145,58 +186,30 @@ class CameraView( Thread, AVTViewProp ):
             return False
 
     #-------------------------------------------------------------------------
-    def run(self) -> None:
-        '''The acquisition method once this thread has been started.
+    def join(self) -> None:
+        '''Joins the internal threads.
         '''
-        frame_index = 0
-        self.keep_on = self.is_ok()
-        
-        self.start_time = time.perf_counter()
+        if not self.joined:
+            self.acq_thread.join()
+            self.disp_thread.join()
+            self.joined = True
+
+    #-------------------------------------------------------------------------
+    def start(self) -> None:
+        '''Starts every internal thread.
+        '''
+        self.acq_thread.start()
+        self.disp_thread.start()
         self.fps_rate.start()
-        
-        while self.keep_on:
-            frame = cv2.flip( self.camera.read(), 1 )  # notice: we're mirroring the captured frame
-            
-            if frame is None:
-                time.sleep( 0.020 )
-            else:
-                frame_height, frame_width = frame.shape[:2]
-                
-                if frame_width != self.width or frame_height != self.height:
-                    
-                    ratio_x = self.width / frame_width
-                    ratio_y = self.height / frame_height
-                    ratio = min( ratio_x, ratio_y )                    
-                    frame = cv2.resize( frame, None, fx=ratio, fy=ratio, interpolation=cv2.INTER_LINEAR )
-                    
-                    new_height, new_width = frame.shape[:2]
-                    if new_width > self.width:
-                        new_width = self.width
-                    if new_height > self.height:
-                        new_height = self.height
-                        
-                    x = (self.width - new_width) // 2
-                    y = (self.height - new_height) // 2
-                    
-                    self.content = np.zeros( (self.height, self.width, 3), np.uint8 ) + 16
-                    self.content[ y:y+new_height,
-                                  x:x+new_width, : ] = frame[ :new_height, :new_width, : ] 
-                
-                else:
-                    self.content = frame.copy()
-                
-                self.draw()
-                ##self.buffer.set( IndexedFrame(frame_index, frame) )
-                
-            frame_index += 1
-        
-        self.camera.release()
 
     #-------------------------------------------------------------------------
     def stop(self) -> None:
-        '''Definitively stops this acquisition thread.
+        '''Definitively stops every internal threads.
         '''
-        self.keep_on = False
+        self.acq_thread.stop()
+        self.disp_thread.stop()
+        self.join()
+        self.camera.release()
 
     #-------------------------------------------------------------------------
     _CAM_VIEWS_COUNT = 0
