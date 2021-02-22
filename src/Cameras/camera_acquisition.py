@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Copyright (c) 2021 Philippe Schmouker
 
@@ -21,109 +23,118 @@ SOFTWARE.
 """
 
 #=============================================================================
-from threading import Thread
+from threading import Event, Thread
 import time
 
-from src.Cameras.camera                      import Camera
-from src.Utils.types                         import Frame
-from src.Buffers.frames_acquisition_buffer   import FramesAcquisitionBuffer
-from src.Utils.indexed_frame                 import IndexedFrame
+from .camera                     import Camera
+from src.Utils.circular_buffer   import CircularBuffer
+from src.Utils.types             import Frame
+from src.Utils.indexed_frame     import IndexedFrame
+
 
 #=============================================================================
 class CameraAcquisition( Thread ):
-    """The class of camera acquisition threads.
+    """The class description.
     """
-    
     #-------------------------------------------------------------------------
-    def __init__(self, camera: Camera, name: str = None) -> None:
+    def __init__(self, camera: Camera) -> None:
         '''Constructor.
+        
+        CameraAcquisition instances are thread  that  capture
+        video frame from cameras at their own pace. They fill
+        buffers that can be read by external threads.
         
         Args:
             camera: Camera
-                A reference to the associated camera.
-            name: str
-                The name of this thread. If not set, a default
-                name will be given to the associated thread.
+                A reference to the associated camera instance.
         '''
-        if name is None:
-            name = f"cam-acq-thrd-{CameraAcquisition._CAM_ACQ_THREADS_COUNT}"
-            CameraAcquisition._CAM_ACQ_THREADS_COUNT += 1
-        
-        super().__init__( name=name )
         self.camera = camera
-        self.buffer = FramesAcquisitionBuffer()
-        self.last_frame_index = -1
-        
+        self.period = 1.0 / self.camera.get_fps()
+        self.buffer = CircularBuffer( 3 )
+        self.sync_event = Event()
+        super().__init__( name=f"cam-acq-{camera.get_id()}-thrd" )
+
     #-------------------------------------------------------------------------
-    def get(self) -> IndexedFrame:
-        '''Returns a reference to the newly acquired frame.
-        
-        Cannot be called within the context of the  frames
-        acquisition thread.  Must be called outside of it.
-        Deadlocks will eventually happen otherwise.
-        
-        Returns:
-            Either a reference to the buffer that contains 
-            the  newly  acquired  frame or None if timeout
-            happened.
-        '''
-        return self.buffer.get()
-        
+    @property
+    def cam_id(self) -> int:
+        try:
+            return self.camera.cam_id
+        except:
+            return -1
+
     #-------------------------------------------------------------------------
     def get_frame(self) -> Frame:
-        '''Returns a reference to the currently accessible buffer.
-        
-        Cannot be called within the context of the  frames
-        acquisition thread.  Must be called outside of it.
-        Deadlocks will eventually happen otherwise.
+        '''Gets oldest frame present in buffer.
         
         Returns:
-            Either a reference to the newly acquired frame
-            or None if timeout happened.
+            Either a copy of the oldest frame that is 
+            present in the frames buffer,  or None in 
+            case of any error.
         '''
         try:
-            return self.buffer.get().frame
+            return self.buffer.get_oldest().frame.copy()
         except:
             return None
 
     #-------------------------------------------------------------------------
-    def is_ok(self) -> bool:
-        '''Returns True when status of this camera acquisition thread is ok, or False otherwise.
+    def get_indexed_frame(self) -> IndexedFrame:
+        '''Gets oldest frame present in buffer.
+        
+        Returns:
+            Either a copy of the oldest indexed frame 
+            that is present in the frames buffer,  or 
+            None in case of any error.
         '''
         try:
-            return self.camera.hw_default_width != 0
+            return self.buffer.get_oldest().frame
         except:
-            return False
+            return None
 
     #-------------------------------------------------------------------------
     def run(self) -> None:
-        '''The acquisition method once this thread has been started.
+        '''The running loop of this thread.
         '''
-        print( f"running {self.name}" )
+        first_frame = True
         
-        frame_index = 0
-        self._keep_on = self.is_ok()
-        while self._keep_on:
+        self.keep_on = True
+        while self.keep_on:
+            
+            # gets next frame from camera
             frame = self.camera.read()
-            if frame is None:
-                time.sleep( 0.020 )
-            else:
-                self.buffer.set( IndexedFrame(frame_index, frame) )
-            frame_index += 1
-        
-        print( f"finally stopping {self.name}" )
-        
-        self.camera.release()
+            
+            # is capture ok?
+            if self.keep_on:
+                
+                # this is the capturing time (or not that far from it)
+                current_time = time.perf_counter()
+                
+                if first_frame:
+                    # let's stroe immediatly first captured frame
+                    start_time = time.perf_counter()
+                    self.buffer.append( IndexedFrame(0, frame) )
+                    first_frame = False
+                    self.sync_event.set()
+                else:
+                    # if not first frame,
+                    # let's verify its capture time
+                    current_index = round( (current_time - start_time) * self.period )
+
+                    # if capture time is ok with period,
+                    if current_index <= self.buffer[-2].index + 1:
+                        # let's just store the frame
+                        self.buffer.append( IndexedFrame(current_index, frame) )
+                    else:
+                        # if not, let's store an intermediaite frame (the one that is missing)
+                        self.buffer.append( IndexedFrame(current_index-1,
+                                                         frame // 2 + self.buffer[-2].frame // 2) )
+                        # then, let's store the lastly captured frame
+                        self.buffer.append( IndexedFrame(current_index, frame) )
+            # that's it!
 
     #-------------------------------------------------------------------------
     def stop(self) -> None:
-        '''Definitively stops this acquisition thread.
+        '''Definitively stops this thread.
         '''
-        print( f"stopping {self.name}" )
-
-        self._keep_on = False
-
-    #-------------------------------------------------------------------------
-    _CAM_ACQ_THREADS_COUNT = 0
+        self.keep_on = False
 
 #=====   end of   src.Cameras.camera_acquisition   =====#

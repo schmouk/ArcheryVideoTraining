@@ -21,26 +21,40 @@ SOFTWARE.
 """
 
 #=============================================================================
-from typing import ForwardRef
+from threading import Semaphore
 
-from src.Utils.types import Frame
-
-
-#=============================================================================
-IndexedFrameRef = ForwardRef( "IndexedFrame" )
+from src.Utils.circular_buffer   import CircularBuffer
+from src.Utils.types             import Frame
+from src.Utils.indexed_frame     import IndexedFrame
 
 
 #=============================================================================
-class IndexedFrame:
-    """The class of frames associated with an index.
+class FramesAcquisitionBuffer( CircularBuffer ):
+    """The class of the cameras buffers for frames acquisition.
     """
+
     #-------------------------------------------------------------------------
-    def __init__(self, index: int   = None,
-                       frame: Frame = None,
-                       *, 
-                       copy: IndexedFrameRef = None) -> None:
+    def __init__(self) -> None:
         '''Constructor.
         
+        Args:
+            sync_event: Event
+                A reference to a synchronizing event between
+                acquisition and display of captured frames.
+        '''
+        entries_count = 2
+        super().__init__( entries_count )
+        self.sems = [ Semaphore() for _ in range(entries_count) ]
+        
+    #-------------------------------------------------------------------------
+    def append(self, index: int, frame: Frame) -> None:
+        '''Appends a new indexed frame to this buffer.
+        
+        This is a convenient wrapper to the inherited  over-
+        written method.
+        
+        Notice:  returns nothing while the inherited  called
+            method returns a reference to 'self'.
         Args:
             index: int
                 The index of the associated frame within the 
@@ -51,34 +65,22 @@ class IndexedFrame:
                 A reference to a frame associated  with  the 
                 index.  Must  be set if 'index' is set. Must 
                 be None if 'copy' is set. Defaults to None.
-            copy: IndexFrame
-                Named argument.  This is a reference  to  an 
-                indexed  frame instance that is to be copied 
-                into this newly created one. Must be None if 
-                'index'  and  'frame'  are set.  Defaults to 
-                None.
-        Raises:
-            AssertionError:  some assertion on the arguments
-                values has failed.
         '''
-        if copy is None:
-            assert (index is None and frame is None) or (index is not None and frame is not None)
-            self.index = index
-            self.frame = frame
-        else:
-            assert index is None and frame is None
-            self = copy.copy()
-
-    #-------------------------------------------------------------------------
-    def copy(self) -> IndexedFrameRef:
-        '''Returns a copy of this indexed frame as a new instance.
+        super().append( IndexedFrame(index, frame) )
         
-        Notice: the content of the frame is truly copied, unless
-        self.frame is None.
+    #-------------------------------------------------------------------------
+    def get(self) -> IndexedFrame:
+        '''Returns a reference to the oldest acquired indexed frame.
+        
+        Cannot be called within the context of the  frames
+        acquisition thread.  Must be called outside of it.
+        Deadlocks will eventually happen otherwise.
+        
+        Returns:
+            Either a reference to the buffer that contains 
+            the oldest acquired frame or None if buffer is
+            not yet full.
         '''
-        try:
-            return IndexedFrame( self.index, self.frame.copy() )
-        except:
-            return IndexedFrame( self.index, self.frame )
+        return self.get_oldest() if self.is_nearly_full(1) else None
 
-#=====   end of   src.Utils.indexed_frame   =====#
+#=====   end of   src.Buffers.frames_acquisition_buffer   =====#

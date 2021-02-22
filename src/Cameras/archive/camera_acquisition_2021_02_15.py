@@ -21,34 +21,38 @@ SOFTWARE.
 """
 
 #=============================================================================
-from threading import Lock
+from threading import Thread
+import time
 
-from src.Utils.types         import Frame
-from src.Utils.indexed_frame import IndexedFrame
-
+from src.Cameras.camera                      import Camera
+from src.Utils.types                         import Frame
+from src.Buffers.frames_acquisition_buffer   import FramesAcquisitionBuffer
+from src.Utils.indexed_frame                 import IndexedFrame
 
 #=============================================================================
-class FramesAcquisitionBuffer:
-    """The class of the cameras buffers for frames acquisition.
-    
-    These buffers are flip-flop buffers.
+class CameraAcquisition( Thread ):
+    """The class of camera acquisition threads.
     """
-
+    
     #-------------------------------------------------------------------------
-    def __init__(self, acquisition_timeout: float = 0.100) -> None:
+    def __init__(self, camera: Camera, name: str = None) -> None:
         '''Constructor.
         
         Args:
-            acquisition_timeout: float
-                The value, expressed in fractional seconds,
-                of the timeout to be applied on acquisition
-                of frames. Defaults to 100 ms.
+            camera: Camera
+                A reference to the associated camera.
+            name: str
+                The name of this thread. If not set, a default
+                name will be given to the associated thread.
         '''
-        self.acq_timeout = acquisition_timeout
-
-        self._buf = [ None, None ]
-        self._ndx = 0
-        self._lock = Lock()
+        if name is None:
+            name = f"cam-acq-thrd-{CameraAcquisition._CAM_ACQ_THREADS_COUNT}"
+            CameraAcquisition._CAM_ACQ_THREADS_COUNT += 1
+        
+        super().__init__( name=name )
+        self.camera = camera
+        self.buffer = FramesAcquisitionBuffer()
+        self.last_frame_index = -1
         
     #-------------------------------------------------------------------------
     def get(self) -> IndexedFrame:
@@ -63,7 +67,7 @@ class FramesAcquisitionBuffer:
             the  newly  acquired  frame or None if timeout
             happened.
         '''
-        return self._buf[ self._flipflop_index() ]
+        return self.buffer.get()
         
     #-------------------------------------------------------------------------
     def get_frame(self) -> Frame:
@@ -77,27 +81,49 @@ class FramesAcquisitionBuffer:
             Either a reference to the newly acquired frame
             or None if timeout happened.
         '''
-        return self.get().frame
+        try:
+            return self.buffer.get().frame
+        except:
+            return None
 
     #-------------------------------------------------------------------------
-    def set(self, indexed_frame: IndexedFrame) -> None:
-        '''Sets new data into the not yet accessible buffer.
-        
-        Internally calls protected method '_set()' which may
-        be overwritten in inheriting classes.
-        
-        Args:
-            indexed_frame: IndexedFrame
-                A reference to an indexed frame.
+    def is_ok(self) -> bool:
+        '''Returns True when status of this camera acquisition thread is ok, or False otherwise.
         '''
-        with self._lock:
-            self._buf[ self._ndx ] = indexed_frame
-            self._ndx = self._flipflop_index()
+        try:
+            return self.camera.hw_default_width != 0
+        except:
+            return False
 
     #-------------------------------------------------------------------------
-    def _flipflop_index(self) -> int:
-        '''Returns the index of the currently accessible buffer.
+    def run(self) -> None:
+        '''The acquisition method once this thread has been started.
         '''
-        return 0 if self._ndx == 1 else 1
+        print( f"running {self.name}" )
+        
+        frame_index = 0
+        self._keep_on = self.is_ok()
+        while self._keep_on:
+            frame = self.camera.read()
+            if frame is None:
+                time.sleep( 0.020 )
+            else:
+                self.buffer.set( IndexedFrame(frame_index, frame) )
+            frame_index += 1
+        
+        print( f"finally stopping {self.name}" )
+        
+        self.camera.release()
 
-#=====   end of   src.Buffers.frames_acquisition_buffer   =====#
+    #-------------------------------------------------------------------------
+    def stop(self) -> None:
+        '''Definitively stops this acquisition thread.
+        '''
+        print( f"stopping {self.name}" )
+
+        self._keep_on = False
+
+    #-------------------------------------------------------------------------
+    _CAM_ACQ_THREADS_COUNT = 0
+
+#=====   end of   src.Cameras.camera_acquisition   =====#
