@@ -43,20 +43,22 @@ class IndexedFrame:
         
         Args:
             index: int
-                The index of the associated frame within  stream.
-                Must  be s et if 'frame' is set.  Must be None if
-                'copy' is set. Defaults to None.
+                The index of the associated frame within the 
+                video stream. Must be set if 'frame' is set. 
+                Must be None if 'copy' is set.  Defaults to 
+                None.
             frame: Frame
-                A reference to a frame associated with the index. 
-                Must  be  set if 'index' is set.  Must be None if 
-                'copy' is set. Defaults to None.
+                A reference to a frame associated  with  the 
+                index.  Must  be set if 'index' is set. Must 
+                be None if 'copy' is set. Defaults to None.
             copy: IndexFrame
-                Named argument. This is a reference to an indexed
-                frame  instance  that  is  to be copied into this
-                newly created one.  Must be None if  'index'  and
-                'frame' are set. Defaults to None.
+                Named argument.  This is a reference  to  an 
+                indexed  frame instance that is to be copied 
+                into this newly created one. Must be None if 
+                'index'  and  'frame'  are set.  Defaults to 
+                None.
         Raises:
-            AssertionError:   some  assertion  on  the  arguments
+            AssertionError:  some assertion on the arguments
                 values has failed.
         '''
         if copy is None:
