@@ -25,19 +25,19 @@ SOFTWARE.
 #=============================================================================
 import cv2
 import numpy as np
-import time
 
-from threading import Event, Thread
+from threading import Event
 from typing    import ForwardRef
 
 from src.App.avt_config                      import AVTConfig
 from .avt_view_prop                          import AVTViewProp
 from .avt_window                             import AVTWindowRef
 from src.Cameras.camera                      import Camera
+from src.Cameras.camera_acquisition          import CameraAcquisition
+from src.Cameras.camera_direct_display       import CameraDirectDisplay
 from src.GUIItems.font                       import Font
-from src.Buffers.frames_acquisition_buffer   import FramesAcquisitionBuffer
+from src.Utils.types                         import Frame
 from src.Display.fps_rate                    import FPSRateFrames
-from src.Utils.indexed_frame                 import IndexedFrame
 from src.Utils.rgb_color                     import RGBColor, YELLOW
 from src.GUIItems.label                      import Label
 from src.Shapes.rect                         import Rect
@@ -93,20 +93,13 @@ class CameraView( AVTViewProp ):
         self.camera = camera
         CameraView._CAM_VIEWS_COUNT += 1
 
-        self.buffer = FramesAcquisitionBuffer()
         self.sync_event = Event()
         
         super().__init__( parent, x, y, width, height, parent_rect )
 
-        self.acq_thread  = self._Acquisition( f"{self.view_name}-acq-thrd" ,
-                                              self.buffer,
-                                              self.sync_event,
-                                              self.camera,
-                                              self.fps_rate )
-        self.disp_thread = self._Display    ( f"{self.view_name}-disp-thrd",
-                                              self.buffer,
-                                              self.sync_event,
-                                              self )
+        self.acq_thread  = CameraAcquisition( self.camera )
+        self.disp_thread = CameraDirectDisplay( self.acq_thread, self )
+        
         self.draw()
 
     #-------------------------------------------------------------------------
@@ -153,6 +146,37 @@ class CameraView( AVTViewProp ):
             self.fps_label.draw()
 
     #-------------------------------------------------------------------------
+    def draw_frame(self, frame: Frame) -> None:
+        '''Draws a new frame within this camera view
+        '''
+        frame_height, frame_width = frame.shape[:2]
+        
+        if frame_width != self.width or frame_height != self.height:
+            
+            ratio_x = self.width / frame_width
+            ratio_y = self.height / frame_height
+            ratio = min( ratio_x, ratio_y )                    
+            frame = cv2.resize( frame, None, fx=ratio, fy=ratio, interpolation=cv2.INTER_LINEAR )
+            
+            new_height, new_width = frame.shape[:2]
+            if new_width > self.width:
+                new_width = self.width
+            if new_height > self.height:
+                new_height = self.height
+                
+            x = (self.width - new_width) // 2
+            y = (self.height - new_height) // 2
+            
+            self.content = np.zeros( (self.height, self.width, 3), np.uint8 ) + 16
+            self.content[ y:y+new_height,
+                          x:x+new_width, : ] = frame[ :new_height, :new_width, : ] 
+        
+        else:
+            self.content = frame
+        
+        self.draw()
+
+    #-------------------------------------------------------------------------
     def is_ok(self) -> bool:
         '''Returns True when status of this camera acquisition thread is ok, or False otherwise.
         '''
@@ -176,6 +200,7 @@ class CameraView( AVTViewProp ):
         '''
         self.acq_thread.start()
         self.disp_thread.start()
+        self.fps_rate.start()
 
     #-------------------------------------------------------------------------
     def stop(self) -> None:
@@ -188,165 +213,5 @@ class CameraView( AVTViewProp ):
 
     #-------------------------------------------------------------------------
     _CAM_VIEWS_COUNT = 0
-
-
-    #-------------------------------------------------------------------------
-    class _Acquisition( Thread ):
-        '''The internal class for the acquisition thread.
-        '''
-        #---------------------------------------------------------------------
-        def __init__(self, name         : str,
-                           frames_buffer: FramesAcquisitionBuffer,
-                           sync_event   : Event,
-                           camera       : Camera,
-                           fps_rate     : FPSRateFrames) -> None:
-            '''Constructor.
-            
-            Args:
-                name: str
-                    The name of this thread.
-                frames_buffer: FramesAcquisitionBuffer:
-                    A reference to the flip-flop frames  buffer
-                    used to acquire/display frames.
-                sync_event: Event
-                    A reference to the  synchronization  signal
-                    used to synchronize acquisition and display
-                    of frames.
-                camera: Camera
-                    A reference tot he associated camera.
-                fps_rate: FPSRateFrames
-                    A reference to the parent_view frames  rate
-                    evaluator.
-            '''
-            super().__init__( name=name )
-            self.frames_buffer = frames_buffer
-            self.sync_event = sync_event
-            self.sync_event.clear()
-            self.camera = camera
-            self.fps_rate = fps_rate
-    
-        #---------------------------------------------------------------------
-        def run(self) -> None:
-            '''The acquisition method once this thread has been started.
-            '''
-            frame_index = 0
-            self.keep_on = True            
-            
-            while self.keep_on:
-                frame = self.camera.read()
-                
-                if frame is None:
-                    time.sleep( 0.020 )
-                    
-                else:
-                    if frame_index == 0:
-                        self.fps_rate.start()
-
-                    ##print( f"{self.name} + {frame_index:6d} / {time.perf_counter():.3f} s")
-                        
-                    self.frames_buffer.set( IndexedFrame(frame_index, cv2.flip( frame, 1 )) )  # notice: we're mirroring the captured frame
-                    self.sync_event.set()
-            
-                    frame_index += 1
-                    
-        #---------------------------------------------------------------------
-        def stop(self) -> None:
-            '''Definitively stops this thread.
-            '''
-            self.keep_on = False
-
-
-    #-------------------------------------------------------------------------
-    class _Display( Thread ):
-        '''The internal class for the display thread.
-        '''
-        #---------------------------------------------------------------------
-        def __init__(self, name         : str,
-                           frames_buffer: FramesAcquisitionBuffer,
-                           sync_event   : Event                  ,
-                           parent_view  : CameraViewRef           ) -> None:
-            '''Constructor.
-            
-            Args:
-                name: str
-                    The name of this thread.
-                frames_buffer: FramesAcquisitionBuffer:
-                    A reference to the flip-flop frames  buffer
-                    used to acquire/display frames.
-                sync_event: Event
-                    A reference to the  synchronization  signal
-                    used to synchronize acquisition and display
-                    of frames.
-                parent_view: CameraViewRef
-                    A reference to the parent camera view.
-            '''
-            super().__init__( name=name )
-            self.frames_buffer = frames_buffer
-            self.sync_event = sync_event
-            self.parent_view = parent_view
-            self.width  = self.parent_view.width
-            self.height = self.parent_view.height
-    
-        #-------------------------------------------------------------------------
-        def run(self) -> None:
-            '''The acquisition method once this thread has been started.
-            '''
-            self.keep_on = self.parent_view.is_ok()
-            
-            #===================================================================
-            # last_frame_index = -1
-            #===================================================================
-            
-            while self.keep_on:
-                self.sync_event.wait()
-                indexed_frame = self.frames_buffer.get()
-                
-                if indexed_frame is None:
-                    time.sleep( 0.020 )
-                    continue
-                
-                #===============================================================
-                # if indexed_frame.index == last_frame_index:
-                #     time.sleep( 0.005 )
-                #     continue
-                # else:
-                #     last_frame_index = indexed_frame.index
-                #===============================================================
-
-                self.sync_event.clear()
-                
-                frame = indexed_frame.frame
-                frame_height, frame_width = frame.shape[:2]
-                if frame_width != self.width or frame_height != self.height:
-                    
-                    ratio_x = self.width / frame_width
-                    ratio_y = self.height / frame_height
-                    ratio = min( ratio_x, ratio_y )                    
-                    frame = cv2.resize( frame, None, fx=ratio, fy=ratio, interpolation=cv2.INTER_LINEAR )
-                    
-                    new_height, new_width = frame.shape[:2]
-                    if new_width > self.width:
-                        new_width = self.width
-                    if new_height > self.height:
-                        new_height = self.height
-                        
-                    x = (self.width - new_width) // 2
-                    y = (self.height - new_height) // 2
-                    
-                    self.parent_view.content = np.zeros( (self.height, self.width, 3), np.uint8 ) + 16
-                    self.parent_view.content[ y:y+new_height,
-                                              x:x+new_width, : ] = frame[ :new_height, :new_width, : ] 
-                
-                else:
-                    self.parent_view.content = frame.copy()
-                
-                ##print( f"{self.name} - {indexed_frame.index:6d} / {time.perf_counter():.3f} s")
-                self.parent_view.draw()
-        
-        #---------------------------------------------------------------------
-        def stop(self) -> None:
-            '''Definitively stops this thread.
-            '''
-            self.keep_on = False
 
 #=====   end of   src.Display.camera_view   =====#
