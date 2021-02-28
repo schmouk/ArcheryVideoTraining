@@ -26,6 +26,8 @@ SOFTWARE.
 from threading import Event, Thread 
 import time
 
+from src.Utils.Scheduling import Scheduler
+
 
 #=============================================================================
 class PeriodicalThread( Thread ):
@@ -101,29 +103,29 @@ class PeriodicalThread( Thread ):
         '''
         self.initialize_run_loop()
         
-        self.stop_event.clear()
-        
         start_time = time.perf_counter()
         loops_count = 0
         
-        wait_s = self.period_s
+        self.keep_on = True
         
-        while not self.stop_event.wait( 0.001 ):
-            
-            current_time = time.perf_counter()
-
-            # calls the processing core of this periodical thread
-            if not self.process():
-                break
-            
-            # evaluates the next time for call
-            loops_count += 1
-            next_time = loops_count * self.period_s + start_time
-            
-            # evaluates the waiting period of time
-            wait_s = next_time - current_time
-            ##wait_s = 0.001 if wait_s < 0.001 else wait_s - 0.002
-            time.sleep( 0.001 if wait_s < 0.002 else wait_s - 0.002 )
+        with Scheduler( 3 ):
+            while self.keep_on:
+    
+                next_time = loops_count * self.period_s + start_time
+    
+                # calls the processing core of this periodical thread
+                if not self.process():
+                    break
+                
+                # evaluates the next time for call
+                loops_count += 1
+                next_time = loops_count * self.period_s + start_time
+                 
+                # evaluates the waiting period of time
+                current_time = time.perf_counter()
+                wait_time = next_time - current_time
+                if wait_time > 0:
+                    time.sleep( wait_time )
         
         self.finalize_run_loop()
 
@@ -131,6 +133,6 @@ class PeriodicalThread( Thread ):
     def stop(self) -> None:
         '''Definitively stops this thread.
         '''
-        self.stop_event.set()
+        self.keep_on = False
 
 #=====   end of   src.Utils.periodical_thread   =====#
