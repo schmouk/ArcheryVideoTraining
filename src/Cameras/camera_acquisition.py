@@ -23,13 +23,14 @@ SOFTWARE.
 """
 
 #=============================================================================
-from threading import Event, Thread
+from threading   import Event, Thread
 import time
 
-from .camera                     import Camera
-from src.Utils.circular_buffer   import CircularBuffer
-from src.Utils.types             import Frame
-from src.Utils.indexed_frame     import IndexedFrame
+from .camera                             import Camera
+from src.Buffers.camera_frames_buffer    import CameraFramesBuffer
+from src.Utils.circular_buffer           import CircularBuffer
+from src.Utils.types                     import Frame
+from src.Utils.indexed_frame             import IndexedFrame
 
 
 #=============================================================================
@@ -37,7 +38,8 @@ class CameraAcquisition( Thread ):
     """The class description.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, camera: Camera) -> None:
+    def __init__(self, camera      : Camera,
+                       frame_buffer: CameraFramesBuffer) -> None:
         '''Constructor.
         
         CameraAcquisition instances are thread  that  capture
@@ -47,11 +49,14 @@ class CameraAcquisition( Thread ):
         Args:
             camera: Camera
                 A reference to the associated camera instance.
+            frame_buffer: CameraFramesBuffer
+                A reference to the camera frames  buffer  that
+                is associated with the specified camera.
         '''
         self.camera = camera
-        self.period = 1.0 / self.camera.get_fps()
-        self.buffer = CircularBuffer( 3 )
-        self.sync_event = Event()
+        self.buffer = frame_buffer
+        self.stop_event = Event()
+        self.fps = self.camera.get_fps()
         super().__init__( name=f"cam-acq-{camera.get_id()}-thrd" )
 
     #-------------------------------------------------------------------------
@@ -60,81 +65,122 @@ class CameraAcquisition( Thread ):
         try:
             return self.camera.cam_id
         except:
-            return -1
-
-    #-------------------------------------------------------------------------
-    def get_frame(self) -> Frame:
-        '''Gets oldest frame present in buffer.
-        
-        Returns:
-            Either a copy of the oldest frame that is 
-            present in the frames buffer,  or None in 
-            case of any error.
-        '''
-        try:
-            return self.buffer.get_oldest().frame.copy()
-        except:
             return None
-
-    #-------------------------------------------------------------------------
-    def get_indexed_frame(self) -> IndexedFrame:
-        '''Gets oldest frame present in buffer.
-        
-        Returns:
-            Either a copy of the oldest indexed frame 
-            that is present in the frames buffer,  or 
-            None in case of any error.
-        '''
-        try:
-            return self.buffer.get_oldest().frame
-        except:
-            return None
+    
+    @property
+    def period(self) -> float:
+        return 1.0 / self.fps if self.fps > 0 else 0.0
 
     #-------------------------------------------------------------------------
     def run(self) -> None:
         '''The running loop of this thread.
         '''
-        first_frame = True
+        self.stop_event.set()
+        frames_count = 0
         
-        self.keep_on = True
-        while self.keep_on:
-            
-            # gets next frame from camera
-            frame = self.camera.read()
-            
-            # is capture ok?
-            if self.keep_on:
-                
-                # this is the capturing time (or not that far from it)
-                current_time = time.perf_counter()
-                
-                if first_frame:
-                    # let's stroe immediatly first captured frame
-                    start_time = time.perf_counter()
-                    self.buffer.append( IndexedFrame(0, frame) )
-                    first_frame = False
-                    self.sync_event.set()
-                else:
-                    # if not first frame,
-                    # let's verify its capture time
-                    current_index = round( (current_time - start_time) * self.period )
+        while self.stop_event.is_set():
+            frm = self.camera.read()
 
-                    # if capture time is ok with period,
-                    if current_index <= self.buffer[-2].index + 1:
-                        # let's just store the frame
-                        self.buffer.append( IndexedFrame(current_index, frame) )
-                    else:
-                        # if not, let's store an intermediaite frame (the one that is missing)
-                        self.buffer.append( IndexedFrame(current_index-1,
-                                                         frame // 2 + self.buffer[-2].frame // 2) )
-                        # then, let's store the lastly captured frame
-                        self.buffer.append( IndexedFrame(current_index, frame) )
-            # that's it!
+            if frm is not None:
+                self.buffer.append( IndexedFrame(frames_count, frm) )
+                frames_count += 1
+                time.sleep( 0.004 )
+                
+            else:
+                self.stop()
 
+        self.camera.release()
+        
+#===============================================================================
+#         self.stop_event.set()
+#         start_time = None
+#         current_index = 0
+#         
+#         self.keep_on = True
+#         while self.keep_on and self.stop_event.wait( 1 ):
+#             
+#             # gets next frame from camera
+#             frame = self.camera.read()
+#             
+#             # is capture ok?
+#             self.keep_on = frame is not None
+#             
+#             if self.keep_on:
+#                 
+#                 # this is the capturing time (or not that far from it)
+#                 current_time = time.perf_counter()
+#                                 
+#                 if start_time is None:
+#                     # let's store immediately this first captured frame
+#                     start_time = current_time  ##time.perf_counter()
+#                     self.buffer.append( IndexedFrame(0, frame) )
+#                     self.sync_event.set()
+#                     #===========================================================
+#                     # print( f"{self.name} - {current_time:7.3f} ({self.buffer[0].index:4d}, {self.buffer[1].index:4d}, {self.buffer[2].index:4d}), {0:4d} / {self.buffer[-2].index + 1:4d}" )
+#                     #===========================================================
+#                     print( 0 )
+#                     last_index = 0
+#                 else:
+#                     ##current_index = int( (current_time - start_time) * self.fps )
+#                     
+#                     #===========================================================
+#                     # print( f"{self.name}, current_time = {current_time: 7.3f}, current_index = {current_index:4d}, index[-2] = {self.buffer[-2].index:4d}" )
+#                     # print( self.name, 'index[0] =', self.buffer[0].index )
+#                     # print( self.name, 'index[1] =', self.buffer[1].index )
+#                     # print( self.name, 'index[2] =', self.buffer[2].index )
+#                     # print( self.name, 'index[-2] =', self.buffer[-2].index )
+#                     # print( self.name, 'index[-1] =', self.buffer[-1].index )
+#                     #===========================================================
+# 
+#                     # if capture time is ok with period,
+#                     if True:  ##current_index <= self.buffer[-1].index + 1 or not self.buffer.is_full():
+#                         #=======================================================
+#                         # print( self.name, current_index, '<=', self.buffer[-1].index + 1 )
+#                         #=======================================================
+#                         
+#                         # let's just store the frame
+#                         self.buffer.append( IndexedFrame(current_index, frame) )
+#                         print( '' if current_index == last_index+1 else '==' if current_index == last_index else '++',
+#                                current_index, f"{time.perf_counter():.3f}" )
+#                         last_index = current_index
+#                     else:
+#                         #=======================================================
+#                         # print( self.name, current_index, '> ', self.buffer[-1].index + 1 )
+#                         #=======================================================
+#                         
+#                         # if not, let's store an intermediate frame (the one that is missing)
+#                         self.buffer.append( IndexedFrame(current_index-1,
+#                                                          frame // 2 + self.buffer[-2].frame // 2) )
+#                         #=======================================================
+#                         # print( f"{self.name} - {current_time:7.3f} ({self.buffer[-2].index:4d}), {current_index-1:4d} //" )
+#                         # print( self.name, 'index[0] =', self.buffer[0].index )
+#                         # print( self.name, 'index[1] =', self.buffer[1].index )
+#                         # print( self.name, 'index[2] =', self.buffer[2].index )
+#                         # print( self.name, 'index[-2] =', self.buffer[-2].index )
+#                         # print( self.name, 'index[-1] =', self.buffer[-1].index )
+#                         #=======================================================
+#                         
+#                         # then, let's store the lastly captured frame
+#                         self.buffer.store( IndexedFrame(current_index, frame) )    
+# 
+#                     current_index += 1
+#                     #===========================================================
+#                     # print( f"{self.name} - {current_time:7.3f} ({self.buffer[0].index:4d}, {self.buffer[1].index:4d}, {self.buffer[2].index:4d}), {current_index:4d} / {self.buffer[-2].index + 1:4d}" )
+#                     # print( self.name, 'index[0] =', self.buffer[0].index )
+#                     # print( self.name, 'index[1] =', self.buffer[1].index )
+#                     # print( self.name, 'index[2] =', self.buffer[2].index )
+#                     # print( self.name, 'index[-2] =', self.buffer[-2].index )
+#                     # print( self.name, 'index[-1] =', self.buffer[-1].index )
+#                     #===========================================================
+#         
+#             ##time.sleep( self.period / 2.0 )
+#             time.sleep( 0.002 )
+#===============================================================================
+                
     #-------------------------------------------------------------------------
     def stop(self) -> None:
         '''Definitively stops this thread.
         '''
-        self.keep_on = False
+        self.stop_event.clear()
 
 #=====   end of   src.Cameras.camera_acquisition   =====#

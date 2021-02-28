@@ -24,9 +24,13 @@ SOFTWARE.
 
 #=============================================================================
 from typing import ForwardRef
+import time
 
-from .camera_acquisition         import CameraAcquisition
-from src.Utils.periodical_thread import PeriodicalThread
+from .camera                             import Camera
+from .camera_acquisition                 import CameraAcquisition
+from src.Utils.circular_buffer           import CircularBuffer
+from src.Buffers.camera_frames_buffer    import CameraFramesBuffer
+from src.Utils.periodical_thread         import PeriodicalThread
 
 
 #=============================================================================
@@ -44,7 +48,9 @@ class CameraDirectDisplay( PeriodicalThread ):
     OpenCV capturing of webcams is not that periodical.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, cam_acq: CameraAcquisition, view: CameraViewRef) -> None:
+    def __init__(self, camera      : Camera            ,
+                       frame_buffer: CameraFramesBuffer,
+                       view        : CameraViewRef      ) -> None:
         '''Constructor.
         
         Args:
@@ -52,14 +58,16 @@ class CameraDirectDisplay( PeriodicalThread ):
                 A reference to the associated instance of a 
                 camera acquisition.
         '''
-        self.cam_acq  = cam_acq
-        self.cam_view = view
-        super().__init__( self.period, f"cam-displ-{cam_acq.cam_id}-thrd" )
+        self.camera      = camera
+        self.buffer      = frame_buffer
+        self.first_frame = True
+        self.cam_view    = view
+        super().__init__( self.camera.get_period(), f"cam-displ-{camera.get_id()}-thrd" )
 
     #-------------------------------------------------------------------------
     @property
     def period(self) -> float:
-        return self.cam_acq.period
+        return self.period_s
 
     #-------------------------------------------------------------------------
     def process(self) -> bool:
@@ -69,21 +77,39 @@ class CameraDirectDisplay( PeriodicalThread ):
             True if processing is to be kept on,  or False  if
             this thread must be definitively stopped.
         '''
-        frame = self.cam_acq.get_frame()
-        if frame is None:
-            return False
+        indexed_frame = self.buffer.get_oldest()
+        
+        if indexed_frame.frame is None:
+            return True
+        
         else:
-            self.cam_view.draw_frame( frame )
+            if self.first_frame:
+                self.first_frame = False
+                self.set_start_time()
+        
+            self.cam_view.draw_frame( indexed_frame.frame )
             return True
 
-    #-------------------------------------------------------------------------
-    def run(self) -> None:
-        '''Preparation of the running loop pf this thread.
-        '''
-        # synchronization with camera acquisition
-        self.cam_acq.sync_event.wait()
         
-        # then periodical processing
-        super().run()
+        #=======================================================================
+        # frame = self.cam_acq.get_indexed_frame()
+        # if frame is None:
+        #     return False
+        # else:
+        #     #===================================================================
+        #     # self.frames_buffer.append( frame )
+        #     # if self.frames_buffer.is_nearly_full():
+        #     #     ndx_frm = self.frames_buffer.get_oldest()
+        #     #     current_time = time.perf_counter()
+        #     #     print( self.name, f" - {current_time:7.3f} ({1000.0*(current_time - self.last_time):.1f}) / {ndx_frm.index:4d}" )
+        #     #     self.cam_view.draw_frame( ndx_frm.frame )
+        #     #     self.last_time = current_time
+        #     #===================================================================
+        #     current_time = time.perf_counter()
+        #     print( self.name, f" - {current_time:7.3f} ({1000.0*(current_time - self.last_time):.1f}) / {frame.index:4d}" )
+        #     self.cam_view.draw_frame( frame.frame )
+        #     self.last_time = current_time
+        #     return True
+        #=======================================================================
         
 #=====   end of   src.Cameras.camera_direct_display   =====#

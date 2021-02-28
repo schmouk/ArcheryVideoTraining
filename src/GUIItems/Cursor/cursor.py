@@ -59,7 +59,7 @@ class Cursor( _Cursor ):
     """The base class for all cursors.
     
     This base class inherits from class _Cursor which is implemented
-    in private modules taht are each dedicated to one platform (i.e.
+    in private modules that are each dedicated to one platform (i.e.
     Windows, MacOS, Linux or Java).
     
     As such, class Cursor gets access to next methods:

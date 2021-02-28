@@ -28,11 +28,12 @@ from typing import Tuple
 import win32api
 import win32con
 
-from src.GUIItems.Cursor.cursor_id import CursorID
+from .._cursor_base                  import _CursorBase
+from src.GUIItems.Cursor.cursor_id   import CursorID
 
 
 #=============================================================================
-class _Cursor:
+class _Cursor( _CursorBase ):
     """The class of system cursor.
     """
     #-------------------------------------------------------------------------
@@ -49,8 +50,7 @@ class _Cursor:
                 to False to not  restore  the  'normal'  cursor
                 otherwise. Defaults to True.
         '''
-        self._restore_normal_cursor = restore_normal_cursor
-        self._cursor_id = cursor_id
+        super().__init__( cursor_id, restore_normal_cursor )
 
     #-------------------------------------------------------------------------
     def __del__(self) -> None:

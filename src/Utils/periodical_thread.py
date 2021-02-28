@@ -26,6 +26,8 @@ SOFTWARE.
 from threading import Event, Thread 
 import time
 
+from src.Utils.Scheduling import Scheduler
+
 
 #=============================================================================
 class PeriodicalThread( Thread ):
@@ -80,6 +82,12 @@ class PeriodicalThread( Thread ):
         pass
 
     #-------------------------------------------------------------------------
+    def is_ok(self) -> bool:
+        '''Returns True if the period for this periodical thread is ok.
+        '''
+        return self.period_s > 0.0
+
+    #-------------------------------------------------------------------------
     def process(self) -> bool:
         '''The processing core of this periodical thread.
         
@@ -99,38 +107,46 @@ class PeriodicalThread( Thread ):
     def run(self) -> None:
         '''The looping method of this thread.
         '''
-        self.initialize_run_loop()
-        
-        self.stop_event.clear()
-        
-        start_time = time.perf_counter()
-        loops_count = 0
-        
-        wait_s = self.period_s
-        
-        while not self.stop_event.wait( 0.001 ):
+        if self.is_ok():
             
-            current_time = time.perf_counter()
+            self.initialize_run_loop()
+            
+            self.set_start_time()
+            loops_count = 0
+            
+            self.keep_on = True
+            
+            with Scheduler( 3 ):
+                while self.keep_on:
+        
+                    next_time = loops_count * self.period_s + self.start_time
+        
+                    # calls the processing core of this periodical thread
+                    if not self.process():
+                        break
+                    
+                    # evaluates the next time for call
+                    loops_count += 1
+                    next_time = loops_count * self.period_s + self.start_time
+                     
+                    # evaluates the waiting period of time
+                    current_time = time.perf_counter()
+                    wait_time = next_time - current_time
+                    if wait_time > 0:
+                        time.sleep( wait_time )
+        
+            self.finalize_run_loop()
 
-            # calls the processing core of this periodical thread
-            if not self.process():
-                break
-            
-            # evaluates the next time for call
-            loops_count += 1
-            next_time = loops_count * self.period_s + start_time
-            
-            # evaluates the waiting period of time
-            wait_s = next_time - current_time
-            ##wait_s = 0.001 if wait_s < 0.001 else wait_s - 0.002
-            time.sleep( 0.001 if wait_s < 0.002 else wait_s - 0.002 )
-        
-        self.finalize_run_loop()
+    #-------------------------------------------------------------------------
+    def set_start_time(self) -> None:
+        '''Sets the start time for this periodical processing.
+        '''
+        self.start_time = time.perf_counter()
 
     #-------------------------------------------------------------------------
     def stop(self) -> None:
         '''Definitively stops this thread.
         '''
-        self.stop_event.set()
+        self.keep_on = False
 
 #=====   end of   src.Utils.periodical_thread   =====#
