@@ -25,22 +25,21 @@ SOFTWARE.
 #=============================================================================
 import cv2
 import numpy as np
+from typing import ForwardRef
 
-from threading import Event
-from typing    import ForwardRef
-
-from src.App.avt_config                      import AVTConfig
-from .avt_view_prop                          import AVTViewProp
-from .avt_window                             import AVTWindowRef
-from src.Cameras.camera                      import Camera
-from src.Cameras.camera_acquisition          import CameraAcquisition
-from src.Cameras.camera_direct_display       import CameraDirectDisplay
-from src.GUIItems.font                       import Font
-from src.Utils.types                         import Frame
-from src.Display.fps_rate                    import FPSRateFrames
-from src.Utils.rgb_color                     import RGBColor, YELLOW
-from src.GUIItems.label                      import Label
-from src.Shapes.rect                         import Rect
+from src.App.avt_config                  import AVTConfig
+from .avt_view_prop                      import AVTViewProp
+from .avt_window                         import AVTWindowRef
+from src.Cameras.camera                  import Camera
+from src.Cameras.camera_acquisition      import CameraAcquisition
+from src.Cameras.camera_direct_display   import CameraDirectDisplay
+from src.Buffers.camera_frames_buffer    import CameraFramesBuffer
+from src.GUIItems.font                   import Font
+from src.Utils.types                     import Frame
+from src.Display.fps_rate                import FPSRateFrames
+from src.Utils.rgb_color                 import RGBColor, YELLOW
+from src.GUIItems.label                  import Label
+from src.Shapes.rect                     import Rect
   
 
 #=============================================================================
@@ -93,12 +92,12 @@ class CameraView( AVTViewProp ):
         self.camera = camera
         CameraView._CAM_VIEWS_COUNT += 1
 
-        self.sync_event = Event()
-        
+        camera_frames_buffer = CameraFramesBuffer( 4 )
+                
         super().__init__( parent, x, y, width, height, parent_rect )
 
-        self.acq_thread  = CameraAcquisition( self.camera )
-        self.disp_thread = CameraDirectDisplay( self.acq_thread, self )
+        self.acq_thread  = CameraAcquisition( self.camera, camera_frames_buffer )
+        self.disp_thread = CameraDirectDisplay( self.camera, camera_frames_buffer, self )
         
         self.draw()
 
@@ -209,7 +208,6 @@ class CameraView( AVTViewProp ):
         self.acq_thread.stop()
         self.disp_thread.stop()
         self.join()
-        self.camera.release()
 
     #-------------------------------------------------------------------------
     _CAM_VIEWS_COUNT = 0

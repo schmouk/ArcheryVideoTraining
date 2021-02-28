@@ -24,7 +24,8 @@ SOFTWARE.
 
 #=============================================================================
 from typing      import ForwardRef
-from threading   import Lock
+from threading   import Event, Lock
+import time
 
 from src.Utils.indexed_frame import IndexedFrame
 
@@ -60,13 +61,19 @@ class CameraFramesBuffer:
         Args:
             max_size: int
                 The max number of frames that can be stored
-                simultaneously in this buffer, 
+                simultaneously  in  this  buffer.  Must  be
+                greater than 1.
         '''
+        assert max_size > 1
+        
         self.buffer = [ None ] * max_size
         self.max_size     = max_size
         self.current_size = 0
         self.write_index  = self.Index( max_size )
         self.read_index   = self.Index( max_size )
+        self.free_slots   = 1 if max_size <= 3 else 2
+        self.start_event  = Event()
+        self.start_event.clear()  # just to be sure that this event is not yet flagged.
 
     #-------------------------------------------------------------------------
     def append(self, indexed_frame: IndexedFrame) -> None:
@@ -81,6 +88,9 @@ class CameraFramesBuffer:
         self.write_index += 1
         
         if self.current_size < self.max_size:
+            if self.is_nearly_full():
+                self.start_event.set()
+                
             self.current_size += 1
 
     #-------------------------------------------------------------------------
@@ -91,12 +101,26 @@ class CameraFramesBuffer:
         This will be the case until "enough" grabbed frames
         will have been stored in buffer.
         '''
-        if self.current_size < self.max_size - 1:
-            return None
-        
-        indexed_frame = self[0].copy()
+        indexed_frame = self[0]  ##.copy()
         self.read_index += 1
         return indexed_frame
+
+    #-------------------------------------------------------------------------
+    def is_full(self) -> bool:
+        '''Returns True if this buffer is full.
+        '''
+        return self.current_size == self.max_size
+
+    #-------------------------------------------------------------------------
+    def is_nearly_full(self, free_slots: int = 1) -> bool:
+        '''Returns True if this buffer is "nearly" full.
+        
+        Args:
+            free_slots: int
+                The max number of free slots for this buffer  to
+                be evaluated as nearly full. Defaults to 1.
+        '''
+        return self.current_size >= self.max_size - free_slots
 
     #-------------------------------------------------------------------------
     def __getitem__(self, index: int) -> IndexedFrame:
@@ -125,6 +149,8 @@ class CameraFramesBuffer:
         Raises:
             KeyError: the index is out of bounds.
         '''
+        self.start_event.wait()
+        
         if -self.max_size <= index < self.max_size:
             return self.buffer[ (self.read_index.val() + index) % self.max_size ]
         else:

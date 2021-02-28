@@ -95,12 +95,6 @@ class Camera:
             return self.hndl.get( cv2.CAP_PROP_FPS )
         except:
             return 0.0 
-
-    #-------------------------------------------------------------------------
-    def get_id(self) -> int:
-        '''Returns the identifier of this camera, starting at index 1.
-        '''
-        return self.cam_id + 1
     
     #-------------------------------------------------------------------------
     def get_hw_height(self) -> int:
@@ -119,6 +113,21 @@ class Camera:
             return int( self.hndl.get(cv2.CAP_PROP_FRAME_WIDTH) )
         except:
             return 0
+
+    #-------------------------------------------------------------------------
+    def get_id(self) -> int:
+        '''Returns the identifier of this camera, starting at index 1.
+        '''
+        return self.cam_id + 1
+
+    #-------------------------------------------------------------------------
+    def get_period(self) -> float:
+        '''Returns the frames period for this video capturing device.
+        '''
+        try:
+            return 1.0 / self.get_fps()
+        except:
+            return 0.0
 
     #-------------------------------------------------------------------------
     def is_ok(self) -> bool:

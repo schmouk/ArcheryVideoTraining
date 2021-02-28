@@ -131,6 +131,29 @@ class CircularBuffer:
         return self.max_count - self.count <= free_slots if free_slots >= 1 else self.is_full()
 
     #-------------------------------------------------------------------------
+    def store(self, item: Any) -> CircularBufferRef:
+        '''Stores a new item into this circular buffer.
+        
+        Stores a new item into the current index position.
+        
+        Args:
+            item: Any
+                The new item to be stored in this  buffer.
+                This  may be a reference to an instance of 
+                any class.
+        
+        Returns:
+            a reference to this circular buffer.
+        '''
+        with self._lock:
+            self.buf[ self.ndx ] = item
+            
+            if self.count < self.max_count:
+                self.count += 1
+            
+        return self
+
+    #-------------------------------------------------------------------------
     def __getitem__(self, index: int) -> Any:
         '''Returns an indexed item from this circular buffer.
         
