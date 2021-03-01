@@ -38,8 +38,8 @@ class Label( GUIControlBase ):
     Notice: current version is a first draft one.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, parent_view: View,
-                       text       : str,
+    def __init__(self, parent_view: View = None,
+                       text       : str  = ''  ,
                        x          : int  = None,
                        y          : int  = None,
                        size       : int  = None,
@@ -50,9 +50,14 @@ class Label( GUIControlBase ):
         
         Args:
             parent_view: View 
-                A reference to the containing view.
+                A reference to the containing  view.  Defaults
+                to  None,  in which case a reference to a view
+                will have to be provided as argument to method
+                'draw()' each time it will be called.
             text: str
-                The text of this label.
+                The text of this label. Defaults to the  empty
+                string,  in  which case attribute '.text' will
+                have to be assigned before drawing this label.
             x, y : int
                 The position of this label in the  view.  This
                 is  the  position of the baseline of the text.
@@ -95,10 +100,63 @@ class Label( GUIControlBase ):
         self.font.set_size( value )
 
     #-------------------------------------------------------------------------
-    def draw(self) -> None:
+    def draw(self, view: View = None) -> None:
         '''Draws this label into its parent view.
+        
+        Args:
+            view: View
+                A reference to the view in which this label is
+                to  be drawn.  If set,  it supersedes the view
+                passed  as  argument  at  construction   time.
+                Defaults  to None,  i.e. the view specified at
+                construction time is used. Defaults to None.
+        
+        Raises:
+            ValueError: a view must  be  specified  either  at
+                construction  time or at drawing time.  To let
+                it unspecified is an error.
         '''
-        self.font.draw_text( self.parent_view, self.pos, self.text )
+        vw = self.parent_view or view
+        if vw is None:
+            raise ValueError( f"!!! No view has been specified for the display of label '{self.text}'")
+        self.font.draw_text( vw, self.pos, self.text )
+
+    #-------------------------------------------------------------------------
+    def draw_at(self, x: int, y: int, view: View = None) -> None:
+        '''Draws this label at specified position.
+        
+        Args:
+            x, y: int
+                The top-left position of  this  label  in  the
+                specified view.
+            view: View
+                A reference to the view in which this label is
+                to  be drawn.  If set,  it supersedes the view
+                passed  as  argument  at  construction   time.
+                Defaults  to None,  i.e. the view specified at
+                construction time is used. Defaults to None.
+        
+        Raises:
+            ValueError: a view must  be  specified  either  at
+                construction  time or at drawing time.  To let
+                it unspecified is an error.
+        '''
+        mem_pos = self.pos.copy()
+        self.pos = Point( x, y )
+        self.draw( view )
+        self.pos = mem_pos.copy()
+
+    #-------------------------------------------------------------------------
+    def get_text_height(self) -> int:
+        '''Returns the height in pixels of the text of this label.
+        '''
+        return self.font.get_text_height( self.text )
+
+    #-------------------------------------------------------------------------
+    def get_text_width(self) -> int:
+        '''Returns the width in pixels of the text of this label.
+        '''
+        return self.font.get_text_width( self.text )
 
     #-------------------------------------------------------------------------
     def move(self, dx: int, dy: int) -> None:

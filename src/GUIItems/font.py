@@ -189,12 +189,16 @@ class Font:
                                             cv2.LINE_AA )
         else:
             # put chars over background solid color
-            text_size, baseline = cv2.getTextSize( text, self.cv_font, self.font_scale, self.thickness )
+            _text_size, _baseline = cv2.getTextSize( text, self.cv_font, self.font_scale, self.thickness )
+            ##pt1 = pos + Offset(0, _baseline + self.thickness)
+            pt1 = pos + Offset(0, -self.thickness)
+            pt2 = pos + Offset(*_text_size)
             cv2.rectangle( view.content,
-                           pos + Offset(0, baseline + self.thickness),
-                           pos + Offset(*text_size),
-                           self.bg_color.color )
-            
+                           (pt1.x, pt1.y),
+                           (pt2.x, pt2.y),
+                           self.bg_color.color,
+                           -1 )
+
         view.content = cv2.putText( view.content,
                                     text,
                                     pos.to_tuple(),
