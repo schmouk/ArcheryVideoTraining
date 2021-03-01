@@ -95,4 +95,4 @@ class SummedCircularBuffer( CircularBuffer ):
             
         return super().__iadd__( value )
 
-#=====   end of   src.Utils.summed_circular_buffer   =====#
+#=====   end of   src.Buffers.summed_circular_buffer   =====#

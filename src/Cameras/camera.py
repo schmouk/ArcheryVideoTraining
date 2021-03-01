@@ -33,7 +33,7 @@ from typing import Any
 import cv2
 import time
 
-from src.Utils.circular_buffer   import CircularBuffer
+from src.Buffers.circular_buffer import CircularBuffer
 from src.Utils.types             import Frame
 from src.Utils.indexed_frame     import IndexedFrame
 

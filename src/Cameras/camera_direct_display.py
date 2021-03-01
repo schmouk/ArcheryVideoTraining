@@ -24,11 +24,8 @@ SOFTWARE.
 
 #=============================================================================
 from typing import ForwardRef
-import time
 
 from .camera                             import Camera
-from .camera_acquisition                 import CameraAcquisition
-from src.Utils.circular_buffer           import CircularBuffer
 from src.Buffers.camera_frames_buffer    import CameraFramesBuffer
 from src.Utils.periodical_thread         import PeriodicalThread
 

@@ -29,7 +29,7 @@ import time
 
 from .camera                             import Camera
 from src.Buffers.camera_frames_buffer    import CameraFramesBuffer
-from src.Utils.circular_buffer           import CircularBuffer
+from src.Buffers.circular_buffer         import CircularBuffer
 from src.Utils.types                     import Frame
 from src.Utils.indexed_frame             import IndexedFrame
 
