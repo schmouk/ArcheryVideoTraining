@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 #=============================================================================
+import cv2
 from threading   import Event, Thread
 import time
 
@@ -57,6 +58,7 @@ class CameraAcquisition( Thread ):
         self.buffer = frame_buffer
         self.stop_event = Event()
         self.fps = self.camera.get_fps()
+        self.flip_status = True
         super().__init__( name=f"cam-acq-{camera.get_id()}-thrd" )
 
     #-------------------------------------------------------------------------
@@ -72,6 +74,17 @@ class CameraAcquisition( Thread ):
         return 1.0 / self.fps if self.fps > 0 else 0.0
 
     #-------------------------------------------------------------------------
+    def flip_image(self) -> None:
+        '''Modifies the image flipping status of the camera acquisition.
+        
+        Facing and sides camera views should be  mirrored, 
+        while up and back ones should not. This is then an 
+        option that is available to the  user  via  a  GUI 
+        control. This method acts as a toggle.
+        '''
+        self.flip_status = not self.flip_status
+
+    #-------------------------------------------------------------------------
     def run(self) -> None:
         '''The running loop of this thread.
         '''
@@ -82,6 +95,8 @@ class CameraAcquisition( Thread ):
             frm = self.camera.read()
 
             if frm is not None:
+                if self.flip_status:
+                    frm = cv2.flip( frm, 1 )
                 self.buffer.append( IndexedFrame(frames_count, frm) )
                 frames_count += 1
                 time.sleep( 0.004 )
