@@ -168,12 +168,6 @@ class MainWindow( AVTWindow):
         # Notice: not more than 4 cameras in current version of AVT
 
     #-------------------------------------------------------------------------
-    def draw(self) -> None:
-        '''Draws all the views that are contained in this window.
-        '''
-        super().draw()
-
-    #-------------------------------------------------------------------------
     def get_cameras_area_size(self) -> Tuple[int, int]:
         '''Returns the (width, height) of the cameras displays size in this main window.
         '''

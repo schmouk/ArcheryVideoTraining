@@ -225,6 +225,12 @@ class AVTWindow( Viewable ):
                 pass 
 
     #-------------------------------------------------------------------------
+    def is_visible(self) -> bool:
+        '''Returns True while this window has not been closed.
+        '''
+        return cv2.getWindowProperty( self.name, cv2.WND_PROP_VISIBLE ) >= 1
+
+    #-------------------------------------------------------------------------
     def set_title(self, title: str) -> None:
         '''Sets the title of this window as shown in its top bar.
         

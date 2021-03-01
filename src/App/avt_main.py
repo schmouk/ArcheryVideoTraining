@@ -42,7 +42,7 @@ def avt_main():
     
     #-- interactions w. mouse and keyboard
     while True:
-        if cv2.waitKey( 20 ) == 27:
+        if cv2.waitKey( 20 ) == 27 or not main_window.is_visible():
             break
     
     #-- stops cameras acquisition
