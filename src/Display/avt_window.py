@@ -25,15 +25,17 @@ SOFTWARE.
 #=============================================================================
 import cv2
 import numpy as np
+import time
 
 from typing      import ForwardRef, Tuple
 from threading   import Lock
 
-from src.App.avt_config          import AVTConfig
-from src.GUIItems.Cursor.cursor  import Cursor_NORMAL
-from src.Utils.rgb_color         import RGBColor
-from .view                       import View
-from src.GUIItems.viewable       import Viewable
+from src.App.avt_config              import AVTConfig
+from src.GUIItems.Cursor.cursor      import Cursor_NORMAL
+from src.Buffers.flip_flop_buffer    import FlipFlopBuffer
+from src.Utils.rgb_color             import RGBColor
+from .view                           import View
+from src.GUIItems.viewable           import Viewable
 
 
 #=============================================================================
@@ -119,9 +121,14 @@ class AVTWindow( Viewable ):
 
         width, height = self.get_size()
         super().__init__( 0, 0, width, height, bg_color )
+        self.content_buffer = FlipFlopBuffer()
+        self.content_buffer.set( self.content )
+        self.content_buffer.set( self.content )  # intentionally done twice
+        self.last_time = time.perf_counter()
             
     #-------------------------------------------------------------------------
-    def draw(self, hit_delay_ms: int = 1) -> int:
+    def draw(self, b_forced    : bool = False,
+                   hit_delay_ms: int  = 1     ) -> int:
         '''Draws a content into this window.
         
         Notice: the content will automatically be  resized  to
@@ -129,6 +136,11 @@ class AVTWindow( Viewable ):
                 been created with a specified size.
         
         Args:
+            b_forced: bool
+                Set this to True to get immediate  drawing  of
+                this view content in the embedding window. Set 
+                it to False if delayed drawing is  acceptable. 
+                Defaults to None.
             hit_delay_ms: int
                 A delay,  expressed in milliseconds,  used for 
                 the scanning of keyboards hits.  If any key is 
@@ -145,44 +157,93 @@ class AVTWindow( Viewable ):
             displaying   this  content,   or  -1 if no key was
             hit after expressed delay.
         '''
-        with self.lock:
-            if not self.fixed_size:
-                #-- the window size adapts itself to the content size
-                cv2.imshow( self.name, self.content )
-    
-            else:
-                #-- the content size adapts itself to the window size
-                content_height, content_width = self.content.shape[:2]
-                window_width, window_height = self.get_size()
-                
-                height_ratio = window_height / content_height
-                width_ratio  = window_width  / content_width
-                ratio = height_ratio if height_ratio <= width_ratio else width_ratio
-            
-            
-                if ratio != 1.0 and ratio > 0.0:
-                    window_content = np.zeros( (window_height, window_width, 3), np.uint8 )
-                    new_content = cv2.resize( self.content, None,
-                                              fx=ratio, fy=ratio,
-                                              interpolation=cv2.INTER_LINEAR )
-                    
-                    new_height, new_width = new_content.shape[:2]
-                    if new_width > window_width:
-                        new_width = window_width
-                    if new_height > window_height:
-                        new_height = window_height
-                        
-                    x = (window_width - new_width) // 2
-                    y = (window_height - new_height) // 2
-                    
-                    window_content[ y:y+new_height,
-                                    x:x+new_width, : ] = new_content[ :new_height, :new_width, : ] 
-                    
-                    cv2.imshow( self.name, window_content )
-                
-                else:
-                    cv2.imshow( self.name, self.content )
+        current_time = time.perf_counter()
+        if not b_forced and current_time - self.last_time < 0.007:
+            # Notice: this is NOT satisfactory but it avoids  nearly  all
+            #         video sync issues with the displayed buffer content
+            return -1
+       
+        self.last_time = current_time
         
+    #===========================================================================
+    #     with self.lock:
+    #         if not self.fixed_size:
+    #             #-- the window size automatically adapts itself to the content size
+    #             window_content = self.content.copy()
+    # 
+    #         else:
+    #             #-- the content size adapts itself to the window size
+    #             content_height, content_width = self.content.shape[:2]
+    #             window_width, window_height = self.get_size()
+    #             
+    #             height_ratio = window_height / content_height
+    #             width_ratio  = window_width  / content_width
+    #             ratio = height_ratio if height_ratio <= width_ratio else width_ratio
+    #         
+    #             if ratio != 1.0 and ratio > 0.0:
+    #                 window_content = np.zeros( (window_height, window_width, 3), np.uint8 )
+    #                 new_content = cv2.resize( self.content, None,
+    #                                           fx=ratio, fy=ratio,
+    #                                           interpolation=cv2.INTER_LINEAR )
+    #                 
+    #                 new_height, new_width = new_content.shape[:2]
+    #                 if new_width > window_width:
+    #                     new_width = window_width
+    #                 if new_height > window_height:
+    #                     new_height = window_height
+    #                     
+    #                 x = (window_width - new_width) // 2
+    #                 y = (window_height - new_height) // 2
+    #                 
+    #                 window_content[ y:y+new_height,
+    #                                 x:x+new_width, : ] = new_content[ :new_height, :new_width, : ] 
+    #                                 
+    #             else:
+    #                 window_content = self.content.copy()
+    #     
+    #         self.content_buffer.set( window_content )
+    #         ##window_content = self.content_buffer.get()
+    #         ##self.content = self.content_buffer.get()
+    #===========================================================================
+        with self.lock:
+            window_content = self.content.copy()
+    
+        #=======================================================================
+        # if not self.fixed_size:
+        #     #-- the window size automatically adapts itself to the content size
+        #     pass
+        # else:
+        #=======================================================================
+        if self.fixed_size:
+            #-- the content size adapts itself to the window size
+            content_height, content_width = window_content.shape[:2]
+            window_width, window_height = self.get_size()
+            
+            height_ratio = window_height / content_height
+            width_ratio  = window_width  / content_width
+            ratio = height_ratio if height_ratio <= width_ratio else width_ratio
+        
+            if ratio != 1.0 and ratio > 0.0:
+                window_content = np.zeros( (window_height, window_width, 3), np.uint8 )
+                new_content = cv2.resize( window_content, None,
+                                          fx=ratio, fy=ratio,
+                                          interpolation=cv2.INTER_LINEAR )
+                
+                new_height, new_width = new_content.shape[:2]
+                if new_width > window_width:
+                    new_width = window_width
+                if new_height > window_height:
+                    new_height = window_height
+                    
+                x = (window_width - new_width) // 2
+                y = (window_height - new_height) // 2
+                
+                window_content[ y:y+new_height,
+                                x:x+new_width, : ] = new_content[ :new_height, :new_width, : ] 
+        
+        self.content_buffer.set( window_content )
+        
+        cv2.imshow( self.name, window_content )
         return cv2.waitKey( hit_delay_ms )
 
     #-------------------------------------------------------------------------

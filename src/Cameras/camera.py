@@ -31,11 +31,9 @@ SOFTWARE.
 #=============================================================================
 from typing import Any
 import cv2
-import time
+import numpy as np
 
-from src.Buffers.circular_buffer import CircularBuffer
-from src.Utils.types             import Frame
-from src.Utils.indexed_frame     import IndexedFrame
+from src.Utils.types import Frame
 
 
 #=============================================================================
@@ -76,10 +74,8 @@ class Camera:
         self.hndl = cv2.VideoCapture( cam_id )
         self._copy_default_hw_size()
         self.set_frames_size( width, height )
-        ##self.frames_buffer = CircularBuffer( 3 )
         if self.is_ok():
             self.period = 1.0 / self.get_fps()
-        ##self.last_index = -1
 
     #-------------------------------------------------------------------------
     def __del__(self) -> None:
@@ -147,8 +143,15 @@ class Camera:
             A reference to the captured image,  or None  in 
             case of error.
         '''
-        ok, frame = self.hndl.read()
-        return frame if ok else None
+        try:
+            ok, frame = self.hndl.read()
+            self.last_frame = frame
+            return frame if ok else None
+        except:
+            try:
+                return self.last_frame
+            except:
+                return np.zeros( (480,640,3), np.uint8 )
         
     #-------------------------------------------------------------------------
     def release(self) -> None:

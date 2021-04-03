@@ -82,15 +82,22 @@ class View( Viewable ):
         self.draw()
 
     #-------------------------------------------------------------------------
-    def draw(self) -> None:
+    def draw(self, b_forced: bool = False) -> None:
         '''Draws this view content within the parent window.
         
-        May be overwritten in inheriting classes. See class
-        'CameraView' or class 'ControlView' for examples of 
+        May be overwritten in inheriting classes.  See class
+        'CameraView'  or class 'ControlView' for examples of 
         code.
+        
+        Args:
+            b_forced: bool
+                Set this to True to get immediate drawing of
+                this  view  content in the embedding window.
+                Set  it  to  False  if  delayed  drawing  is 
+                acceptable. Defaults to None.
         '''
         self.parent_window.insert_view_content( self )
-        self.parent_window.draw()
+        self.parent_window.draw( b_forced )
 
     #-------------------------------------------------------------------------
     def get_view_content(self) -> np.ndarray:

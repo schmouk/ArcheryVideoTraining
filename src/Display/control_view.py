@@ -787,9 +787,9 @@ class ControlView( PeriodicalThread, AVTView ):
                 x, y: top-left position of this control.
             '''
             super().__init__( x, y, False, True )
-            self.time_label     = Label( x=x,
-                                         y=y+self._TIME_TEXT_SIZE,
-                                         text_font=Font(self._TIME_TEXT_SIZE, YELLOW-32, bold=True) )
+            self.time_label = Label( x=x,
+                                     y=y+self._TIME_TEXT_SIZE,
+                                     text_font=Font(self._TIME_TEXT_SIZE, YELLOW-32, bold=True) )
             self.duration_label = Label( x=x,
                                          y=y+self._FULL_HEIGHT,
                                          text_font=Font(self._DURATION_TEXT_SIZE, YELLOW) )
@@ -819,10 +819,10 @@ class ControlView( PeriodicalThread, AVTView ):
                            AVTConfig.DEFAULT_BACKGROUND.color,
                            -1 )
             
-            self.time_label.draw_at( (view.width - time_label_width - self.time_label.pos.x) // 2, 
+            self.time_label.draw_at( (view.width - time_label_width) // 2, 
                                      self.time_label.pos.y,
                                      view )
-            self.duration_label.draw_at( (view.width - duration_label_width - self.duration_label.pos.x) // 2,
+            self.duration_label.draw_at( (view.width - duration_label_width) // 2,
                                           self.duration_label.pos.y,
                                           view )
             

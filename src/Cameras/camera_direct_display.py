@@ -76,37 +76,13 @@ class CameraDirectDisplay( PeriodicalThread ):
         '''
         indexed_frame = self.buffer.get_oldest()
         
-        if indexed_frame.frame is None:
-            return True
-        
-        else:
+        if indexed_frame.frame is not None:
             if self.first_frame:
                 self.first_frame = False
                 self.set_start_time()
         
             self.cam_view.draw_frame( indexed_frame.frame )
-            return True
 
-        
-        #=======================================================================
-        # frame = self.cam_acq.get_indexed_frame()
-        # if frame is None:
-        #     return False
-        # else:
-        #     #===================================================================
-        #     # self.frames_buffer.append( frame )
-        #     # if self.frames_buffer.is_nearly_full():
-        #     #     ndx_frm = self.frames_buffer.get_oldest()
-        #     #     current_time = time.perf_counter()
-        #     #     print( self.name, f" - {current_time:7.3f} ({1000.0*(current_time - self.last_time):.1f}) / {ndx_frm.index:4d}" )
-        #     #     self.cam_view.draw_frame( ndx_frm.frame )
-        #     #     self.last_time = current_time
-        #     #===================================================================
-        #     current_time = time.perf_counter()
-        #     print( self.name, f" - {current_time:7.3f} ({1000.0*(current_time - self.last_time):.1f}) / {frame.index:4d}" )
-        #     self.cam_view.draw_frame( frame.frame )
-        #     self.last_time = current_time
-        #     return True
-        #=======================================================================
+        return True
         
 #=====   end of   src.Cameras.camera_direct_display   =====#

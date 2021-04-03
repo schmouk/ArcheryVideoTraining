@@ -146,7 +146,7 @@ class Font:
             self.font_scale = other.font_scale
 
     #-------------------------------------------------------------------------
-    def draw_text(self, view    : Viewable    ,
+    def draw_text(self, view    : View        ,
                         pos     : Point       ,
                         text    : str         ,
                         b_shadow: bool = True ,
@@ -158,7 +158,7 @@ class Font:
                 no background rectangle is set.
         
         Args:
-            view: Viewable
+            view: View
                 A reference to the embedding view.
             pos: Point
                 The absolute (x, y) position of the text in 
@@ -190,7 +190,6 @@ class Font:
         else:
             # put chars over background solid color
             _text_size, _baseline = cv2.getTextSize( text, self.cv_font, self.font_scale, self.thickness )
-            ##pt1 = pos + Offset(0, _baseline + self.thickness)
             pt1 = pos + Offset(0, -self.thickness)
             pt2 = pos + Offset(*_text_size)
             cv2.rectangle( view.content,
@@ -211,7 +210,7 @@ class Font:
             view.draw()
 
     #-------------------------------------------------------------------------
-    def forced_draw_text(self, view    : Viewable   ,
+    def forced_draw_text(self, view    : View       ,
                                pos     : Point      ,
                                text    : str        ,
                                b_shadow: bool = True ) -> None:
@@ -221,7 +220,7 @@ class Font:
         '.draw_text()'.
         
         Args:
-            view: Viewable
+            view: View
                 A reference to the embedding view.
             pos: Point
                 The absolute (x, y) position of the text in 
@@ -293,7 +292,7 @@ class BoldFont( Font ):
             using OpenCV when putting text in video frames.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, size    : int,
+    def __init__(self, size    : int             ,
                        color   : RGBColor = WHITE,
                        bg_color: RGBColor = None ,
                        sans_serif: bool   = True  ) -> None:
@@ -328,7 +327,7 @@ class ItalicFont( Font ):
             using OpenCV when putting text in video frames.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, size    : int,
+    def __init__(self, size    : int             ,
                        color   : RGBColor = WHITE,
                        bg_color: RGBColor = None ,
                        sans_serif: bool   = True  ) -> None:
@@ -359,7 +358,7 @@ class BoldItalicFont( Font ):
             using OpenCV when putting text in video frames.
     """
     #-------------------------------------------------------------------------
-    def __init__(self, size    : int,
+    def __init__(self, size    : int             ,
                        color   : RGBColor = WHITE,
                        bg_color: RGBColor = None ,
                        sans_serif: bool   = True  ) -> None:

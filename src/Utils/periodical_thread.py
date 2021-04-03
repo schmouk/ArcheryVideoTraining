@@ -23,7 +23,7 @@ SOFTWARE.
 """
 
 #=============================================================================
-from threading import Event, Thread 
+from threading import Thread 
 import time
 
 from src.Utils.Scheduling import Scheduler
@@ -53,7 +53,6 @@ class PeriodicalThread( Thread ):
         '''
         super().__init__( name=thread_name )
         self.period_s = period_s
-        self.stop_event = Event()
 
     #-------------------------------------------------------------------------
     def finalize_run_loop(self):
@@ -118,9 +117,6 @@ class PeriodicalThread( Thread ):
             
             with Scheduler( 3 ):
                 while self.keep_on:
-        
-                    next_time = loops_count * self.period_s + self.start_time
-        
                     # calls the processing core of this periodical thread
                     if not self.process():
                         break
@@ -130,8 +126,7 @@ class PeriodicalThread( Thread ):
                     next_time = loops_count * self.period_s + self.start_time
                      
                     # evaluates the waiting period of time
-                    current_time = time.perf_counter()
-                    wait_time = next_time - current_time
+                    wait_time = next_time - time.perf_counter()
                     if wait_time > 0:
                         time.sleep( wait_time )
         

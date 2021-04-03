@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Copyright (c) 2021 Philippe Schmouker
 
@@ -20,16 +22,42 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-#=============================================================================²
-from src.App.avt_main import avt_main
+#=============================================================================
+from typing      import Any
+from threading   import Lock
 
 
 #=============================================================================
-if __name__ == '__main__':
-    """Main script for the launching of application Archery Video Training.
+class FlipFlopBuffer:
+    """The class of Flip-Flop buffers.
+    
+    Flip-Flop buffers are pairs of buffers,  one  being 
+    accessible with very last stored data and the other 
+    one being set with newly acquired or set data.
     """
     #-------------------------------------------------------------------------
-    # quite simple, ins't it?
-    avt_main()
+    def __init__(self) -> None:
+        '''Constructor.
+        '''
+        self.buffer = [ None, None ]
+        self.index = 0
+        self.lock = Lock()
+        
+    #-------------------------------------------------------------------------
+    def get(self) -> Any:
+        '''Returns a reference to the currently accessible buffer.
+        '''
+        return self.buffer[ self.index ]
+    
+    #-------------------------------------------------------------------------
+    def set(self, data: Any) -> None:
+        '''Sets new data into the not yet accessible buffer.
+        '''
+        with self.lock:
+            self.index = (self.index + 1) % 2
+            try:
+                self.buffer[ self.index ] = data.copy()
+            except:
+                self.buffer[ self.index ] = data
 
-#=====   end of   src.avt   =====#
+#=====   end of   src.Buffers.flip_flop_buffer   =====#
