@@ -1,5 +1,5 @@
 # ArcheryVideoTraining
-AVT is a multi cameras video training application for Archery, with real-time as well as delayed or slow-motion captures and diplays.
+**AVT** is a multi cameras video training application for Archery, with real-time as well as delayed or slow-motion captures and diplays.
 
 ## Goal
 This project aims at providing a simple and intuitive application to capture frames with small cameras (e.g. webcams) and under different angles, and to display them at capture time, or with a delay, or in slow-motion (simulated or not).  
