@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 """
 Copyright (c) 2021 Philippe Schmouker
 
@@ -21,36 +23,41 @@ SOFTWARE.
 """
 
 #=============================================================================
-import cv2
-
-from src.Display.main_window     import MainWindow
+from typing      import Any
+from threading   import Lock
 
 
 #=============================================================================
-def avt_main():
-    """This is the main function of the Archery Video Training application.
+class FlipFlopBuffer:
+    """The class of Flip-Flop buffers.
+    
+    Flip-Flop buffers are pairs of buffers,  one  being 
+    accessible with very last stored data and the other 
+    one being set with newly acquired or set data.
     """
+    #-------------------------------------------------------------------------
+    def __init__(self) -> None:
+        '''Constructor.
+        '''
+        self.buffer = [ None, None ]
+        self.index = 0
+        self.lock = Lock()
+        
+    #-------------------------------------------------------------------------
+    def get(self) -> Any:
+        '''Returns a reference to the currently accessible buffer.
+        '''
+        return self.buffer[ self.index ]
     
-    #-- creates the main window
-    main_window = MainWindow()
-     
-    #-- shows the main window
-    main_window.draw()
-    
-    #-- starts the cameras acquisition
-    main_window.run_views()
-    
-    #-- interactions w. mouse and keyboard
-    while True:
-        if cv2.waitKey( 20 ) == 27 or not main_window.is_visible():
-            break
-    
-    #-- stops cameras acquisition
-    main_window.stop_views()
-     
-    #-- releases all allocated resources
-    cv2.destroyAllWindows()
+    #-------------------------------------------------------------------------
+    def set(self, data: Any) -> None:
+        '''Sets new data into the not yet accessible buffer.
+        '''
+        with self.lock:
+            self.index = (self.index + 1) % 2
+            try:
+                self.buffer[ self.index ] = data.copy()
+            except:
+                self.buffer[ self.index ] = data
 
-    print( "\n-- done!" )
-    
-#=====   end of   src.App.avt_main   =====#
+#=====   end of   src.Buffers.flip_flop_buffer   =====#

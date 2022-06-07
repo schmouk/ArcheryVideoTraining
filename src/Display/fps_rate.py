@@ -33,7 +33,7 @@ SOFTWARE.
 #=============================================================================
 import time
 
-from src.Utils.summed_circular_buffer import SummedCircularBuffer
+from src.Buffers.summed_circular_buffer import SummedCircularBuffer
 
 
 #=============================================================================

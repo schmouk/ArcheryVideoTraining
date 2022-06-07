@@ -25,22 +25,22 @@ SOFTWARE.
 #=============================================================================
 import cv2
 import time
-from threading import Thread
 
-from src.Utils.rgb_color             import ANTHRACITE, DEEP_GRAY, GRAY, GrayColor, LIGHT_GRAY, YELLOW
+from src.Utils.rgb_color             import ANTHRACITE, DEEP_GRAY, GRAY, LIGHT_GRAY, YELLOW
 from src.App.avt_config              import AVTConfig
 from .avt_view                       import AVTView
 from .view                           import AVTWindowRef, View
 from src.GUIItems.font               import BoldFont, Font
 from src.Cameras.camera              import Camera, NullCamera
 from src.Cameras.cameras_pool        import CamerasPool
+from src.GUIItems.Controls.sliders   import FloatSlider, IntSlider
 from src.GUIItems.label              import Label
+from src.Utils.periodical_thread     import PeriodicalThread
 from src.Shapes.point                import Point
-from src.GUIItems.Controls.sliders   import IntSlider, FloatSlider
 
 
 #=============================================================================
-class ControlView( Thread, AVTView ):
+class ControlView( PeriodicalThread, AVTView ):
     """The class description.
     """
     def __init__(self, parent      : AVTWindowRef,
@@ -59,12 +59,12 @@ class ControlView( Thread, AVTView ):
             ValueError:  Some  of  the  coordinates  or  sizes 
                 values are outside interval [0.0, 1.0].
         '''
-        Thread.__init__( self, name='controls-thrd' )
         AVTView.__init__( self,
                             parent,
                             parent.width - self.WIDTH, 0,
                             self.WIDTH, parent.height     )
         self.create_controls( cameras_pool )
+        PeriodicalThread.__init__( self, 1.000, 'controls-thrd' )
         
     #-------------------------------------------------------------------------
     def create_controls(self, cameras_pool: CamerasPool) -> None:
@@ -86,30 +86,33 @@ class ControlView( Thread, AVTView ):
                                                          y + self.ICON_HEIGHT*cam_id ) )
         
         y += AVTConfig.CAMERAS_MAX_COUNT * self.ICON_HEIGHT + 6
-        self.target_ctrl   = self._CtrlTarget(   5, y, False, False )
+        self.target_ctrl = self._CtrlTarget( 5, y, False, False )
         
         y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
-        self.lines_ctrl    = self._CtrlLines(    5, y, False, False )
+        self.lines_ctrl = self._CtrlLines( 5, y, False, False )
         
         y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
-        self.delay_ctrl    = self._CtrlDelay(    5, y , False, False )
+        self.delay_ctrl = self._CtrlDelay( 5, y , False, False )
         
         y += self.ICON_PADDING * 2 + self.ICON_HEIGHT
-        self.record_ctrl   = self._CtrlRecord(   5, y, False, False )
+        self.record_ctrl= self._CtrlRecord( 5, y, False, False )
         
         y += self.ICON_PADDING + self.ICON_HEIGHT
-        self.replay_ctrl   = self._CtrlReplay(   5, y, False, False )
+        self.replay_ctrl = self._CtrlReplay(5, y, False, False )
         
-        y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
+        y += 2 * self.ICON_PADDING + self.ICON_HEIGHT + 20
         self.overlays_ctrl = self._CtrlOverlays( 5, y, False, False )
 
-        y += (self.overlays_ctrl._SIZE - self.ICON_HEIGHT) + 2 * self.ICON_PADDING + self.ICON_HEIGHT
-        self.timer_ctrl    = self._CtrlTimer(    5, y, False, False )
+        y += (self.overlays_ctrl._SIZE - self.ICON_HEIGHT) + self.ICON_PADDING + self.ICON_HEIGHT
+        self.timer_ctrl = self._CtrlTimer( 5, y, False, False )
 
+        y += self.ICON_PADDING + self.ICON_HEIGHT
+        self.match_ctrl = self._CtrlMatch( 5, y, False, False )
+        
         y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
-        self.match_ctrl    = self._CtrlMatch(    5, y, False, False )
+        self.time_ctrl = self._CtrlTime( 5, y )
 
-        self.exit_ctrl     = self._CtrlExit( self.width, self.height )
+        self.exit_ctrl = self._CtrlExit( self.width, self.height )
         
         self.controls_list = [ *self.cameras_ctrls,
                                 self.target_ctrl  ,
@@ -120,6 +123,7 @@ class ControlView( Thread, AVTView ):
                                 self.lines_ctrl   ,
                                 self.timer_ctrl   ,
                                 self.match_ctrl   ,
+                                self.time_ctrl    ,
                                 self.exit_ctrl      ]
         
     #-------------------------------------------------------------------------
@@ -167,19 +171,11 @@ class ControlView( Thread, AVTView ):
             pass
         
     #-------------------------------------------------------------------------
-    def run(self) -> None:
-        '''The core loop of this view thread.
+    def process(self) -> bool:
+        '''The processing core of this view thread.
         '''
-        self.keep_on = True
         self.draw()
-        while self.keep_on:
-            time.sleep( 0.200 )
-
-    #-------------------------------------------------------------------------
-    def stop(self) -> None:
-        '''Definitively stops this view thread.
-        '''
-        self.keep_on = False
+        return True
 
     #-------------------------------------------------------------------------
     # Class data
@@ -776,8 +772,66 @@ class ControlView( Thread, AVTView ):
         _ICON_ACTIVE = cv2.imread( '../picts/controls/target-on.png' )
         _ICON_INACTIVE = cv2.imread( '../picts/controls/target-off.png' )
         _ICON_DISABLED = cv2.imread( '../picts/controls/target-disabled.png' )
-        _SIZE = _ICON_ACTIVE.shape[0]
+        _SIZE          = _ICON_ACTIVE.shape[0]
 
+
+    #-------------------------------------------------------------------------
+    class _CtrlTime( _CtrlBase ):
+        '''The time and session duration control.
+        '''
+        #---------------------------------------------------------------------
+        def __init__(self, x:int, y: int) -> None:
+            '''Constructor.
+            
+            Args:
+                x, y: top-left position of this control.
+            '''
+            super().__init__( x, y, False, True )
+            self.time_label = Label( x=x,
+                                     y=y+self._TIME_TEXT_SIZE,
+                                     text_font=Font(self._TIME_TEXT_SIZE, YELLOW-32, bold=True) )
+            self.duration_label = Label( x=x,
+                                         y=y+self._FULL_HEIGHT,
+                                         text_font=Font(self._DURATION_TEXT_SIZE, YELLOW) )
+            
+        #---------------------------------------------------------------------
+        def draw(self, view: View) -> None:
+            '''Draws a control in its embedding content.
+
+            Args:
+                view: View
+                    A reference to the embedding view.
+            '''
+            date = time.localtime()
+            self.time_label.text = f"{date.tm_hour:02d}:{date.tm_min:02d}"
+            time_label_width = self.time_label.get_text_width()
+            
+            duration = time.perf_counter()
+            hr = int( duration // 3600 )
+            mn = int( (duration - 3600 * hr) // 60 )
+            sc = int( duration % 60 )
+            self.duration_label.text = f"({hr:d}:{mn:02d}:{sc:02d})"
+            duration_label_width = self.duration_label.get_text_width()
+            
+            cv2.rectangle( view.content,
+                           (self.x, self.y-3),
+                           (view.width-self.x-2, self.y+self._FULL_HEIGHT + 3),
+                           AVTConfig.DEFAULT_BACKGROUND.color,
+                           -1 )
+            
+            self.time_label.draw_at( (view.width - time_label_width) // 2, 
+                                     self.time_label.pos.y,
+                                     view )
+            self.duration_label.draw_at( (view.width - duration_label_width) // 2,
+                                          self.duration_label.pos.y,
+                                          view )
+            
+        #---------------------------------------------------------------------
+        _DURATION_TEXT_SIZE = 11
+        _PADDING            = 11
+        _TIME_TEXT_SIZE     = 15
+        _FULL_HEIGHT        = _TIME_TEXT_SIZE + _PADDING + _DURATION_TEXT_SIZE
+        
 
     #-------------------------------------------------------------------------
     class _CtrlTimer( _CtrlBase ):
@@ -803,7 +857,7 @@ class ControlView( Thread, AVTView ):
         _ICON_DISABLED = cv2.imread( '../picts/controls/timer-disabled.png' )
         _ICON_OFF      = cv2.imread( '../picts/controls/timer-off.png' )
         _ICON_ON       = cv2.imread( '../picts/controls/timer-on.png' )
-        _SIZE = _ICON_ON.shape[ 0 ]
+        _SIZE          = _ICON_ON.shape[ 0 ]
 
 
 #=====   end of   src.Display.cantrol_view   =====#

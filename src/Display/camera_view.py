@@ -96,7 +96,7 @@ class CameraView( AVTViewProp ):
                 
         super().__init__( parent, x, y, width, height, parent_rect )
 
-        self.acq_thread  = CameraAcquisition( self.camera, camera_frames_buffer )
+        self.acq_thread  = CameraAcquisition(   self.camera, camera_frames_buffer )
         self.disp_thread = CameraDirectDisplay( self.camera, camera_frames_buffer, self )
         
         self.draw()
@@ -174,6 +174,17 @@ class CameraView( AVTViewProp ):
             self.content = frame
         
         self.draw()
+
+    #-------------------------------------------------------------------------
+    def flip_image(self) -> None:
+        '''Modifies the image flipping status of the camera acquisition.
+        
+        Facing and sides camera views should be  mirrored, 
+        while up and back ones should not. This is then an 
+        option that is available to the  user  via  a  GUI 
+        control. This method acts as a toggle.
+        '''
+        self.acq_thread.flip_image()
 
     #-------------------------------------------------------------------------
     def is_ok(self) -> bool:

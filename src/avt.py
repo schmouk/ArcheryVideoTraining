@@ -20,7 +20,7 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-#=============================================================================
+#=============================================================================²
 from src.App.avt_main import avt_main
 
 
