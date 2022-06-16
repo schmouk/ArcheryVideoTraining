@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "avt_cpp", "avt_cpp.vcxproj", "{0F40E2CB-1033-4FE0-9C93-A6AEB3D0FED0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0F40E2CB-1033-4FE0-9C93-A6AEB3D0FED0}.Debug|x64.ActiveCfg = Debug|x64
+		{0F40E2CB-1033-4FE0-9C93-A6AEB3D0FED0}.Debug|x64.Build.0 = Debug|x64
+		{0F40E2CB-1033-4FE0-9C93-A6AEB3D0FED0}.Debug|x86.ActiveCfg = Debug|Win32
+		{0F40E2CB-1033-4FE0-9C93-A6AEB3D0FED0}.Debug|x86.Build.0 = Debug|Win32
+		{0F40E2CB-1033-4FE0-9C93-A6AEB3D0FED0}.Release|x64.ActiveCfg = Release|x64
+		{0F40E2CB-1033-4FE0-9C93-A6AEB3D0FED0}.Release|x64.Build.0 = Release|x64
+		{0F40E2CB-1033-4FE0-9C93-A6AEB3D0FED0}.Release|x86.ActiveCfg = Release|Win32
+		{0F40E2CB-1033-4FE0-9C93-A6AEB3D0FED0}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6D69D44A-18FE-4CFE-8C85-A25996C061D4}
+	EndGlobalSection
+EndGlobal
