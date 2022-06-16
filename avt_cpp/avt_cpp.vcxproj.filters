@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="modules\utils\circular_buffer.ixx">
+    <ClCompile Include="modules\utils\rgb_color.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
