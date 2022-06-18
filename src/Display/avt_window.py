@@ -208,12 +208,6 @@ class AVTWindow( Viewable ):
         with self.lock:
             window_content = self.content.copy()
     
-        #=======================================================================
-        # if not self.fixed_size:
-        #     #-- the window size automatically adapts itself to the content size
-        #     pass
-        # else:
-        #=======================================================================
         if self.fixed_size:
             #-- the content size adapts itself to the window size
             content_height, content_width = window_content.shape[:2]
@@ -273,12 +267,9 @@ class AVTWindow( Viewable ):
                 A reference to the view from which the content
                 is to be inserted in this window content.
         '''
+        width  = min( view.width , self.content.shape[1] - view.x )
+        height = min( view.height, self.content.shape[0] - view.y )
         with self.lock:
-            content_height, content_width = self.content.shape[:2]
-            
-            width  = min( view.width , content_width  - view.x )
-            height = min( view.height, content_height - view.y )
-            
             try:
                 self.content[ view.y:view.y+height,
                               view.x:view.x+width, : ] = view.content[ :height, :width, : ]

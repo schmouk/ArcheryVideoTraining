@@ -20,13 +20,13 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-#=============================================================================²
+#=============================================================================
 from src.App.avt_main import avt_main
 
 
 #=============================================================================
 if __name__ == '__main__':
-    """Main script for the launching of application Archery Video Training.
+    """Main script for the launching of the application Archery Video Training.
     """
     #-------------------------------------------------------------------------
     # quite simple, ins't it?

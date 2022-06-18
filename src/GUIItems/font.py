@@ -39,7 +39,6 @@ from src.Shapes.offset       import Offset
 from src.Shapes.point        import Point
 from src.Utils.rgb_color     import RGBColor, WHITE
 from src.Display.view        import View
-from src.GUIItems.viewable   import Viewable
 
 
 #=============================================================================

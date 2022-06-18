@@ -144,8 +144,8 @@ class MainWindow( AVTWindow):
                   
         elif cameras_count == 2:
             self.views = [ ControlView( self, cameras_pool ),
-                           CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
-                           CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect )  ]
+                            CameraView( self, cameras_pool[0], 0.0, 0.0, 0.5, 0.5, rect ),
+                            CameraView( self, cameras_pool[1], 0.5, 0.0, 0.5, 0.5, rect )  ]
             if b_target_view:
                 self.views.append( TargetView( self, 0.0, 0.5, 1.0, 0.5, rect ) )
                   

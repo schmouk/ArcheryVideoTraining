@@ -807,10 +807,10 @@ class ControlView( PeriodicalThread, AVTView ):
             time_label_width = self.time_label.get_text_width()
             
             duration = time.perf_counter()
-            hr = int( duration // 3600 )
-            mn = int( (duration - 3600 * hr) // 60 )
-            sc = int( duration % 60 )
-            self.duration_label.text = f"({hr:d}:{mn:02d}:{sc:02d})"
+            hr = int( duration / 3600 )
+            mn = int( (duration - 3600 * hr) / 60 )
+            sc = int( duration ) % 60
+            self.duration_label.text = f"{hr:d}:{mn:02d}:{sc:02d}"
             duration_label_width = self.duration_label.get_text_width()
             
             cv2.rectangle( view.content,
