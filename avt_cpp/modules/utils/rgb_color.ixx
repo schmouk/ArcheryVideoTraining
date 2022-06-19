@@ -28,7 +28,8 @@ module;
 #include <array>
 #include <vector>
 
-export module avt.utils;
+export module utils.rgb_color;
+
 
 //===========================================================================
 namespace avt::utils
@@ -669,6 +670,7 @@ namespace avt::utils
             };
         };
 
+
         //---   Predefined colors   -----------------------------------------
         static const RGBColor
             ANTHRACITE,
@@ -697,8 +699,6 @@ namespace avt::utils
             TARGET_BLUE_6,
             TARGET_BLUE_NFAA;
 
-    protected:
-
 
     private:
         /** \brief Returns the clipped value acccording to color components type. */
@@ -720,7 +720,7 @@ namespace avt::utils
 
     };
 
-
+    //-----------------------------------------------------------------------
     const RGBColor RGBColor::ANTHRACITE(31, 31, 31);
     const RGBColor RGBColor::BLACK(0, 0, 0);
     const RGBColor RGBColor::BLUE(0, 0, 255);
@@ -746,4 +746,5 @@ namespace avt::utils
     
     const RGBColor RGBColor::TARGET_BLUE_6(17, 165, 255);
     const RGBColor RGBColor::TARGET_BLUE_NFAA(63, 63, 95);
+
 }

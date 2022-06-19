@@ -18,5 +18,8 @@
     <ClCompile Include="modules\utils\rgb_color.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="modules\utils\gray_color.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

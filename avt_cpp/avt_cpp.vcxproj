@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="modules\utils\gray_color.ixx" />
     <ClCompile Include="modules\utils\rgb_color.ixx" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
