@@ -23,9 +23,7 @@ SOFTWARE.
 */
 
 //===========================================================================
-module;
-
-export module utils.gray_color;
+module utils:gray_color;
 
 import utils.rgb_color;
 
@@ -35,7 +33,7 @@ namespace avt::utils
     //=======================================================================
     /** \brief The class of GRAY RGB components colors.
     */
-    export class GrayColor : public avt::utils::RGBColor
+    class GrayColor : public avt::utils::RGBColor
     {
     public:
         //---   Constructors / Destructor   ---------------------------------
@@ -128,5 +126,4 @@ namespace avt::utils
         }
 
     };
-
 }

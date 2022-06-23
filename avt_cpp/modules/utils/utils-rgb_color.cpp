@@ -28,7 +28,7 @@ module;
 #include <array>
 #include <vector>
 
-export module utils.rgb_color;
+module utils:rgb_color;
 
 
 //===========================================================================
@@ -37,12 +37,12 @@ namespace avt::utils
     //=======================================================================
     /** \brief The class of RGB components colors.
     *
-    * Library OpenCV uses a default BGR coding for colors which is not the 
-    * usual RGB one.  To help developments, class RGBColor codes colors in 
+    * Library OpenCV uses a default BGR coding for colors which is not the
+    * usual RGB one.  To help developments, class RGBColor codes colors in
     * a usual way while the BGR conversion is internally automated for its
     * use with library OpenCV.
     */
-    export class RGBColor
+    class RGBColor
     {
     public:
         //---   Constructors / Destructor   ---------------------------------
@@ -54,7 +54,7 @@ namespace avt::utils
 
         /** \brief Valued Constructor (three R, G, B bytes). */
         template<typename T, typename U, typename V>
-            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U> && std::is_arithmetic_v<V>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>&& std::is_arithmetic_v<V>
         inline RGBColor(const T r, const U g, const V b) noexcept
         {
             set(r, g, b);
@@ -235,7 +235,7 @@ namespace avt::utils
             requires std::is_arithmetic_v<T>
         RGBColor& operator+= (const T rhs[3]) noexcept
         {
-           set(r + rhs[0], g + rhs[1], b + rhs[2]);
+            set(r + rhs[0], g + rhs[1], b + rhs[2]);
             return *this;
         }
 
@@ -711,7 +711,7 @@ namespace avt::utils
 
         /** \brief Returns the rounding value of a division. */
         template<typename T, typename U>
-            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
+            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
         inline static const unsigned char _div(const T num, const U den) noexcept(false)
         {
             assert(den > 0);
@@ -743,8 +743,7 @@ namespace avt::utils
     const RGBColor RGBColor::TARGET_BLUE(65, 181, 200);
     const RGBColor RGBColor::TARGET_RED(255, 37, 21);
     const RGBColor RGBColor::TARGET_GOLD(255, 245, 55);
-    
+
     const RGBColor RGBColor::TARGET_BLUE_6(17, 165, 255);
     const RGBColor RGBColor::TARGET_BLUE_NFAA(63, 63, 95);
-
 }
