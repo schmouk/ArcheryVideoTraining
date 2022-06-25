@@ -20,9 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="modules\utils\utils.ixx" />
-    <ClCompile Include="modules\utils\utils-rgb_color.cpp" />
     <ClCompile Include="modules\utils\utils-rgb_color.ixx" />
-    <ClCompile Include="modules\utils\utils-gray_color.cpp" />
     <ClCompile Include="modules\utils\utils-gray_color.ixx" />
     <ClCompile Include="avt_main.cpp" />
   </ItemGroup>
