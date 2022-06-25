@@ -19,14 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="modules\utils\utils-rgb_color.cpp" />
     <ClCompile Include="modules\utils\utils.ixx" />
-    <ClCompile Include="modules\utils\archive\gray_color.ixx" />
-    <ClCompile Include="modules\utils\archive\rgb_color.ixx" />
+    <ClCompile Include="modules\utils\utils-rgb_color.cpp" />
+    <ClCompile Include="modules\utils\utils-rgb_color.ixx" />
     <ClCompile Include="modules\utils\utils-gray_color.cpp" />
     <ClCompile Include="modules\utils\utils-gray_color.ixx" />
     <ClCompile Include="avt_main.cpp" />
-    <ClCompile Include="modules\utils\utils-rgb_color.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="avt_tests\src\unit_tests\rgb_color.h" />
