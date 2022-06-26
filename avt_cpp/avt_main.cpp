@@ -25,9 +25,11 @@ SOFTWARE.
 //===========================================================================
 #include <iostream>
 
-
-//===========================================================================
-int main(const int argc, const char** argv)
+int main()
 {
+#if defined(_UNIT_TESTS)
+    std::cout << "--- UNIT TESTS - Archery Video Training ---\n\n";
+#else
     std::cout << "--- ARCHERY VIDEO TRAINING ---\n\n";
+#endif
 }
