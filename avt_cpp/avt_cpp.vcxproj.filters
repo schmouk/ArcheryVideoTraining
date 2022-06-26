@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="avt_cpp.cpp">
+    <ClCompile Include="avt_main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils\rgb_color.ixx">

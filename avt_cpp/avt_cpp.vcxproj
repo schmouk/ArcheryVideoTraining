@@ -143,7 +143,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="avt_cpp.cpp" />
+    <ClCompile Include="avt_main.cpp" />
     <ClCompile Include="utils\gray_color.ixx" />
     <ClCompile Include="utils\rgb_color.ixx" />
   </ItemGroup>
