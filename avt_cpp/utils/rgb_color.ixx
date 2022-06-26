@@ -28,7 +28,7 @@ module;
 #include <array>
 #include <vector>
 
-export module utils:rgb_color;
+export module utils.rgb_color;
 
 
 //===========================================================================
@@ -37,8 +37,8 @@ export namespace avt::utils
     //=======================================================================
     /** \brief The class of RGB components colors.
     *
-    * Library OpenCV uses a default BGR coding for colors which is not the 
-    * usual RGB one.  To help developments, class RGBColor codes colors in 
+    * Library OpenCV uses a default BGR coding for colors which is not the
+    * usual RGB one.  To help developments, class RGBColor codes colors in
     * a usual way while the BGR conversion is internally automated for its
     * use with library OpenCV.
     */
