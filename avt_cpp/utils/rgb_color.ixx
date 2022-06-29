@@ -9,7 +9,6 @@ in the Software without restriction,  including without limitation the  rights
 to use,  copy,  modify,  merge,  publish,  distribute, sublicense, and/or sell
 copies of the Software,  and  to  permit  persons  to  whom  the  Software  is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -25,8 +24,11 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <algorithm>
 #include <array>
+#include <cassert>
 #include <vector>
+#include "utils/types.h"
 
 export module utils.rgb_color;
 
@@ -35,7 +37,7 @@ export module utils.rgb_color;
 export namespace avt::utils
 {
     //=======================================================================
-    /** \brief The class of RGB components colors.
+    /** @brief The class of RGB components colors.
     *
     * Library OpenCV uses a default BGR coding for colors which is not the
     * usual RGB one.  To help developments, class RGBColor codes colors in
@@ -46,13 +48,13 @@ export namespace avt::utils
     {
     public:
         //---   Constructors / Destructor   ---------------------------------
-        /** \brief Default constructor. */
+        /** @brief Default constructor. */
         inline RGBColor() noexcept
         {
             set(0, 0, 0);
         }
 
-        /** \brief Valued Constructor (three R, G, B bytes). */
+        /** @brief Valued Constructor (three R, G, B bytes). */
         template<typename T, typename U, typename V>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>&& std::is_arithmetic_v<V>
         inline RGBColor(const T r, const U g, const V b) noexcept
@@ -60,7 +62,7 @@ export namespace avt::utils
             set(r, g, b);
         }
 
-        /** \brief Valued Constructor (one gray value). */
+        /** @brief Valued Constructor (one gray value). */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline RGBColor(const T value) noexcept
@@ -68,15 +70,15 @@ export namespace avt::utils
             set(value, value, value);
         }
 
-        /** \brief Valued Constructor (one 3-bytes buffer). */
+        /** @brief Valued Constructor (one 3-bytes buffer). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline RGBColor(const unsigned char buffer[3]) noexcept
+        inline RGBColor(const T buffer[3]) noexcept
         {
             set(buffer);
         }
 
-        /** \brief Valued Constructor (std::vector). */
+        /** @brief Valued Constructor (std::vector). */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline RGBColor(const std::vector<T>& vect) noexcept(false)
@@ -84,7 +86,7 @@ export namespace avt::utils
             set(vect);
         }
 
-        /** \brief Valued Constructor (std::array). */
+        /** @brief Valued Constructor (std::array). */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline RGBColor(const std::array<T, 3>& arr) noexcept
@@ -92,29 +94,29 @@ export namespace avt::utils
             set(arr);
         }
 
-        /** \brief Copy and Move constructors. */
+        /** @brief Copy and Move constructors. */
         RGBColor(const RGBColor&) noexcept = default;
         RGBColor(RGBColor&&) noexcept = default;
 
-        /** \brief Destructor. */
-        ~RGBColor() noexcept = default;
+        /** @brief Destructor. */
+        virtual ~RGBColor() noexcept = default;
 
 
         //---   Assignments   -----------------------------------------------
-        /** \brief Copy and Move assignments. */
-        RGBColor& operator= (const RGBColor&) noexcept = default;
-        RGBColor& operator= (RGBColor&&) noexcept = default;
+        /** @brief Copy and Move assignments. */
+        virtual RGBColor& operator= (const RGBColor&) noexcept = default;
+        virtual RGBColor& operator= (RGBColor&&) noexcept = default;
 
-        /** \brief Assignment operator (one 3-bytes buffer). */
+        /** @brief Assignment operator (one 3-bytes buffer). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline RGBColor& operator= (const unsigned char buffer[3]) noexcept
+        inline RGBColor& operator= (const T buffer[3]) noexcept
         {
             set(buffer);
             return *this;
         }
 
-        /** \brief Assignment operator (std::vector). */
+        /** @brief Assignment operator (std::vector). */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline RGBColor& operator= (const std::vector<T>& vect) noexcept(false)
@@ -123,7 +125,7 @@ export namespace avt::utils
             return *this;
         }
 
-        /** \brief Assignment operator (std::array). */
+        /** @brief Assignment operator (std::array). */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline RGBColor& operator= (const std::array<T, 3>& arr) noexcept
@@ -133,40 +135,78 @@ export namespace avt::utils
         }
 
 
+        //---   Accessing R, G and B components   ---------------------------
+        /** @brief R accessor. */
+        inline const avt::Byte r() const noexcept
+        {
+            return rgb.R;
+        }
+
+        /** @brief R mutator. */
+        inline avt::Byte& r() noexcept
+        {
+            return rgb.R;
+        }
+
+        /** @brief G accessor. */
+        inline const avt::Byte g() const noexcept
+        {
+            return rgb.G;
+        }
+
+        /** @brief G mutator. */
+        inline avt::Byte& g() noexcept
+        {
+            return rgb.G;
+        }
+
+        /** @brief B accessor. */
+        inline const avt::Byte b() const noexcept
+        {
+            return rgb.B;
+        }
+
+        /** @brief B mutator. */
+        inline avt::Byte& b() noexcept
+        {
+            return rgb.B;
+        }
+
+
         //---   Set color   -------------------------------------------------
-        /** \brief Sets this color to BLACK. */
-        inline void clr() noexcept
+        /** @brief Sets this color to BLACK. */
+        virtual inline void clr() noexcept
         {
-            set(BLACK);
+            rgb.R = rgb.G = rgb.B = avt::Byte{ 0 };
         }
 
-        /** \brief Sets color (copy). */
-        inline void set(const RGBColor& copy) noexcept
+        /** @brief Sets color (copy). */
+        virtual inline void set(const RGBColor& copy) noexcept
         {
-            r = copy.r;
-            g = copy.g;
-            b = copy.b;
+            rgb.R = copy.rgb.R;
+            rgb.G = copy.rgb.G;
+            rgb.B = copy.rgb.B;
         }
 
-        /** \brief Sets color (three R, G, B bytes). */
+        /** @brief Sets color (three R, G, B bytes). */
         template<typename T, typename U, typename V>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>&& std::is_arithmetic_v<V>
         inline void set(const T r, const U g, const V b) noexcept
         {
-            this->r = _clipped(r);
-            this->g = _clipped(g);
-            this->b = _clipped(b);
+            rgb.R = _clipped(r);
+            rgb.G = _clipped(g);
+            rgb.B = _clipped(b);
         }
 
-        /** \brief Sets color (one 3-bytes buffer). */
+        /** @brief Sets color (one 3-bytes buffer). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline void set(const unsigned char buffer[3]) noexcept
+        inline void set(const T buffer[3]) noexcept
         {
             set(buffer[0], buffer[1], buffer[2]);
         }
 
-        /** \brief Sets color (std::vector). */
+        /** @brief Sets color (std::vector). */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline void set(const std::vector<T>& vect) noexcept(false)
@@ -175,7 +215,7 @@ export namespace avt::utils
             set(vect[0], vect[1], vect[2]);
         }
 
-        /** \brief Sets color (std::array). */
+        /** @brief Sets color (std::array). */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline void set(const std::array<T, 3>& arr) noexcept
@@ -185,94 +225,85 @@ export namespace avt::utils
 
 
         //---   Gray Value   ------------------------------------------------
-        /** \brief Returns the intensity of the luminance for this RGB color. */
-        inline const unsigned char get_lum() const noexcept
+        /** @brief Returns the intensity of the luminance for this RGB color. */
+        inline const avt::Byte get_lum() const noexcept
         {
-            return unsigned char(0.299f * r + 0.587f * g + 0.114f * b + 0.5f);
+            return avt::Byte(0.299f * rgb.R + 0.587f * rgb.G + 0.114f * rgb.B + 0.5f);
         }
 
-        /** \brief Instantiates a new RGB color with the gray value of this RGB color. */
+        /** @brief Instantiates a new RGB color with the gray value of this RGB color. */
         inline RGBColor to_gray_color() const noexcept
         {
-            const unsigned char lum = get_lum();
+            const avt::Byte lum = get_lum();
             return RGBColor(lum, lum, lum);
         }
 
 
         //---   Comparisons   -----------------------------------------------
-        /** \brief Returns true if each component of both colors are the same at the same place. */
-        inline const bool operator== (const RGBColor& rhs) const
+        /** @brief Returns true if each component of both colors are the same at the same place. */
+        virtual inline const bool operator== (const RGBColor& rhs) const
         {
-            return r == rhs.r && g == rhs.g && b == rhs.b;
+            return rgb.R == rhs.rgb.R && rgb.G == rhs.rgb.G && rgb.B == rhs.rgb.B;
         }
 
-        /** \brief Returns true if any components are not the same at the same place. */
-        inline const bool operator!= (const RGBColor& rhs) const
+        /** @brief Returns true if any components are not the same at the same place. */
+        virtual inline const bool operator!= (const RGBColor& rhs) const
         {
             return !(*this == rhs);
         }
 
 
         //---   Adding colors   ---------------------------------------------
-        /** \brief In-place adds one RGB color. */
+        /** @brief In-place adds one RGB color. */
         inline RGBColor& operator+= (const RGBColor& rhs) noexcept
         {
-            set(r + rhs.r, g + rhs.g, b + rhs.b);
+            set(rgb.R + rhs.rgb.R, rgb.G + rhs.rgb.G, rgb.B + rhs.rgb.B);
             return *this;
         }
 
-        /** \brief In-place adds one single term. */
+        /** @brief In-place adds one single term. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator+= (const T value) noexcept
         {
-            set(r + value, g + value, b + value);
+            set(rgb.R + value, rgb.G + value, rgb.B + value);
             return *this;
         }
 
-        /** \brief In-place adds one 3-bytes buffer. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        RGBColor& operator+= (const T rhs[3]) noexcept
-        {
-            set(r + rhs[0], g + rhs[1], b + rhs[2]);
-            return *this;
-        }
-
-        /** \brief In-place adds one std::vector. */
+        /** @brief In-place adds one std::vector. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator+= (const std::vector<T>& rhs) noexcept(false)
         {
             assert(rhs.size() == 3);
-            set(r + rhs.r, g + rhs.g, b + rhs.b);
+            set(rgb.R + rhs[0], rgb.G + rhs[1], rgb.B + rhs[2]);
             return *this;
         }
 
-        /** \brief In-place adds one std::array. */
+        /** @brief In-place adds one std::array. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator+= (const std::array<T, 3>& rhs) noexcept
         {
-            set(r + rhs.r, g + rhs.g, b + rhs.b);
+            set(rgb.R + rhs[0], rgb.G + rhs[1], rgb.B + rhs[2]);
             return *this;
         }
 
-        /** \brief Adds RGBColor + RGBColor. */
+        /** @brief Adds RGBColor + RGBColor. */
         friend inline RGBColor operator+ (RGBColor lhs, const RGBColor& rhs) noexcept
         {
             return lhs += rhs;
         }
 
-        /** \brief Adds RGBColor + one single term. */
+        /** @brief Adds RGBColor + one single term. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline RGBColor operator+ (const T value) const noexcept
         {
-            return RGBColor(r + value, g + value, b + value);
+            return RGBColor(rgb.R + value, rgb.G + value, rgb.B + value);
         }
 
-        /** \brief Adds one single term + RGBColor. */
+        /** @brief Adds one single term + RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator+ (const T value, const RGBColor rhs) noexcept
@@ -280,23 +311,7 @@ export namespace avt::utils
             return rhs + value;
         }
 
-        /** \brief Adds RGBColor + one 3-bytes buffer. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        friend inline RGBColor operator+ (const RGBColor& lhs, const unsigned char rhs[3]) noexcept
-        {
-            return RGBColor(lhs.r + rhs[0], lhs.g + rhs[1], lhs.b + rhs[2]);
-        }
-
-        /** \brief Adds one 3-bytes buffer + RGBColor. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        friend inline RGBColor operator+ (const unsigned char lhs[3], const RGBColor& rhs) noexcept
-        {
-            return RGBColor(rhs.r + lhs[0], rhs.g + lhs[1], rhs.b + lhs[2]);
-        }
-
-        /** \brief Adds RGBColor + one std::vector. */
+        /** @brief Adds RGBColor + one std::vector. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator+ (RGBColor lhs, const std::vector<T>& rhs) noexcept(false)
@@ -305,7 +320,7 @@ export namespace avt::utils
             return lhs += rhs;
         }
 
-        /** \brief Adds one std::vector + RGBColor. */
+        /** @brief Adds one std::vector + RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator+ (const std::vector<T>& lhs, RGBColor rhs) noexcept(false)
@@ -314,7 +329,7 @@ export namespace avt::utils
             return rhs += lhs;
         }
 
-        /** \brief Adds RGBColor + one std::array. */
+        /** @brief Adds RGBColor + one std::array. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator+ (RGBColor lhs, const std::array<T, 3>& rhs) noexcept
@@ -322,7 +337,7 @@ export namespace avt::utils
             return lhs += rhs;
         }
 
-        /** \brief Adds one std::array + RGBColor. */
+        /** @brief Adds one std::array + RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator+ (const std::array<T, 3>& lhs, RGBColor rhs) noexcept
@@ -332,89 +347,64 @@ export namespace avt::utils
 
 
         //---   Subtracting colors   ----------------------------------------
-        /** \brief In-place subtracts one RGB color. */
+        /** @brief In-place subtracts one RGB color. */
         inline RGBColor& operator-= (const RGBColor& rhs) noexcept
         {
-            set(r - rhs.r, g - rhs.g, b - rhs.b);
+            set(rgb.R - rhs.rgb.R, rgb.G - rhs.rgb.G, rgb.B - rhs.rgb.B);
             return *this;
         }
 
-        /** \brief In-place subtracts one single term. */
+        /** @brief In-place subtracts one single term. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator-= (const T value) noexcept
         {
-            set(r - value, g - value, b - value);
+            set(rgb.R - value, rgb.G - value, rgb.B - value);
             return *this;
         }
 
-        /** \brief In-place subtracts one 3-bytes buffer. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        RGBColor& operator-= (const T rhs[3]) noexcept
-        {
-            set(r - rhs[0], g - rhs[1], b - rhs[2]);
-            return *this;
-        }
-
-        /** \brief In-place subtracts one std::vector. */
+        /** @brief In-place subtracts one std::vector. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator-= (const std::vector<T>& rhs) noexcept(false)
         {
             assert(rhs.size() == 3);
-            set(r - rhs.r, g - rhs.g, b - rhs.b);
+            set(rgb.R - rhs[0], rgb.G - rhs[1], rgb.B - rhs[2]);
             return *this;
         }
 
-        /** \brief In-place subtracts one std::array. */
+        /** @brief In-place subtracts one std::array. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator-= (const std::array<T, 3>& rhs) noexcept
         {
-            set(r - rhs.r, g - rhs.g, b - rhs.b);
+            set(rgb.R - rhs[0], rgb.G - rhs[1], rgb.B - rhs[2]);
             return *this;
         }
 
-        /** \brief Subtracts RGBColor - RGBColor. */
+        /** @brief Subtracts RGBColor - RGBColor. */
         friend inline RGBColor operator- (RGBColor lhs, const RGBColor& rhs) noexcept
         {
             return lhs -= rhs;
         }
 
-        /** \brief Subtracts RGBColor - one single term. */
+        /** @brief Subtracts RGBColor - one single term. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline RGBColor operator- (const T value) const noexcept
         {
-            return RGBColor(r - value, g - value, b - value);
+            return RGBColor(rgb.R - value, rgb.G - value, rgb.B - value);
         }
 
-        /** \brief Subtracts one single term - RGBColor. */
+        /** @brief Subtracts one single term - RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator- (const T value, const RGBColor rhs) noexcept
         {
-            return rhs - value;
+            return RGBColor(value - rhs.rgb.R, value - rhs.rgb.G, value - rhs.rgb.B);
         }
 
-        /** \brief Subtracts RGBColor - one 3-bytes buffer. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        friend inline RGBColor operator- (const RGBColor& lhs, const unsigned char rhs[3]) noexcept
-        {
-            return RGBColor(lhs.r - rhs[0], lhs.g - rhs[1], lhs.b - rhs[2]);
-        }
-
-        /** \brief Subtracts one 3-bytes buffer - RGBColor. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        friend inline RGBColor operator- (const unsigned char lhs[3], const RGBColor& rhs) noexcept
-        {
-            return RGBColor(rhs.r - lhs[0], rhs.g - lhs[1], rhs.b - lhs[2]);
-        }
-
-        /** \brief Subtracts RGBColor - one std::vector. */
+        /** @brief Subtracts RGBColor - one std::vector. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator- (RGBColor lhs, const std::vector<T>& rhs) noexcept(false)
@@ -423,16 +413,16 @@ export namespace avt::utils
             return lhs -= rhs;
         }
 
-        /** \brief Subtracts one std::vector - RGBColor. */
+        /** @brief Subtracts one std::vector - RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator- (const std::vector<T>& lhs, RGBColor rhs) noexcept(false)
         {
             assert(lhs.size() == 3);
-            return rhs -= lhs;
+            return RGBColor(lhs) -= rhs;
         }
 
-        /** \brief Subtracts RGBColor - one std::array. */
+        /** @brief Subtracts RGBColor - one std::array. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator- (RGBColor lhs, const std::array<T, 3>& rhs) noexcept
@@ -440,62 +430,53 @@ export namespace avt::utils
             return lhs -= rhs;
         }
 
-        /** \brief Subtracts one std::array - RGBColor. */
+        /** @brief Subtracts one std::array - RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator- (const std::array<T, 3>& lhs, RGBColor rhs) noexcept
         {
-            return rhs -= lhs;
+            return RGBColor(lhs) -= rhs;
         }
 
 
         //---   Magnifying colors   -----------------------------------------
-        /** \brief In-place multiplies (one single factor). */
+        /** @brief In-place multiplies (one single factor). */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator*= (const T value) noexcept
         {
-            set(r * value, g * value, b * value);
+            set(rgb.R * value, rgb.G * value, rgb.B * value);
             return *this;
         }
 
-        /** \brief In-place multiplies one 3*bytes buffer. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        RGBColor& operator*= (const T rhs[3]) noexcept
-        {
-            set(r * rhs[0], g * rhs[1], b * rhs[2]);
-            return *this;
-        }
-
-        /** \brief In-place multiplies one std::vector. */
+        /** @brief In-place multiplies one std::vector. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator*= (const std::vector<T>& rhs) noexcept(false)
         {
             assert(rhs.size() == 3);
-            set(r * rhs.r, g * rhs.g, b * rhs.b);
+            set(rgb.R * rhs[0], rgb.G * rhs[1], rgb.B * rhs[2]);
             return *this;
         }
 
-        /** \brief In-place multiplies one std::array. */
+        /** @brief In-place multiplies one std::array. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator*= (const std::array<T, 3>& rhs) noexcept
         {
-            set(r * rhs.r, g * rhs.g, b * rhs.b);
+            set(rgb.R * rhs[0], rgb.G * rhs[1], rgb.B * rhs[2]);
             return *this;
         }
 
-        /** \brief Multiplies RGBColor * one single term. */
+        /** @brief Multiplies RGBColor * one single term. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline RGBColor operator* (const T value) const noexcept
         {
-            return RGBColor(r * value, g * value, b * value);
+            return RGBColor(rgb.R * value, rgb.G * value, rgb.B * value);
         }
 
-        /** \brief Multiplies one single term * RGBColor. */
+        /** @brief Multiplies one single term * RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator* (const T value, const RGBColor rhs) noexcept
@@ -503,23 +484,7 @@ export namespace avt::utils
             return rhs * value;
         }
 
-        /** \brief Multiplies RGBColor * one 3*bytes buffer. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        friend inline RGBColor operator* (const RGBColor& lhs, const unsigned char rhs[3]) noexcept
-        {
-            return RGBColor(lhs.r * rhs[0], lhs.g * rhs[1], lhs.b * rhs[2]);
-        }
-
-        /** \brief Multiplies one 3*bytes buffer * RGBColor. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        friend inline RGBColor operator* (const unsigned char lhs[3], const RGBColor& rhs) noexcept
-        {
-            return RGBColor(rhs.r * lhs[0], rhs.g * lhs[1], rhs.b * lhs[2]);
-        }
-
-        /** \brief Multiplies RGBColor * one std::vector. */
+        /** @brief Multiplies RGBColor * one std::vector. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator* (RGBColor lhs, const std::vector<T>& rhs) noexcept(false)
@@ -528,7 +493,7 @@ export namespace avt::utils
             return lhs *= rhs;
         }
 
-        /** \brief Multiplies one std::vector * RGBColor. */
+        /** @brief Multiplies one std::vector * RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator* (const std::vector<T>& lhs, RGBColor rhs) noexcept(false)
@@ -537,7 +502,7 @@ export namespace avt::utils
             return rhs *= lhs;
         }
 
-        /** \brief Multiplies RGBColor * one std::array. */
+        /** @brief Multiplies RGBColor * one std::array. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator* (RGBColor lhs, const std::array<T, 3>& rhs) noexcept
@@ -545,7 +510,7 @@ export namespace avt::utils
             return lhs *= rhs;
         }
 
-        /** \brief Multiplies one std::array * RGBColor. */
+        /** @brief Multiplies one std::array * RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator* (const std::array<T, 3>& lhs, RGBColor rhs) noexcept
@@ -555,77 +520,52 @@ export namespace avt::utils
 
 
         //---   Dividing colors   -------------------------------------------
-        /** \brief In-place divides (one single factor). */
+        /** @brief In-place divides (one single factor). */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator/= (const T value) noexcept(false)
         {
             assert(value > 0);
-            set(_div(r, value), _div(g, value), _div(b, value));
+            set(_div(rgb.R, value), _div(rgb.G, value), _div(rgb.B, value));
             return *this;
         }
 
-        /** \brief In-place divides one 3*bytes buffer. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        RGBColor& operator/= (const T rhs[3]) noexcept(false)
-        {
-            set(_div(r, rhs[0]), _div(g, rhs[1]), _div(b, rhs[2]));
-            return *this;
-        }
-
-        /** \brief In-place divides one std::vector. */
+        /** @brief In-place divides one std::vector. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator/= (const std::vector<T>& rhs) noexcept(false)
         {
             assert(rhs.size() == 3);
-            set(_div(r, rhs[0]), _div(g, rhs[1]), _div(b, rhs[2]));
+            set(_div(rgb.R, rhs[0]), _div(rgb.G, rhs[1]), _div(rgb.B, rhs[2]));
             return *this;
         }
 
-        /** \brief In-place divides one std::array. */
+        /** @brief In-place divides one std::array. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         RGBColor& operator/= (const std::array<T, 3>& rhs) noexcept(false)
         {
-            set(_div(r, rhs[0]), _div(g, rhs[1]), _div(b, rhs[2]));
+            set(_div(rgb.R, rhs[0]), _div(rgb.G, rhs[1]), _div(rgb.B, rhs[2]));
             return *this;
         }
 
-        /** \brief Divides RGBColor / one single term. */
+        /** @brief Divides RGBColor / one single term. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         inline RGBColor operator/ (const T value) const noexcept(false)
         {
-            return RGBColor(_div(r, value), _div(g, value), _div(b, value));
+            return RGBColor(_div(rgb.R, value), _div(rgb.G, value), _div(rgb.B, value));
         }
 
-        /** \brief Divides one single term / RGBColor. */
+        /** @brief Divides one single term / RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (const T value, const RGBColor rhs) noexcept(false)
         {
-            return RGBColor(_div(r, rhs.r), _div(g, rhs.g), _div(b, rhs.b));
+            return RGBColor(rhs._div(value, rhs.rgb.R), rhs._div(value, rhs.rgb.G), rhs._div(value, rhs.rgb.B));
         }
 
-        /** \brief Divides RGBColor / one 3*bytes buffer. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        friend inline RGBColor operator/ (const RGBColor& lhs, const unsigned char rhs[3]) noexcept(false)
-        {
-            return RGBColor(_div(lhs.r, rhs[0]), _div(lhs.g, rhs[1]), _div(lhs.b, rhs[2]));
-        }
-
-        /** \brief Divides one 3*bytes buffer / RGBColor. */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        friend inline RGBColor operator/ (const unsigned char lhs[3], const RGBColor& rhs) noexcept(false)
-        {
-            return RGBColor(_div(lhs[0], rhs.r), _div(lhs[1], rhs.g), _div(lhs[2], rhs.b));
-        }
-
-        /** \brief Divides RGBColor * one std::vector. */
+        /** @brief Divides RGBColor * one std::vector. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (RGBColor lhs, const std::vector<T>& rhs) noexcept(false)
@@ -634,16 +574,16 @@ export namespace avt::utils
             return lhs /= rhs;
         }
 
-        /** \brief Divides one std::vector * RGBColor. */
+        /** @brief Divides one std::vector * RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (const std::vector<T>& lhs, RGBColor rhs) noexcept(false)
         {
             assert(lhs.size() == 3);
-            return RGBColor(_div(lhs[0], rhs.r), _div(lhs[1], rhs.g), _div(lhs[2], rhs.b));
+            return RGBColor(rhs._div(lhs[0], rhs.rgb.R), rhs._div(lhs[1], rhs.rgb.G), rhs._div(lhs[2], rhs.rgb.B));
         }
 
-        /** \brief Divides RGBColor * one std::array. */
+        /** @brief Divides RGBColor * one std::array. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (RGBColor lhs, const std::array<T, 3>& rhs) noexcept(false)
@@ -651,23 +591,23 @@ export namespace avt::utils
             return lhs /= rhs;
         }
 
-        /** \brief Divides one std::array * RGBColor. */
+        /** @brief Divides one std::array * RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (const std::array<T, 3>& lhs, RGBColor rhs) noexcept(false)
         {
-            return RGBColor(_div(lhs[0], rhs.r), _div(lhs[1], rhs.g), _div(lhs[2], rhs.b));
+            return RGBColor(rhs._div(lhs[0], rhs.rgb.R), rhs._div(lhs[1], rhs.rgb.G), rhs._div(lhs[2], rhs.rgb.B));
         }
 
 
         //---   Data   ------------------------------------------------------
         union {
-            unsigned char comp[3];
+            avt::Byte data[3];
             struct {
-                unsigned char b;
-                unsigned char g;
-                unsigned char r;
-            };
+                avt::Byte B;
+                avt::Byte G;
+                avt::Byte R;
+            } rgb;
         };
 
 
@@ -700,51 +640,54 @@ export namespace avt::utils
             TARGET_BLUE_NFAA;
 
 
-    private:
-        /** \brief Returns the clipped value acccording to color components type. */
+    protected:
+        /** @brief Returns the clipped value acccording to color components type. */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline static const unsigned char _clipped(const T value) noexcept
+        inline static const avt::Byte _clipped(const T value) noexcept
         {
-            return (value >= 255) ? 255 : ((value <= 0) ? 0 : (unsigned char)value);
+            return avt::Byte(std::clamp(value, T(0), T(255)));
+            //return (value >= 255) ? 255 : ((value <= 0) ? 0 : (avt::Byte)value);
         }
 
-        /** \brief Returns the rounding value of a division. */
+
+    private:
+        /** @brief Returns the rounding value of a division. */
         template<typename T, typename U>
             requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>
-        inline static const unsigned char _div(const T num, const U den) noexcept(false)
+        inline static const avt::Byte _div(const T num, const U den) noexcept(false)
         {
             assert(den > 0);
-            return (unsigned char)(float(num) / float(den));
+            return (avt::Byte)(float(num) / float(den));
         }
 
     };
 
     //-----------------------------------------------------------------------
-    const RGBColor RGBColor::ANTHRACITE(31, 31, 31);
-    const RGBColor RGBColor::BLACK(0, 0, 0);
-    const RGBColor RGBColor::BLUE(0, 0, 255);
-    const RGBColor RGBColor::BROWN(95, 47, 0);
-    const RGBColor RGBColor::DARK_RED(127, 0, 0);
-    const RGBColor RGBColor::DEEP_GRAY(63, 63, 63);
-    const RGBColor RGBColor::DEEP_GREEN(0, 95, 0);
-    const RGBColor RGBColor::GRAY(127, 127, 127);
-    const RGBColor RGBColor::LIGHT_BLUE(0, 255, 255);
-    const RGBColor RGBColor::LIGHT_GRAY(191, 191, 191);
-    const RGBColor RGBColor::LIGHT_GREEN(0, 255, 0);
-    const RGBColor RGBColor::NAVY_BLUE(0, 0, 63);
-    const RGBColor RGBColor::ORANGE(255, 127, 0);
-    const RGBColor RGBColor::RED(255, 0, 0);
-    const RGBColor RGBColor::YELLOW(255, 255, 0);
-    const RGBColor RGBColor::WHITE(255, 255, 255);
+    const RGBColor RGBColor::ANTHRACITE{ 31, 31, 31 };
+    const RGBColor RGBColor::BLACK{ 0, 0, 0 };
+    const RGBColor RGBColor::BLUE{ 0, 0, 255 };
+    const RGBColor RGBColor::BROWN{ 95, 47, 0 };
+    const RGBColor RGBColor::DARK_RED{ 127, 0, 0 };
+    const RGBColor RGBColor::DEEP_GRAY{ 63, 63, 63 };
+    const RGBColor RGBColor::DEEP_GREEN{ 0, 95, 0 };
+    const RGBColor RGBColor::GRAY{ 127, 127, 127 };
+    const RGBColor RGBColor::LIGHT_BLUE{ 0, 255, 255 };
+    const RGBColor RGBColor::LIGHT_GRAY{ 191, 191, 191 };
+    const RGBColor RGBColor::LIGHT_GREEN{ 0, 255, 0 };
+    const RGBColor RGBColor::NAVY_BLUE{ 0, 0, 63 };
+    const RGBColor RGBColor::ORANGE{ 255, 127, 0 };
+    const RGBColor RGBColor::RED{ 255, 0, 0 };
+    const RGBColor RGBColor::YELLOW{ 255, 255, 0 };
+    const RGBColor RGBColor::WHITE{ 255, 255, 255 };
 
-    const RGBColor RGBColor::TARGET_WHITE(255, 255, 255);
-    const RGBColor RGBColor::TARGET_BLACK(0, 0, 0);
-    const RGBColor RGBColor::TARGET_BLUE(65, 181, 200);
-    const RGBColor RGBColor::TARGET_RED(255, 37, 21);
-    const RGBColor RGBColor::TARGET_GOLD(255, 245, 55);
+    const RGBColor RGBColor::TARGET_WHITE{ 255, 255, 255 };
+    const RGBColor RGBColor::TARGET_BLACK{ 0, 0, 0 };
+    const RGBColor RGBColor::TARGET_BLUE{ 65, 181, 200 };
+    const RGBColor RGBColor::TARGET_RED{ 255, 37, 21 };
+    const RGBColor RGBColor::TARGET_GOLD{ 255, 245, 55 };
 
-    const RGBColor RGBColor::TARGET_BLUE_6(17, 165, 255);
-    const RGBColor RGBColor::TARGET_BLUE_NFAA(63, 63, 95);
+    const RGBColor RGBColor::TARGET_BLUE_6{ 17, 165, 255 };
+    const RGBColor RGBColor::TARGET_BLUE_NFAA{ 63, 63, 95 };
 
 }

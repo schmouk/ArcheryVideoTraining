@@ -1,3 +1,4 @@
+#pragma once
 /*
 MIT License
 
@@ -9,7 +10,6 @@ in the Software without restriction,  including without limitation the  rights
 to use,  copy,  modify,  merge,  publish,  distribute, sublicense, and/or sell
 copies of the Software,  and  to  permit  persons  to  whom  the  Software  is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -23,28 +23,7 @@ SOFTWARE.
 */
 
 //===========================================================================
-#include <iostream>
-
-
-//===========================================================================
-#if defined(_UNIT_TESTS)
-
-import unit_tests.utils.test_rgb_color;
-import unit_tests.utils.test_gray_color;
-
-int main()
+namespace avt
 {
-    std::cout << "--- UNIT TESTS - Archery Video Training ---\n\n";
-
-    avt::unit_tests::test_rgb_color();
-    avt::unit_tests::test_gray_color();
-
-    std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";
+	using Byte = unsigned char;  //!< the unsigned 8-bits integer values type
 }
-
-#else
-int main()
-{
-    std::cout << "--- ARCHERY VIDEO TRAINING ---\n\n";
-}
-#endif
