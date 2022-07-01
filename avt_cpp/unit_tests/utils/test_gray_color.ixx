@@ -44,52 +44,52 @@ export namespace avt::unit_tests
         std::cout << "-- TEST GrayColor\n";
 
         avt::utils::GrayColor r0;
-        assert(r0.r() == 0);
-        assert(r0.g() == 0);
-        assert(r0.b() == 0);
-        assert(r0.data[0] == 0);
-        assert(r0.data[1] == 0);
-        assert(r0.data[2] == 0);
+        assert(r0.r == 0);
+        assert(r0.g == 0);
+        assert(r0.b == 0);
+        assert(r0.bgr[0] == 0);
+        assert(r0.bgr[1] == 0);
+        assert(r0.bgr[2] == 0);
 
         avt::utils::GrayColor r1(127);
-        assert(r1.r() == 127);
-        assert(r1.g() == 127);
-        assert(r1.b() == 127);
-        assert(r1.data[0] == 127);
-        assert(r1.data[1] == 127);
-        assert(r1.data[2] == 127);
+        assert(r1.r == 127);
+        assert(r1.g == 127);
+        assert(r1.b == 127);
+        assert(r1.bgr[0] == 127);
+        assert(r1.bgr[1] == 127);
+        assert(r1.bgr[2] == 127);
 
         avt::utils::GrayColor r2 = 253;
-        assert(r2.r() == 253);
-        assert(r2.g() == 253);
-        assert(r2.b() == 253);
-        assert(r2.data[0] == 253);
-        assert(r2.data[1] == 253);
-        assert(r2.data[2] == 253);
+        assert(r2.r == 253);
+        assert(r2.g == 253);
+        assert(r2.b == 253);
+        assert(r2.bgr[0] == 253);
+        assert(r2.bgr[1] == 253);
+        assert(r2.bgr[2] == 253);
 
         avt::utils::GrayColor r3(avt::utils::RGBColor(0, 127, 255));
-        assert(r3.r() == 104);
-        assert(r3.g() == 104);
-        assert(r3.b() == 104);
-        assert(r3.data[0] == 104);
-        assert(r3.data[1] == 104);
-        assert(r3.data[2] == 104);
+        assert(r3.r == 104);
+        assert(r3.g == 104);
+        assert(r3.b == 104);
+        assert(r3.bgr[0] == 104);
+        assert(r3.bgr[1] == 104);
+        assert(r3.bgr[2] == 104);
 
         r0.set(15);
-        assert(r0.r() == 15);
-        assert(r0.g() == 15);
-        assert(r0.b() == 15);
-        assert(r0.data[0] == 15);
-        assert(r0.data[1] == 15);
-        assert(r0.data[2] == 15);
+        assert(r0.r == 15);
+        assert(r0.g == 15);
+        assert(r0.b == 15);
+        assert(r0.bgr[0] == 15);
+        assert(r0.bgr[1] == 15);
+        assert(r0.bgr[2] == 15);
 
         r0.set(avt::utils::RGBColor(0, 127, 255));
-        assert(r0.r() == 104);
-        assert(r0.g() == 104);
-        assert(r0.b() == 104);
-        assert(r0.data[0] == 104);
-        assert(r0.data[1] == 104);
-        assert(r0.data[2] == 104);
+        assert(r0.r == 104);
+        assert(r0.g == 104);
+        assert(r0.b == 104);
+        assert(r0.bgr[0] == 104);
+        assert(r0.bgr[1] == 104);
+        assert(r0.bgr[2] == 104);
 
         std::cout << "   All tests OK\n\n";
     };

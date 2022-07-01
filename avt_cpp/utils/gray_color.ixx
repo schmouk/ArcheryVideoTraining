@@ -87,13 +87,13 @@ export namespace avt::utils
         /** @brief Sets value (copy). */
         virtual inline void set(const GrayColor& copy) noexcept
         {
-            rgb.R = rgb.G = rgb.B = copy.r();
+            r = g = b = copy.r;
         }
 
         /** @brief Sets value (RGBColor). */
         virtual inline void set(const avt::utils::RGBColor& copy) noexcept
         {
-            rgb.R = rgb.G = rgb.B = copy.get_lum();
+            r = g = b = copy.get_lum();
         }
 
         /** @brief Sets color (oner lum bytes). */
@@ -101,7 +101,7 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         inline void set(const T lum) noexcept
         {
-            rgb.R = rgb.G = rgb.B = _clipped(lum);
+            r = g = b = _clipped(lum);
         }
 
     };
