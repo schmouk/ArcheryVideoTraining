@@ -1,3 +1,4 @@
+#pragma once
 /*
 MIT License
 
@@ -22,29 +23,16 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#if !defined(_UNIT_TESTS)
+
 //===========================================================================
 #include <iostream>
 
 
 //===========================================================================
-#if defined(_UNIT_TESTS)
-
-import unit_tests.utils.test_rgb_color;
-import unit_tests.utils.test_gray_color;
-
-int main()
-{
-    std::cout << "--- UNIT TESTS - Archery Video Training ---\n\n";
-
-    avt::unit_tests::test_rgb_color();
-    avt::unit_tests::test_gray_color();
-
-    std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";
-}
-
-#else
 int main()
 {
     std::cout << "--- ARCHERY VIDEO TRAINING ---\n\n";
 }
+
 #endif

@@ -15,10 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="avt_main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_ gray_color.cpp">
+    <ClCompile Include="avt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="unit_tests\utils\test_rgb_color.ixx">
