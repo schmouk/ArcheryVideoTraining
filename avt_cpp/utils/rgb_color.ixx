@@ -565,16 +565,16 @@ export namespace avt::utils
         //---   Data   ------------------------------------------------------
         union {
             struct {
-                avt::Byte b;
-                avt::Byte g;
-                avt::Byte r;
+                avt::Byte b;  //!< the Blue component of this color
+                avt::Byte g;  //!< the Green component of this color
+                avt::Byte r;  //!< the Red component of this color
             };
             avt::Byte bgr[3];
         };
 
-        static inline int R{ 2 };
-        static inline int G{ 1 };
-        static inline int B{ 0 };
+        static inline int R{ 2 };  //!< to be used when indexing '.bgr'
+        static inline int G{ 1 };  //!< to be used when indexing '.bgr'
+        static inline int B{ 0 };  //!< to be used when indexing '.bgr'
 
 
         //---   Predefined colors   -----------------------------------------

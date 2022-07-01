@@ -30,6 +30,15 @@
     <ClCompile Include="utils\gray_color.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utils\coords.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\offsets.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\base2D.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

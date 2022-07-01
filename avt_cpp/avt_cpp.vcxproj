@@ -150,7 +150,10 @@
     <ClCompile Include="avt.cpp" />
     <ClCompile Include="unit_tests\utils\test_gray_color.ixx" />
     <ClCompile Include="unit_tests\utils\test_rgb_color.ixx" />
+    <ClCompile Include="utils\base2D.ixx" />
+    <ClCompile Include="utils\coords.ixx" />
     <ClCompile Include="utils\gray_color.ixx" />
+    <ClCompile Include="utils\offsets.ixx" />
     <ClCompile Include="utils\rgb_color.ixx" />
   </ItemGroup>
   <ItemGroup>

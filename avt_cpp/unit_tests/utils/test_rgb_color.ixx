@@ -50,6 +50,14 @@ export namespace avt::unit_tests
         assert(r0.bgr[1] == 0);
         assert(r0.bgr[2] == 0);
 
+        r0 = { 1.1, 2.2, 3.3 };
+        assert(r0.r == 1);
+        assert(r0.g == 2);
+        assert(r0.b == 3);
+        assert(r0.bgr[0] == 3);
+        assert(r0.bgr[1] == 2);
+        assert(r0.bgr[2] == 1);
+
         avt::utils::RGBColor r123(1, (unsigned char)2, 3.0f);
         assert(r123.r == 1);
         assert(r123.g == 2);
