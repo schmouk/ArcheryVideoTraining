@@ -40,7 +40,7 @@ export namespace avt::unit_tests
     //=======================================================================
     void test_rgb_color()
     {
-        std::cout << "-- TEST RGBColor\n";
+        std::cout << "-- TEST avt::utils::RGBColor\n";
 
         avt::utils::RGBColor r0;
         assert(r0.r == 0);

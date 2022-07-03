@@ -41,7 +41,7 @@ export namespace avt::unit_tests
     //=======================================================================
     void test_gray_color()
     {
-        std::cout << "-- TEST GrayColor\n";
+        std::cout << "-- TEST avt::utils::GrayColor\n";
 
         avt::utils::GrayColor r0;
         assert(r0.r == 0);

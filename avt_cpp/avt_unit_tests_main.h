@@ -28,6 +28,7 @@ SOFTWARE.
 //===========================================================================
 #include <iostream>
 
+import unit_tests.utils.test_base2d;
 import unit_tests.utils.test_rgb_color;
 import unit_tests.utils.test_gray_color;
 
@@ -37,6 +38,7 @@ int main()
 {
     std::cout << "--- UNIT TESTS - Archery Video Training ---\n\n";
 
+    avt::unit_tests::test_base2d();
     avt::unit_tests::test_rgb_color();
     avt::unit_tests::test_gray_color();
 

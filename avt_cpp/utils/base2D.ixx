@@ -44,16 +44,60 @@ export namespace avt::utils
     class Base2D
     {
     public:
+        using ValueType = short;  //!< The generic type for any 2D components
+
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Default constructor. */
         inline Base2D() noexcept
-            : x{ 0 }, y{ 0 }
+            : x{ ValueType{0} },
+              y{ ValueType{0} }
         {}
 
         /** @brief Valued constructor. */
-        inline Base2D(const short x, const short y)
-            : x{ x }, y{ y }
-        {}
+        template<typename X, typename Y>
+            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
+        inline Base2D(const X x_, const Y y_)  noexcept
+            : x{ ValueType{0} },
+              y{ ValueType{0} }
+        {
+            x = _clipped(x_);
+            y = _clipped(y_);
+        }
+
+        /** @brief Constructor (2-components buffer). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline Base2D(const T buffer[2]) noexcept
+            : x{ ValueType{0} },
+              y{ ValueType{0} }
+        {
+            x = _clipped(buffer[0]);
+            y = _clipped(buffer[1]);
+        }
+
+        /** @brief Constructor (std::vector). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline Base2D(const std::vector<T> vect) noexcept(false)
+            : x{ ValueType{0} },
+              y{ ValueType{0} }
+        {
+            assert(vect.size() >= 2);
+            x = _clipped(vect[0]);
+            y = _clipped(vect[1]);
+        }
+
+        /** @brief Constructor (std::array). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline Base2D(const std::array<T, 2> arr) noexcept(false)
+            : x{ ValueType{0} },
+              y{ ValueType{0} }
+        {
+            x = _clipped(arr[0]);
+            y = _clipped(arr[1]);
+        }
+
 
         /** @brief Copy and Move constructors. */
         Base2D(const Base2D&) noexcept = default;
@@ -73,8 +117,8 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         inline Base2D& operator= (const T buffer[2]) noexcept
         {
-            x = short(buffer[0]);
-            y = short(buffer[1]);
+            x = _clipped(buffer[0]);
+            y = _clipped(buffer[1]);
             return *this;
         }
 
@@ -84,8 +128,8 @@ export namespace avt::utils
         inline Base2D& operator= (const std::vector<T>& vect) noexcept(false)
         {
             assert(vect.size() >= 2);
-            x = short(vect[0]);
-            y = short(vect[1]);
+            x = _clipped(vect[0]);
+            y = _clipped(vect[1]);
             return *this;
         }
 
@@ -94,9 +138,23 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         inline Base2D& operator= (const std::array<T, 2>& arr) noexcept
         {
-            x = short(arr[0]);
-            y = short(arr[1]);
+            x = _clipped(arr[0]);
+            y = _clipped(arr[1]);
             return *this;
+        }
+
+
+        //---   Comparisons   -----------------------------------------------
+        /** @brief Returns true if both coordinates are the same. */
+        inline const bool operator==(const Base2D& rhs) const noexcept
+        {
+            return x == rhs.x && y == rhs.y;
+        }
+
+        /** @brief Returns true if any of x or y coordinates are not the same. */
+        inline const bool operator!=(const Base2D& rhs) const noexcept
+        {
+            return !(*this == rhs);
         }
 
 
@@ -104,8 +162,8 @@ export namespace avt::utils
         /** @brief In-place adds a 2D-components. */
         inline Base2D& operator+= (const Base2D& rhs) noexcept
         {
-            x = _clipped(int(x) + int(rhs.x));
-            y = _clipped(int(y) + int(rhs.y));
+            x = _clipped(ConvertedType(x) + ConvertedType(rhs.x));
+            y = _clipped(ConvertedType(y) + ConvertedType(rhs.y));
             return *this;
         }
 
@@ -114,7 +172,8 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         inline Base2D& operator+= (const std::vector<T>& rhs) noexcept(false)
         {
-            return this += Base2D(rhs);
+            assert(rhs.size() >= 2);
+            return *this += Base2D(rhs[0], rhs[1]);
         }
 
         /** @brief In-place adds one std::array. */
@@ -122,7 +181,7 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         Base2D& operator+= (const std::array<T, 2>& rhs) noexcept
         {
-            return this += Base2D(rhs);
+            return *this += Base2D(rhs[0], rhs[1]);
         }
 
         /** @brief Adds Base2D + Base2D. */
@@ -168,8 +227,8 @@ export namespace avt::utils
         /** @brief In-place subtracts a 2D-components. */
         inline Base2D& operator-= (const Base2D& rhs) noexcept
         {
-            x = _clipped(int(x) - int(rhs.x));
-            y = _clipped(int(y) - int(rhs.y));
+            x = _clipped(ConvertedType(x) - ConvertedType(rhs.x));
+            y = _clipped(ConvertedType(y) - ConvertedType(rhs.y));
             return *this;
         }
 
@@ -178,7 +237,7 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         inline Base2D& operator-= (const std::vector<T>& rhs) noexcept(false)
         {
-            return this -= Base2D(rhs);
+            return *this -= Base2D(rhs[0], rhs[1]);
         }
 
         /** @brief In-place subtracts one std::array. */
@@ -186,7 +245,7 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         Base2D& operator-= (const std::array<T, 2>& rhs) noexcept
         {
-            return this -= Base2D(rhs);
+            return *this -= Base2D(rhs[0], rhs[1]);
         }
 
         /** @brief subtracts Base2D - Base2D. */
@@ -208,7 +267,7 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         friend inline Base2D operator- (const std::vector<T>& lhs, Base2D rhs) noexcept(false)
         {
-            return Base2D(rhs) -= lhs;
+            return Base2D(lhs) -= rhs;
         }
 
         /** @brief subtracts Base2D - one std::array. */
@@ -224,7 +283,7 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         friend inline Base2D operator- (const std::array<T, 2>& lhs, Base2D rhs) noexcept
         {
-            return Base2D(rhs) -= lhs;
+            return Base2D(lhs) -= rhs;
         }
 
 
@@ -232,11 +291,28 @@ export namespace avt::utils
         /** @brief In-place multiplies (one single factor). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        Base2D& operator*= (const T factor) noexcept
+        inline Base2D& operator*= (const T factor) noexcept
         {
-            x = _clipped(std::round(double(x) * factor));
-            y = _clipped(std::round(double(y) * factor));
+            x = _clipped(std::lround(double(x) * factor));
+            y = _clipped(std::lround(double(y) * factor));
             return *this;
+        }
+
+        /** @brief Mulitplies by a factor (post-). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Base2D operator* (const Base2D& lhs, const T rhs) noexcept
+        {
+            Base2D tmp{ lhs };
+            return tmp *= rhs;
+        }
+
+        /** @brief Mulitplies by a factor (pre-). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Base2D operator* (const T lhs, const Base2D& rhs) noexcept
+        {
+            return rhs * lhs;
         }
 
 
@@ -244,23 +320,44 @@ export namespace avt::utils
         /** @brief In-place divides (one single factor). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        Base2D& operator/= (const T factor) noexcept
+        inline Base2D operator/= (const T factor) noexcept(false)
         {
             assert(factor > 0);
             return *this *= 1.0 / factor;;
         }
 
+        /** @brief Divides by a factor (post-). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Base2D operator/ (const Base2D lhs, const T rhs) noexcept(false)
+        {
+            Base2D tmp{ lhs };
+            return tmp /= rhs;
+        }
+
 
         //---   Data   ------------------------------------------------------
-        short x;
-        short y;
+        ValueType x;  //!< the X-axis coordinate 
+        ValueType y;  //!< the Y-axis coordinate
 
 
     protected:
-        /** @brief Clips value in 'short' integer range. */
-        const short _clipped(const int value) const noexcept
+        using ConvertedType = long;  //!< the intetrnal type used to convert values before clipping
+
+        /** @brief Clips value in 'ValueType' integer range. */
+        template<typename T>
+        requires std::is_arithmetic_v<T>
+        const ValueType _clipped(const T value) const noexcept
         {
-            return short(std::clamp<int>(value, int(std::numeric_limits<short>::min()), int(std::numeric_limits<short>::max())));
+            if (std::is_integral_v<T>)
+                return ValueType(std::clamp<ConvertedType>(ConvertedType(value),
+                                 ConvertedType(std::numeric_limits<ValueType>::min()),
+                                 ConvertedType(std::numeric_limits<ValueType>::max())));
+            else
+                return ValueType(std::clamp<ConvertedType>(std::lround(value),
+                                 ConvertedType(std::numeric_limits<ValueType>::min()),
+                                 ConvertedType(std::numeric_limits<ValueType>::max())));
+
         }
     };
 
