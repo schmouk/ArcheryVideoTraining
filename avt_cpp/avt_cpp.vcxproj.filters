@@ -45,6 +45,9 @@
     <ClCompile Include="unit_tests\utils\test_coords.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="unit_tests\utils\test_offsets.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

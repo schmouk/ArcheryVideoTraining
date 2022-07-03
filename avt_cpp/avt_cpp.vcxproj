@@ -151,6 +151,7 @@
     <ClCompile Include="unit_tests\utils\test_base2D.ixx" />
     <ClCompile Include="unit_tests\utils\test_coords.ixx" />
     <ClCompile Include="unit_tests\utils\test_gray_color.ixx" />
+    <ClCompile Include="unit_tests\utils\test_offsets.ixx" />
     <ClCompile Include="unit_tests\utils\test_rgb_color.ixx" />
     <ClCompile Include="utils\base2D.ixx" />
     <ClCompile Include="utils\coords.ixx" />
