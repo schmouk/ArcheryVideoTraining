@@ -33,8 +33,8 @@ export namespace avt::utils
 {
     //=======================================================================
     /** @brief The class of 2D integer offsets.
-    * To be used e.g. for moving 2D entities (e.g. Points, Lines, Rectangles, etc.)
+    * To be used e.g. for moving 2D shapes (e.g. Points, Lines, Rectangles, etc.)
     */
     using Offsets = avt::utils::Base2D;
-    
+
 }

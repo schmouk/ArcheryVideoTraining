@@ -336,8 +336,22 @@ export namespace avt::utils
 
 
         //---   Data   ------------------------------------------------------
-        ValueType x;  //!< the X-axis coordinate 
-        ValueType y;  //!< the Y-axis coordinate
+        union {
+            struct {
+                ValueType x;  //!< the X-axis coordinate 
+                ValueType y;  //!< the Y-axis coordinate
+            };
+
+            struct {
+                ValueType dx;  //!< the X-axis offset 
+                ValueType dy;  //!< the Y-axis offset
+            };
+
+            struct {
+                ValueType width;  //!< the X-axis width 
+                ValueType height;  //!< the Y-axis height
+            };
+        };
 
 
     protected:
