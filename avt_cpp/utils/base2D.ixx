@@ -98,7 +98,6 @@ export namespace avt::utils
             y = _clipped(arr[1]);
         }
 
-
         /** @brief Copy and Move constructors. */
         Base2D(const Base2D&) noexcept = default;
         Base2D(Base2D&&) noexcept = default;

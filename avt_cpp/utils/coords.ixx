@@ -23,6 +23,10 @@ SOFTWARE.
 */
 
 //===========================================================================
+module;
+
+#include <algorithm>
+
 export module utils.coords;
 
 import utils.base2d;
@@ -33,7 +37,7 @@ export namespace avt::utils
 {
     //=======================================================================
     /** @brief The class of 2D integer coordinates.
-    * To be used e.g. for Points.
+    * To be used with Points, for instance.
     * Notice: Only Offsets should be added to / subtracted from Points.
     */
     using Coords = avt::utils::Base2D;
