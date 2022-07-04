@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 //===========================================================================
-export module utils.offsets;
+export module utils.size;
 
 import utils.base2d;
 
@@ -35,10 +35,10 @@ export namespace avt::utils
     /** @brief The class of 2D integer offsets.
     * To be used e.g. for moving 2D shapes (e.g. Points, Lines, Rectangles, etc.)
     *
-    * Notice: While accessing data members, prefer to use '.dx' and '.dy'
-    * of base class 'Base2D' since these  are  the  best  appropriate  to
-    * describe offsets on the X- and Y- axis of the frames plan.
+    * Notice: While accessing data members, prefer to use '.width' and  '.height'
+    * of  base  class  'Base2D'  since these are the best appropriate to describe 
+    * dimension values on the X- and Y- axis of the frames plan.
     */
-    using Offsets = avt::utils::Base2D;
+    using Size = avt::utils::Base2D;
 
 }

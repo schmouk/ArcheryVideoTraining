@@ -38,7 +38,12 @@ export namespace avt::utils
     //=======================================================================
     /** @brief The class of 2D integer coordinates.
     * To be used with Points, for instance.
+    *
     * Notice: Only Offsets should be added to / subtracted from Points.
+    * 
+    * Notice: While accessing data members, prefer to use '.x' and '.y'
+    * of base class 'Base2D' since these are the  best  appropriate  to
+    * describe coordinates on the X- and Y- axis of the frames plan.
     */
     using Coords = avt::utils::Base2D;
 

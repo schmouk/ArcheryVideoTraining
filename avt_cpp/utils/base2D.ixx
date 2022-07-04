@@ -336,6 +336,9 @@ export namespace avt::utils
 
 
         //---   Data   ------------------------------------------------------
+        // Well, not very proud of this design, but it is a simple 
+        // and effective trade-off between memory consumption  and 
+        // code factorization...
         union {
             struct {
                 ValueType x;  //!< the X-axis coordinate 
