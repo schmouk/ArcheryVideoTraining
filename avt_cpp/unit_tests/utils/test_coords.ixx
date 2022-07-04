@@ -32,6 +32,7 @@ module;
 export module unit_tests.utils.test_coords;
 
 import utils.coords;
+import utils.offsets;
 
 
 
@@ -75,7 +76,7 @@ export namespace avt::unit_tests
         assert(c3.x == -32'767);
         assert(c3.y == 1028);
 
-        c2 += c1;
+        c2 += avt::utils::Offsets(c1);
         assert(c2.x == -32'767);
         assert(c2.y == 1'028);
 
@@ -126,7 +127,7 @@ export namespace avt::unit_tests
         assert(c2.x == 3);
         assert(c2.y == 1'023);
 
-        c2 -= c1;
+        c2 -= avt::utils::Offsets(c1.x, c1.y);
         assert(c2.x == -1);
         assert(c2.y == 985);
 
@@ -138,7 +139,7 @@ export namespace avt::unit_tests
         assert(c2.x == 32'765);
         assert(c2.y == 32'764);
 
-        c3 = c2 - c1;
+        c3 = c2 - avt::utils::Offsets(c1);
         assert(c3.x == 32'761);
         assert(c3.y == 32'726);
         assert(c2.x == 32'765);
