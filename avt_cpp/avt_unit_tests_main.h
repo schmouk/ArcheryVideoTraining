@@ -1,3 +1,4 @@
+#pragma once
 /*
 MIT License
 
@@ -22,29 +23,34 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
+#if defined(_UNIT_TESTS)
+
 //===========================================================================
 #include <iostream>
 
+import unit_tests.utils.test_base2d;
+import unit_tests.utils.test_coords;
+import unit_tests.utils.test_gray_color;
+import unit_tests.utils.test_offsets;
+import unit_tests.utils.test_size;
+import unit_tests.utils.test_rgb_color;
+
 
 //===========================================================================
-#if defined(_UNIT_TESTS)
-
-import unit_tests.utils.test_rgb_color;
-import unit_tests.utils.test_gray_color;
-
 int main()
 {
-    std::cout << "--- UNIT TESTS - Archery Video Training ---\n\n";
+    std::cout << "\n===================================================";
+    std::cout << "\n=====   UNIT TESTS - Archery Video Training   =====";
+    std::cout << "\n===================================================\n\n";
 
+    avt::unit_tests::test_base2d();
+    avt::unit_tests::test_coords();
+    avt::unit_tests::test_offsets();
+    avt::unit_tests::test_size();
     avt::unit_tests::test_rgb_color();
     avt::unit_tests::test_gray_color();
 
     std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";
 }
 
-#else
-int main()
-{
-    std::cout << "--- ARCHERY VIDEO TRAINING ---\n\n";
-}
 #endif

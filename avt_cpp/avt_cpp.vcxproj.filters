@@ -15,7 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="avt_main.cpp">
+    <ClCompile Include="avt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\utils\test_rgb_color.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\utils\test_gray_color.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils\rgb_color.ixx">
@@ -24,13 +30,28 @@
     <ClCompile Include="utils\gray_color.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_ gray_color.cpp">
+    <ClCompile Include="utils\coords.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_rgb_color.ixx">
+    <ClCompile Include="utils\offsets.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_gray_color.ixx">
+    <ClCompile Include="utils\base2D.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\utils\test_base2D.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\utils\test_coords.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\utils\test_offsets.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\size.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\utils\test_size.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
