@@ -23,7 +23,66 @@ SOFTWARE.
 */
 
 //===========================================================================
+#include <array>
+#include <vector>
+
+
+//===========================================================================
 namespace avt
 {
-	using Byte = unsigned char;  //!< the unsigned 8-bits integer values type
+    using Byte = unsigned char;  //!< the unsigned 8-bits integer values type
+    using CoordsType = short;    //!< avt 2D-coordinates are coded on short integer values
+
+    /** @brief States the Pair status of a type - always false unless specified as true. */
+    template<typename T, typename U>
+    struct is_pair_type {
+        static const bool value = false;
+    };
+
+    /** @brief Wrapper to the value of avt::is_pair_type. */
+    template<typename T, typename U>
+    inline constexpr bool is_pair_type_v = is_pair_type<T, U>::value;
+
+    /** @brief States that buffers containing two artihmetic values are a Pair. */
+    template<typename _T, typename _U>
+    struct is_pair_type<_T[2], _U> {
+        static const bool value = std::is_arithmetic_v<_T>;
+    };
+
+    /** @brief States that std::vector is a Pair type. */
+    template<typename _T, typename _U>
+    struct is_pair_type<std::vector<_T>, _U> {
+        static const bool value = std::is_arithmetic_v<_T>;  // CAUTION: vectors of size < 2 may generate exceptions when used
+    };
+
+    /** @brief States that std::array of size 2 is a Pair type. */
+    template<typename _T, typename _U>
+    struct is_pair_type<std::array<_T, 2>, _U> {
+        static const bool value = std::is_arithmetic_v<_T>;
+    };
+
+    /** @brief States that std::tuple containing 2 values is a Pair type. */
+    template<typename _T, typename _U>
+    struct is_pair_type<std::tuple<_T, _U>, _U> {
+        static const bool value = std::is_arithmetic_v<_T> && std::is_arithmetic_v<_U>;
+    };
+
+    /** @brief States that std::pair is a Pair type. */
+    template<typename _T, typename _U>
+    struct is_pair_type<std::pair<_T, _U>, _U> {
+        static const bool value = std::is_arithmetic_v<_T> && std::is_arithmetic_v<_U>;
+    };
+
+
+    /** @brief Ensures at compile time the arithmetic status of a type.
+    * This is an SFINAE implementation.
+    * \see https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error.
+    */
+#define ENSURE_IS_ARITHMETIC(T) typename std::enable_if_t<std::is_arithmetic_v<T>, T>* = nullptr
+
+    /** @brief Ensures at compile time the Pair status of a type.
+    * This is an SFINAE implementation.
+    */
+#define ENSURE_IS_PAIR(T) typename std::enable_if_t<avt::is_pair_type_v<T>, T>* = nullptr
+
 }
