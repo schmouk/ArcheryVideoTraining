@@ -27,7 +27,12 @@ module;
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <format>
+#include <string>
 #include <vector>
+
+#include <opencv2/core/matx.hpp>
+
 #include "utils/types.h"
 
 export module utils.rgb_color;
@@ -102,9 +107,23 @@ export namespace avt::utils
         virtual ~RGBColor() noexcept = default;
 
 
+        //---   Casting operators   -----------------------------------------
+        inline operator cv::Vec3b()
+        {
+            return cv::Vec3b(b, g, r);
+        }
+
+        inline operator std::string() const
+        {
+            return std::format("#{:02X}{:02X}{:02X}", r, g, b);
+        }
+
+
         //---   Assignments   -----------------------------------------------
-        /** @brief Copy and Move assignments. */
+        /** @brief Copy assignment. */
         virtual RGBColor& operator= (const RGBColor&) noexcept = default;
+
+        /** @brief Move assignment. */
         virtual RGBColor& operator= (RGBColor&&) noexcept = default;
 
         /** @brief Assignment operator (one 3-bytes buffer). */
@@ -152,7 +171,7 @@ export namespace avt::utils
 
         /** @brief Sets color (three R, G, B bytes). */
         template<typename T, typename U, typename V>
-            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>&& std::is_arithmetic_v<V>
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U> && std::is_arithmetic_v<V>
         inline void set(const T r_, const U g_, const V b_) noexcept
         {
             r = _clipped(r_);
