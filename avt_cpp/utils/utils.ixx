@@ -35,9 +35,8 @@ export namespace avt::utils
 {
     /** @brief Clamping values - generic form. */
     template<typename T, typename U>
-    inline const T clamp_(const U value,
-                          ENSURE_IS_ARITHMETIC(T),
-                          ENSURE_IS_ARITHMETIC(U)) noexcept
+        requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
+    inline const T clamp_(const U value) noexcept
     {
         return T{ std::clamp<U>(value,
                                 U(std::numeric_limits<T>::lower()),
@@ -46,37 +45,40 @@ export namespace avt::utils
 
     /** @brief Clamping avt::CoordsType values. */
     template<typename U>
-    inline const avt::CoordsType clamp(const U value, ENSURE_IS_ARITHMETIC(U)) noexcept
+        requires std::is_arithmetic_v<U>
+    inline const avt::CoordsType clamp(const U value) noexcept
     {
         return avt::utils::clamp_<avt::CoordsType, U>(value);
     }
 
     /** @brief Clamping unsigned short values. */
     template<typename U>
-    inline const unsigned short clamp_us(const U value, ENSURE_IS_ARITHMETIC(U)) noexcept
+        requires std::is_arithmetic_v<U>
+    inline const unsigned short clamp_us(const U value) noexcept
     {
         return avt::utils::clamp_<unsigned short, U>(value);
     }
 
     /** @brief Clamping values - generic form. */
     template<typename T, typename U>
-    inline const T clamp0_(const U value,
-                           ENSURE_IS_ARITHMETIC(T),
-                           ENSURE_IS_ARITHMETIC(U)) noexcept
+        requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
+    inline const T clamp0_(const U value) noexcept
     {
         return T{ std::clamp<U>(value, U{ 0 }, U{ std::numeric_limits<T>::max() }) };
     }
 
     /** @brief Clamping avt::CoordsType values. */
     template<typename U>
-    inline const avt::CoordsType clamp0(const U value, ENSURE_IS_ARITHMETIC(U)) noexcept
+        requires std::is_arithmetic_v<U>
+    inline const avt::CoordsType clamp0(const U value) noexcept
     {
         return avt::utils::clamp0_<avt::CoordsType, U>(value);
     }
 
     /** @brief Clamping unsigned short values. */
     template<typename U>
-    inline const unsigned clamp0_us(const U value, ENSURE_IS_ARITHMETIC(U)) noexcept
+        requires std::is_arithmetic_v<U>
+    inline const unsigned clamp0_us(const U value) noexcept
     {
         return avt::utils::clamp0_<unsigned short, U>(value);
     }

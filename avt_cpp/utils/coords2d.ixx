@@ -61,15 +61,15 @@ export namespace avt::utils
 
         /** @brief Constructor (2 values). */
         template<typename X, typename Y>
-        inline Coords2D(const X x, const Y y,
-                        ENSURE_IS_ARITHMETIC(X),
-                        ENSURE_IS_ARITHMETIC(Y)) noexcept
+            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
+        inline Coords2D(const X x, const Y y) noexcept
             : MyBaseType(avt::utils::clamp(x), avt::utils::clamp(y))
         {}
 
         /** @brief Constructor (2-components container). */
         template<typename P>
-        inline Coords2D(const P pair, ENSURE_IS_PAIR(P)) noexcept(false)
+            requires avt::is_pair_type_v<P>
+        inline Coords2D(const P pair) noexcept(false)
             : MyBaseType(avt::utils::clamp(pair[0]), avt::utils::clamp(pair[1]))
         {}
 
@@ -93,7 +93,7 @@ export namespace avt::utils
         /** @brief Copy Assignment (2-components container). */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        inline Coords2D& operator= (const P pair) noexcept
+        Coords2D& operator= (const P pair) noexcept
         {
             x = avt::utils::clamp(pair[0]);
             y = avt::utils::clamp(pair[1]);
