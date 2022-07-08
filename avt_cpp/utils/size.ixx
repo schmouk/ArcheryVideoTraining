@@ -25,9 +25,6 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <array>
-#include <vector>
-
 #include <opencv2/core/types.hpp>
 
 #include "utils/types.h"
@@ -57,21 +54,21 @@ export namespace avt::utils
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Empty constructor. */
         inline Size() noexcept
-            : MyBaseType()
+            : MyBaseType{}
         {}
 
         /** @brief Constructor by values (x, y). */
         template<typename X, typename Y>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline Size(const X x, const Y y) noexcept
-            : MyBaseType(avt::utils::clamp0_us(x), avt::utils::clamp0_us(y))
+            : MyBaseType{ avt::utils::clamp0_us(x), avt::utils::clamp0_us(y) }
         {}
 
         /** @brief Constructor (2-components containers). */
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline Size(const P &pair) noexcept
-            : MyBaseType(avt::utils::clamp0_us(pair[0]), avt::utils::clamp0_us(pair[1]))
+            : MyBaseType{ avt::utils::clamp0_us(pair[0]), avt::utils::clamp0_us(pair[1]) }
         {}
 
         /** @brief Default Copy Constructor. */
