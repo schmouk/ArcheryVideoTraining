@@ -56,21 +56,21 @@ export namespace avt::utils
         //--- Constructors / Destructors ------------------------------------
         /** @brief Default constructor. */
         inline Coords2D() noexcept
-            : MyBaseType()
+            : MyBaseType{}
         {}
 
         /** @brief Constructor (2 values). */
         template<typename X, typename Y>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline Coords2D(const X x, const Y y) noexcept
-            : MyBaseType(avt::utils::clamp(x), avt::utils::clamp(y))
+            : MyBaseType{ avt::utils::clamp(x), avt::utils::clamp(y) }
         {}
 
         /** @brief Constructor (2-components container). */
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline Coords2D(const P pair) noexcept(false)
-            : MyBaseType(avt::utils::clamp(pair[0]), avt::utils::clamp(pair[1]))
+            : MyBaseType{ avt::utils::clamp(pair[0]), avt::utils::clamp(pair[1]) }
         {}
 
         /** @brief Default Copy constructor. */
@@ -93,12 +93,43 @@ export namespace avt::utils
         /** @brief Copy Assignment (2-components container). */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        Coords2D& operator= (const P pair) noexcept
+        Coords2D& operator= (const P& pair) noexcept
         {
             x = avt::utils::clamp(pair[0]);
             y = avt::utils::clamp(pair[1]);
             return *this;
         }
+
+
+        //--- Comparisons ---------------------------------------------------
+        /** @brief Returns true if coords are the same, or false otherwise. */
+        inline const bool operator==(const Coords2D& rhs) const noexcept
+        {
+            return x == rhs.x && y == rhs.y;
+        }
+
+        /** @brief Returns true if coords are the same, or false otherwise. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline const bool operator==(const P& rhs) const noexcept
+        {
+            return x == rhs[0] && y == rhs[1];
+        }
+
+        /** @brief Returns true if coords are not the same, or false otherwise. */
+        inline const bool operator!=(const Coords2D& rhs) const noexcept
+        {
+            return !(*this == rhs);
+        }
+
+        /** @brief Returns true if coords are not the same, or false otherwise. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline const bool operator!=(const P& rhs) const noexcept
+        {
+            return !(*this == rhs);
+        }
+
     };
 
 }
