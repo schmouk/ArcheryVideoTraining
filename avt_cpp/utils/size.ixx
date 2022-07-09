@@ -91,10 +91,11 @@ export namespace avt::utils
         /** @brief Assignment operator (2-components container). */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        inline Size& operator= (const P& rhs) noexcept
+        inline Size& operator= (const P& rhs) noexcept(false)
         {
             width = clamp0_us(rhs[0]);
             height = clamp0_us(rhs[1]);
+            return *this;
         }
 
         //---   Comparisons   -----------------------------------------------
@@ -107,7 +108,7 @@ export namespace avt::utils
         /** @brief Returns true if this size and 2-components container are the ame, or false otherwise. */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        inline const bool operator== (const P& rhs) const noexcept
+        inline const bool operator== (const P& rhs) const noexcept(false)
         {
             width == rhs[0];
             height == rhs[1];
@@ -122,7 +123,7 @@ export namespace avt::utils
         /** @brief Returns true if this size and 2-components container are not the ame, or false otherwise. */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        inline const bool operator!= (const P& rhs) const noexcept
+        inline const bool operator!= (const P& rhs) const noexcept(false)
         {
             return !(*this == rhs);
         }
