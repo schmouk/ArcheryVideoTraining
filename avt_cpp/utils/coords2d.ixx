@@ -26,6 +26,7 @@ SOFTWARE.
 module;
 
 #include <array>
+#include <cmath>
 #include <tuple>
 #include <utility>
 #include <vector>
@@ -83,7 +84,7 @@ export namespace avt::utils
         virtual ~Coords2D() noexcept = default;
 
 
-        //--- Assignments ---------------------------------------------------
+        //---   Assignments   -----------------------------------------------
         /** @brief Default Copy assignment. */
         Coords2D& operator=(const Coords2D&) noexcept = default;
 
@@ -101,7 +102,7 @@ export namespace avt::utils
         }
 
 
-        //--- Comparisons ---------------------------------------------------
+        //---   Comparisons   -----------------------------------------------
         /** @brief Returns true if coords are the same, or false otherwise. */
         inline const bool operator==(const Coords2D& rhs) const noexcept
         {
@@ -129,6 +130,141 @@ export namespace avt::utils
         {
             return !(*this == rhs);
         }
+
+
+        //---   Adding   ----------------------------------------------------
+        /** @brief In-place adds a 2D-coords. */
+        inline Coords2D& operator+= (const Coords2D& rhs) noexcept
+        {
+            x = avt::utils::clamp(_ConvertType{ x } + _ConvertType{ rhs.x });
+            y = avt::utils::clamp(_ConvertType{ y } + _ConvertType{ rhs.y });
+            return *this;
+        }
+
+        /** @brief In-place adds a 2-components container. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline Coords2D& operator+= (const P& rhs) noexcept(false)
+        {
+            return *this += Coords2D(rhs[0], rhs[1]);
+        }
+
+        /** @brief Adds Coords2D + Coords2D. */
+        friend inline Coords2D operator+ (Coords2D lhs, const Coords2D& rhs) noexcept
+        {
+            return lhs += rhs;
+        }
+
+        /** @brief Adds Coords2D + a 2-components container. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Coords2D operator+ (Coords2D lhs, const P& rhs) noexcept(false)
+        {
+            return lhs += rhs;
+        }
+
+        /** @brief Adds a 2-components container + Coords2D. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Coords2D operator+ (const P& lhs, Coords2D rhs) noexcept(false)
+        {
+            return rhs += lhs;
+        }
+
+
+        //---   Subtracting   -----------------------------------------------
+        /** @brief In-place subtracts a 2D-components. */
+        inline Coords2D& operator-= (const Coords2D& rhs) noexcept
+        {
+            x = avt::utils::clamp(_ConvertType{ x } - _ConvertType{ rhs.x });
+            y = avt::utils::clamp(_ConvertType{ y } - _ConvertType{ rhs.y });
+            return *this;
+        }
+
+        /** @brief In-place subtracts a 2-components container. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline Coords2D& operator-= (const P& rhs) noexcept(false)
+        {
+            return *this -= Coords2D(rhs[0], rhs[1]);
+        }
+
+        /** @brief subtracts Coords2D - Coords2D. */
+        friend inline Coords2D operator- (Coords2D lhs, const Coords2D& rhs) noexcept
+        {
+            return lhs -= rhs;
+        }
+
+        /** @brief subtracts Coords2D - a 2-components container. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Coords2D operator- (Coords2D lhs, const P& rhs) noexcept(false)
+        {
+            return lhs -= rhs;
+        }
+
+        /** @brief subtracts a 2-components container - Coords2D. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Coords2D operator- (const P& lhs, const Coords2D& rhs) noexcept(false)
+        {
+            return Coords2D(lhs) -= rhs;
+        }
+
+
+        //---   Magnifying   ------------------------------------------------
+        /** @brief In-place multiplies (one single factor). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        Coords2D& operator*= (const T factor) noexcept
+        {
+            const long xf = std::lround(double(x) * double(factor));
+            const long yf = std::lround(double(y) * double(factor));
+            x = avt::utils::clamp(xf);
+            y = avt::utils::clamp(yf);
+            return *this;
+        }
+
+        /** @brief Mulitplies by a factor (post). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Coords2D operator* (const Coords2D& lhs, const T factor) noexcept
+        {
+            Coords2D tmp{ lhs };
+            return tmp *= factor;
+        }
+
+        /** @brief Mulitplies by a factor (pre-). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Coords2D operator* (const T factor, const Coords2D& rhs) noexcept
+        {
+            return rhs * factor;
+        }
+
+
+        //---   Dividing   --------------------------------------------------
+        /** @brief In-place divides (one single factor). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline Coords2D operator/= (const T factor) noexcept(false)
+        {
+            assert(factor > 0);
+            return *this *= 1.0 / factor;;
+        }
+
+        /** @brief Divides by a factor (post-). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Coords2D operator/ (const Coords2D lhs, const T rhs) noexcept(false)
+        {
+            Coords2D tmp{ lhs };
+            return tmp /= rhs;
+        }
+
+
+        private:
+            using _ConvertType = long;  //!< type for the conversion of coordinates on internal operations.
 
     };
 
