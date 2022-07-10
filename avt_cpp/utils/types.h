@@ -24,7 +24,6 @@ SOFTWARE.
 
 //===========================================================================
 #include <array>
-#include <tuple>
 #include <utility>
 #include <vector>
 
@@ -71,24 +70,4 @@ namespace avt
         static constexpr bool value = std::is_arithmetic_v<_T>;
     };
 
-    /** @brief States that std::tuple containing 2 values is a Pair type. */
-    template<typename _T>
-    struct is_pair_type<std::tuple<_T, _T>>
-    {
-        static constexpr bool value = std::is_arithmetic_v<_T>;
-    };
-
 }
-
-
-//=== MACRO DEFINITIONS =====================================================
-/** @brief Ensures at compile time the arithmetic status of a type.
-* This is an SFINAE implementation
-* (\see https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error).
-*/
-#define ENSURE_IS_ARITHMETIC(T) typename std::enable_if_t<std::is_arithmetic_v<T>, T>* = nullptr
-
-/** @brief Ensures at compile time the Pair status of a type.
-* This is an SFINAE implementation.
-*/
-#define ENSURE_IS_PAIR(T) typename std::enable_if_t<avt::is_pair_type_v<T>, T>* = nullptr

@@ -36,11 +36,25 @@ export namespace avt::utils
     /** @brief Clamping values - generic form. */
     template<typename T, typename U>
         requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-    const T clamp_(const U& value) noexcept
+    const T clamp_(const U& value, const T _MIN = std::numeric_limits<T>::lowest()) noexcept
     {
-        return T(std::clamp<U>(value,
-                               U(std::numeric_limits<T>::lowest()),
-                               U(std::numeric_limits<T>::max())));
+        constexpr T _MAX = std::numeric_limits<T>::max();
+
+        if (std::numeric_limits<U>::is_integer) {
+            if (value <= _MIN)
+                return T(_MIN);
+            if (value >= _MAX)
+                return T(_MAX);
+            return T(value);
+        }
+        else {
+            const U val = value + U(0.5);
+            if (val <= _MIN)
+                return T(_MIN);
+            if (val >= _MAX)
+                return T(_MAX);
+            return T(val);
+        }
     }
 
     /** @brief Clamping avt::CoordsType values. */
@@ -64,7 +78,7 @@ export namespace avt::utils
         requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
     inline const T clamp0_(const U& value) noexcept
     {
-        return T{ std::clamp<U>(value, U{ 0 }, U{ std::numeric_limits<T>::max() }) };
+        return T(avt::utils::clamp_<U>(value, U(0)));
     }
 
     /** @brief Clamping avt::CoordsType values. */

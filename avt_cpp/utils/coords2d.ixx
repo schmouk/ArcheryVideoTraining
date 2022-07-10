@@ -25,12 +25,6 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <array>
-#include <cmath>
-#include <tuple>
-#include <utility>
-#include <vector>
-
 #include <opencv2/core/types.hpp>
 
 #include "utils/types.h"
