@@ -29,10 +29,9 @@ module;
 #include <iostream>
 #include <vector>
 
-export module unit_tests.utils.test_coords;
+export module unit_tests.utils.test_coords2d;
 
-import utils.coords;
-import utils.offsets;
+import utils.coords2d;
 
 
 
@@ -40,19 +39,19 @@ import utils.offsets;
 export namespace avt::unit_tests
 {
     //=======================================================================
-    void test_coords()
+    void test_coords2d()
     {
-        std::cout << "-- TEST avt::utils::Coords\n";
+        std::cout << "-- TEST avt::utils::Coords2D\n";
 
-        avt::utils::Coords c0;
+        avt::utils::Coords2D c0;
         assert(c0.x == 0);
         assert(c0.y == 0);
 
-        avt::utils::Coords c1(-65'000L, 3.9);
+        avt::utils::Coords2D c1(-65'000L, 3.9);
         assert(c1.x == -32'768);
         assert(c1.y == 4);
 
-        avt::utils::Coords c2(c1);
+        avt::utils::Coords2D c2(c1);
         assert(c2.x == -32'768);
         assert(c2.y == 4);
 
@@ -60,7 +59,7 @@ export namespace avt::unit_tests
         assert(c2.x == 0);
         assert(c2.y == 0);
 
-        c2 = { (unsigned char)1, 3ULL };
+        c2 = { (unsigned char)1, (unsigned char)3 };
         assert(c2.x == 1);
         assert(c2.y == 3);
 
@@ -72,11 +71,11 @@ export namespace avt::unit_tests
         assert(c2.x == 1);
         assert(c2.y == 1'024);
 
-        avt::utils::Coords c3 = c1 + c2;
+        avt::utils::Coords2D c3 = c1 + c2;
         assert(c3.x == -32'767);
         assert(c3.y == 1028);
 
-        c2 += avt::utils::Offsets(c1);
+        c2 += c1;
         assert(c2.x == -32'767);
         assert(c2.y == 1'028);
 
@@ -94,19 +93,19 @@ export namespace avt::unit_tests
         assert(c2.x == 1);
         assert(c2.y == 32'765);
 
-        avt::utils::Coords c4 = std::vector<float>{ 1.f, -1.9f, 4.5f } + c2;
+        avt::utils::Coords2D c4 = std::vector<float>{ 1.f, -1.9f, 4.5f } + c2;
         assert(c4.x == 2);
         assert(c4.y == 32'763);
         assert(c2.x == 1);
         assert(c2.y == 32'765);
 
-        avt::utils::Coords c5 = c2 + std::array<char, 2>{ 1, -2 };
+        avt::utils::Coords2D c5 = c2 + std::array<char, 2>{ 1, -2 };
         assert(c5.x == 2);
         assert(c5.y == 32'763);
         assert(c2.x == 1);
         assert(c2.y == 32'765);
 
-        avt::utils::Coords c6 = std::array<char, 2>{ 1, -2 } + c2;
+        avt::utils::Coords2D c6 = std::array<char, 2>{ 1, -2 } + c2;
         assert(c6.x == 2);
         assert(c6.y == 32'763);
         assert(c2.x == 1);
@@ -127,7 +126,7 @@ export namespace avt::unit_tests
         assert(c2.x == 3);
         assert(c2.y == 1'023);
 
-        c2 -= avt::utils::Offsets(c1.x, c1.y);
+        c2 -= c1;
         assert(c2.x == -1);
         assert(c2.y == 985);
 
@@ -136,12 +135,6 @@ export namespace avt::unit_tests
         assert(c2.y == 32'767);
 
         c2 -= std::array<float, 2>{ 1.f, 2.9f };
-        assert(c2.x == 32'765);
-        assert(c2.y == 32'764);
-
-        c3 = c2 - avt::utils::Offsets(c1);
-        assert(c3.x == 32'761);
-        assert(c3.y == 32'726);
         assert(c2.x == 32'765);
         assert(c2.y == 32'764);
 
@@ -169,12 +162,12 @@ export namespace avt::unit_tests
         assert(c2.x == 32'765);
         assert(c2.y == 32'764);
 
-        c2 = avt::utils::Coords{ 3, 1'023 };
+        c2 = avt::utils::Coords2D{ 3, 1'023 };
         c2 *= 2.3f;
         assert(c2.x == 7);
         assert(c2.y == 2'353);
 
-        avt::utils::Coords c7 = c2 * 1.1;
+        avt::utils::Coords2D c7 = c2 * 1.1;
         assert(c7.x == 8);
         assert(c7.y == 2'588);
 
@@ -182,7 +175,7 @@ export namespace avt::unit_tests
         assert(c7.x == 15);
         assert(c7.y == 4'941);
 
-        avt::utils::Coords c8 = c2 / 1.1f;
+        avt::utils::Coords2D c8 = c2 / 1.1f;
         assert(c8.x == 6);
         assert(c8.y == 2'139);
 
