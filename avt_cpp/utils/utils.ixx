@@ -44,7 +44,7 @@ export namespace avt::utils
             return T(std::clamp(value, _min, _max));
         }
         else {
-            const U val = value + U(0.5);
+            const U val = value + (value >= U(0) ? U(0.5) : U(-0.5));
             return T(std::clamp(val, _min, _max));
         }
     }

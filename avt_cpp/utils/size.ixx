@@ -143,9 +143,20 @@ export namespace avt::utils
         /** @brief In-place adds a 2-components container. */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        inline Size& operator+= (const P& rhs) noexcept(false)
+        Size& operator+= (const P& rhs) noexcept(false)
         {
-            return *this += Size(rhs[0], rhs[1]);
+            using T = decltype(rhs[0]);
+            if (std::is_integral_v<T>) {
+                width = avt::utils::clamp_us(_ConvertType(width) + _ConvertType(rhs[0]));
+                height = avt::utils::clamp_us(_ConvertType(height) + _ConvertType(rhs[1]));
+            }
+            else {
+                const T w = rhs[0] + (rhs[0] >= T(0) ? T(0.5) :T(-0.5));
+                width = avt::utils::clamp_us(_ConvertType(width) + _ConvertType(w));
+                const T h = rhs[1] + (rhs[1] >= T(0) ? T(0.5) : T(-0.5));
+                height = avt::utils::clamp_us(_ConvertType(height) + _ConvertType(h));
+            }
+            return *this;
         }
 
         /** @brief Adds Size + Size. */
@@ -183,9 +194,20 @@ export namespace avt::utils
         /** @brief In-place subtracts a 2-components container. */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        inline Size& operator-= (const P& rhs) noexcept(false)
+        Size& operator-= (const P& rhs) noexcept(false)
         {
-            return *this -= Size(rhs[0], rhs[1]);
+            using T = decltype(rhs[0]);
+            if (std::is_integral_v<T>) {
+                width = avt::utils::clamp_us(_ConvertType(width) - _ConvertType(rhs[0]));
+                height = avt::utils::clamp_us(_ConvertType(height) - _ConvertType(rhs[1]));
+            }
+            else {
+                const T w = rhs[0] + (rhs[0] >= T(0) ? T(0.5) : T(-0.5));
+                width = avt::utils::clamp_us(_ConvertType(width) - _ConvertType(w));
+                const T h = rhs[1] + (rhs[1] >= T(0) ? T(0.5) : T(-0.5));
+                height = avt::utils::clamp_us(_ConvertType(height) - _ConvertType(h));
+            }
+            return *this;
         }
 
         /** @brief subtracts Size - Size. */
@@ -263,7 +285,7 @@ export namespace avt::utils
 
 
     private:
-        using _ConvertType = unsigned long;  //!< type for the conversion of coordinates on internal operations.
+        using _ConvertType = long;  //!< type for the conversion of coordinates on internal operations.
 
 
         //---   Miscelaneous   ----------------------------------------------

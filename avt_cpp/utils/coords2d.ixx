@@ -203,7 +203,8 @@ export namespace avt::utils
             requires avt::is_pair_type_v<P>
         friend inline Coords2D operator- (const P& lhs, const Coords2D& rhs) noexcept(false)
         {
-            return Coords2D(lhs) -= rhs;
+            using T = decltype(lhs[0]);
+            return Coords2D(lhs[0] - T(rhs.x), lhs[1] - T(rhs.y));
         }
 
 
@@ -215,8 +216,8 @@ export namespace avt::utils
         {
             const long xf = std::lround(double(x) * double(factor));
             const long yf = std::lround(double(y) * double(factor));
-            x = avt::utils::clamp(xf);
-            y = avt::utils::clamp(yf);
+            x = avt::utils::clamp_s(xf);
+            y = avt::utils::clamp_s(yf);
             return *this;
         }
 
@@ -232,9 +233,9 @@ export namespace avt::utils
         /** @brief Mulitplies by a factor (pre-). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline friend Coords2D operator* (const T factor, const Coords2D& rhs) noexcept
+        inline friend Coords2D operator* (const T factor, Coords2D rhs) noexcept
         {
-            return rhs * factor;
+            return rhs *= factor;
         }
 
 
