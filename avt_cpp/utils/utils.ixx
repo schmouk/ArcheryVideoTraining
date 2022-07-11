@@ -33,68 +33,64 @@ export module utils;
 
 export namespace avt::utils
 {
+    //===   Types Clamping   ================================================
     /** @brief Clamping values - generic form. */
     template<typename T, typename U>
-        requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-    const T clamp_(const U& value, const T _MIN = std::numeric_limits<T>::lowest()) noexcept
+    const T clamp(const U& value)
     {
-        constexpr T _MAX = std::numeric_limits<T>::max();
-
-        if (std::numeric_limits<U>::is_integer) {
-            if (value <= _MIN)
-                return T(_MIN);
-            if (value >= _MAX)
-                return T(_MAX);
-            return T(value);
+        constexpr U _min = U(std::numeric_limits<T>::lowest());
+        constexpr U _max = U(std::numeric_limits<T>::max());
+        if (std::is_integral_v<U>) {
+            return T(std::clamp(value, _min, _max));
         }
         else {
             const U val = value + U(0.5);
-            if (val <= _MIN)
-                return T(_MIN);
-            if (val >= _MAX)
-                return T(_MAX);
-            return T(val);
+            return T(std::clamp(val, _min, _max));
         }
     }
 
-    /** @brief Clamping avt::CoordsType values. */
+    /** @brief Clamping values - unsigned short form. */
     template<typename U>
-        requires std::is_arithmetic_v<U>
-    inline const avt::CoordsType clamp(const U& value) noexcept
+    inline const unsigned short clamp_us(const U& value)
     {
-        return avt::utils::clamp_<avt::CoordsType, U>(value);
+        return avt::utils::clamp<unsigned short, U>(value);
     }
 
-    /** @brief Clamping unsigned short values. */
+    /** @brief Clamping values - short form. */
     template<typename U>
-        requires std::is_arithmetic_v<U>
-    inline const unsigned short clamp_us(const U value) noexcept
+    inline const short clamp_s(const U& value)
     {
-        return avt::utils::clamp_<unsigned short, U>(value);
+        return avt::utils::clamp<short, U>(value);
     }
 
-    /** @brief Clamping values - generic form. */
-    template<typename T, typename U>
-        requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U>
-    inline const T clamp0_(const U& value) noexcept
+    //---   Clamping - specialization to unsigned short   -------------------
+    /** @brief clamping (char -> unsigned short). */
+    template<>
+    inline const unsigned short clamp<unsigned short, char>(const char& value)
     {
-        return T(avt::utils::clamp_<U>(value, U(0)));
+        return (unsigned short)std::max(char(0), value);
     }
 
-    /** @brief Clamping avt::CoordsType values. */
-    template<typename U>
-        requires std::is_arithmetic_v<U>
-    inline const avt::CoordsType clamp0(const U& value) noexcept
+    /** @brief clamping (unsigned char -> unsigned short). */
+    template<>
+    inline const unsigned short clamp<unsigned short, unsigned char>(const unsigned char& value)
     {
-        return avt::utils::clamp0_<avt::CoordsType, U>(value);
+        return (unsigned short)std::max(unsigned char(0), value);
     }
 
-    /** @brief Clamping unsigned short values. */
-    template<typename U>
-        requires std::is_arithmetic_v<U>
-    inline const unsigned clamp0_us(const U value) noexcept
+    //---   Clamping - specialization to short   ----------------------------
+    /** @brief clamping (char -> short). */
+    template<>
+    inline const short clamp<short, char>(const char& value)
     {
-        return avt::utils::clamp0_<unsigned short, U>(value);
+        return short(value);
+    }
+
+    /** @brief clamping (unsigned char -> short). */
+    template<>
+    inline const short clamp<short, unsigned char>(const unsigned char& value)
+    {
+        return short(value);
     }
 
 }

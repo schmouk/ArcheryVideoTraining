@@ -76,16 +76,16 @@ export namespace avt {
         template<typename F, typename S>
             requires std::is_arithmetic_v<F> && std::is_arithmetic_v<S>
         inline Pair_(const F first, const S second) noexcept
-            : MyBaseClass{ avt::utils::clamp_<T>(first),
-                           avt::utils::clamp_<T>(second) }
+            : MyBaseClass{ avt::utils::clamp<T, F>(first),
+                           avt::utils::clamp<T, S>(second) }
         {}
 
         /** @brief Constructor (2-components containers). */
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline Pair_(const P& other) noexcept(false)
-            : MyBaseClass{ avt::utils::clamp_<T>(other[0]),
-                           avt::utils::clamp_<T>(other[1]) }
+            : MyBaseClass{ avt::utils::clamp<T, decltype(other[0])>(other[0]),
+                           avt::utils::clamp<T, decltype(other[1])>(other[1]) }
         {}
 
 
@@ -138,8 +138,8 @@ export namespace avt {
             requires avt::is_pair_type_v<P>
         Pair_& operator= (const P& other)
         {
-            this->first = avt::utils::clamp_<T>(other.first);
-            this->second = avt::utils::clamp_<T>(other.second);
+            this->first = avt::utils::clamp<T, decltype(other.first)>(other.first);
+            this->second = avt::utils::clamp<T, decltype(other.second)>(other.second);
             return *this;
         }
 

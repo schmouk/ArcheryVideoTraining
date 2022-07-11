@@ -58,7 +58,8 @@ export namespace avt::utils
         template<typename X, typename Y>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline Coords2D(const X x, const Y y) noexcept
-            : MyBaseType{ avt::utils::clamp(x), avt::utils::clamp(y) }
+            : MyBaseType{ avt::utils::clamp<MyBaseType::value_type, X>(x),
+                          avt::utils::clamp<MyBaseType::value_type, Y>(y) }
         {}
 
         /** @brief Constructor (2-components container). */
@@ -90,8 +91,8 @@ export namespace avt::utils
             requires avt::is_pair_type_v<P>
         Coords2D& operator= (const P& pair) noexcept
         {
-            x = avt::utils::clamp(pair[0]);
-            y = avt::utils::clamp(pair[1]);
+            x = avt::utils::clamp<MyBaseType::value_type, decltype(pair[0])>(pair[0]);
+            y = avt::utils::clamp<MyBaseType::value_type, decltype(pair[1])>(pair[1]);
             return *this;
         }
 
@@ -130,8 +131,8 @@ export namespace avt::utils
         /** @brief In-place adds a 2D-coords. */
         inline Coords2D& operator+= (const Coords2D& rhs) noexcept
         {
-            x = avt::utils::clamp(_ConvertType{ x } + _ConvertType{ rhs.x });
-            y = avt::utils::clamp(_ConvertType{ y } + _ConvertType{ rhs.y });
+            x = avt::utils::clamp_s(_ConvertType{ x } + _ConvertType{ rhs.x });
+            y = avt::utils::clamp_s(_ConvertType{ y } + _ConvertType{ rhs.y });
             return *this;
         }
 
@@ -170,8 +171,8 @@ export namespace avt::utils
         /** @brief In-place subtracts a 2D-components. */
         inline Coords2D& operator-= (const Coords2D& rhs) noexcept
         {
-            x = avt::utils::clamp(_ConvertType{ x } - _ConvertType{ rhs.x });
-            y = avt::utils::clamp(_ConvertType{ y } - _ConvertType{ rhs.y });
+            x = avt::utils::clamp_s(_ConvertType{ x } - _ConvertType{ rhs.x });
+            y = avt::utils::clamp_s(_ConvertType{ y } - _ConvertType{ rhs.y });
             return *this;
         }
 

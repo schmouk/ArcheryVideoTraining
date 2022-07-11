@@ -49,7 +49,8 @@ export namespace avt::utils
     {
     public:
 
-        using MyBaseType = cv::Size_<avt::SizeValueType>;  //!< wrapper to the base class
+        using MyBaseType = cv::Size_<avt::SizeValueType>;  //!< wrapper to the base class.
+        using ValueType = unsigned short;                  //!< wrapper to the width and height type.
 
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Empty constructor. */
@@ -57,18 +58,19 @@ export namespace avt::utils
             : MyBaseType{}
         {}
 
-        /** @brief Constructor by values (x, y). */
+        /** @brief Constructor by values (width, height). */
         template<typename X, typename Y>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
-        inline Size(const X x, const Y y) noexcept
-            : MyBaseType{ avt::utils::clamp0_us(x), avt::utils::clamp0_us(y) }
+        inline Size(const X width, const Y height) noexcept
+            : MyBaseType{ avt::utils::clamp<MyBaseType::value_type, X>(width),
+                          avt::utils::clamp<MyBaseType::value_type, Y>(height) }
         {}
 
         /** @brief Constructor (2-components containers). */
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline Size(const P &pair) noexcept
-            : MyBaseType{ avt::utils::clamp0_us(pair[0]), avt::utils::clamp0_us(pair[1]) }
+            : MyBaseType{ avt::utils::clamp_us(pair[0]), avt::utils::clamp_us(pair[1]) }
         {}
 
         /** @brief Default Copy Constructor. */
@@ -93,8 +95,8 @@ export namespace avt::utils
             requires avt::is_pair_type_v<P>
         inline Size& operator= (const P& rhs) noexcept(false)
         {
-            width = clamp0_us(rhs[0]);
-            height = clamp0_us(rhs[1]);
+            width = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[0])>(rhs[0]);
+            height = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[1])>(rhs[1]);
             return *this;
         }
 
@@ -127,6 +129,141 @@ export namespace avt::utils
         {
             return !(*this == rhs);
         }
+
+
+        //---   Adding   ----------------------------------------------------
+        /** @brief In-place adds a 2D-coords. */
+        inline Size& operator+= (const Size& rhs) noexcept
+        {
+            width = avt::utils::clamp_us(_ConvertType(width) + _ConvertType(rhs.width));
+            height = avt::utils::clamp_us(_ConvertType(height) + _ConvertType(rhs.height));
+            return *this;
+        }
+
+        /** @brief In-place adds a 2-components container. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline Size& operator+= (const P& rhs) noexcept(false)
+        {
+            return *this += Size(rhs[0], rhs[1]);
+        }
+
+        /** @brief Adds Size + Size. */
+        friend inline Size operator+ (Size lhs, const Size& rhs) noexcept
+        {
+            return lhs += rhs;
+        }
+
+        /** @brief Adds Size + a 2-components container. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Size operator+ (Size lhs, const P& rhs) noexcept(false)
+        {
+            return lhs += rhs;
+        }
+
+        /** @brief Adds a 2-components container + Size. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Size operator+ (const P& lhs, Size rhs) noexcept(false)
+        {
+            return rhs += lhs;
+        }
+
+
+        //---   Subtracting   -----------------------------------------------
+        /** @brief In-place subtracts a 2D-components. */
+        inline Size& operator-= (const Size& rhs) noexcept
+        {
+            width = avt::utils::clamp_us(_ConvertType{ width } - _ConvertType{ rhs.width });
+            height = avt::utils::clamp_us(_ConvertType{ height } - _ConvertType{ rhs.height });
+            return *this;
+        }
+
+        /** @brief In-place subtracts a 2-components container. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline Size& operator-= (const P& rhs) noexcept(false)
+        {
+            return *this -= Size(rhs[0], rhs[1]);
+        }
+
+        /** @brief subtracts Size - Size. */
+        friend inline Size operator- (Size lhs, const Size& rhs) noexcept
+        {
+            return lhs -= rhs;
+        }
+
+        /** @brief subtracts Size - a 2-components container. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Size operator- (Size lhs, const P& rhs) noexcept(false)
+        {
+            return lhs -= rhs;
+        }
+
+        /** @brief subtracts a 2-components container - Size. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Size operator- (const P& lhs, const Size& rhs) noexcept(false)
+        {
+            return Size(lhs) -= rhs;
+        }
+
+
+        //---   Magnifying   ------------------------------------------------
+        /** @brief In-place multiplies (one single factor). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        Size& operator*= (const T factor) noexcept
+        {
+            const long xf = std::lround(double(width) * double(factor));
+            const long yf = std::lround(double(height) * double(factor));
+            width = avt::utils::clamp<MyBaseType::value_type, long>(xf);
+            height = avt::utils::clamp<MyBaseType::value_type, long>(yf);
+            return *this;
+        }
+
+        /** @brief Mulitplies by a factor (post). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Size operator* (const Size& lhs, const T factor) noexcept
+        {
+            Size tmp{ lhs };
+            return tmp *= factor;
+        }
+
+        /** @brief Mulitplies by a factor (pre-). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Size operator* (const T factor, const Size& rhs) noexcept
+        {
+            return rhs * factor;
+        }
+
+
+        //---   Dividing   --------------------------------------------------
+        /** @brief In-place divides (one single factor). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline Size operator/= (const T factor) noexcept(false)
+        {
+            assert(factor > 0);
+            return *this *= 1.0 / factor;;
+        }
+
+        /** @brief Divides by a factor (post-). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Size operator/ (const Size lhs, const T rhs) noexcept(false)
+        {
+            Size tmp{ lhs };
+            return tmp /= rhs;
+        }
+
+
+    private:
+        using _ConvertType = unsigned long;  //!< type for the conversion of coordinates on internal operations.
 
 
         //---   Miscelaneous   ----------------------------------------------
