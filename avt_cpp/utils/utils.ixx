@@ -28,8 +28,6 @@ module;
 #include <cmath>
 #include <limits>
 
-#include "utils/types.h"
-
 export module utils;
 
 export namespace avt::utils
