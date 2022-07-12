@@ -38,6 +38,7 @@ export module utils.range;
 
 import utils;
 
+
 //===========================================================================
 export namespace avt::utils
 {
@@ -55,7 +56,8 @@ export namespace avt::utils
     {
     public:
         //-------------------------------------------------------------------
-        using MyBaseType = cv::Range;  //!< wrapper to the base class
+        using MyBaseType = cv::Range;   //!< wrapper to the base class
+        using value_type = int;         //!< wrapper to the internal storage type (as implemented in cv::Range)
 
 
         //---   Constructors / Destructor   ---------------------------------
@@ -68,15 +70,15 @@ export namespace avt::utils
         template<typename S, typename E>
             requires std::is_arithmetic_v<S> && std::is_arithmetic_v<E>
         inline Range(const S start, const E end) noexcept
-            : MyBaseType{ start, end }
+            : MyBaseType{ avt::utils::clamp<int, S>(start), avt::utils::clamp<int, E>(end) }
         {}
 
         /** @brief Constructor (2-components containers). */
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline Range(const P& pair) noexcept
-            : MyBaseType{ std::clamp<int>(pair[0], _MIN_INT, _MAX_INT),
-                          std::clamp<int>(pair[1], _MIN_INT, _MAX_INT) }
+            : MyBaseType{ avt::utils::clamp<int, decltype(pair[0])>(pair[0], _MIN_INT, _MAX_INT),
+                          avt::utils::clamp<int, decltype(pair[1])>(pair[1], _MIN_INT, _MAX_INT) }
         {}
 
         /** @brief Default Copy Constructor. */
@@ -101,8 +103,8 @@ export namespace avt::utils
             requires avt::is_pair_type_v<P>
         inline Range& operator= (const P& rhs) noexcept
         {
-            start = std::clamp<int>(rhs[0], _MIN_INT, _MAX_INT);
-            end   = std::clamp<int>(rhs[1], _MIN_INT, _MAX_INT);
+            start = std::clamp<int, decltype(rhs[0])>(rhs[0], _MIN_INT, _MAX_INT);
+            end   = std::clamp<int, decltype(rhs[1])>(rhs[1], _MIN_INT, _MAX_INT);
         }
 
         //---   Comparisons   -----------------------------------------------
@@ -117,8 +119,7 @@ export namespace avt::utils
             requires avt::is_pair_type_v<P>
         inline const bool operator== (const P& rhs) const noexcept
         {
-            start == rhs[0];
-            end == rhs[1];
+            return start == rhs[0] && end == rhs[1];
         }
 
         /** @brief Returns true if sizes are not the same, or false otherwise. */
@@ -140,11 +141,13 @@ export namespace avt::utils
         /** @brief Evaluates the area of this Size. */
         const unsigned long area() const
         {
-            return (unsigned long)start * (unsigned long)end;
+            return _ConvertType(start) * _ConvertType(end);
         }
 
 
     private:
+        using _ConvertType = unsigned long;  //!< type for the conversion of coordinates on internal operations.
+
         static constexpr int _MIN_INT{ std::numeric_limits<int>::min() };
         static constexpr int _MAX_INT{ std::numeric_limits<int>::max() };
     };
