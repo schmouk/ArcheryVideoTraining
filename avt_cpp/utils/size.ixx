@@ -287,7 +287,6 @@ export namespace avt::utils
     private:
         using _ConvertType = long;  //!< type for the conversion of coordinates on internal operations.
 
-
         //---   Miscelaneous   ----------------------------------------------
         /** @brief Evaluates the area of this Size. */
         const unsigned long area() const

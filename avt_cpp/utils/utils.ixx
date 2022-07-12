@@ -25,6 +25,7 @@ SOFTWARE.
 module;
 
 #include <algorithm>
+#include <cmath>
 #include <limits>
 
 #include "utils/types.h"
@@ -36,7 +37,7 @@ export namespace avt::utils
     //===   Types Clamping   ================================================
     /** @brief Clamping values - generic form. */
     template<typename T, typename U>
-    const T clamp(const U& value)
+    const T clamp(const U value)
     {
         constexpr U _min = U(std::numeric_limits<T>::lowest());
         constexpr U _max = U(std::numeric_limits<T>::max());
@@ -44,51 +45,52 @@ export namespace avt::utils
             return T(std::clamp(value, _min, _max));
         }
         else {
-            const U val = value + (value >= U(0) ? U(0.5) : U(-0.5));
+            const U val = U(std::round(value));
             return T(std::clamp(val, _min, _max));
         }
     }
 
     /** @brief Clamping values - unsigned short form. */
     template<typename U>
-    inline const unsigned short clamp_us(const U& value)
+    inline const unsigned short clamp_us(const U value)
     {
         return avt::utils::clamp<unsigned short, U>(value);
     }
 
     /** @brief Clamping values - short form. */
     template<typename U>
-    inline const short clamp_s(const U& value)
+    inline const short clamp_s(const U value)
     {
         return avt::utils::clamp<short, U>(value);
     }
 
-    //---   Clamping - specialization to unsigned short   -------------------
+
+    //---   Clamping - specialization for type unsigned short   -------------
     /** @brief clamping (char -> unsigned short). */
     template<>
-    inline const unsigned short clamp<unsigned short, char>(const char& value)
+    inline const unsigned short clamp<unsigned short, char>(const char value)
     {
         return (unsigned short)std::max(char(0), value);
     }
 
     /** @brief clamping (unsigned char -> unsigned short). */
     template<>
-    inline const unsigned short clamp<unsigned short, unsigned char>(const unsigned char& value)
+    inline const unsigned short clamp<unsigned short, unsigned char>(const unsigned char value)
     {
         return (unsigned short)std::max(unsigned char(0), value);
     }
 
-    //---   Clamping - specialization to short   ----------------------------
+    //---   Clamping - specialization for type short   ----------------------
     /** @brief clamping (char -> short). */
     template<>
-    inline const short clamp<short, char>(const char& value)
+    inline const short clamp<short, char>(const char value)
     {
         return short(value);
     }
 
     /** @brief clamping (unsigned char -> short). */
     template<>
-    inline const short clamp<short, unsigned char>(const unsigned char& value)
+    inline const short clamp<short, unsigned char>(const unsigned char value)
     {
         return short(value);
     }
