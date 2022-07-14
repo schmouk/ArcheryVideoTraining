@@ -108,11 +108,6 @@ export namespace avt::utils
 
 
         //---   Casting operators   -----------------------------------------
-        inline operator cv::Vec3b()
-        {
-            return cv::Vec3b(b, g, r);
-        }
-
         inline operator std::string() const
         {
             return std::format("#{:02X}{:02X}{:02X}", r, g, b);

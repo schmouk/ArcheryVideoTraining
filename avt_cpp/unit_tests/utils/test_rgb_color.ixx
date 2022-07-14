@@ -29,6 +29,11 @@ module;
 #include <iostream>
 #include <vector>
 
+#include <opencv2/core/matx.hpp>
+
+#include "utils/types.h"
+
+
 export module unit_tests.utils.test_rgb_color;
 
 import utils.rgb_color;
@@ -548,6 +553,9 @@ export namespace avt::unit_tests
         assert(r6.bgr[0] == 154);
         assert(r6.bgr[1] == 124);
         assert(r6.bgr[2] == 163);
+
+        std::string s = std::string(r6);
+        assert(s == "#A37C9A");
 
         std::cout << "   All tests OK\n\n";
     }

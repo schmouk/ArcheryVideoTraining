@@ -27,14 +27,15 @@ SOFTWARE.
 #include <utility>
 #include <vector>
 
+#include <opencv2/core/types.hpp>
+
 
 //===========================================================================
 namespace avt
 {
     //--- main Types --------------------------------------------------------
-    using Byte = unsigned char;             //!< the unsigned 8-bits integer values type
-    using CoordsType = short;               //!< the type of avt 2D-coordinates
-    using SizeValueType = unsigned short;   //!< the type of avt widths and heights (i.e. Size attributes)
+    using Byte          = unsigned char;    //!< the unsigned 8-bits integer values type
+    using CoordsType    = short;            //!< the type of avt 2D-coordinates
 
 
     //--- is_pair_type ------------------------------------------------------
