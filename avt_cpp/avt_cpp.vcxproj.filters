@@ -54,6 +54,12 @@
     <ClCompile Include="unit_tests\utils\test_size.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="devices\display_monitor.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\monitors_list.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">
