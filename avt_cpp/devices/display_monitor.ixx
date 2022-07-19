@@ -27,6 +27,9 @@ module;
 #include <windows.h>
 #include <shellscalingapi.h>
 
+#include <cmath>
+
+
 export module devices.display_monitor;
 
 
@@ -66,18 +69,18 @@ export namespace avt::devices
 
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Default constructor. */
-        inline DisplayMonitor(const HMONITOR monitor_handle = nullptr,
-                              const HDC      display_context_handle = nullptr,
+        inline DisplayMonitor(const HMONITOR monitor_handle = 0,
+                              const HDC      display_context_handle = 0 ,
                               const int      left_x = 0,
                               const int      top_y = 0,
                               const int      width = 0,
                               const int      height = 0) noexcept
             : win_handle(monitor_handle),
-            win_dc_handle(display_context_handle),
-            x(left_x),
-            y(top_y),
-            width(width),
-            height(height)
+              win_dc_handle(display_context_handle),
+              x(left_x),
+              y(top_y),
+              width(width),
+              height(height)
         {
             if (is_ok())
                 set_system_data();
@@ -113,6 +116,11 @@ export namespace avt::devices
 
             width_mm = GetDeviceCaps(win_dc_handle, HORZSIZE);
             height_mm = GetDeviceCaps(win_dc_handle, VERTSIZE);
+
+            if (width_mm == 0) {
+                width_mm = lround(width * 25.4 / raw_dpiX);
+                height_mm = lround(height * 25.4 / raw_dpiY);
+            }
 
             vertical_refresh_rate = GetDeviceCaps(win_dc_handle, VREFRESH);
         }
