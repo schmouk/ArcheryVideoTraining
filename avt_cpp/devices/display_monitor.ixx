@@ -67,11 +67,11 @@ export namespace avt::devices
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Default constructor. */
         inline DisplayMonitor(const HMONITOR monitor_handle = nullptr,
-            const HDC      display_context_handle = nullptr,
-            const int      left_x = 0,
-            const int      top_y = 0,
-            const int      width = 0,
-            const int      height = 0) noexcept
+                              const HDC      display_context_handle = nullptr,
+                              const int      left_x = 0,
+                              const int      top_y = 0,
+                              const int      width = 0,
+                              const int      height = 0) noexcept
             : win_handle(monitor_handle),
             win_dc_handle(display_context_handle),
             x(left_x),
@@ -99,7 +99,6 @@ export namespace avt::devices
         {
             return win_handle != nullptr;
         }
-
 
         /** @brief Sets Windows additional features associated with this display monitor. */
         void set_system_data()
