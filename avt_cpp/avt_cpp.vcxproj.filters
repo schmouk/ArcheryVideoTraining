@@ -66,6 +66,9 @@
     <ClCompile Include="unit_tests\mtmp\test_threads.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mtmp\mutex.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">
