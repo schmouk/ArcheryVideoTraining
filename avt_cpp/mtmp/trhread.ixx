@@ -124,6 +124,18 @@ export namespace mtmp
                 m_pThread->join();
         }
 
+        /** @brief Puts this thread to sleep for a fractional count of seconds. */
+        inline void sleep_s(const double duration_seconds) noexcept
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(llround(duration_seconds * 1e6)));
+        }
+
+        /** @brief Puts this thread to sleep for a fractional count of milliseconds. */
+        inline void sleep_ms(const double duration_ms) noexcept
+        {
+            std::this_thread::sleep_for(std::chrono::microseconds(llround(duration_ms * 1e3)));
+        }
+
         /** @brief Starts (at will) the processing of this thread. */
         inline void start() noexcept(false)
         {
