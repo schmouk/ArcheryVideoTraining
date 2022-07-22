@@ -24,6 +24,7 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <cassert>
 #include <chrono>         // std::chrono::milliseconds
 #include <iostream>
 #include <thread>         // std::this_thread::sleep_for
@@ -52,6 +53,8 @@ namespace mtmp::unit_tests
         //---   Core processing method   ------------------------------------
         virtual void run() override
         {
+            std::cout << "- in ThreadA::run()\n";
+
             for (int i = 0; i < 10 && is_running(); ++i) {
                 sleep_s(1);
                 std::cout << "A-" << i << '\n';
@@ -74,6 +77,8 @@ namespace mtmp::unit_tests
         //---   Core processing method   ------------------------------------
         virtual void run()  override
         {
+            std::cout << "- in ThreadB::run()\n";
+
             for (int i = 20; i > 0; --i) {
                 sleep_s(0.5);
                 std::cout << "B-" << i-1 << '\n';
@@ -92,8 +97,12 @@ namespace mtmp::unit_tests
 
         std::cout << a.get_id() << " / " << b.get_id() << std::endl;
 
+        assert(mtmp::Thread::get_running_threads_count() == 0);
+
         a.start();
         b.start();
+
+        assert(mtmp::Thread::get_running_threads_count() == 2);
 
         std::cout << a.get_id() << " / " << b.get_id() << std::endl;
 
@@ -101,8 +110,13 @@ namespace mtmp::unit_tests
         std::this_thread::sleep_for(std::chrono::seconds(5));
         a.stop();
         a.join();
+
+        assert(mtmp::Thread::get_running_threads_count() == 1);
+
         b.join();
         std::cout << "main thread has sucessfully joined\n";
+
+        assert(mtmp::Thread::get_running_threads_count() == 0);
 
         std::cout << "   All tests OK\n\n";
     }

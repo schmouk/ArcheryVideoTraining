@@ -1,8 +1,6 @@
 /*
 MIT License
-
 Copyright (c) 2022 Philippe Schmouker, ph.schmouker (at) gmail.com
-
 Permission is hereby granted,  free of charge,  to any person obtaining a copy
 of this software and associated documentation files (the "Software"),  to deal
 in the Software without restriction,  including without limitation the  rights
@@ -11,7 +9,6 @@ copies of the Software,  and  to  permit  persons  to  whom  the  Software  is
 furnished to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS",  WITHOUT WARRANTY OF ANY  KIND,  EXPRESS  OR
 IMPLIED,  INCLUDING  BUT  NOT  LIMITED  TO  THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT  SHALL  THE
@@ -35,11 +32,11 @@ export module mtmp.thread;
 export namespace mtmp
 {
     //=======================================================================
-    /** @brief The base class for Threads. 
+    /** @brief The base class for Threads.
     *
     * Uses the STL std::thread class (per composition) and offers goodies
     * for the launching of threads at will rather than at  instantiation.
-    * 
+    *
     * Correct usage is:
     *   - Define a new class inheriting from this one;
     *   - Implement the abstract method run() in your new class;
@@ -53,7 +50,7 @@ export namespace mtmp
     *     running thread.  This will set data member 'm_is_running' which
     *     can be tested via method 'is_running()' within your  implement-
     *     ation of protected method '.run()' to stop its processing.
-    * 
+    *
     *  Notice : a stopped thread SHOULD NOT be started again.  Attempting
     *     to do so leads to the throwing of a dedicated exception.
     */
@@ -65,7 +62,7 @@ export namespace mtmp
         inline Thread() noexcept
         {}
 
-        /** @brief Default Move constructor. */
+        /** @brief Default Copy constructor. */
         Thread(const Thread&) = delete;
 
         /** @brief Default Move constructor. */
@@ -76,7 +73,7 @@ export namespace mtmp
         {
             stop();
             if (is_ok())
-                delete m_pThread;
+                delete mp_thread;
         }
 
 
@@ -98,7 +95,7 @@ export namespace mtmp
         inline const std::thread::id get_id() const noexcept
         {
             if (is_ok())
-                return m_pThread->get_id();
+                return mp_thread->get_id();
             else
                 return std::thread::id();
         }
@@ -106,7 +103,7 @@ export namespace mtmp
         /** @brief Returns true if this thread has been successfully started, or false otherwise. */
         inline const bool is_ok() const noexcept
         {
-            return m_pThread != nullptr;
+            return mp_thread != nullptr;
         }
 
         /** @brief Returns true if this thread is currently running, or false otherwise. */
@@ -121,7 +118,10 @@ export namespace mtmp
         inline void join() noexcept
         {
             if (is_ok())
-                m_pThread->join();
+            {
+                mp_thread->join();
+                stop();
+            }
         }
 
         /** @brief Puts this thread to sleep for a fractional count of seconds. */
@@ -137,31 +137,40 @@ export namespace mtmp
         }
 
         /** @brief Starts (at will) the processing of this thread. */
-        inline void start() noexcept(false)
+        void start() noexcept(false)
         {
-            if (m_already_started.load())
-                throw StartedException();
+            if (m_already_started.load()) {
+                throw mtmp::Thread::StartedException();
+            }
             else {
-                m_pThread = new std::thread( [this](){ this->run(); } );  // got it?
-                if (m_pThread == nullptr)
-                    throw CreationException();
-                else {
-                    m_is_running.store(true);
-                    m_already_started.store(true);
-                }
+                mp_thread = new std::thread([this]() { this->_run(); });  // got it?
+                if (mp_thread == nullptr)
+                    throw mtmp::Thread::CreationException();
             }
         }
 
         /** @brief Asks for the stopping of the processing of this thread.
         *
-        * The stopping of the processing should take place in the protected
-        * method 'run()' which must be implemented in inheriting classes.
+        * The actions related to the stopping of this thread processings
+        * should  take  place in the protected method 'run()' which must
+        * be implemented in inheriting classes.
         */
         inline void stop() noexcept
         {
-            m_is_running.store(false);
+            if (is_running())
+            {
+                m_is_running.store(false);
+                ms_active_threads_count--;
+            }
         }
 
+
+        //---   Threads counting   ------------------------------------------
+        /** @brief Returns the number of currently active threads. */
+        static inline const long get_running_threads_count() noexcept
+        {
+            return ms_active_threads_count.load();
+        }
 
         //---   Specific Exceptions   ---------------------------------------
         /** @brief Exception on erroneous instantiation of this class. */
@@ -190,10 +199,26 @@ export namespace mtmp
 
 
     private:
+        //--- Internal processing stuff   -----------------------------------
+        /** @brief The internal running method.
+        *
+        * Launches the protected method '.run()' which must be implemented
+        * in inheriting classes.
+        */
+        inline void _run() noexcept
+        {
+            m_is_running.store(true);
+            m_already_started.store(true);
+            ms_active_threads_count++;
+            run();
+        }
+
         //---   Base class attributes   -------------------------------------
+        static inline std::atomic_long ms_active_threads_count{ 0 };
+
         std::atomic_bool m_already_started{ false };
         std::atomic_bool m_is_running{ false };
-        std::thread*     m_pThread{ nullptr };
+        std::thread* mp_thread{ nullptr };
     };
 
 }
