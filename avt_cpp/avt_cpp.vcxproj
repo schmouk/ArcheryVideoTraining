@@ -155,6 +155,7 @@
     <ClCompile Include="devices\display_monitor.ixx" />
     <ClCompile Include="devices\monitors_list.ixx" />
     <ClCompile Include="mtmp\mutex.ixx" />
+    <ClCompile Include="mtmp\semaphore.ixx" />
     <ClCompile Include="mtmp\trhread.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_signal.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_threads.ixx" />
