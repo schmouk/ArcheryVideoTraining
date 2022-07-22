@@ -93,7 +93,7 @@ namespace mtmp::unit_tests
     //=======================================================================
     export void test_signal()
     {
-        std::cout << "-- TEST mtmp::thread\n";
+        std::cout << "-- TEST mtmp::Signal\n";
 
         mtmp::Signal the_signal;
         mtmp::unit_tests::ThreadA a(&the_signal);

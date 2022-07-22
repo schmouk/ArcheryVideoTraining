@@ -27,12 +27,11 @@ module;
 #include <cassert>
 #include <chrono>         // std::chrono::milliseconds
 #include <iostream>
-#include <thread>         // std::this_thread::sleep_for
 
-export module unit_tests.mtmp.test_threads;
+export module unit_tests.mtmp.test_mutex;
 
+import mtmp.mutex;
 import mtmp.thread;
-
 
 
 //===========================================================================
@@ -42,8 +41,8 @@ namespace mtmp::unit_tests
     class ThreadA : public mtmp::Thread
     {
     public:
-        inline ThreadA() noexcept
-            : mtmp::Thread()
+        inline ThreadA(mtmp::Mutex* p_mutex) noexcept
+            : mtmp::Thread(), mp_mutex(p_mutex)
         {}
 
         inline virtual ~ThreadA() noexcept
@@ -53,21 +52,23 @@ namespace mtmp::unit_tests
         //---   Core processing method   ------------------------------------
         virtual void run() override
         {
-            std::cout << "- in ThreadA::run()\n";
-
-            for (int i = 0; i < 10 && is_running(); ++i) {
-                sleep_s(1);
-                std::cout << "A-" << i << '\n';
+            for (int i = 0; i < 20 && is_running(); ++i) {
+                std::cout << "A - unlocks the mutex\n";
+                mp_mutex->unlock();
+                sleep_s(0.5);
             }
         }
+
+    private:
+        mtmp::Mutex* mp_mutex;
     };
 
     //=======================================================================
     class ThreadB : public mtmp::Thread
     {
     public:
-        inline ThreadB() noexcept
-            : mtmp::Thread()
+        inline ThreadB(const char id, mtmp::Mutex* p_mutex) noexcept
+            : mtmp::Thread(), m_id(id), mp_mutex(p_mutex)
         {}
 
         inline virtual ~ThreadB() noexcept
@@ -77,46 +78,37 @@ namespace mtmp::unit_tests
         //---   Core processing method   ------------------------------------
         virtual void run()  override
         {
-            std::cout << "- in ThreadB::run()\n";
-
             for (int i = 20; i > 0; --i) {
-                sleep_s(0.5);
-                std::cout << "B-" << i-1 << '\n';
+                const bool ok = (i % 2) ? mp_mutex->lock_ms(400) : mp_mutex->lock_s(0.2);
+                std::cout << "B-" << m_id << ": " << ok << '/' << i - 1 << '\n';
+                sleep_s(0.1);
             }
         }
+
+    private:
+        mtmp::Mutex* mp_mutex;
+        char m_id;
 
     };
 
     //=======================================================================
-    export void test_threads()
+    export void test_mutex()
     {
-        std::cout << "-- TEST mtmp::Thread\n";
+        std::cout << "-- TEST mtmp::Mutex\n";
 
-        mtmp::unit_tests::ThreadA a;
-        mtmp::unit_tests::ThreadB b;
-
-        std::cout << a.get_id() << " / " << b.get_id() << std::endl;
-
-        assert(mtmp::Thread::get_running_threads_count() == 0);
+        mtmp::Mutex the_mutex;
+        mtmp::unit_tests::ThreadA a(&the_mutex);
+        mtmp::unit_tests::ThreadB b1('1', &the_mutex);
+        mtmp::unit_tests::ThreadB b2('2', &the_mutex);
 
         a.start();
-        b.start();
+        b1.start();
+        b2.start();
 
-        assert(mtmp::Thread::get_running_threads_count() == 2);
-
-        std::cout << a.get_id() << " / " << b.get_id() << std::endl;
-
-        std::cout << "main thread is waiting for joins\n";
-        std::this_thread::sleep_for(std::chrono::seconds(5));
-        a.stop();
         a.join();
+        b1.join();
+        b2.join();
 
-        assert(mtmp::Thread::get_running_threads_count() == 1);
-
-        b.join();
-        std::cout << "main thread has sucessfully joined\n";
-
-        assert(mtmp::Thread::get_running_threads_count() == 0);
 
         std::cout << "   All tests OK\n\n";
     }

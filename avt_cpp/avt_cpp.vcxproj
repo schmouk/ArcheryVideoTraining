@@ -157,6 +157,7 @@
     <ClCompile Include="mtmp\mutex.ixx" />
     <ClCompile Include="mtmp\semaphore.ixx" />
     <ClCompile Include="mtmp\trhread.ixx" />
+    <ClCompile Include="unit_tests\mtmp\test_mutex.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_signal.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_threads.ixx" />
     <ClCompile Include="mtmp\signal.ixx" />

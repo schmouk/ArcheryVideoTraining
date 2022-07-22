@@ -44,9 +44,23 @@ export namespace mtmp
             : m_mtx{}
         {}
 
+        /** @brief Deleted Copy constructor. */
+        Mutex(const Mutex&) = delete;
+
+        /** @brief Deleted Move constructor. */
+        Mutex(Mutex&&) = delete;
+
         /** @brief Default Destructor. */
         virtual inline ~Mutex() noexcept
         {}
+
+
+        //---   Assignments   -----------------------------------------------
+        /** @brief Deleted Copy assignment. */
+        Mutex& operator=(const Mutex&) = delete;
+
+        /** @brief Deleted Move assignment. */
+        Mutex& operator=(Mutex&&) = delete;
 
 
         //---   Mutex operations   ------------------------------------------
@@ -59,7 +73,21 @@ export namespace mtmp
             m_mtx.lock();
         }
 
-        /** @brief Locking the calling thread - timed out.
+        /** @brief Locking the calling thread - timed out (seconds).
+        *
+        * The calling thread will be blocked until this mutex  gets  unlocked
+        * or after the timeout period of time expiration.  The timeout period
+        * of time is expressed in fractional seconds.
+        *
+        * Returns true if the function succeeds in locking this mutex for the
+        * thread, or false otherwise.
+        */
+        inline bool lock_s(const double timeout_s) noexcept
+        {
+            return lock_ms(timeout_s * 1e3);
+        }
+
+        /** @brief Locking the calling thread - timed out (milliseconds).
         *
         * The calling thread will be blocked until this mutex  gets  unlocked
         * or after the timeout period of time expiration.  The timeout period
@@ -68,7 +96,7 @@ export namespace mtmp
         * Returns true if the function succeeds in locking this mutex for the 
         * thread, or false otherwise.
         */
-        inline bool lock(const double timeout_ms) noexcept
+        inline bool lock_ms(const double timeout_ms) noexcept
         {
             return m_mtx.try_lock_for(std::chrono::microseconds(llround(timeout_ms * 1e3)));
         }
@@ -81,7 +109,7 @@ export namespace mtmp
 
 
     private:
-        std::recursive_timed_mutex m_mtx;  //!< Inheritance is implemented via composition.
+        std::timed_mutex m_mtx;  //!< So, inheritance is implemented here via composition.
     };
 
 }
