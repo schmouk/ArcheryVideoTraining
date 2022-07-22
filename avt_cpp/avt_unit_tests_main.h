@@ -34,8 +34,9 @@ import unit_tests.utils.test_gray_color;
 import unit_tests.utils.test_offsets;
 import unit_tests.utils.test_size;
 import unit_tests.utils.test_rgb_color;
-/**/
 import unit_tests.mtmp.test_threads;
+/**/
+import unit_tests.mtmp.test_signal;
 
 
 //===========================================================================
@@ -52,8 +53,9 @@ int main()
     avt::unit_tests::test_size();
     avt::unit_tests::test_rgb_color();
     avt::unit_tests::test_gray_color();
-    /**/
     mtmp::unit_tests::test_threads();
+    /**/
+    mtmp::unit_tests::test_signal();
 
     std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";
 }
