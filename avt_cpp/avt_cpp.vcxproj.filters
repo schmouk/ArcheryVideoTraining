@@ -60,7 +60,7 @@
     <ClCompile Include="devices\monitors_list.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mtmp\trhread.ixx">
+    <ClCompile Include="mtmp\thread.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="unit_tests\mtmp\test_threads.ixx">
@@ -79,6 +79,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="unit_tests\mtmp\test_mutex.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mtmp\timer.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

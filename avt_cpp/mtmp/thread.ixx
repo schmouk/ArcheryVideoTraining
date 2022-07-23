@@ -69,7 +69,7 @@ export namespace mtmp
         Thread(Thread&&) noexcept = default;
 
         /** @brief Destructor. */
-        inline virtual ~Thread() noexcept
+        virtual inline ~Thread() noexcept
         {
             stop();
             if (is_ok())
@@ -198,20 +198,31 @@ export namespace mtmp
         virtual void run() = 0;
 
 
-    private:
         //--- Internal processing stuff   -----------------------------------
+        /** @brief The internal inits to be done before calling '.run()'. */
+        inline void _prepare_run() noexcept
+        {
+            m_is_running.store(true);
+            m_already_started.store(true);
+            ms_active_threads_count++;
+        }
+
         /** @brief The internal running method.
         *
         * Launches the protected method '.run()' which must be implemented
         * in inheriting classes.
         */
-        inline void _run() noexcept
+        virtual inline void _run() noexcept
         {
-            m_is_running.store(true);
-            m_already_started.store(true);
-            ms_active_threads_count++;
+            _prepare_run();
             run();
+            _terminate_run();
         }
+
+        /** @brief The internal termination to be done when '.run()' has completed. */
+        virtual inline void _terminate_run()
+        {}
+
 
         //---   Base class attributes   -------------------------------------
         static inline std::atomic_long ms_active_threads_count{ 0 };
