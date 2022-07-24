@@ -127,7 +127,7 @@ export namespace mtmp
         /** @brief Puts this thread to sleep for a fractional count of seconds. */
         inline void sleep_s(const double duration_seconds) noexcept
         {
-            std::this_thread::sleep_for(std::chrono::microseconds(llround(duration_seconds * 1e6)));
+            sleep_ms(duration_seconds * 1e3);  // std::this_thread::sleep_for(std::chrono::microseconds(llround(duration_seconds * 1e6)));
         }
 
         /** @brief Puts this thread to sleep for a fractional count of milliseconds. */

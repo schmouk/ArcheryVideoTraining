@@ -134,7 +134,7 @@ export namespace mtmp
                 count++;
             }
 
-            while (this->is_running() && (m_n_repeats == 0 || count < m_n_repeats)) {
+            while (this->is_running() && (m_n_repeats == 0 || count <= m_n_repeats)) {
                 run();
                 std::this_thread::sleep_until(start_time + count * m_period_ms);
                 count++;
