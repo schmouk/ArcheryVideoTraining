@@ -55,7 +55,7 @@ export namespace mtmp
     *     can be tested via method 'is_running()' within your  implement-
     *     ation of protected method '.run()' to stop its processing.
     *
-    *  Notice : a stopped thread SHOULD NOT be started again.  Attempting
+    *  Notice:  a stopped timer SHOULD NOT be started  again.  Attempting
     *     to do so leads to the throwing of a dedicated exception.
     */
     class Timer : public mtmp::Thread
@@ -85,13 +85,15 @@ export namespace mtmp
         * Set b_delay to true to get a waiting period before running the
         * repetead  task, or set it to false to get this running as soon
         * as '.start()' is called.
+        * N.B. 'n_repeats' set to 0 means infinite repeating.  The timer 
+        * must then be explicitely stopped to complete.
         */
         inline Timer(const double period_ms,
                      const size_t n_repeats,
                      const bool   b_delay = false) noexcept
             : mtmp::Thread{},
-            m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
-            m_n_repeats{ n_repeats },
+              m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
+              m_n_repeats{ n_repeats },
               m_b_delay{ b_delay }
         {}
 
@@ -116,6 +118,18 @@ export namespace mtmp
 
 
     protected:
+        //---   Core processing method   ------------------------------------
+        /** @brief The core of this thread processing.
+        *
+        * This methods does nothing in this generic class. Inheriting
+        * classes  can  override  it  to implement their own repeated
+        * processing.
+        * @sa as an example class mtmp::Watchdog.
+        */
+        virtual inline void run() override
+        {}
+
+
         //---   Internal processing stuff   ---------------------------------
         /** @brief The internal running method.
         *

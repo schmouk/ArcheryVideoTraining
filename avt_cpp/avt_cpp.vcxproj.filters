@@ -87,6 +87,9 @@
     <ClCompile Include="unit_tests\mtmp\test_timer.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mtmp\watchdog.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">
