@@ -43,14 +43,14 @@ namespace mtmp::unit_tests
     {
     public:
         inline MyWatchdog(const char name, const double duration_ms) noexcept
-            : mtmp::Watchdog{ duration_ms }, m_name{ name }
+            : mtmp::Watchdog{ duration_ms, name }, m_name{ name }
         {}
 
     protected:
         //---   Core processing method   ------------------------------------
         virtual void run() override
         {
-            std::cout << "Watchdog " << m_name << "has expired - " << std::chrono::system_clock::now() << '\n';
+            std::cout << "-->  Watchdog " << m_name << " has expired - " << std::chrono::system_clock::now() << '\n';
         }
 
     private:
@@ -62,30 +62,29 @@ namespace mtmp::unit_tests
     {
         std::cout << "-- TEST mtmp::Watchdog\n";
 
-        mtmp::unit_tests::MyWatchdog a{ 'X', 311 };
-        mtmp::unit_tests::MyWatchdog b{ 'Y', 463.49 };
+        mtmp::unit_tests::MyWatchdog a{ 'X', 1311 };
+        mtmp::unit_tests::MyWatchdog b{ 'Y', 1763.49 };
+
+        std::cout << "  -- " << std::chrono::system_clock::now() << "\n\n";
 
         a.start();
         b.start();
-        //assert(mtmp::Thread::get_running_threads_count() == 2);
-        std::cout << "A -- " << std::chrono::system_clock::now() << '\n';
-        std::this_thread::sleep_for(std::chrono::milliseconds(1400));
+        std::cout << "A -- " << std::chrono::system_clock::now() << "\n\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
         a.reset();
         b.reset();
-        std::cout << "B -- " << std::chrono::system_clock::now() << '\n';
-        std::this_thread::sleep_for(std::chrono::milliseconds(350));
+        std::cout << "B -- " << std::chrono::system_clock::now() << "\n\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(1500));
 
         a.reset();
         b.reset();
-        std::cout << "C -- " << std::chrono::system_clock::now() << '\n';
-        std::this_thread::sleep_for(std::chrono::milliseconds(1470));
+        std::cout << "C -- " << std::chrono::system_clock::now() << "\n\n";
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000));
 
         a.stop();
         b.stop();
-        std::cout << "D -- " << std::chrono::system_clock::now() << '\n';
-
-        assert(mtmp::Thread::get_running_threads_count() == 0);
+        std::cout << "D -- " << std::chrono::system_clock::now() << "\n\n";
 
         std::cout << "   All tests OK\n\n";
     }

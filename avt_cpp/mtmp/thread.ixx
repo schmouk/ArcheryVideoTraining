@@ -23,6 +23,7 @@ module;
 
 #include <atomic>
 #include <exception>
+//#include <iostream>
 #include <thread>
 
 export module mtmp.thread;
@@ -139,6 +140,7 @@ export namespace mtmp
         /** @brief Starts (at will) the processing of this thread. */
         virtual void start() noexcept(false)
         {
+            //std::cout << "- " << this << " - in mtmp::Thread::start()   (" << std::chrono::system_clock::now() << ")\n";
             if (m_already_started.load()) {
                 throw mtmp::Thread::StartedException();
             }
@@ -146,6 +148,7 @@ export namespace mtmp
                 mp_thread = new std::thread([this]() { this->_run(); });  // got it?
                 if (mp_thread == nullptr)
                     throw mtmp::Thread::CreationException();
+                //std::cout << "--" << mp_thread << " - in mtmp::Thread::start()   (" << std::chrono::system_clock::now() << ")\n";
             }
         }
 

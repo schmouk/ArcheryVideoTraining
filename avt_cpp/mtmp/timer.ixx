@@ -22,6 +22,7 @@ SOFTWARE.
 module;
 
 #include <chrono>
+//#include <iostream>
 #include <thread>
 
 
@@ -106,7 +107,9 @@ export namespace mtmp
 
         /** @brief Destructor. */
         virtual inline ~Timer() noexcept
-        {}
+        {
+            //std::cout << "\n- " << this << " - in mtmp::Timer::delete()  (" << std::chrono::system_clock::now() << ")\n";
+        }
 
 
         //---   Assignments   -----------------------------------------------
@@ -127,7 +130,9 @@ export namespace mtmp
         * @sa as an example class mtmp::Watchdog.
         */
         virtual inline void run() override
-        {}
+        {
+            //std::cout << "\n- " << this << "in mtmp::Timer::run()  (" << std::chrono::system_clock::now() << ")\n";
+        }
 
 
         //---   Internal processing stuff   ---------------------------------
