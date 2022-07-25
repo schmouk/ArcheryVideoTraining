@@ -29,9 +29,9 @@ module;
 #include <iostream>
 #include <thread>
 
-export module unit_tests.mtmp.test_timers;
+export module unit_tests.mtmp.test_watchdog;
 
-import mtmp.timer;
+import mtmp.watchdog;
 
 
 
@@ -39,27 +39,18 @@ import mtmp.timer;
 namespace mtmp::unit_tests
 {
     //=======================================================================
-    class TimerA : public mtmp::Timer
+    class MyWatchdog : public mtmp::Watchdog
     {
     public:
-        inline TimerA(const char   name,
-                      const double period_ms,
-                      const bool   b_delay = false) noexcept
-            : mtmp::Timer{ period_ms, b_delay }, m_name{ name }
-        {}
-
-        inline TimerA(const char   name,
-                      const double period_ms,
-                      const size_t n_repeats,
-                      const bool   b_delay = false) noexcept
-            : mtmp::Timer{ period_ms, n_repeats, b_delay }, m_name{ name }
+        inline MyWatchdog(const char name, const double duration_ms) noexcept
+            : mtmp::Watchdog{ duration_ms }, m_name{ name }
         {}
 
     protected:
         //---   Core processing method   ------------------------------------
         virtual void run() override
         {
-            std::cout << m_name << '-' << std::chrono::system_clock::now() << '\n';
+            std::cout << "Watchdog " << m_name << "has expired - " << std::chrono::system_clock::now() << '\n';
         }
 
     private:
@@ -67,23 +58,32 @@ namespace mtmp::unit_tests
     };
 
     //=======================================================================
-    export void test_timers()
+    export void test_watchdog()
     {
-        std::cout << "-- TEST mtmp::Timer\n";
+        std::cout << "-- TEST mtmp::Watchdog\n";
 
-        mtmp::unit_tests::TimerA a{ 'A', 311, true };
-        mtmp::unit_tests::TimerA b{ 'B', 463.49, 20, false };
+        mtmp::unit_tests::MyWatchdog a{ 'X', 311 };
+        mtmp::unit_tests::MyWatchdog b{ 'Y', 463.49 };
 
         a.start();
         b.start();
+        //assert(mtmp::Thread::get_running_threads_count() == 2);
+        std::cout << "A -- " << std::chrono::system_clock::now() << '\n';
+        std::this_thread::sleep_for(std::chrono::milliseconds(1400));
 
-        std::cout << std::chrono::system_clock::now() << '\n';
+        a.reset();
+        b.reset();
+        std::cout << "B -- " << std::chrono::system_clock::now() << '\n';
+        std::this_thread::sleep_for(std::chrono::milliseconds(350));
 
-        std::cout << "main thread is waiting for joins\n";
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        a.reset();
+        b.reset();
+        std::cout << "C -- " << std::chrono::system_clock::now() << '\n';
+        std::this_thread::sleep_for(std::chrono::milliseconds(1470));
+
         a.stop();
-        a.join();
-        b.join();
+        b.stop();
+        std::cout << "D -- " << std::chrono::system_clock::now() << '\n';
 
         assert(mtmp::Thread::get_running_threads_count() == 0);
 

@@ -137,7 +137,7 @@ export namespace mtmp
         }
 
         /** @brief Starts (at will) the processing of this thread. */
-        void start() noexcept(false)
+        virtual void start() noexcept(false)
         {
             if (m_already_started.load()) {
                 throw mtmp::Thread::StartedException();
@@ -225,11 +225,13 @@ export namespace mtmp
 
 
         //---   Base class attributes   -------------------------------------
-        static inline std::atomic_long ms_active_threads_count{ 0 };
+        static std::atomic_long ms_active_threads_count;
 
         std::atomic_bool m_already_started{ false };
         std::atomic_bool m_is_running{ false };
         std::thread* mp_thread{ nullptr };
     };
+
+    std::atomic_long Thread::ms_active_threads_count{ 0 };
 
 }

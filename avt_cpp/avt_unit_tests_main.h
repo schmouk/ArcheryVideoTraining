@@ -37,8 +37,9 @@ import unit_tests.utils.test_rgb_color;
 import unit_tests.mtmp.test_threads;
 import unit_tests.mtmp.test_signal;
 import unit_tests.mtmp.test_mutex;
-/**/
 import unit_tests.mtmp.test_timers;
+/**/
+import unit_tests.mtmp.test_watchdog;
 
 //===========================================================================
 int main()
@@ -55,8 +56,9 @@ int main()
     avt::unit_tests::test_rgb_color();
     avt::unit_tests::test_gray_color();
     mtmp::unit_tests::test_mutex();
-    /**/
     mtmp::unit_tests::test_timers();
+    /**/
+    mtmp::unit_tests::test_watchdog();
 
     std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";
 }

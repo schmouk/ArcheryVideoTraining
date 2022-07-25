@@ -21,6 +21,7 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <iostream>
 #include <chrono>
 #include <thread>
 
@@ -96,7 +97,7 @@ export namespace mtmp
         }
 
         /** @brief Starts this watchdog. */
-        void start() noexcept(false)
+        virtual void start() noexcept(false)
         {
             if (mp_timer != nullptr)
                 stop();
@@ -109,9 +110,11 @@ export namespace mtmp
         }
 
         /** @brief Stops this watchdog. */
-        inline void stop() noexcept
+        void stop() noexcept
         {
             if (mp_timer != nullptr) {
+                mp_timer->stop();
+                mp_timer->join();
                 delete mp_timer;
                 mp_timer = nullptr;
             }
@@ -148,7 +151,9 @@ export namespace mtmp
         * down completes. Inheriting classes should implement it.
         */
         virtual inline void run()
-        {}
+        {
+            std::cout << "- in mtmp::Watchdog.run()\n";
+        }
 
 
     private:

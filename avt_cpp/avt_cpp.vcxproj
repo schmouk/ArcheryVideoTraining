@@ -164,6 +164,7 @@
     <ClCompile Include="unit_tests\mtmp\test_threads.ixx" />
     <ClCompile Include="mtmp\signal.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_timer.ixx" />
+    <ClCompile Include="unit_tests\mtmp\test_watchdog.ixx" />
     <ClCompile Include="unit_tests\utils\test_size.ixx" />
     <ClCompile Include="unit_tests\utils\test_base2D.ixx" />
     <ClCompile Include="unit_tests\utils\test_coords.ixx" />
