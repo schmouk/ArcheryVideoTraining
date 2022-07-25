@@ -22,7 +22,7 @@ SOFTWARE.
 */
 
 //===========================================================================
-export module mtmp.guarded_value;
+export module mtmp.guarded_block;
 
 import mtmp.mutex;
 
@@ -31,13 +31,13 @@ import mtmp.mutex;
 export namespace mtmp
 {
     //=======================================================================
-    /** @brief The class for Guarded Values. */
-    class GuardedValue
+    /** @brief The class for Guarded Blocks of code. */
+    class GuardedBlock
     {
     public:
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Default Constructor. */
-        inline GuardedValue(mtmp::Mutex* p_mtx) noexcept
+        inline GuardedBlock(mtmp::Mutex* p_mtx) noexcept
             : mp_mtx{ p_mtx }
         {
             if (mp_mtx != nullptr)
@@ -45,16 +45,16 @@ export namespace mtmp
         }
 
         /** @brief Default Destructor. */
-        virtual inline ~GuardedValue() noexcept
+        virtual inline ~GuardedBlock() noexcept
         {
             if (mp_mtx != nullptr)
                 mp_mtx->unlock();
         }
 
-        GuardedValue(const GuardedValue&) = delete;
-        GuardedValue(GuardedValue&&) = delete;
-        GuardedValue& operator=(const GuardedValue&) = delete;
-        GuardedValue& operator=(GuardedValue&&) = delete;
+        GuardedBlock(const GuardedBlock&) = delete;
+        GuardedBlock(GuardedBlock&&) = delete;
+        GuardedBlock& operator=(const GuardedBlock&) = delete;
+        GuardedBlock& operator=(GuardedBlock&&) = delete;
 
 
     private:
