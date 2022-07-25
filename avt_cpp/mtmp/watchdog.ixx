@@ -21,25 +21,29 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <iostream>
+#include <atomic>
+//#include <iostream>
 #include <chrono>
 #include <thread>
 
 
 export module mtmp.watchdog;
 
+import mtmp.thread;
 import mtmp.timer;
 
 
 //===========================================================================
 export namespace mtmp
 {
+    export class Watchdog;
+
     //=======================================================================
     /** @brief The base class for Watch Dogs.
     *
     * Watchdogs  are timers which act only once,  when their timeout period
     * of time has expired.  Meanwhile, they can be reset at any time.  This
-    * leads  to  the running again of their timing down count before waking 
+    * leads  to  the running again of their timing count-down before waking 
     * up.
     *
     * @sa mtmp::Timer.
@@ -52,11 +56,12 @@ export namespace mtmp
     *     on this newly created instance.
     *   - Call '.reset()' from times to time, for this watchdog not to wake
     *     up before a new period of time.
-    *   - If the watchdog wakes up (i.e. no call to '.reset()'  before  the
-    *     time count down completes), method '.run()' will be run.
+    *   - If the watchdog wakes up (i.e. no  call  to  '.reset()'  happened
+    *     before  the  time  count-down completes), method '.run()' will be 
+    *     run.
     *   - Meanwhile,  method '.stop()'  may  be  called  from  outside  the
     *     running thread.  This  will  set data member 'm_is_running' which
-    *     can be tested via method 'is_running()'  within  your  implement-
+    *     can be tested via method '.is_running()' within  your  implement-
     *     ation of protected method '.run()' to stop its processing.
     */
     class Watchdog
@@ -64,11 +69,11 @@ export namespace mtmp
     public:
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Constructor. */
-        inline Watchdog(const double time_countdown_ms) noexcept
+        inline Watchdog(const double time_countdown_ms, const char name) noexcept
             : mp_timer{ nullptr },
-              m_time_countdown_ms{ time_countdown_ms }
+              m_time_countdown_ms{ time_countdown_ms },
+              m_name{ name }
         {}
-
 
         /** @brief Default Copy constructor. */
         Watchdog(const Watchdog&) = delete;
@@ -90,29 +95,40 @@ export namespace mtmp
 
 
         //---   Watchdog operations   ---------------------------------------
-        /** @brief Resets the time down-count for this watchdog. */
+        /** @brief Resets the time count-down for this watchdog. */
         inline void reset() noexcept(false)
         {
+            //std::cout << "- " << mp_timer << " - in " << m_name << " mtmp::Watchdog::reset() (" << std::chrono::system_clock::now() << ")\n";
+            if (mp_timer != nullptr) {
+                mp_timer->b_reset.store(true);
+            }
+                
             start();
         }
 
         /** @brief Starts this watchdog. */
         virtual void start() noexcept(false)
         {
+            //std::cout << "- " << mp_timer << " - in " << m_name << " mtmp::Watchdog::start() (" << std::chrono::system_clock::now() << ")\n";
+
             if (mp_timer != nullptr)
                 stop();
 
-            mp_timer = new mtmp::Timer(m_time_countdown_ms, 1, false);
+            mp_timer = new _Timer(this, (const double)m_time_countdown_ms);
+
             if (mp_timer == nullptr)
                 throw mtmp::Watchdog::StartException();
-            else
+            else {
+                //std::cout << "- " << mp_timer << " - " << m_name << " launches mp_timer          (" << std::chrono::system_clock::now() << ")\n";
                 mp_timer->start();
+            }
         }
 
         /** @brief Stops this watchdog. */
         void stop() noexcept
         {
             if (mp_timer != nullptr) {
+                //std::cout << "- " << mp_timer << " - in " << m_name << " mtmp::Watchdog::stop()  (" << std::chrono::system_clock::now() << ")\n";
                 mp_timer->stop();
                 mp_timer->join();
                 delete mp_timer;
@@ -147,19 +163,59 @@ export namespace mtmp
         //---   Core processing method   ------------------------------------
         /** @brief The core of this watchdog processing.
         *
-        * This is the code that shoul be run when the time count-
-        * down completes. Inheriting classes should implement it.
+        * This is the code that should be run when the time count-
+        * down  completes.  Inheriting classes should override it.
         */
         virtual inline void run()
         {
-            std::cout << "- in mtmp::Watchdog.run()\n";
+            //std::cout << "- " << mp_timer << " - in " << m_name << " mtmp::Watchdog.run()\n";
         }
 
 
     private:
-         //---   Attributes   ------------------------------------------------
-        mtmp::Timer* mp_timer;
-        double       m_time_countdown_ms;
+        //---   Internal implementation   -----------------------------------
+        class _Timer : public mtmp::Timer {
+        public:
+            inline _Timer(Watchdog* parent_watchdog,
+                          const double time_countdown_ms) noexcept
+                : mp_parent{ parent_watchdog },
+                  mtmp::Timer(time_countdown_ms, 1, true)  //false)  // 
+            {
+                b_reset.store(false);
+            }
+
+            std::atomic_bool b_reset;
+
+        protected:
+            virtual void _run() noexcept
+            {
+                std::chrono::system_clock::time_point start_time = std::chrono::system_clock::now();
+                std::this_thread::sleep_until(start_time + m_period_ms);
+                _prepare_run();
+                run();
+                _terminate_run();
+            }
+
+            virtual inline void run() override
+            {
+                //std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                //std::cout << "\n- " << this << " - in " << mp_parent->m_name << " mtmp::Watchdog::_Timer.run()  (" << std::chrono::system_clock::now() << ")\n";
+                if (!b_reset.load()) {
+                    mp_parent->run();
+                }
+                else {
+                    //std::cout << "\n- " << this << " - in " << mp_parent->m_name << " mtmp::Watchdog::_Timer.run()  (resetted)\n";
+                }
+            }
+
+            mtmp::Watchdog*  mp_parent;
+        };
+
+
+        //---   Attributes   ------------------------------------------------
+        _Timer* mp_timer;
+        double  m_time_countdown_ms;
+        char    m_name;
     };
 
 }
