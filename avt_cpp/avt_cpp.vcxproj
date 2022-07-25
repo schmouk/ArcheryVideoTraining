@@ -154,6 +154,8 @@
     <ClCompile Include="avt.cpp" />
     <ClCompile Include="devices\display_monitor.ixx" />
     <ClCompile Include="devices\monitors_list.ixx" />
+    <ClCompile Include="mtmp\barrier.ixx" />
+    <ClCompile Include="mtmp\guarded_block.ixx" />
     <ClCompile Include="mtmp\mutex.ixx" />
     <ClCompile Include="mtmp\semaphore.ixx" />
     <ClCompile Include="mtmp\timer.ixx" />

@@ -96,7 +96,7 @@
     <ClCompile Include="mtmp\barrier.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="mtmp\guarded_value.ixx">
+    <ClCompile Include="mtmp\guarded_block.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
