@@ -93,6 +93,12 @@
     <ClCompile Include="unit_tests\mtmp\test_watchdog.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mtmp\barrier.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mtmp\guarded_value.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">
