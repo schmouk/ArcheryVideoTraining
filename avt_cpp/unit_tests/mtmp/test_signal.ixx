@@ -35,7 +35,7 @@ import mtmp.thread;
 
 
 //===========================================================================
-namespace mtmp::unit_tests
+namespace mtmp::unit_tests::test_signal
 {
     //=======================================================================
     class ThreadA : public mtmp::Thread
@@ -43,7 +43,9 @@ namespace mtmp::unit_tests
     public:
         inline ThreadA(mtmp::Signal* p_signal) noexcept
             : mtmp::Thread(), mp_signal(p_signal)
-        {}
+        {
+            std::cout << "instantiates Thread A\n";
+        }
 
         inline virtual ~ThreadA() noexcept
         {}
@@ -52,6 +54,7 @@ namespace mtmp::unit_tests
         //---   Core processing method   ------------------------------------
         virtual void run() override
         {
+            std::cout << "Runs Thread A\n";
             for (int i = 0; i < 10 && is_running(); ++i) {
                 sleep_s(0.5);
                 std::cout << "A - emits signal\n";
@@ -69,7 +72,9 @@ namespace mtmp::unit_tests
     public:
         inline ThreadB(const char id, mtmp::Signal* p_signal) noexcept
             : mtmp::Thread(), m_id(id), mp_signal(p_signal)
-        {}
+        {
+            std::cout << "instantiates Thread B(" << m_id << ")\n";
+        }
 
         inline virtual ~ThreadB() noexcept
         {}
@@ -78,6 +83,7 @@ namespace mtmp::unit_tests
         //---   Core processing method   ------------------------------------
         virtual void run()  override
         {
+            std::cout << "Runs Thread B(" << m_id << ")\n";
             for (int i = 20; i > 0; --i) {
                 const bool ok = (i % 2) ? mp_signal->wait_ms(400) : mp_signal->wait_s(0.2);
                 std::cout << "B-" << m_id << ": " << ok << '/' << i - 1 << '\n';
@@ -96,9 +102,9 @@ namespace mtmp::unit_tests
         std::cout << "-- TEST mtmp::Signal\n";
 
         mtmp::Signal the_signal;
-        mtmp::unit_tests::ThreadA a(&the_signal);
-        mtmp::unit_tests::ThreadB b1('1', &the_signal);
-        mtmp::unit_tests::ThreadB b2('2', &the_signal);
+        mtmp::unit_tests::test_signal::ThreadA a(&the_signal);
+        mtmp::unit_tests::test_signal::ThreadB b1('1', &the_signal);
+        mtmp::unit_tests::test_signal::ThreadB b2('2', &the_signal);
 
         b1.start();
         b2.start();
