@@ -34,7 +34,7 @@ export namespace mtmp
     /** @brief The class for Signals.
     *
     * Signals are events with no value that can be broadcasted to
-    * receivers that are waiting for it.  Upon emission,  one and
+    * receivers that are waiting for them. Upon emission, one and
     * only one receiver will be awakened. Meanwhile, the awakened
     * receiver may emit again the signal.
     */

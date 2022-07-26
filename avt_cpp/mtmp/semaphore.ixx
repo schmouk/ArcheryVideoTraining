@@ -60,19 +60,19 @@ export namespace mtmp
 
 
         //---   Semaphores operations   -------------------------------------
-        /** @brief Emits this signal. */
-        inline void emit() noexcept
+        /** @brief Releases one resource that is protected by this semaphore. */
+        inline void release() noexcept
         {
-            this->release();
+            release();
         }
 
-        /** @brief Waits for this semaphore.
+        /** @brief Waits for the availability of at least one resource that is protected by this semaphore.
         *
         * May throw std::system_error.
         */
-        inline void wait() noexcept(false)
+        inline void acquire() noexcept(false)
         {
-            this->acquire();
+            acquire();
         }
 
         /** @brief Timed out waiting for this semaphore (seconds).
@@ -94,7 +94,7 @@ export namespace mtmp
         */
         inline bool wait_ms(const double timeout_ms) noexcept(false)
         {
-            return this->try_acquire_for(std::chrono::microseconds(llround(timeout_ms * 1e3)));
+            return std::counting_semaphore<kValue>::try_acquire_for(std::chrono::microseconds(llround(timeout_ms * 1e3)));
         }
 
         /** @brief Non-blocking wait for this semaphore.
@@ -103,7 +103,7 @@ export namespace mtmp
         */
         inline bool try_wait() noexcept
         {
-            return this->try_acquire();
+            return std::counting_semaphore<kValue>::try_acquire();
         }
     };
 

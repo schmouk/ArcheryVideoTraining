@@ -22,13 +22,17 @@ SOFTWARE.
 module;
 
 #include <atomic>
+#include <chrono>
 #include <exception>
+#include <iostream>
+#include <thread>
 #include <vector>
 
 export module mtmp.barrier;
 
 import mtmp.guarded_block;
 import mtmp.mutex;
+import mtmp.signal;
 import mtmp.thread;
 
 
@@ -54,34 +58,66 @@ export namespace mtmp
     class Barrier
     {
     public:
+
+        /**
+        class Barrier :
+            def __init__ ( self , n ):
+                self . n = n
+                self . count = 0
+                self . mutex = Semaphore (1)
+                self . turnstile = Semaphore (0)
+                self . turnstile2 = Semaphore (0)
+
+            def phase1 ( self ):
+                self . mutex . wait ()
+                self . count += 1
+                if self . count == self . n :
+                self . turnstile . signal ( self . n )
+                self . mutex . signal ()
+                self . turnstile . wait ()
+
+             def phase2 ( self ):
+                self . mutex . wait ()
+                self . count -= 1
+                if self . count == 0:
+                self . turnstile2 . signal ( self . n )
+                self . mutex . signal ()
+                self . turnstile2 . wait ()
+
+             def wait ( self ):
+                self . phase1 ()
+                self . phase2 ()
+        **/
+
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Constructor. */
         inline Barrier(const unsigned long synchronizing_threads_count) noexcept(false)
             : m_sync_threads_count{ synchronizing_threads_count },
               m_waiting_threads_count{ 0 },
               m_guard_mtx{},
-              m_mutexes_list{}
+              m_turnstile_1{ false },
+              m_turnstile_2{ true }
         {
             if (synchronizing_threads_count < 1)
                 throw CreationValueException();
         }
 
         /** @brief Default Copy constructor. */
-        Barrier(const Barrier&) = default;
+        Barrier(const Barrier&) noexcept = delete;
 
         /** @brief Default Move constructor. */
-        Barrier(Barrier&&) noexcept = default;
+        Barrier(Barrier&&) noexcept = delete;
 
         /** @brief Destructor. */
-        virtual inline ~Barrier() = default;
+        virtual inline ~Barrier() noexcept = default;
 
 
         //---   Assignments   -----------------------------------------------
         /** @brief Default Copy assignment. */
-        Barrier& operator=(const Barrier&) = default;
+        Barrier& operator=(const Barrier&) noexcept = delete;
 
         /** @brief Default Move assignment. */
-        Barrier& operator=(Barrier&&) = default;
+        Barrier& operator=(Barrier&&) noexcept = delete;
 
 
         //---   Status checking   -------------------------------------------
@@ -101,28 +137,32 @@ export namespace mtmp
 
 
         //---   Barriers operations   ---------------------------------------
-        /** @brief Makes one thread to wait on this barrier. */
+        /** @brief Makes all threads to wait on this barrier then run altogether. */
         void wait() noexcept(false)
         {
-            mtmp::GuardedBlock guard{ &m_guard_mtx };
-
-            if (m_waiting_threads_count == m_sync_threads_count - 1) {
-                for (mtmp::Mutex* p_mtx : m_mutexes_list) {
-                    p_mtx->unlock();
+            // First synchronizing step - on turnstile 1
+            {
+                mtmp::GuardedBlock guard{ &m_guard_mtx };
+                m_waiting_threads_count++;
+                if (m_waiting_threads_count == m_sync_threads_count) {
+                    m_turnstile_2.wait();
+                    m_turnstile_1.emit();
                 }
             }
-            else {
-                mtmp::Mutex* p_mutex = new mtmp::Mutex{};
+            m_turnstile_1.wait();
+            m_turnstile_1.emit();
 
-                if (p_mutex == nullptr) {
-                    throw SynchronizationException();
-                }
-                else {
-                    m_waiting_threads_count++;
-                    m_mutexes_list.push_back(p_mutex);
-                    p_mutex->lock();
+            // Second synchronizing step - on turnstile 2
+            {
+                mtmp::GuardedBlock guard{ &m_guard_mtx };
+                m_waiting_threads_count--;
+                if (m_waiting_threads_count == 0) {
+                    m_turnstile_1.wait();
+                    m_turnstile_2.emit();
                 }
             }
+            m_turnstile_2.wait();
+            m_turnstile_2.emit();
         }
 
 
@@ -142,10 +182,11 @@ export namespace mtmp
 
     private:
         //---   Attributes   ------------------------------------------------
-        unsigned long               m_sync_threads_count;
-        unsigned long               m_waiting_threads_count;
-        mtmp::Mutex                 m_guard_mtx;
-        std::vector<mtmp::Mutex*>   m_mutexes_list;
+        unsigned long   m_sync_threads_count;
+        unsigned long   m_waiting_threads_count;
+        mtmp::Mutex     m_guard_mtx;
+        mtmp::Signal    m_turnstile_1;
+        mtmp::Signal    m_turnstile_2;
     };
 
 }
