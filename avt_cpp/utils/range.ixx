@@ -47,11 +47,11 @@ export namespace avt::utils
     */
     class Range : public cv::Range
         /* Notice: Due to inheritance, gets access to
-        *  - bool   empty() const
-        *  - int    size() const
-        *  - static Range all()
-        *  - int end
-        *  - int start
+        *    - bool         empty() const
+        *    - int          size() const
+        *    - static Range all()
+        *    - int          end
+        *    - int          start
         */
     {
     public:

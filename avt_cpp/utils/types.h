@@ -33,12 +33,12 @@ SOFTWARE.
 //===========================================================================
 namespace avt
 {
-    //--- main Types --------------------------------------------------------
+    //---   main Types   ----------------------------------------------------
     using Byte          = unsigned char;    //!< the unsigned 8-bits integer values type
     using CoordsType    = short;            //!< the type of avt 2D-coordinates
 
 
-    //--- is_pair_type ------------------------------------------------------
+    //---   is_pair_type   --------------------------------------------------
     /** @brief States the Pair status of a type - always false unless specified as true in specializations. */
     template<typename T>
     struct is_pair_type
@@ -72,7 +72,7 @@ namespace avt
     };
 
 
-    //--- is_container3_type ------------------------------------------------
+    //---   is_container3_type   --------------------------------------------
     /** @brief States the at least 3-components container status of a type - always false unless specified as true in specializations. */
     template<typename T>
     struct is_container3_type

@@ -81,10 +81,10 @@ export namespace avt::unit_tests
 
         avt::utils::RGBColor r2({ -1.0, 127.9, 256.1 });
         assert(r2.r == 0);
-        assert(r2.g == 127);
+        assert(r2.g == 128);
         assert(r2.b == 255);
         assert(r2.bgr[0] == 255);
-        assert(r2.bgr[1] == 127);
+        assert(r2.bgr[1] == 128);
         assert(r2.bgr[2] == 0);
 
         avt::utils::RGBColor r3(std::vector<short>{32767, 128, -1});
@@ -121,10 +121,10 @@ export namespace avt::unit_tests
 
         r6 = r2;
         assert(r6.r == 0);
-        assert(r6.g == 127);
+        assert(r6.g == 128);
         assert(r6.b == 255);
         assert(r6.bgr[0] == 255);
-        assert(r6.bgr[1] == 127);
+        assert(r6.bgr[1] == 128);
         assert(r6.bgr[2] == 0);
 
         r6 = { short(-3), short(33), short(333) };
@@ -241,12 +241,12 @@ export namespace avt::unit_tests
         assert(r123.bgr[2] == 0);
 
         r123 += std::array<double, 3>{ 1.9, 2.1, -3.9};
-        assert(r123.r == 1);
+        assert(r123.r == 2);
         assert(r123.g == 131);
         assert(r123.b == 251);
         assert(r123.bgr[0] == 251);
         assert(r123.bgr[1] == 131);
-        assert(r123.bgr[2] == 1);
+        assert(r123.bgr[2] == 2);
 
         r123 = avt::utils::RGBColor(1, 2, 3);
         r6 = r1 + r123;
@@ -257,7 +257,7 @@ export namespace avt::unit_tests
         assert(r6.bgr[1] == 129);
         assert(r6.bgr[2] == 128);
 
-        r6 = r123 + 253.9f;
+        r6 = r123 + 252.9f;
         assert(r6.r == 254);
         assert(r6.g == 255);
         assert(r6.b == 255);
@@ -387,8 +387,8 @@ export namespace avt::unit_tests
         r6 = std::vector<double>{ 129.0, 128.1, 127.9 } - r123;
         assert(r6.r == 128);
         assert(r6.g == 126);
-        assert(r6.b == 124);
-        assert(r6.bgr[0] == 124);
+        assert(r6.b == 125);
+        assert(r6.bgr[0] == 125);
         assert(r6.bgr[1] == 126);
         assert(r6.bgr[2] == 128);
 
@@ -403,58 +403,58 @@ export namespace avt::unit_tests
         r6 = std::array<double, 3>{ 129.0, 128.1, 127.9 } - r123;
         assert(r6.r == 128);
         assert(r6.g == 126);
-        assert(r6.b == 124);
-        assert(r6.bgr[0] == 124);
+        assert(r6.b == 125);
+        assert(r6.bgr[0] == 125);
         assert(r6.bgr[1] == 126);
         assert(r6.bgr[2] == 128);
 
         r6 *= 1.1;
-        assert(r6.r == 140);
-        assert(r6.g == 138);
-        assert(r6.b == 136);
-        assert(r6.bgr[0] == 136);
-        assert(r6.bgr[1] == 138);
-        assert(r6.bgr[2] == 140);
+        assert(r6.r == 141);
+        assert(r6.g == 139);
+        assert(r6.b == 138);
+        assert(r6.bgr[0] == 138);
+        assert(r6.bgr[1] == 139);
+        assert(r6.bgr[2] == 141);
 
         r6 = std::array<double, 3>{ 126, 151, 163 };
         r6 *= std::vector<double>{0.9, 1.1, 1.2};
         assert(r6.r == 113);
         assert(r6.g == 166);
-        assert(r6.b == 195);
-        assert(r6.bgr[0] == 195);
+        assert(r6.b == 196);
+        assert(r6.bgr[0] == 196);
         assert(r6.bgr[1] == 166);
         assert(r6.bgr[2] == 113);
 
         r6 *= std::array<float, 3>{0.9f, 1.1f, 1.2f};
-        assert(r6.r == 101);
-        assert(r6.g == 182);
-        assert(r6.b == 234);
-        assert(r6.bgr[0] == 234);
-        assert(r6.bgr[1] == 182);
-        assert(r6.bgr[2] == 101);
+        assert(r6.r == 102);
+        assert(r6.g == 183);
+        assert(r6.b == 235);
+        assert(r6.bgr[0] == 235);
+        assert(r6.bgr[1] == 183);
+        assert(r6.bgr[2] == 102);
 
         r6 = avt::utils::RGBColor(128, 126, 124) * 1.1;
-        assert(r6.r == 140);
-        assert(r6.g == 138);
+        assert(r6.r == 141);
+        assert(r6.g == 139);
         assert(r6.b == 136);
         assert(r6.bgr[0] == 136);
-        assert(r6.bgr[1] == 138);
-        assert(r6.bgr[2] == 140);
+        assert(r6.bgr[1] == 139);
+        assert(r6.bgr[2] == 141);
 
         r6 = 0.9 * avt::utils::RGBColor(128, 126, 124);
         assert(r6.r == 115);
         assert(r6.g == 113);
-        assert(r6.b == 111);
-        assert(r6.bgr[0] == 111);
+        assert(r6.b == 112);
+        assert(r6.bgr[0] == 112);
         assert(r6.bgr[1] == 113);
         assert(r6.bgr[2] == 115);
 
         r6 = avt::utils::RGBColor(136, 138, 140) * std::vector<double>{ 0.9, 1.1, 1.2 };
         assert(r6.r == 122);
-        assert(r6.g == 151);
+        assert(r6.g == 152);
         assert(r6.b == 168);
         assert(r6.bgr[0] == 168);
-        assert(r6.bgr[1] == 151);
+        assert(r6.bgr[1] == 152);
         assert(r6.bgr[2] == 122);
 
         r6 = std::vector<float>{ 1.2f, 0.9f, 1.1f } * avt::utils::RGBColor(136, 138, 140);
@@ -467,10 +467,10 @@ export namespace avt::unit_tests
 
         r6 = avt::utils::RGBColor(136, 138, 140) * std::array<double, 3>{ 0.9, 1.1, 1.2 };
         assert(r6.r == 122);
-        assert(r6.g == 151);
+        assert(r6.g == 152);
         assert(r6.b == 168);
         assert(r6.bgr[0] == 168);
-        assert(r6.bgr[1] == 151);
+        assert(r6.bgr[1] == 152);
         assert(r6.bgr[2] == 122);
 
         r6 = std::array<float, 3>{ 1.2f, 0.9f, 1.1f } * avt::utils::RGBColor(136, 138, 140);
@@ -483,36 +483,36 @@ export namespace avt::unit_tests
 
         r6 /= 1.1f;
         assert(r6.r == 148);
-        assert(r6.g == 112);
+        assert(r6.g == 113);
         assert(r6.b == 140);
         assert(r6.bgr[0] == 140);
-        assert(r6.bgr[1] == 112);
+        assert(r6.bgr[1] == 113);
         assert(r6.bgr[2] == 148);
 
         r6 = std::array<double, 3>{ 126, 151, 163 };
         r6 /= std::vector<double>{1.0 / 0.9, 1.0 / 1.1, 1.0 / 1.2};
         assert(r6.r == 113);
         assert(r6.g == 166);
-        assert(r6.b == 195);
-        assert(r6.bgr[0] == 195);
+        assert(r6.b == 196);
+        assert(r6.bgr[0] == 196);
         assert(r6.bgr[1] == 166);
         assert(r6.bgr[2] == 113);
 
         r6 /= std::array<float, 3>{1.0f / 0.9f, 1.0f / 1.1f, 1.0f / 1.2f};
-        assert(r6.r == 101);
-        assert(r6.g == 182);
-        assert(r6.b == 234);
-        assert(r6.bgr[0] == 234);
-        assert(r6.bgr[1] == 182);
-        assert(r6.bgr[2] == 101);
+        assert(r6.r == 102);
+        assert(r6.g == 183);
+        assert(r6.b == 235);
+        assert(r6.bgr[0] == 235);
+        assert(r6.bgr[1] == 183);
+        assert(r6.bgr[2] == 102);
 
         r6 = avt::utils::RGBColor(128, 126, 124) / (1.0 / 1.1);
-        assert(r6.r == 140);
-        assert(r6.g == 138);
+        assert(r6.r == 141);
+        assert(r6.g == 139);
         assert(r6.b == 136);
         assert(r6.bgr[0] == 136);
-        assert(r6.bgr[1] == 138);
-        assert(r6.bgr[2] == 140);
+        assert(r6.bgr[1] == 139);
+        assert(r6.bgr[2] == 141);
 
         r6 = 16384 / avt::utils::RGBColor(128, 126, 124);
         assert(r6.r == 128);
@@ -524,10 +524,10 @@ export namespace avt::unit_tests
 
         r6 = avt::utils::RGBColor(136, 138, 140) / std::vector<double>{ 1.0 / 0.9, 1.0 / 1.1, 1.0 / 1.2 };
         assert(r6.r == 122);
-        assert(r6.g == 151);
+        assert(r6.g == 152);
         assert(r6.b == 168);
         assert(r6.bgr[0] == 168);
-        assert(r6.bgr[1] == 151);
+        assert(r6.bgr[1] == 152);
         assert(r6.bgr[2] == 122);
 
         r6 = std::vector<float>{ 22'200.1f, 17'115.9f, 21'600.0f } / avt::utils::RGBColor(136, 138, 140);
@@ -540,10 +540,10 @@ export namespace avt::unit_tests
 
         r6 = avt::utils::RGBColor(136, 138, 140) / std::array<double, 3>{ 1.0 / 0.9, 1.0 / 1.1, 1.0 / 1.2 };
         assert(r6.r == 122);
-        assert(r6.g == 151);
+        assert(r6.g == 152);
         assert(r6.b == 168);
         assert(r6.bgr[0] == 168);
-        assert(r6.bgr[1] == 151);
+        assert(r6.bgr[1] == 152);
         assert(r6.bgr[2] == 122);
 
         r6 = std::array<float, 3>{ 22'200.1f, 17'115.9f, 21'600.0f } / avt::utils::RGBColor(136, 138, 140);

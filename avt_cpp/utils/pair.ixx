@@ -138,7 +138,7 @@ export namespace avt {
             requires avt::is_pair_type_v<P>
         Pair_& operator= (const P& other)
         {
-            this->first = avt::utils::clamp<T, decltype(other.first)>(other.first);
+            this->first  = avt::utils::clamp<T, decltype(other.first )>(other.first );
             this->second = avt::utils::clamp<T, decltype(other.second)>(other.second);
             return *this;
         }
@@ -146,7 +146,7 @@ export namespace avt {
 
     private:
         /** @brief private internal exception to be thrown on erroneous indexing. */
-        inline static std::exception& index_exception(const size_t index) noexcept(false)
+        inline static std::out_of_range& index_exception(const size_t index) noexcept(false)
         {
             constexpr std::string error_format =
                 "ERROR: trying to index a pair with index value = {} (should be either 0 or 1)";
