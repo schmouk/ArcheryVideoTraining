@@ -105,6 +105,9 @@
     <ClCompile Include="unit_tests\shapes\test_shape.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="shapes\point.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

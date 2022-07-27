@@ -32,6 +32,7 @@ module;
 #include <vector>
 
 #include <opencv2/core/matx.hpp>
+#include <opencv2/core/types.hpp>
 
 #include "utils/types.h"
 
@@ -110,9 +111,22 @@ export namespace avt::utils
 
 
         //---   Casting operators   -----------------------------------------
+        /** @brief Returns a string describing this color components (hexadecimal form). */
         inline operator std::string() const
         {
             return std::format("#{:02X}{:02X}{:02X}", r, g, b);
+        }
+
+        /** @brief Casts this RGB color to a cv::Scalar (i.e. 4 doubles, the fourth one being 255.0). */
+        inline operator cv::Scalar()
+        {
+            return cv::Scalar(double(b), double(g), double(r), 255.0);
+        }
+
+        /** @brief Casts this RGB color to a cv::Scalar (i.e. 4 bytes, the fourth one being 255). */
+        inline operator avt::CVScalarByte()
+        {
+            return avt::CVScalarByte(b, g, r, avt::Byte(255));
         }
 
 

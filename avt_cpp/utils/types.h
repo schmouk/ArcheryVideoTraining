@@ -34,8 +34,10 @@ SOFTWARE.
 namespace avt
 {
     //---   main Types   ----------------------------------------------------
-    using Byte          = unsigned char;    //!< the unsigned 8-bits integer values type
-    using CoordsType    = short;            //!< the type of avt 2D-coordinates
+    using Byte       = unsigned char;    //!< the unsigned 8-bits integer values type
+    using CoordsType = short;            //!< the type of avt 2D-coordinates
+
+    using CVScalarByte = cv::Scalar_<avt::Byte>; //!< OpenCV-like Scalar wrapper to cv::Scalar_<unsigned char>
 
 
     //---   is_pair_type   --------------------------------------------------
