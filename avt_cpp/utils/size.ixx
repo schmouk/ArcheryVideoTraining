@@ -39,9 +39,13 @@ import utils;
 export namespace avt::utils
 {
     //=======================================================================
+    using SizeValueType = unsigned short;  //!< wrapper to the type of dimensions
+
+
+    //=======================================================================
     /** @brief The class of 2D sizes.
     */
-    class Size : public cv::Size_<avt::SizeValueType>
+    class Size : public cv::Size_<avt::utils::SizeValueType>
         /* Notice: Due to inheritance, gets access to
         *  - double aspectRatio () const   (i.e. width/height)
         *  - bool   empty () const
@@ -49,8 +53,8 @@ export namespace avt::utils
     {
     public:
 
-        using MyBaseType = cv::Size_<avt::SizeValueType>;  //!< wrapper to the base class.
-        using ValueType = unsigned short;                  //!< wrapper to the width and height type.
+        using ValueType = avt::utils::SizeValueType;  //!< wrapper to the width and height type.
+        using MyBaseType = cv::Size_<ValueType>;      //!< wrapper to the base class.
 
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Empty constructor. */

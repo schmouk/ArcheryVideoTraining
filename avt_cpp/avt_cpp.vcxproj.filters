@@ -33,19 +33,7 @@
     <ClCompile Include="utils\coords2d.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils\offsets.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\base2D.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_base2D.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_coords.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_offsets.ixx">
+    <ClCompile Include="unit_tests\utils\test_coords2d.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils\size.ixx">
@@ -60,7 +48,7 @@
     <ClCompile Include="utils\pair.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unit_tests\utils\range.ixx">
+    <ClCompile Include="utils\range.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

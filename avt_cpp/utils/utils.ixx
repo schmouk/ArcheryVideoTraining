@@ -28,6 +28,9 @@ module;
 #include <cmath>
 #include <limits>
 
+#include "utils/types.h"
+
+
 export module utils;
 
 export namespace avt::utils
@@ -48,11 +51,11 @@ export namespace avt::utils
         }
     }
 
-    /** @brief Clamping values - unsigned short form. */
+    /** @brief Clamping values - avt::Byte form. */
     template<typename U>
-    inline const unsigned short clamp_us(const U value)
+    inline const avt::Byte clamp_b(const U value)
     {
-        return avt::utils::clamp<unsigned short, U>(value);
+        return avt::utils::clamp<avt::Byte, U>(value);
     }
 
     /** @brief Clamping values - short form. */
@@ -60,6 +63,29 @@ export namespace avt::utils
     inline const short clamp_s(const U value)
     {
         return avt::utils::clamp<short, U>(value);
+    }
+
+    /** @brief Clamping values - unsigned short form. */
+    template<typename U>
+    inline const unsigned short clamp_us(const U value)
+    {
+        return avt::utils::clamp<unsigned short, U>(value);
+    }
+
+
+    //---   Clamping - specialization for type short   ----------------------
+    /** @brief clamping (char -> short). */
+    template<>
+    inline const short clamp<short, char>(const char value)
+    {
+        return short(value);
+    }
+
+    /** @brief clamping (unsigned char -> short). */
+    template<>
+    inline const short clamp<short, unsigned char>(const unsigned char value)
+    {
+        return short(value);
     }
 
 
@@ -76,21 +102,6 @@ export namespace avt::utils
     inline const unsigned short clamp<unsigned short, unsigned char>(const unsigned char value)
     {
         return (unsigned short)std::max(unsigned char(0), value);
-    }
-
-    //---   Clamping - specialization for type short   ----------------------
-    /** @brief clamping (char -> short). */
-    template<>
-    inline const short clamp<short, char>(const char value)
-    {
-        return short(value);
-    }
-
-    /** @brief clamping (unsigned char -> short). */
-    template<>
-    inline const short clamp<short, unsigned char>(const unsigned char value)
-    {
-        return short(value);
     }
 
 }
