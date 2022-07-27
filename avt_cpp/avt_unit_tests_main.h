@@ -28,7 +28,7 @@ SOFTWARE.
 //===========================================================================
 #include <iostream>
 
-/**/
+/** /
 import unit_tests.utils.test_gray_color;
 import unit_tests.utils.test_rgb_color;
 import unit_tests.utils.test_size;
@@ -40,7 +40,7 @@ import unit_tests.mtmp.test_timers;
 import unit_tests.mtmp.test_watchdog;
 import unit_tests.mtmp.test_barrier;
 /**/
-
+import unit_tests.shapes.test_shape;
 
 //===========================================================================
 int main()
@@ -49,7 +49,7 @@ int main()
     std::cout << "\n=====   UNIT TESTS - Archery Video Training   =====";
     std::cout << "\n===================================================\n\n";
 
-    /**/
+    /** /
     avt::unit_tests::test_rgb_color();
     avt::unit_tests::test_gray_color();
     avt::unit_tests::test_size();
@@ -61,6 +61,7 @@ int main()
     mtmp::unit_tests::test_watchdog();
     mtmp::unit_tests::test_barrier::test_barrier();
     /**/
+    avt::unit_tests::test_shape();
 
     std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";
 }

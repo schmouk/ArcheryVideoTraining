@@ -66,7 +66,8 @@ export namespace avt::utils
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline Coords2D(const P pair) noexcept(false)
-            : MyBaseType{ avt::utils::clamp(pair[0]), avt::utils::clamp(pair[1]) }
+            : MyBaseType{ avt::utils::clamp<MyBaseType::value_type, decltype(pair[0])>(pair[0]),
+                          avt::utils::clamp<MyBaseType::value_type, decltype(pair[1])>(pair[1])}
         {}
 
         /** @brief Default Copy constructor. */
