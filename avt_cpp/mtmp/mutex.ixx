@@ -52,8 +52,7 @@ export namespace mtmp
         Mutex(Mutex&&) = delete;
 
         /** @brief Default Destructor. */
-        virtual inline ~Mutex() noexcept
-        {}
+        virtual inline ~Mutex() noexcept = default;
 
 
         //---   Assignments   -----------------------------------------------

@@ -36,7 +36,7 @@ import mtmp.thread;
 
 
 //===========================================================================
-namespace mtmp::unit_tests
+namespace mtmp::unit_tests::threads
 {
     //=======================================================================
     class ThreadA : public mtmp::Thread
@@ -92,8 +92,8 @@ namespace mtmp::unit_tests
     {
         std::cout << "-- TEST mtmp::Thread\n";
 
-        mtmp::unit_tests::ThreadA a;
-        mtmp::unit_tests::ThreadB b;
+        mtmp::unit_tests::threads::ThreadA a;
+        mtmp::unit_tests::threads::ThreadB b;
 
         std::cout << a.get_id() << " / " << b.get_id() << std::endl;
 
@@ -102,6 +102,7 @@ namespace mtmp::unit_tests
         a.start();
         b.start();
 
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
         assert(mtmp::Thread::get_running_threads_count() == 2);
 
         std::cout << a.get_id() << " / " << b.get_id() << std::endl;
@@ -111,11 +112,13 @@ namespace mtmp::unit_tests
         a.stop();
         a.join();
 
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
         assert(mtmp::Thread::get_running_threads_count() == 1);
 
         b.join();
         std::cout << "main thread has sucessfully joined\n";
 
+        std::this_thread::sleep_for(std::chrono::milliseconds(16));
         assert(mtmp::Thread::get_running_threads_count() == 0);
 
         std::cout << "   All tests OK\n\n";
