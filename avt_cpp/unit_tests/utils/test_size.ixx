@@ -31,7 +31,6 @@ module;
 
 export module unit_tests.utils.test_size;
 
-import utils.offsets;
 import utils.size;
 
 
@@ -49,11 +48,11 @@ export namespace avt::unit_tests
         assert(s0.height == 0);
 
         avt::utils::Size s1(-65'000L, 3.9);
-        assert(s1.width == -32'768);
+        assert(s1.width == 0);
         assert(s1.height == 4);
 
         avt::utils::Size s2(s1);
-        assert(s2.width == -32'768);
+        assert(s2.width == 0);
         assert(s2.height == 4);
 
         s2 = s0;
@@ -72,46 +71,43 @@ export namespace avt::unit_tests
         assert(s2.width == 1);
         assert(s2.height == 1'024);
 
-        avt::utils::Size s3 = s1 + avt::utils::Offsets(s2);
-        assert(s3.width == -32'767);
-        assert(s3.height == 1028);
-
-        s2 += avt::utils::Offsets(s1);
-        assert(s2.width == -32'767);
+        s2 += s1;
+        assert(s2.width == 1);
         assert(s2.height == 1'028);
 
-        s2 += std::vector<long>{ 32'767, 40'000, 16, 25 };
-        assert(s2.width == 0);
-        assert(s2.height == 32'767);
+        s2 += std::vector<long>{ 65'535, 70'000, 16, 25 };
+        assert(s2.width == 65'535);
+        assert(s2.height == 65'535);
 
-        s2 += std::array<float, 2>{ 1.f, -1.9f };
-        assert(s2.width == 1);
-        assert(s2.height == 32'765);
+        s2 += std::array<float, 2>{ -1.f, -2.9f };
+        assert(s2.width == 65'534);
+        assert(s2.height == 65'532);
 
-        s3 = s2 + std::vector<float>{ 1.f, -1.9f };
-        assert(s3.width == 2);
-        assert(s3.height == 32'763);
-        assert(s2.width == 1);
-        assert(s2.height == 32'765);
+        avt::utils::Size s3 = s2 + std::vector<float>{ 1.f, -2.9f };
+        assert(s3.width == 65'535);
+        assert(s3.height == 65'529);
+        assert(s2.width == 65'534);
+        assert(s2.height == 65'532);
 
-        avt::utils::Size s4 = std::vector<float>{ 1.f, -1.9f, 4.5f } + s2;
-        assert(s4.width == 2);
-        assert(s4.height == 32'763);
-        assert(s2.width == 1);
-        assert(s2.height == 32'765);
+        avt::utils::Size s4 = std::vector<float>{ -1.f, -3.9f, 4.5f } + s2;
+        assert(s4.width == 65'533);
+        assert(s4.height == 65'528);
+        assert(s2.width == 65'534);
+        assert(s2.height == 65'532);
 
         avt::utils::Size s5 = s2 + std::array<char, 2>{ 1, -2 };
-        assert(s5.width == 2);
-        assert(s5.height == 32'763);
-        assert(s2.width == 1);
-        assert(s2.height == 32'765);
+        assert(s5.width == 65'535);
+        assert(s5.height == 65'530);
+        assert(s2.width == 65'534);
+        assert(s2.height == 65'532);
 
-        avt::utils::Size s6 = std::array<char, 2>{ 1, -2 } + s2;
-        assert(s6.width == 2);
-        assert(s6.height == 32'763);
-        assert(s2.width == 1);
-        assert(s2.height == 32'765);
+        avt::utils::Size s6 = std::array<char, 2>{ -1, -2 } + s2;
+        assert(s6.width == 65'533);
+        assert(s6.height == 65'530);
+        assert(s2.width == 65'534);
+        assert(s2.height == 65'532);
 
+        s3 = s4;
         assert(s3 == s4);
         assert(s4 == s3);
         assert(!(s3 != s4));
@@ -127,47 +123,47 @@ export namespace avt::unit_tests
         assert(s2.width == 3);
         assert(s2.height == 1'023);
 
-        s2 -= avt::utils::Offsets(s1.width, s1.height);
-        assert(s2.width == -1);
+        s2 -= avt::utils::Size(s1.width, s1.height);
+        assert(s2.width == 0);
         assert(s2.height == 985);
 
         s2 -= std::vector<long>{ -32'767, -40'000, 16, 25 };
-        assert(s2.width == 32'766);
-        assert(s2.height == 32'767);
+        assert(s2.width == 32'767);
+        assert(s2.height == 40'985);
 
         s2 -= std::array<float, 2>{ 1.f, 2.9f };
-        assert(s2.width == 32'765);
-        assert(s2.height == 32'764);
+        assert(s2.width == 32'766);
+        assert(s2.height == 40'982);
 
-        s3 = s2 - avt::utils::Offsets(s1);
-        assert(s3.width == 32'761);
-        assert(s3.height == 32'726);
-        assert(s2.width == 32'765);
-        assert(s2.height == 32'764);
+        s3 = s2 - avt::utils::Size(s1);  // s1 = { 4L, 37.6f };
+        assert(s3.width == 32'762);
+        assert(s3.height == 40'982 - 38);
+        assert(s2.width == 32'766);
+        assert(s2.height == 40'982);
 
         s3 = s2 - std::vector<float>{ 1.f, 1.9f };
-        assert(s3.width == 32'764);
-        assert(s3.height == 32'762);
-        assert(s2.width == 32'765);
-        assert(s2.height == 32'764);
+        assert(s3.width == 32'765);
+        assert(s3.height == 40'980);
+        assert(s2.width == 32'766);
+        assert(s2.height == 40'982);
 
         s4 = std::vector<float>{ 1.f, -2.9f, 4.5f } - s2;
-        assert(s4.width == -32'764);
-        assert(s4.height == -32'767);
-        assert(s2.width == 32'765);
-        assert(s2.height == 32'764);
+        assert(s4.width == 0);
+        assert(s4.height == 0);
+        assert(s2.width == 32'766);
+        assert(s2.height == 40'982);
 
         s3 = s2 - std::array<char, 2>{ 1, 2 };
-        assert(s3.width == 32'764);
-        assert(s3.height == 32'762);
-        assert(s2.width == 32'765);
-        assert(s2.height == 32'764);
+        assert(s3.width == 32'765);
+        assert(s3.height == 40'980);
+        assert(s2.width == 32'766);
+        assert(s2.height == 40'982);
 
         s4 = std::array<float, 2>{ 1.f, -2.9f } - s2;
-        assert(s4.width == -32'764);
-        assert(s4.height == -32'767);
-        assert(s2.width == 32'765);
-        assert(s2.height == 32'764);
+        assert(s4.width == 0);
+        assert(s4.height == 0);
+        assert(s2.width == 32'766);
+        assert(s2.height == 40'982);
 
         s2 = avt::utils::Size{ 3, 1'023 };
         s2 *= 2.3f;

@@ -30,24 +30,6 @@
     <ClCompile Include="utils\gray_color.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils\coords.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\offsets.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\base2D.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_base2D.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_coords.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_offsets.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="utils\size.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -100,6 +82,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="unit_tests\mtmp\test_barrier.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\coords2d.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\pair.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\range.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\utils.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
