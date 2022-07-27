@@ -96,6 +96,12 @@
     <ClCompile Include="utils\utils.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="shapes\shape.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="video\frame.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

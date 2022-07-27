@@ -1,4 +1,3 @@
-#pragma once
 /*
 MIT License
 
@@ -23,46 +22,20 @@ OUT  OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-#if defined(_UNIT_TESTS)
-
 //===========================================================================
-#include <iostream>
+module;
 
-/**/
-import unit_tests.utils.test_gray_color;
-import unit_tests.utils.test_rgb_color;
-import unit_tests.utils.test_size;
-/** /
-import unit_tests.mtmp.test_threads;
-import unit_tests.mtmp.test_signal;
-import unit_tests.mtmp.test_mutex;
-import unit_tests.mtmp.test_timers;
-import unit_tests.mtmp.test_watchdog;
-import unit_tests.mtmp.test_barrier;
-/**/
+#include <opencv2/core/mat.hpp>
+
+export module video.frame;
+
 
 
 //===========================================================================
-int main()
+export namespace avt::video
 {
-    std::cout << "\n===================================================";
-    std::cout << "\n=====   UNIT TESTS - Archery Video Training   =====";
-    std::cout << "\n===================================================\n\n";
+    //=======================================================================
+    /** @brief The base class for all video frames. */
+    using Frame = cv::Mat;
 
-    /**/
-    avt::unit_tests::test_rgb_color();
-    avt::unit_tests::test_gray_color();
-    avt::unit_tests::test_size();
-    /** /
-    mtmp::unit_tests::threads::test_threads();
-    mtmp::unit_tests::test_signal::test_signal();
-    mtmp::unit_tests::test_mutex();
-    mtmp::unit_tests::test_timers();
-    mtmp::unit_tests::test_watchdog();
-    mtmp::unit_tests::test_barrier::test_barrier();
-    /**/
-
-    std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";
 }
-
-#endif

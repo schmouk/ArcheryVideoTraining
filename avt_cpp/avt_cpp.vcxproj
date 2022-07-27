@@ -162,6 +162,7 @@
     <ClCompile Include="mtmp\timer.ixx" />
     <ClCompile Include="mtmp\thread.ixx" />
     <ClCompile Include="mtmp\watchdog.ixx" />
+    <ClCompile Include="shapes\shape.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_barrier.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_mutex.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_signal.ixx" />
@@ -178,6 +179,7 @@
     <ClCompile Include="utils\rgb_color.ixx" />
     <ClCompile Include="utils\size.ixx" />
     <ClCompile Include="utils\utils.ixx" />
+    <ClCompile Include="video\frame.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h" />
