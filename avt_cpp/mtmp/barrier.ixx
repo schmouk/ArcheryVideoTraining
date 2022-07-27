@@ -165,6 +165,55 @@ export namespace mtmp
             m_turnstile_2.emit();
         }
 
+        /** @brief Timed out waiting for this barrier (seconds).
+        *
+        * Returns true if synchronization happened before timeout, or
+        * false otherwise.
+        * May throw std::system_error or a timeout-related exception.
+        */
+        inline bool wait_s(const double timeout_s) noexcept(false)
+        {
+            return wait_ms(timeout_s * 1e3);
+        }
+
+        /** @brief Timed out waiting for this signal (milliseconds).
+        *
+        * Returns true if synchronization happened before timeout, or
+        * false otherwise.
+        * May throw std::system_error or a timeout-related exception.
+        */
+        bool wait_ms(const double timeout_ms) noexcept(false)
+        {
+            bool no_timeout = true;
+
+            // First synchronizing step - on turnstile 1
+            {
+                mtmp::GuardedBlock guard{ &m_guard_mtx };
+                m_waiting_threads_count++;
+                if (m_waiting_threads_count == m_sync_threads_count) {
+                    no_timeout = no_timeout && m_turnstile_2.wait_ms(timeout_ms);
+                    m_turnstile_1.emit();
+                }
+            }
+            no_timeout = no_timeout && m_turnstile_1.wait_ms(timeout_ms);
+            m_turnstile_1.emit();
+
+            // Second synchronizing step - on turnstile 2
+            {
+                mtmp::GuardedBlock guard{ &m_guard_mtx };
+                m_waiting_threads_count--;
+                if (m_waiting_threads_count == 0) {
+                    no_timeout = no_timeout && m_turnstile_1.wait_ms(timeout_ms);
+                    m_turnstile_2.emit();
+                }
+            }
+            no_timeout = no_timeout && m_turnstile_2.wait_ms(timeout_ms);
+            m_turnstile_2.emit();
+
+            return no_timeout;
+        }
+
+
 
         //---   Specific Exceptions   ---------------------------------------
         /** @brief Exception on erroneous instantiation of this class. */
