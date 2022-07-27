@@ -9,7 +9,6 @@ in the Software without restriction,  including without limitation the  rights
 to use,  copy,  modify,  merge,  publish,  distribute, sublicense, and/or sell
 copies of the Software,  and  to  permit  persons  to  whom  the  Software  is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -23,22 +22,43 @@ SOFTWARE.
 */
 
 //===========================================================================
-export module utils.offsets;
+export module mtmp.guarded_block;
 
-import utils.base2d;
+import mtmp.mutex;
 
 
 //===========================================================================
-export namespace avt::utils
+export namespace mtmp
 {
     //=======================================================================
-    /** @brief The class of 2D integer offsets.
-    * To be used e.g. for moving 2D shapes (e.g. Points, Lines, Rectangles, etc.)
-    *
-    * Notice: While accessing data members, prefer to use '.dx' and '.dy'
-    * of base class 'Base2D' since these  are  the  best  appropriate  to
-    * describe offsets on the X- and Y- axis of the frames plan.
-    */
-    using Offsets = avt::utils::Base2D;
+    /** @brief The class for Guarded Blocks of code. */
+    class GuardedBlock
+    {
+    public:
+        //---   Constructors / Destructor   ---------------------------------
+        /** @brief Default Constructor. */
+        inline GuardedBlock(mtmp::Mutex* p_mtx) noexcept
+            : mp_mtx{ p_mtx }
+        {
+            if (mp_mtx != nullptr)
+                mp_mtx->lock();
+        }
+
+        /** @brief Default Destructor. */
+        virtual inline ~GuardedBlock() noexcept
+        {
+            if (mp_mtx != nullptr)
+                mp_mtx->unlock();
+        }
+
+        GuardedBlock(const GuardedBlock&) = delete;
+        GuardedBlock(GuardedBlock&&) = delete;
+        GuardedBlock& operator=(const GuardedBlock&) = delete;
+        GuardedBlock& operator=(GuardedBlock&&) = delete;
+
+
+    private:
+        mtmp::Mutex* mp_mtx;
+    };
 
 }

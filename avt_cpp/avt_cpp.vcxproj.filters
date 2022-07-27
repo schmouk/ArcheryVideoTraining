@@ -30,28 +30,70 @@
     <ClCompile Include="utils\gray_color.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils\coords.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\offsets.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="utils\base2D.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_base2D.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_coords.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="unit_tests\utils\test_offsets.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="utils\size.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="unit_tests\utils\test_size.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\display_monitor.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\monitors_list.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mtmp\thread.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\mtmp\test_threads.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mtmp\mutex.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mtmp\signal.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\mtmp\test_signal.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mtmp\semaphore.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\mtmp\test_mutex.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mtmp\timer.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\mtmp\test_timer.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mtmp\watchdog.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\mtmp\test_watchdog.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mtmp\barrier.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mtmp\guarded_block.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\mtmp\test_barrier.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\coords2d.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\pair.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\range.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\utils.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -80,11 +80,12 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableModules>true</EnableModules>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Libs\opencv-4-6-0a\build\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x86\shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -99,13 +100,14 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableModules>true</EnableModules>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Libs\opencv-4-6-0a\build\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x86\shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -118,11 +120,12 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableModules>true</EnableModules>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Libs\opencv-4-6-0a\build\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x64\shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,29 +140,44 @@
       <LanguageStandard_C>stdc17</LanguageStandard_C>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <EnableModules>true</EnableModules>
-      <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)..\..\Libs\opencv-4-6-0a\build\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x64\shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="avt.cpp" />
+    <ClCompile Include="devices\display_monitor.ixx" />
+    <ClCompile Include="devices\monitors_list.ixx" />
+    <ClCompile Include="mtmp\barrier.ixx" />
+    <ClCompile Include="mtmp\guarded_block.ixx" />
+    <ClCompile Include="mtmp\mutex.ixx" />
+    <ClCompile Include="mtmp\semaphore.ixx" />
+    <ClCompile Include="mtmp\signal.ixx" />
+    <ClCompile Include="mtmp\timer.ixx" />
+    <ClCompile Include="mtmp\thread.ixx" />
+    <ClCompile Include="mtmp\watchdog.ixx" />
+    <ClCompile Include="unit_tests\mtmp\test_barrier.ixx" />
+    <ClCompile Include="unit_tests\mtmp\test_mutex.ixx" />
+    <ClCompile Include="unit_tests\mtmp\test_signal.ixx" />
+    <ClCompile Include="unit_tests\mtmp\test_threads.ixx" />
+    <ClCompile Include="unit_tests\mtmp\test_timer.ixx" />
+    <ClCompile Include="unit_tests\mtmp\test_watchdog.ixx" />
     <ClCompile Include="unit_tests\utils\test_size.ixx" />
-    <ClCompile Include="unit_tests\utils\test_base2D.ixx" />
-    <ClCompile Include="unit_tests\utils\test_coords.ixx" />
     <ClCompile Include="unit_tests\utils\test_gray_color.ixx" />
-    <ClCompile Include="unit_tests\utils\test_offsets.ixx" />
     <ClCompile Include="unit_tests\utils\test_rgb_color.ixx" />
-    <ClCompile Include="utils\base2D.ixx" />
-    <ClCompile Include="utils\coords.ixx" />
+    <ClCompile Include="utils\coords2d.ixx" />
     <ClCompile Include="utils\gray_color.ixx" />
-    <ClCompile Include="utils\offsets.ixx" />
+    <ClCompile Include="utils\pair.ixx" />
+    <ClCompile Include="utils\range.ixx" />
     <ClCompile Include="utils\rgb_color.ixx" />
     <ClCompile Include="utils\size.ixx" />
+    <ClCompile Include="utils\utils.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h" />
