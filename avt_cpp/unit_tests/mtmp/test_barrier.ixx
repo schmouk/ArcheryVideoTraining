@@ -87,6 +87,55 @@ namespace mtmp::unit_tests::test_barrier
         mtmp::Mutex*    mp_prt_mtx;
         char            m_name;
     };
+    //=======================================================================
+    class ThreadB : public mtmp::Thread
+    {
+    public:
+        inline ThreadB(const char name, mtmp::Barrier* p_barrier, const double waiting_s, mtmp::Mutex* print_mutex) noexcept
+            : mtmp::Thread{}, m_waiting_s{ waiting_s }, mp_barrier{ p_barrier }, m_name{ name }, mp_prt_mtx{ print_mutex }
+        {}
+
+        inline virtual ~ThreadB() noexcept
+        {}
+
+    protected:
+        //---   Core processing method   ------------------------------------
+        virtual void run() override
+        {
+            {
+                mtmp::GuardedBlock guard{ mp_prt_mtx };
+                std::cout << std::this_thread::get_id() << "- " << m_name
+                    << " in run(), sleeps " << m_waiting_s << "s             ("
+                    << std::chrono::system_clock::now() << ")\n";
+            }
+
+            mtmp::Thread::sleep_s(m_waiting_s);
+
+            {
+                mtmp::GuardedBlock guard{ mp_prt_mtx };
+                std::cout << std::this_thread::get_id() << "- " << m_name
+                    << " waits for barrier synchronization (" << std::chrono::system_clock::now() << ")\n";
+            }
+
+            if (!mp_barrier->wait_ms(1)) {
+                mtmp::GuardedBlock guard{ mp_prt_mtx };
+                std::cout << std::this_thread::get_id() << "- " << m_name
+                    << " synchronization timed out!        (" << std::chrono::system_clock::now() << ")\n";
+            }
+            else {
+                mtmp::GuardedBlock guard{ mp_prt_mtx };
+                std::cout << std::this_thread::get_id() << "- " << m_name
+                    << " synchronization OK                (" << std::chrono::system_clock::now() << ")\n";
+            }
+        }
+
+    private:
+        double          m_waiting_s;
+        mtmp::Barrier* mp_barrier;
+        mtmp::Mutex* mp_prt_mtx;
+        char            m_name;
+    };
+
 
     //=======================================================================
     export void test_barrier()
@@ -95,8 +144,6 @@ namespace mtmp::unit_tests::test_barrier
 
         mtmp::Barrier the_barrier(5);
         mtmp::Mutex print_mutex;
-
-
 
         mtmp::unit_tests::test_barrier::ThreadA v('V', &the_barrier, 1.1, &print_mutex);
         mtmp::unit_tests::test_barrier::ThreadA w('W', &the_barrier, 1.3, &print_mutex);
@@ -112,10 +159,34 @@ namespace mtmp::unit_tests::test_barrier
         threads.push_back(&z);
 
 
-        for (ThreadA* t : threads)
+        for (auto* t : threads)
             t->start();
 
-        for (ThreadA* t : threads)
+        for (auto* t : threads)
+            t->join();
+
+
+        std::cout << std::endl;
+
+
+        mtmp::unit_tests::test_barrier::ThreadB a('A', &the_barrier, 1.1, &print_mutex);
+        mtmp::unit_tests::test_barrier::ThreadB b('B', &the_barrier, 1.3, &print_mutex);
+        mtmp::unit_tests::test_barrier::ThreadB c('C', &the_barrier, 1.5, &print_mutex);
+        mtmp::unit_tests::test_barrier::ThreadB d('D', &the_barrier, 1.7, &print_mutex);
+        mtmp::unit_tests::test_barrier::ThreadB e('E', &the_barrier, 1.9, &print_mutex);
+
+        std::vector<ThreadB*> threadsB{};
+        threadsB.push_back(&a);
+        threadsB.push_back(&b);
+        threadsB.push_back(&c);
+        threadsB.push_back(&d);
+        threadsB.push_back(&e);
+
+
+        for (auto* t : threadsB)
+            t->start();
+
+        for (auto* t : threadsB)
             t->join();
 
 
