@@ -45,7 +45,7 @@ export namespace avt::unit_tests
     //=======================================================================
     void test_point()
     {
-        std::cout << "-- TEST avt::utils::Shape\n";
+        std::cout << "-- TEST avt::utils::Point\n";
 
         avt::shapes::Point s0;
         assert(s0.x == 0);
