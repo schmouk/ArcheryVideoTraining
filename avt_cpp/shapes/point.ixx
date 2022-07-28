@@ -126,12 +126,12 @@ export namespace avt::shapes
             draw(frame, radius);
         }
 
-        /** @breif Draws this point in the specified frame with the specified radius. */
+        /** @brief Draws this point in the specified frame with the specified radius. */
         inline void draw(avt::video::Frame& frame, const avt::CoordsType radius)
         {
             cv::circle(frame,
                        *this,
-                       std::max<avt::CoordsType>(1, radius),
+                       std::max<avt::CoordsType>(0, radius),
                        (cv::Scalar)color,
                        cv::FILLED,
                        cv::LINE_8,

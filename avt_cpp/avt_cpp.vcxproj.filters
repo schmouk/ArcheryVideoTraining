@@ -114,6 +114,9 @@
     <ClCompile Include="utils\rgba_color.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="shapes\line.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

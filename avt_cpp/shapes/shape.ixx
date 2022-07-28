@@ -108,7 +108,7 @@ export namespace avt::shapes
             requires avt::is_pair_type_v<P>
         inline void move(const P& offset) noexcept(false)
         {
-            *this += offset;
+            move(offset[0], offset[1]);
         }
 
         /** @brief Absolute move of the base coordinantes of this shape (2 offsets). */
@@ -116,9 +116,7 @@ export namespace avt::shapes
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline void move_at(const X new_x, const Y new_y)
         {
-            x = avt::utils::clamp<MyBaseType::value_type, X>(new_x);
-            y = avt::utils::clamp<MyBaseType::value_type, Y>(new_y);
-
+            move(new_x - x, new_y - y);
         }
 
         /** @brief Relative move of the base coordinantes of this shape (2-components container). */
@@ -126,8 +124,7 @@ export namespace avt::shapes
             requires avt::is_pair_type_v<P>
         inline void move_at(const P& new_pos) noexcept(false)
         {
-            x = avt::utils::clamp<MyBaseType::value_type, decltype(new_pos[0])>(new_pos[0]);
-            y = avt::utils::clamp<MyBaseType::value_type, decltype(new_pos[1])>(new_pos[1]);
+            move_at(new_pos[0], new_pos[1]);
         }
 
 
