@@ -72,7 +72,7 @@ export namespace avt::unit_tests
         avt::shapes::Shape s4(s3);
         assert(s4.x == 25);
         assert(s4.y == 15);
-        assert(s4.color == avt::utils::RGBAColor(1, 2, 3));
+        assert(s4.color == avt::utils::RGBAColor(1, 2, 3, 4));
 
         s4 = s2;
         assert(s4.x == 200);
@@ -96,7 +96,7 @@ export namespace avt::unit_tests
         s3.move_at(-5, -15);
         assert(s3.x == -5);
         assert(s3.y == -15);
-        assert(s3.color == avt::utils::RGBAColor(1, 2, 3));
+        assert(s3.color == avt::utils::RGBAColor(1, 2, 3, 4));
 
         s2.move_at(avt::Pair(1899, 1199));
         assert(s2.x == 1899);
