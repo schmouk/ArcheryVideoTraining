@@ -47,29 +47,41 @@ export namespace avt::shapes
         /** @brief Default constructor. */
         inline Shape() noexcept
             : avt::utils::Coords2D{},
-              color{}
+              color{},
+              transparency{ avt::Byte(255) }
         {}
 
         /** @brief Constructor (2 values). */
-        inline Shape(const avt::utils::Coords2D& _coords, const avt::utils::RGBColor& _color) noexcept
+        template<typename T = avt::Byte>
+            requires std::is_arithmetic_v<T>
+        inline Shape(const avt::utils::Coords2D& _coords,
+                     const avt::utils::RGBColor& _color,
+                     const T                     _transparency = T(255)) noexcept
             : avt::utils::Coords2D{ _coords },
-              color{ _color }
+              color{ _color },
+              transparency{ avt::utils::clamp_b<T>(_transparency) }
         {}
 
         /** @brief Constructor (2-components container + color). */
-        template<typename P>
-            requires avt::is_pair_type_v<P>
-        inline Shape(const P pair, const avt::utils::RGBColor& _color) noexcept(false)
-            : avt::utils::Coords2D{ pair },
-              color{ _color }
+        template<typename P, typename T = avt::Byte>
+            requires avt::is_pair_type_v<P> && std::is_arithmetic_v<T>
+        inline Shape(const P                     _pair,
+                     const avt::utils::RGBColor& _color,
+                     const T                     _transparency = T(255)) noexcept(false)
+            : avt::utils::Coords2D{ _pair },
+              color{ _color },
+              transparency{ avt::utils::clamp_b<T>(_transparency) }
         {}
 
         /** @brief Constructor (3 values). */
         template<typename X, typename Y>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
-        inline Shape(const X x, const Y y, const avt::utils::RGBColor& _color) noexcept
-            : avt::utils::Coords2D( x, y ),
-              color{ _color }
+        inline Shape(const X _x, const Y _y,
+                     const avt::utils::RGBColor& _color,
+                     const avt::Byte _transparency = 255) noexcept
+            : avt::utils::Coords2D( _x, _y ),
+              color{ _color },
+              transparency{ _transparency }
         {}
 
         /** @brief Default Copy constructor. */
@@ -96,7 +108,7 @@ export namespace avt::shapes
         * In this base class, no drawing takes place. This
         * method MUST BE overriden in inheriting classes.
         */
-        virtual inline [[nodiscard]] void draw(avt::video::Frame&)
+        virtual inline void draw(avt::video::Frame&)
         {}
 
         /** @brief Relative move of the base coordinantes of this shape (2 offsets). */
@@ -137,6 +149,7 @@ export namespace avt::shapes
 
         //---   Attributes   ------------------------------------------------
         avt::utils::RGBColor color;
+        avt::Byte            transparency;
     };
 
 }

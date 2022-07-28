@@ -54,10 +54,11 @@ export namespace avt::unit_tests
         assert(s1.y == 2);
         assert(s1.color == avt::utils::RGBColor(11, 22, 33));
 
-        avt::shapes::Shape s2(avt::utils::Coords2D(200, 100), avt::utils::RGBColor(44, 55, 66));
+        avt::shapes::Shape s2(avt::utils::Coords2D(200, 100), avt::utils::RGBColor(44, 55, 66), 256.0);
         assert(s2.x == 200);
         assert(s2.y == 100);
         assert(s2.color == avt::utils::RGBColor(44, 55, 66));
+        assert(s2.transparency == avt::Byte(255));
         assert(s2 == avt::utils::Coords2D(200, 100));
 
         avt::shapes::Shape s3(std::array<long, 2>{25, 15}, avt::utils::RGBColor(1, 2, 3));
@@ -74,6 +75,7 @@ export namespace avt::unit_tests
         assert(s4.x == 200);
         assert(s4.y == 100);
         assert(s4.color == avt::utils::RGBColor(44, 55, 66));
+        assert(s4.transparency == avt::Byte(255));
         assert(s2.x == 200);
         assert(s2.y == 100);
         assert(s2.color == avt::utils::RGBColor(44, 55, 66));

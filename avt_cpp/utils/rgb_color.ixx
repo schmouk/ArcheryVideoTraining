@@ -129,6 +129,22 @@ export namespace avt::utils
             return avt::CVScalarByte(b, g, r, avt::Byte(255));
         }
 
+        /** @brief Creates an instance of cv::Scalar with transparency. */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline cv::Scalar& to_cv_scalar(const T transparency)
+        {
+            return cv::Scalar(double(b), double(g), double(r), double(avt::utils::clamp_b(transparency)));
+        }
+
+        /** @brief Creates an instance of cv::Scalar_<Byte> with transparency. */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline avt::CVScalarByte& to_avt_scalar_byte(const T transparency)
+        {
+            return avt::CVScalarByte(b, g, r, avt::utils::clamp_b(transparency));
+        }
+
 
         //---   Assignments   -----------------------------------------------
         /** @brief Copy assignment. */

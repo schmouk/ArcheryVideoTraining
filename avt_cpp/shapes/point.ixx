@@ -102,7 +102,7 @@ export namespace avt::shapes
 
         //---   Operations   ------------------------------------------------
         /** @brief Draws this point in the specified frame. */
-        virtual inline [[nodiscard]] void draw(avt::video::Frame& frame)
+        virtual inline void draw(avt::video::Frame& frame)
         {
             cv::circle(frame,
                        *this,
