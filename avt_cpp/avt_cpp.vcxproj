@@ -170,6 +170,7 @@
     <ClCompile Include="unit_tests\mtmp\test_threads.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_timer.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_watchdog.ixx" />
+    <ClCompile Include="unit_tests\shapes\test_point.ixx" />
     <ClCompile Include="unit_tests\shapes\test_shape.ixx" />
     <ClCompile Include="unit_tests\utils\test_size.ixx" />
     <ClCompile Include="unit_tests\utils\test_gray_color.ixx" />
@@ -178,6 +179,7 @@
     <ClCompile Include="utils\gray_color.ixx" />
     <ClCompile Include="utils\pair.ixx" />
     <ClCompile Include="utils\range.ixx" />
+    <ClCompile Include="utils\rgba_color.ixx" />
     <ClCompile Include="utils\rgb_color.ixx" />
     <ClCompile Include="utils\size.ixx" />
     <ClCompile Include="utils\utils.ixx" />

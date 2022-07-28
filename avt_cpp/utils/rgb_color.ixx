@@ -112,19 +112,19 @@ export namespace avt::utils
 
         //---   Casting operators   -----------------------------------------
         /** @brief Returns a string describing this color components (hexadecimal form). */
-        inline operator std::string() const
+        virtual inline operator std::string() const
         {
             return std::format("#{:02X}{:02X}{:02X}", r, g, b);
         }
 
         /** @brief Casts this RGB color to a cv::Scalar (i.e. 4 doubles, the fourth one being 255.0). */
-        inline operator cv::Scalar()
+        virtual inline operator cv::Scalar()
         {
             return cv::Scalar(double(b), double(g), double(r), 255.0);
         }
 
-        /** @brief Casts this RGB color to a cv::Scalar (i.e. 4 bytes, the fourth one being 255). */
-        inline operator avt::CVScalarByte()
+        /** @brief Casts this RGB color to a cv::Scalar_<avt::Byte> (i.e. 4 bytes, the fourth one being 255). */
+        virtual inline operator avt::CVScalarByte()
         {
             return avt::CVScalarByte(b, g, r, avt::Byte(255));
         }
@@ -132,7 +132,7 @@ export namespace avt::utils
         /** @brief Creates an instance of cv::Scalar with transparency. */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline cv::Scalar& to_cv_scalar(const T transparency)
+        inline cv::Scalar to_cv_scalar(const T transparency) const
         {
             return cv::Scalar(double(b), double(g), double(r), double(avt::utils::clamp_b(transparency)));
         }
@@ -140,7 +140,7 @@ export namespace avt::utils
         /** @brief Creates an instance of cv::Scalar_<Byte> with transparency. */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline avt::CVScalarByte& to_avt_scalar_byte(const T transparency)
+        inline avt::CVScalarByte to_avt_scalar_byte(const T transparency) const
         {
             return avt::CVScalarByte(b, g, r, avt::utils::clamp_b(transparency));
         }
@@ -249,13 +249,13 @@ export namespace avt::utils
 
         //---   Comparisons   -----------------------------------------------
         /** @brief Returns true if each component of both colors are the same at the same place. */
-        virtual inline const bool operator== (const RGBColor& rhs) const
+        inline const bool operator== (const RGBColor& rhs) const
         {
             return r == rhs.r && g == rhs.g && b == rhs.b;
         }
 
         /** @brief Returns true if any components are not the same at the same place. */
-        virtual inline const bool operator!= (const RGBColor& rhs) const
+        inline const bool operator!= (const RGBColor& rhs) const
         {
             return !(*this == rhs);
         }
@@ -608,7 +608,7 @@ export namespace avt::utils
         }
 
 
-        //---   Data   ------------------------------------------------------
+        //---   Attributes   ------------------------------------------------
         union {
             struct {
                 avt::Byte b;  //!< the Blue component of this color

@@ -108,6 +108,12 @@
     <ClCompile Include="shapes\point.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="unit_tests\shapes\test_point.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\rgba_color.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">
