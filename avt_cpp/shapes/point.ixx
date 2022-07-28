@@ -35,7 +35,7 @@ export module shapes.point;
 
 import utils.coords2d;
 import video.frame;
-import utils.rgb_color;
+import utils.rgba_color;
 import shapes.shape;
 import utils;
 
@@ -49,37 +49,56 @@ export namespace avt::shapes
     {
     public:
         //--- Constructors / Destructors ------------------------------------
-        /** @brief Default constructor. */
+        /** @brief Default constructor (1/7). */
         inline Point() noexcept
-            : avt::shapes::Shape{}, radius{ 1 }
+            : avt::shapes::Shape{}, radius{ 0 }
         {}
 
-        /** @brief Constructor (2 values). */
+        /** @brief Constructor (2/7). */
+        inline Point(const avt::utils::Coords2D&  _coords,
+                     const avt::utils::RGBAColor& _color) noexcept
+            : avt::shapes::Shape(_coords, _color), radius{ avt::Byte(0) }
+        {}
+
+        /** @brief Constructor (3/7). */
+        template<typename R>
+            requires std::is_arithmetic_v<R>
         inline Point(const avt::utils::Coords2D& _coords,
-                     const avt::utils::RGBColor& _color,
-                     const avt::CoordsType       _radius = 1) noexcept
-            : avt::shapes::Shape( _coords, _color ),
-              radius{ _radius }
+                     const avt::utils::RGBAColor& _color,
+                     const R                      _radius) noexcept
+            : avt::shapes::Shape(_coords, _color), radius{ avt::utils::clamp_s(_radius) }
         {}
 
-        /** @brief Constructor (2-components container + color). */
+        /** @brief Constructor (4/7). */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        inline Point(const P                     _pair,
-                     const avt::utils::RGBColor& _color,
-                     const avt::CoordsType       _radius = 1) noexcept(false)
-            : avt::shapes::Shape( _pair, _color ),
-              radius{ _radius }
+        inline Point(const P _pair, const avt::utils::RGBAColor& _color) noexcept(false)
+            : avt::shapes::Shape(_pair, _color), radius{ avt::Byte(0) }
         {}
 
-        /** @brief Constructor (3 values). */
+        /** @brief Constructor (5/7). */
+        template<typename P, typename R>
+            requires avt::is_pair_type_v<P> && std::is_arithmetic_v<R>
+        inline Point(const P                      _pair,
+                     const avt::utils::RGBAColor& _color,
+                     const R                      _radius) noexcept(false)
+            : avt::shapes::Shape(_pair, _color), radius{ _radius }
+        {}
+
+        /** @brief Constructor (6/7). */
         template<typename X, typename Y>
-            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
-        inline Point(const X x, const Y y, 
-                     const avt::utils::RGBColor& _color,
-                     const avt::CoordsType       _radius = 1) noexcept
-            : avt::shapes::Shape(x, y, _color ),
-              radius{ _radius }
+            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
+        inline Point(const X x, const Y y, const avt::utils::RGBAColor& _color) noexcept
+            : avt::shapes::Shape(x, y, _color ), radius{ avt::Byte(0) }
+        {}
+
+        /** @brief Constructor (7/7). */
+        template<typename X, typename Y, typename R>
+            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y> && std::is_arithmetic_v<R>
+        inline Point(const X x, const Y y,
+                     const avt::utils::RGBAColor& _color,
+                     const avt::CoordsType        _radius) noexcept
+            : avt::shapes::Shape(x, y, _color), radius{ _radius }
         {}
 
         /** @brief Default Copy constructor. */
@@ -104,13 +123,7 @@ export namespace avt::shapes
         /** @brief Draws this point in the specified frame. */
         virtual inline void draw(avt::video::Frame& frame)
         {
-            cv::circle(frame,
-                       *this,
-                       radius,
-                       avt::CVScalarByte(color),
-                       cv::FILLED,
-                       cv::LINE_8,
-                       0);
+            draw(frame, radius);
         }
 
         /** @breif Draws this point in the specified frame with the specified radius. */
@@ -119,7 +132,7 @@ export namespace avt::shapes
             cv::circle(frame,
                        *this,
                        std::max<avt::CoordsType>(1, radius),
-                       avt::CVScalarByte(color),
+                       (cv::Scalar)color,
                        cv::FILLED,
                        cv::LINE_8,
                        0);
