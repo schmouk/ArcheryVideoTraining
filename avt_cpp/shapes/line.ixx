@@ -50,10 +50,14 @@ export namespace avt::shapes
     class Line : public avt::shapes::Shape
     {
     public:
+        //--- Wrappers ------------------------------------------------------
+        using MyBaseType = avt::shapes::Shape;
+
+
         //--- Constructors / Destructors ------------------------------------
         /** @brief Default constructor. */
         inline Line() noexcept
-            : avt::shapes::Shape{}, end{}, thickness{ 1 }
+            : MyBaseType{}, end{}, thickness{ 1 }
         {}
 
         /** @brief Constructor. */
@@ -61,21 +65,21 @@ export namespace avt::shapes
                     const avt::utils::Coords2D&  _end,
                     const avt::utils::RGBAColor& _color,
                     const int                    _thickness = 1) noexcept
-            : avt::shapes::Shape{ _start, _color }, end{ _end }, thickness{ _thickness }
+            : MyBaseType{ _start, _color }, end{ _end }, thickness{ _thickness }
         {}
 
         /** @brief Constructor). */
         template<typename P1, typename P2>
             requires avt::is_pair_type_v<P1> && avt::is_pair_type_v<P2>
         inline Line(const P1 _start, const P2 _end, const avt::utils::RGBAColor& _color) noexcept(false)
-            : avt::shapes::Shape{ _start, _color }, end{ _end }, thickness{ 1 }
+            : MyBaseType{ _start, _color }, end{ _end }, thickness{ 1 }
         {}
 
         /** @brief Constructor. */
         template<typename P1, typename P2>
             requires avt::is_pair_type_v<P1>&& avt::is_pair_type_v<P2>
         inline Line(const P1 _start, const P2 _end, const avt::utils::RGBAColor& _color, const int _thickness) noexcept(false)
-            : avt::shapes::Shape{ _start, _color }, end{ _end }, thickness{ _thickness }
+            : MyBaseType{ _start, _color }, end{ _end }, thickness{ _thickness }
         {}
 
         /** @brief Default Copy constructor. */
@@ -100,7 +104,7 @@ export namespace avt::shapes
         /** @brief Returns true if coords are the same, or false otherwise. */
         inline const bool operator==(const Line& rhs) const noexcept
         {
-            return x == rhs.x && y == rhs.y && end.x == rhs.end.x && end.y == rhs.end.y;
+            return x == rhs.x && y == rhs.y && end.x == rhs.end.x && end.y == rhs.end.y && thickness == rhs.thickness;
         }
 
 
@@ -122,26 +126,59 @@ export namespace avt::shapes
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         void move(const X dx, const Y dy)
         {
-            avt::utils::Coords2D offset(dx, dy);
-            *this += offset;  // moves start point
-            end += offset;    // moves end point
+            MyBaseType::move(dx, dy);  // moves start point
+            end += {dx, dy};           // moves end point
+        }
+
+        /** @brief Absolute move of the base coordinates of this shape (2 offsets). */
+        template<typename X, typename Y>
+            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+        inline void move_at(const X new_x, const Y new_y)
+        {
+            move(new_x - x, new_y - y);
+        }
+
+        /** @brief Relative move of the base coordinates of this shape (2-components container). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline void move_at(const P& new_pos) noexcept(false)
+        {
+            move_at(new_pos[0], new_pos[1]);
         }
 
 
         //---   Operators   -------------------------------------------------
-        /** @brief In-place adds a 2D-coords. */
+        /** @brief Moves line by a 2D-coords offset. */
         inline Line& operator+= (const Coords2D& rhs) noexcept
         {
             move(rhs.x, rhs.y);
             return *this;
         }
 
-        /** @brief In-place subtracts a 2D-components. */
-        inline Line& operator-= (const Coords2D& rhs) noexcept
+        /** @brief Moves Line by a 2-components container offset. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Line operator+ (Line lhs, const P& rhs) noexcept(false)
         {
-            move(-rhs.x, -rhs.y);
-            return *this;
+            return lhs += rhs;
         }
+
+        /** @brief Moves line by a 2-components container offset. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Line operator+ (const P& lhs, Line rhs) noexcept(false)
+        {
+            return rhs += lhs;
+        }
+
+        /** @brief Moves line by a negative 2-components container. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Line operator- (Line lhs, const P& rhs) noexcept(false)
+        {
+            return lhs -= rhs;
+        }
+
 
         /** @brief In-place multiplies (one single factor). */
         template<typename T>
@@ -155,6 +192,23 @@ export namespace avt::shapes
             end *= factor;
             return *this;
         }
+
+        /** @brief Mulitplies by a factor (post). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Line operator* (Line lhs, const T factor) noexcept
+        {
+            return lhs *= factor;
+        }
+
+        /** @brief Mulitplies by a factor (pre-). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Line operator* (const T factor, Line rhs) noexcept
+        {
+            return rhs *= factor;
+        }
+
 
 
         //---   Attributes   ------------------------------------------------

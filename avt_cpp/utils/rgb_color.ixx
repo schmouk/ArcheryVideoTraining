@@ -117,6 +117,12 @@ export namespace avt::utils
             return std::format("#{:02X}{:02X}{:02X}", r, g, b);
         }
 
+        /** @brief Casts this RGB color to a cv::Vec3b instance. */
+        inline operator cv::Vec3b()
+        {
+            return cv::Vec3b(bgr);
+        }
+
         /** @brief Casts this RGB color to a cv::Scalar (i.e. 4 doubles, the fourth one being 255.0). */
         virtual inline operator cv::Scalar()
         {

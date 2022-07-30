@@ -132,8 +132,8 @@ export namespace avt::utils
         /** @brief In-place adds a 2D-coords. */
         inline Coords2D& operator+= (const Coords2D& rhs) noexcept
         {
-            x = avt::utils::clamp_s(_ConvertType{ x } + _ConvertType{ rhs.x });
-            y = avt::utils::clamp_s(_ConvertType{ y } + _ConvertType{ rhs.y });
+            x = avt::utils::clamp_s(_ConvertType(x) + _ConvertType(rhs.x));
+            y = avt::utils::clamp_s(_ConvertType(y) + _ConvertType(rhs.y));
             return *this;
         }
 
@@ -172,8 +172,8 @@ export namespace avt::utils
         /** @brief In-place subtracts a 2D-components. */
         inline Coords2D& operator-= (const Coords2D& rhs) noexcept
         {
-            x = avt::utils::clamp_s(_ConvertType{ x } - _ConvertType{ rhs.x });
-            y = avt::utils::clamp_s(_ConvertType{ y } - _ConvertType{ rhs.y });
+            x = avt::utils::clamp_s(_ConvertType(x) - _ConvertType(rhs.x));
+            y = avt::utils::clamp_s(_ConvertType(y) - _ConvertType(rhs.y));
             return *this;
         }
 
@@ -225,10 +225,9 @@ export namespace avt::utils
         /** @brief Mulitplies by a factor (post). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline friend Coords2D operator* (const Coords2D& lhs, const T factor) noexcept
+        inline friend Coords2D operator* (Coords2D lhs, const T factor) noexcept
         {
-            Coords2D tmp{ lhs };
-            return tmp *= factor;
+            return lhs *= factor;
         }
 
         /** @brief Mulitplies by a factor (pre-). */
@@ -247,7 +246,7 @@ export namespace avt::utils
         inline Coords2D operator/= (const T factor) noexcept(false)
         {
             assert(factor > 0);
-            return *this *= 1.0 / factor;;
+            return *this *= 1.0 / double(factor);
         }
 
         /** @brief Divides by a factor (post-). */
@@ -260,8 +259,8 @@ export namespace avt::utils
         }
 
 
-        private:
-            using _ConvertType = long;  //!< type for the conversion of coordinates on internal operations.
+    protected:
+        using _ConvertType = long;  //!< type for the conversion of coordinates on internal operations.
 
     };
 

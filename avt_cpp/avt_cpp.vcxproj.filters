@@ -117,6 +117,9 @@
     <ClCompile Include="shapes\line.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="unit_tests\shapes\test_line.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

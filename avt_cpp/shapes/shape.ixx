@@ -43,29 +43,33 @@ export namespace avt::shapes
     class Shape : public avt::utils::Coords2D
     {
     public:
+        //--- Wrappers ------------------------------------------------------
+        using MyBaseType = avt::utils::Coords2D;
+
+
         //--- Constructors / Destructors ------------------------------------
         /** @brief Default constructor. */
         inline Shape() noexcept
-            : avt::utils::Coords2D{}, color{}
+            : MyBaseType{}, color{}
         {}
 
         /** @brief Constructor (2 values). */
-        inline Shape(const avt::utils::Coords2D& _coords, const avt::utils::RGBAColor& _color) noexcept
-            : avt::utils::Coords2D{ _coords }, color{ _color }
+        inline Shape(const MyBaseType& _coords, const avt::utils::RGBAColor& _color) noexcept
+            : MyBaseType{ _coords }, color{ _color }
         {}
 
         /** @brief Constructor (2-components container + color). */
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline Shape(const P _pair, const avt::utils::RGBAColor& _color) noexcept(false)
-            : avt::utils::Coords2D{ _pair }, color{ _color }
+            : MyBaseType{ _pair }, color{ _color }
         {}
 
         /** @brief Constructor (3 values). */
         template<typename X, typename Y>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline Shape(const X _x, const Y _y, const avt::utils::RGBAColor& _color) noexcept
-            : avt::utils::Coords2D( _x, _y ), color{ _color }
+            : MyBaseType( _x, _y ), color{ _color }
         {}
 
         /** @brief Default Copy constructor. */
@@ -100,7 +104,7 @@ export namespace avt::shapes
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline void move(const X dx, const Y dy)
         {
-            *this += avt::utils::Coords2D(dx, dy);
+            *this += MyBaseType(dx, dy);
         }
 
         /** @brief Relative move of the base coordinantes of this shape (2-components container). */
@@ -111,7 +115,7 @@ export namespace avt::shapes
             move(offset[0], offset[1]);
         }
 
-        /** @brief Absolute move of the base coordinantes of this shape (2 offsets). */
+        /** @brief Absolute move of the base coordinates of this shape (2 offsets). */
         template<typename X, typename Y>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline void move_at(const X new_x, const Y new_y)
@@ -119,14 +123,14 @@ export namespace avt::shapes
             move(new_x - x, new_y - y);
         }
 
-        /** @brief Relative move of the base coordinantes of this shape (2-components container). */
+        /** @brief Relative move of the base coordinates of this shape (2-components container). */
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline void move_at(const P& new_pos) noexcept(false)
         {
             move_at(new_pos[0], new_pos[1]);
         }
-
+        
 
         //---   Attributes   ------------------------------------------------
         avt::utils::RGBAColor color;

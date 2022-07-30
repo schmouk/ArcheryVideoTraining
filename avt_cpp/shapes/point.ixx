@@ -113,10 +113,150 @@ export namespace avt::shapes
 
         //---   Assignments   -----------------------------------------------
         /** @brief Default Copy assignment. */
-        Point& operator=(const Point&) noexcept = default;
+        Point& operator= (const Point&) noexcept = default;
 
         /** @brief Default Move assignment. */
-        Point& operator=(Point&&) noexcept = default;
+        Point& operator= (Point&&) noexcept = default;
+
+        /** @brief Assignment from Coords2D. */
+        inline Point& operator= (const avt::utils::Coords2D& pos) noexcept
+        {
+            x = pos.x;
+            y = pos.y;
+            return *this;
+        }
+
+
+        //---   Positive Moving   -------------------------------------------
+        /** @brief In-place positive move by an offset. */
+        inline Point& operator+= (const avt::utils::Coords2D& rhs) noexcept
+        {
+            x = avt::utils::clamp_s(_ConvertType(x) + _ConvertType(rhs.x));
+            y = avt::utils::clamp_s(_ConvertType(y) + _ConvertType(rhs.y));
+            return *this;
+        }
+
+        /** @brief In-place positive move by a 2-components container offset. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline Point& operator+= (const P& rhs) noexcept(false)
+        {
+            return *this += avt::utils::Coords2D(rhs[0], rhs[1]);
+        }
+
+        /** @brief Positive move by a Coords2D offset (post-). */
+        friend inline Point operator+ (Point lhs, const avt::utils::Coords2D& rhs) noexcept
+        {
+            return lhs += rhs;
+        }
+
+        /** @brief Positive move by a Coords2D offset (pre-). */
+        friend inline Point operator+ (const avt::utils::Coords2D& lhs, Point rhs) noexcept
+        {
+            return rhs += lhs;
+        }
+
+        /** @brief Positive move by a 2-components container offset (post-). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Point operator+ (Point lhs, const P& rhs) noexcept(false)
+        {
+            return lhs += rhs;
+        }
+
+        /** @brief Positive move by a 2-components container offset (pre-). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Point operator+ (const P& lhs, Point rhs) noexcept(false)
+        {
+            return rhs += lhs;
+        }
+
+
+        //---   Negative Moving   -------------------------------------------
+        /** @brief In-place negative move by an offset. */
+        inline Point& operator-= (const avt::utils::Coords2D& rhs) noexcept
+        {
+            x = avt::utils::clamp_s(_ConvertType(x) - _ConvertType(rhs.x));
+            y = avt::utils::clamp_s(_ConvertType(y) - _ConvertType(rhs.y));
+            return *this;
+        }
+
+        /** @brief In-place negative move by a 2-components container offset. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline Point& operator-= (const P& rhs) noexcept(false)
+        {
+            return *this -= avt::utils::Coords2D(rhs[0], rhs[1]);
+        }
+
+        /** @brief Negative move by an offset. */
+        friend inline Point operator- (Point lhs, const avt::utils::Coords2D& rhs) noexcept
+        {
+            return lhs -= rhs;
+        }
+
+        /** @brief Negative move by a 2-components container offset (post-). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Point operator- (Point lhs, const P& rhs) noexcept(false)
+        {
+            return lhs -= rhs;
+        }
+
+        /** @brief Negative move by a 2-components container offset (pre-). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        friend inline Point operator- (const P& lhs, const Point& rhs) noexcept(false)
+        {
+            using T = decltype(lhs[0]);
+            return Point(lhs[0] - T(rhs.x), lhs[1] - T(rhs.y));
+        }
+
+
+        //---   Magnifying   ------------------------------------------------
+        /** @brief In-place multiplies position (one single factor). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline Point& operator*= (const T factor) noexcept
+        {
+            return *this = avt::utils::Coords2D(x, y) * factor;
+        }
+
+        /** @brief Mulitplies position by a factor (post-). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Point operator* (Point lhs, const T factor) noexcept
+        {
+            return lhs *= factor;
+        }
+
+        /** @brief Mulitplies position by a factor (pre-). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Point operator* (const T factor, Point rhs) noexcept
+        {
+            return rhs *= factor;
+        }
+
+
+        //---   Dividing   --------------------------------------------------
+        /** @brief In-place divides position (one single factor). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline Point operator/= (const T factor) noexcept(false)
+        {
+            assert(factor > 0);
+            return *this *= 1.0 / double(factor);
+        }
+
+        /** @brief Divides position by a factor (post-). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Point operator/ (Point lhs, const T rhs) noexcept(false)
+        {
+            return lhs /= rhs;
+        }
 
 
         //---   Operations   ------------------------------------------------
@@ -129,13 +269,16 @@ export namespace avt::shapes
         /** @brief Draws this point in the specified frame with the specified radius. */
         inline void draw(avt::video::Frame& frame, const avt::CoordsType radius)
         {
-            cv::circle(frame,
-                       *this,
-                       std::max<avt::CoordsType>(0, radius),
-                       (cv::Scalar)color,
-                       cv::FILLED,
-                       cv::LINE_8,
-                       0);
+            if (radius > 1)
+                cv::circle(frame,
+                    *this,
+                    radius,
+                    (cv::Scalar)color,
+                    cv::FILLED,
+                    cv::LINE_8,
+                    0);
+            else
+                frame.at<cv::Vec3b>(y,x) = (cv::Vec3b)color;
         }
 
 

@@ -36,6 +36,6 @@ export namespace avt::video
 {
     //=======================================================================
     /** @brief The base class for Video Frames. */
-    using Frame = cv::InputOutputArray;
+    using Frame = cv::Mat;
 
 }
