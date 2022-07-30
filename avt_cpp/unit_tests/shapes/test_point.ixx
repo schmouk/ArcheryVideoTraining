@@ -124,7 +124,6 @@ export namespace avt::unit_tests
         assert(s4.color == avt::utils::RGBAColor(44, 55, 66, 255));
 
 
-
         std::cout << "   All tests OK\n\n";
     }
 }

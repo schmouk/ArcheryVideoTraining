@@ -128,12 +128,59 @@ export namespace avt::utils
         }
 
 
+        //---   Moving   ----------------------------------------------------
+        /** @brief Relative move of this position (two scalar offsets). */
+        template<typename X, typename Y>
+            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
+        inline void move(const X dx, const Y dy) noexcept
+        {
+            x = avt::utils::clamp_s(_ConvertType(x) + dx);
+            y = avt::utils::clamp_s(_ConvertType(y) + dy);
+        }
+
+        /** @brief Relative move of this position (one Coords2D offset). */
+        inline void move(const avt::utils::Coords2D& offset) noexcept
+        {
+            move(offset.x, offset.y);
+        }
+
+        /** @brief Relative move of this position (one 2-D container offset). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline void move(const P& offset) noexcept
+        {
+            move(offset.x, offset.y);
+        }
+
+        /** @brief Absolute move of this position (two scalar new coordinates). */
+        template<typename X, typename Y>
+            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+        inline void move_at(const X new_x, const Y new_y)
+        {
+            x = avt::utils::clamp_s(new_x);
+            y = avt::utils::clamp_s(new_y);
+        }
+
+        /** @brief Absolute move of this position (one Coords2D offset). */
+        inline void move_at(const avt::utils::Coords2D& offset) noexcept
+        {
+            move_at(offset.x, offset.y);
+        }
+
+        /** @brief Absolute move of this position (one 2-D container offset). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline void move_at(const P& offset) noexcept
+        {
+            move_at(offset.x, offset.y);
+        }
+
+
         //---   Adding   ----------------------------------------------------
         /** @brief In-place adds a 2D-coords. */
         inline Coords2D& operator+= (const Coords2D& rhs) noexcept
         {
-            x = avt::utils::clamp_s(_ConvertType(x) + _ConvertType(rhs.x));
-            y = avt::utils::clamp_s(_ConvertType(y) + _ConvertType(rhs.y));
+            move(rhs);
             return *this;
         }
 
@@ -172,8 +219,7 @@ export namespace avt::utils
         /** @brief In-place subtracts a 2D-components. */
         inline Coords2D& operator-= (const Coords2D& rhs) noexcept
         {
-            x = avt::utils::clamp_s(_ConvertType(x) - _ConvertType(rhs.x));
-            y = avt::utils::clamp_s(_ConvertType(y) - _ConvertType(rhs.y));
+            move(-rhs.x, -rhs.y);
             return *this;
         }
 
@@ -215,10 +261,9 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         Coords2D& operator*= (const T factor) noexcept
         {
-            const long xf = std::lround(double(x) * double(factor));
-            const long yf = std::lround(double(y) * double(factor));
-            x = avt::utils::clamp_s(xf);
-            y = avt::utils::clamp_s(yf);
+            const long xl = std::lround(double(x) * double(factor));
+            const long yl = std::lround(double(y) * double(factor));
+            move_at(xl, yl);
             return *this;
         }
 

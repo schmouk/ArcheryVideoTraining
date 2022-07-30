@@ -97,12 +97,19 @@ export namespace avt::shapes
         Line& operator=(const Line&) noexcept = default;
 
         /** @brief Default Move assignment. */
-        Line& operator=(Line&&) noexcept = default;
+        Line& operator= (Line&&) noexcept = default;
+
+        /** @brief New position assignment. */
+        Line& operator= (const avt::utils::Coords2D& new_pos)
+        {
+            move_at(new_pos.x, new_pos.y);
+            return *this;
+        }
 
 
         //---   Comparisons   -----------------------------------------------
         /** @brief Returns true if coords are the same, or false otherwise. */
-        inline const bool operator==(const Line& rhs) const noexcept
+        inline const bool operator== (const Line& rhs) const noexcept
         {
             return x == rhs.x && y == rhs.y && end.x == rhs.end.x && end.y == rhs.end.y && thickness == rhs.thickness;
         }
@@ -121,13 +128,23 @@ export namespace avt::shapes
             cv::line(frame, *this, end, (cv::Scalar)color, thickness, cv::LINE_8, 0);
         }
 
-        /** @brief Relative move of the base coordinantes of this shape (2 offsets). */
+
+        //---   Moving   ----------------------------------------------------
+        /** @brief Relative move of the base coordinates of this shape (2 offsets). */
         template<typename X, typename Y>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
-        void move(const X dx, const Y dy)
+        inline void move(const X dx, const Y dy)
         {
             MyBaseType::move(dx, dy);  // moves start point
             end += {dx, dy};           // moves end point
+        }
+
+        /** @brief Relative move of the base coordinates of this shape (2-components container). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline void move(const P& new_pos) noexcept(false)
+        {
+            move(new_pos[0], new_pos[1]);
         }
 
         /** @brief Absolute move of the base coordinates of this shape (2 offsets). */
@@ -138,7 +155,7 @@ export namespace avt::shapes
             move(new_x - x, new_y - y);
         }
 
-        /** @brief Relative move of the base coordinates of this shape (2-components container). */
+        /** @brief Absolute move of the base coordinates of this shape (2-components container). */
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline void move_at(const P& new_pos) noexcept(false)
@@ -146,39 +163,19 @@ export namespace avt::shapes
             move_at(new_pos[0], new_pos[1]);
         }
 
-
-        //---   Operators   -------------------------------------------------
-        /** @brief Moves line by a 2D-coords offset. */
+        /** @brief Relative move of line by a positive 2D-coords offset. */
         inline Line& operator+= (const Coords2D& rhs) noexcept
         {
             move(rhs.x, rhs.y);
             return *this;
         }
 
-        /** @brief Moves Line by a 2-components container offset. */
-        template<typename P>
-            requires avt::is_pair_type_v<P>
-        friend inline Line operator+ (Line lhs, const P& rhs) noexcept(false)
+        /** @brief Relative move of line by a negative 2D-coords offset. */
+        inline Line& operator-= (const Coords2D& rhs) noexcept
         {
-            return lhs += rhs;
+            move(-rhs.x, -rhs.y);
+            return *this;
         }
-
-        /** @brief Moves line by a 2-components container offset. */
-        template<typename P>
-            requires avt::is_pair_type_v<P>
-        friend inline Line operator+ (const P& lhs, Line rhs) noexcept(false)
-        {
-            return rhs += lhs;
-        }
-
-        /** @brief Moves line by a negative 2-components container. */
-        template<typename P>
-            requires avt::is_pair_type_v<P>
-        friend inline Line operator- (Line lhs, const P& rhs) noexcept(false)
-        {
-            return lhs -= rhs;
-        }
-
 
         /** @brief In-place multiplies (one single factor). */
         template<typename T>
@@ -209,6 +206,26 @@ export namespace avt::shapes
             return rhs *= factor;
         }
 
+        /** @brief In-place divides (one single factor). */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        Line& operator/= (const T factor) noexcept
+        {
+            avt::utils::Coords2D start(x, y);
+            start /= factor;
+            x = start.x;
+            y = start.y;
+            end /= factor;
+            return *this;
+        }
+
+        /** @brief Divides by a factor. */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline friend Line operator/ (Line lhs, const T factor) noexcept
+        {
+            return lhs /= factor;
+        }
 
 
         //---   Attributes   ------------------------------------------------

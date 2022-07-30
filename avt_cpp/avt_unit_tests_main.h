@@ -38,9 +38,9 @@ import unit_tests.mtmp.test_mutex;
 import unit_tests.mtmp.test_timers;
 import unit_tests.mtmp.test_watchdog;
 import unit_tests.mtmp.test_barrier;
-/**/
 import unit_tests.shapes.test_shape;
 import unit_tests.shapes.test_point;
+/**/
 import unit_tests.shapes.test_line;
 
 
@@ -61,9 +61,9 @@ int main()
     mtmp::unit_tests::test_timers();
     mtmp::unit_tests::test_watchdog();
     mtmp::unit_tests::test_barrier::test_barrier();
-    /**/
     avt::unit_tests::test_shape();
     avt::unit_tests::test_point();
+    /**/
     avt::unit_tests::test_line();
 
 
