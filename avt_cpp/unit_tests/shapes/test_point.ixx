@@ -112,7 +112,7 @@ export namespace avt::unit_tests
         s4 = s2 * 2;
         assert(s4.x == 400);
         assert(s4.y == 200);
-        assert(s4.color == avt::utils::RGBAColor(48, 61, 73));
+        assert(s4.color == avt::utils::RGBAColor(44, 55, 66));
         assert(s4.color.a == avt::Byte(255));
         assert(s2.x == 200);
         assert(s2.y == 100);
@@ -121,7 +121,7 @@ export namespace avt::unit_tests
         s4 /= 1.5f;
         assert(s4.x == 267);
         assert(s4.y == 133);
-        assert(s4.color == avt::utils::RGBAColor(48, 61, 73, 255));
+        assert(s4.color == avt::utils::RGBAColor(44, 55, 66, 255));
 
 
 
