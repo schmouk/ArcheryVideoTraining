@@ -89,6 +89,14 @@ export namespace avt::shapes
         /** @brief Default Move assignment. */
         Shape& operator=(Shape&&) noexcept = default;
 
+        /** @brief New position assignment. */
+        Shape& operator=(const avt::utils::Coords2D& pos)
+        {
+            x = pos.x;
+            y = pos.y;
+            return *this;
+        }
+
 
         //---   Operations   ------------------------------------------------
         /** @brief Draws this shape in the specified frame.

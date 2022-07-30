@@ -108,6 +108,21 @@ export namespace avt::unit_tests
         assert(s2.y == 1199);
         assert(s2.color == avt::utils::RGBAColor(48, 61, 73));
 
+        s2 = avt::utils::Coords2D(100, 40);
+        assert(s2.x == 100);
+        assert(s2.y == 40);
+        assert(s2.color == avt::utils::RGBAColor(48, 61, 73));
+
+        s2 += {22, 12};
+        assert(s2.x == 122);
+        assert(s2.y == 52);
+        assert(s2.color == avt::utils::RGBAColor(48, 61, 73));
+
+        s2 *= 1.6;
+        assert(s2.x == 195);
+        assert(s2.y == 83);
+        assert(s2.color == avt::utils::RGBAColor(48, 61, 73, 255));
+
 
         std::cout << "   All tests OK\n\n";
     }
