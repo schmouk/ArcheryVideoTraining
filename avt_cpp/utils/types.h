@@ -34,8 +34,12 @@ SOFTWARE.
 namespace avt
 {
     //---   main Types   ----------------------------------------------------
-    using Byte          = unsigned char;    //!< the unsigned 8-bits integer values type
-    using CoordsType    = short;            //!< the type of avt 2D-coordinates
+    using Byte       = unsigned char;    //!< the unsigned 8-bits integer values type
+    using CoordsType = short;            //!< the type of avt 2D-coordinates
+
+    using CVScalarByte = cv::Scalar_<avt::Byte>;        //!< OpenCV-like Scalar wrapper
+    using CVPoint      = cv::Point_<avt::CoordsType>;   //!< OpenCV-like Point_ wrapper
+    using CVRect       = cv::Rect_<avt::CoordsType>;    //!< OpenCV-like Rect_ wrapper
 
 
     //---   is_pair_type   --------------------------------------------------

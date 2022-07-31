@@ -1,5 +1,7 @@
 .vs
-x64
-x86
-Debug
-Release
+x64/Debug
+x64/Release
+x86/Debug
+x86/Release
+avt_cpp/Debug
+avt_cpp/Release
