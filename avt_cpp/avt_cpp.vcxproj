@@ -85,7 +85,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x86\shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x86\shcore.lib;$(ProjectDir)extern\win10\Libs\x86\WinMM.Lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -107,7 +107,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x86\shcore.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x86\shcore.lib;$(ProjectDir)extern\win10\Libs\x86\WinMM.Lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -125,7 +125,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x64\shcore.lib;$(ProjectDir)..\..\Libs\opencv-4-6-0\build\x64\vc15\lib\opencv_world460d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x64\shcore.lib;$(ProjectDir)extern\win10\Libs\x64\WinMM.Lib;$(ProjectDir)..\..\Libs\opencv-4-6-0\build\x64\vc15\lib\opencv_world460d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -147,7 +147,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x64\shcore.lib;$(ProjectDir)..\..\Libs\opencv-4-6-0\build\x64\vc15\lib\opencv_world460.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)extern\win10\Libs\x64\shcore.lib;$(ProjectDir)extern\win10\Libs\x64\WinMM.Lib;$(ProjectDir)..\..\Libs\opencv-4-6-0\build\x64\vc15\lib\opencv_world460.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -157,6 +157,7 @@
     <ClCompile Include="mtmp\barrier.ixx" />
     <ClCompile Include="mtmp\guarded_block.ixx" />
     <ClCompile Include="mtmp\mutex.ixx" />
+    <ClCompile Include="mtmp\scheduler.ixx" />
     <ClCompile Include="mtmp\semaphore.ixx" />
     <ClCompile Include="mtmp\signal.ixx" />
     <ClCompile Include="mtmp\timer.ixx" />

@@ -151,7 +151,7 @@ export namespace avt::shapes
         /** @brief Line reference assignment. */
         Rect& operator= (const avt::shapes::Line& line) noexcept
         {
-            *this = avt::shapes::Rect(line);
+            return *this = avt::shapes::Rect(line);
         }
 
 
