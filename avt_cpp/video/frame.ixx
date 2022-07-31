@@ -23,22 +23,19 @@ SOFTWARE.
 */
 
 //===========================================================================
-export module utils.offsets;
+module;
 
-import utils.base2d;
+#include <opencv2/core/mat.hpp>
+
+export module video.frame;
+
 
 
 //===========================================================================
-export namespace avt::utils
+export namespace avt::video
 {
     //=======================================================================
-    /** @brief The class of 2D integer offsets.
-    * To be used e.g. for moving 2D shapes (e.g. Points, Lines, Rectangles, etc.)
-    *
-    * Notice: While accessing data members, prefer to use '.dx' and '.dy'
-    * of base class 'Base2D' since these  are  the  best  appropriate  to
-    * describe offsets on the X- and Y- axis of the frames plan.
-    */
-    using Offsets = avt::utils::Base2D;
+    /** @brief The base class for Video Frames. */
+    using Frame = cv::Mat;
 
 }

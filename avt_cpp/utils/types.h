@@ -23,7 +23,90 @@ SOFTWARE.
 */
 
 //===========================================================================
+#include <array>
+#include <utility>
+#include <vector>
+
+#include <opencv2/core/types.hpp>
+
+
+//===========================================================================
 namespace avt
 {
-	using Byte = unsigned char;  //!< the unsigned 8-bits integer values type
+    //---   main Types   ----------------------------------------------------
+    using Byte       = unsigned char;    //!< the unsigned 8-bits integer values type
+    using CoordsType = short;            //!< the type of avt 2D-coordinates
+
+    using CVScalarByte = cv::Scalar_<avt::Byte>;        //!< OpenCV-like Scalar wrapper
+    using CVPoint      = cv::Point_<avt::CoordsType>;   //!< OpenCV-like Point_ wrapper
+    using CVRect       = cv::Rect_<avt::CoordsType>;    //!< OpenCV-like Rect_ wrapper
+
+
+    //---   is_pair_type   --------------------------------------------------
+    /** @brief States the Pair status of a type - always false unless specified as true in specializations. */
+    template<typename T>
+    struct is_pair_type
+    {
+        static constexpr bool value = false;
+    };
+
+    /** @brief Wrapper to the value of avt::is_pair_type. */
+    template<typename T>
+    inline constexpr bool is_pair_type_v = is_pair_type<T>::value;
+
+    /** @brief States that buffers containing two arithmetic values are a Pair. */
+    template<typename _T>
+    struct is_pair_type<_T[2]>
+    {
+        static constexpr bool value = std::is_arithmetic_v<_T>;
+    };
+
+    /** @brief States that std::vector is a Pair type. */
+    template<typename _T>
+    struct is_pair_type<std::vector<_T>>
+    {
+        static constexpr bool value = std::is_arithmetic_v<_T>;  // CAUTION: vectors of size < 2 may generate exceptions when used
+    };
+
+    /** @brief States that std::array of size 2 is a Pair type. */
+    template<typename _T>
+    struct is_pair_type<std::array<_T, 2>>
+    {
+        static constexpr bool value = std::is_arithmetic_v<_T>;
+    };
+
+
+    //---   is_container3_type   --------------------------------------------
+    /** @brief States the at least 3-components container status of a type - always false unless specified as true in specializations. */
+    template<typename T>
+    struct is_container3_type
+    {
+        static constexpr bool value = false;
+    };
+
+    /** @brief Wrapper to the value of avt::is_container3_type. */
+    template<typename T>
+    inline constexpr bool is_container3_type_v = is_container3_type<T>::value;
+
+    /** @brief States that buffers containing three arithmetic values are of a 3-components container type. */
+    template<typename _T>
+    struct is_container3_type<_T[3]>
+    {
+        static constexpr bool value = std::is_arithmetic_v<_T>;
+    };
+
+    /** @brief States that std::vector with t least 3 components is of a 3-components container type. */
+    template<typename _T>
+    struct is_container3_type<std::vector<_T>>
+    {
+        static constexpr bool value = std::is_arithmetic_v<_T>;  // CAUTION: vectors of size < 3 may generate exceptions when used
+    };
+
+    /** @brief States that std::array of size 3 is of a 3-components container type. */
+    template<typename _T>
+    struct is_container3_type<std::array<_T, 3>>
+    {
+        static constexpr bool value = std::is_arithmetic_v<_T>;
+    };
+
 }

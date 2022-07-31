@@ -23,6 +23,7 @@ module;
 
 #include <atomic>
 #include <exception>
+#include <iostream>
 #include <thread>
 
 export module mtmp.thread;
@@ -205,6 +206,7 @@ export namespace mtmp
             m_is_running.store(true);
             m_already_started.store(true);
             ms_active_threads_count++;
+            std::cout << "in _prepare_run(), active threads count = " << ms_active_threads_count.load() << std::endl;
         }
 
         /** @brief The internal running method.

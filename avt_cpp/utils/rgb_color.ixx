@@ -27,10 +27,18 @@ module;
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <format>
+#include <string>
 #include <vector>
+
+#include <opencv2/core/matx.hpp>
+#include <opencv2/core/types.hpp>
+
 #include "utils/types.h"
 
 export module utils.rgb_color;
+
+import utils;
 
 
 //===========================================================================
@@ -102,9 +110,53 @@ export namespace avt::utils
         virtual ~RGBColor() noexcept = default;
 
 
+        //---   Casting operators   -----------------------------------------
+        /** @brief Returns a string describing this color components (hexadecimal form). */
+        virtual inline operator std::string() const
+        {
+            return std::format("#{:02X}{:02X}{:02X}", r, g, b);
+        }
+
+        /** @brief Casts this RGB color to a cv::Vec3b instance. */
+        inline operator cv::Vec3b()
+        {
+            return cv::Vec3b(bgr);
+        }
+
+        /** @brief Casts this RGB color to a cv::Scalar (i.e. 4 doubles, the fourth one being 255.0). */
+        virtual inline operator cv::Scalar()
+        {
+            return cv::Scalar(double(b), double(g), double(r), 255.0);
+        }
+
+        /** @brief Casts this RGB color to a cv::Scalar_<avt::Byte> (i.e. 4 bytes, the fourth one being 255). */
+        virtual inline operator avt::CVScalarByte()
+        {
+            return avt::CVScalarByte(b, g, r, avt::Byte(255));
+        }
+
+        /** @brief Creates an instance of cv::Scalar with transparency. */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline cv::Scalar to_cv_scalar(const T transparency) const
+        {
+            return cv::Scalar(double(b), double(g), double(r), double(avt::utils::clamp_b(transparency)));
+        }
+
+        /** @brief Creates an instance of cv::Scalar_<Byte> with transparency. */
+        template<typename T>
+            requires std::is_arithmetic_v<T>
+        inline avt::CVScalarByte to_avt_scalar_byte(const T transparency) const
+        {
+            return avt::CVScalarByte(b, g, r, avt::utils::clamp_b(transparency));
+        }
+
+
         //---   Assignments   -----------------------------------------------
-        /** @brief Copy and Move assignments. */
+        /** @brief Copy assignment. */
         virtual RGBColor& operator= (const RGBColor&) noexcept = default;
+
+        /** @brief Move assignment. */
         virtual RGBColor& operator= (RGBColor&&) noexcept = default;
 
         /** @brief Assignment operator (one 3-bytes buffer). */
@@ -152,7 +204,7 @@ export namespace avt::utils
 
         /** @brief Sets color (three R, G, B bytes). */
         template<typename T, typename U, typename V>
-            requires std::is_arithmetic_v<T>&& std::is_arithmetic_v<U>&& std::is_arithmetic_v<V>
+            requires std::is_arithmetic_v<T> && std::is_arithmetic_v<U> && std::is_arithmetic_v<V>
         inline void set(const T r_, const U g_, const V b_) noexcept
         {
             r = _clipped(r_);
@@ -203,13 +255,13 @@ export namespace avt::utils
 
         //---   Comparisons   -----------------------------------------------
         /** @brief Returns true if each component of both colors are the same at the same place. */
-        virtual inline const bool operator== (const RGBColor& rhs) const
+        inline const bool operator== (const RGBColor& rhs) const
         {
             return r == rhs.r && g == rhs.g && b == rhs.b;
         }
 
         /** @brief Returns true if any components are not the same at the same place. */
-        virtual inline const bool operator!= (const RGBColor& rhs) const
+        inline const bool operator!= (const RGBColor& rhs) const
         {
             return !(*this == rhs);
         }
@@ -562,7 +614,7 @@ export namespace avt::utils
         }
 
 
-        //---   Data   ------------------------------------------------------
+        //---   Attributes   ------------------------------------------------
         union {
             struct {
                 avt::Byte b;  //!< the Blue component of this color
@@ -612,8 +664,7 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         inline static const avt::Byte _clipped(const T value) noexcept
         {
-            return avt::Byte(std::clamp(value, T(0), T(255)));
-            //return (value >= 255) ? 255 : ((value <= 0) ? 0 : (avt::Byte)value);
+            return avt::utils::clamp_b(value);
         }
 
 
@@ -624,36 +675,36 @@ export namespace avt::utils
         inline static const avt::Byte _div(const T num, const U den) noexcept(false)
         {
             assert(den > 0);
-            return (avt::Byte)(float(num) / float(den));
+            return avt::utils::clamp_b(float(num) / float(den));
         }
 
     };
 
     //-----------------------------------------------------------------------
-    const RGBColor RGBColor::ANTHRACITE{ 31, 31, 31 };
-    const RGBColor RGBColor::BLACK{ 0, 0, 0 };
-    const RGBColor RGBColor::BLUE{ 0, 0, 255 };
-    const RGBColor RGBColor::BROWN{ 95, 47, 0 };
-    const RGBColor RGBColor::DARK_RED{ 127, 0, 0 };
-    const RGBColor RGBColor::DEEP_GRAY{ 63, 63, 63 };
-    const RGBColor RGBColor::DEEP_GREEN{ 0, 95, 0 };
-    const RGBColor RGBColor::GRAY{ 127, 127, 127 };
-    const RGBColor RGBColor::LIGHT_BLUE{ 0, 255, 255 };
-    const RGBColor RGBColor::LIGHT_GRAY{ 191, 191, 191 };
-    const RGBColor RGBColor::LIGHT_GREEN{ 0, 255, 0 };
-    const RGBColor RGBColor::NAVY_BLUE{ 0, 0, 63 };
-    const RGBColor RGBColor::ORANGE{ 255, 127, 0 };
-    const RGBColor RGBColor::RED{ 255, 0, 0 };
-    const RGBColor RGBColor::YELLOW{ 255, 255, 0 };
-    const RGBColor RGBColor::WHITE{ 255, 255, 255 };
+    const RGBColor RGBColor::ANTHRACITE       {  31,  31,  31 };
+    const RGBColor RGBColor::BLACK            {   0,   0,   0 };
+    const RGBColor RGBColor::BLUE             {   0,   0, 255 };
+    const RGBColor RGBColor::BROWN            {  95,  47,   0 };
+    const RGBColor RGBColor::DARK_RED         { 127,   0,   0 };
+    const RGBColor RGBColor::DEEP_GRAY        {  63,  63,  63 };
+    const RGBColor RGBColor::DEEP_GREEN       {   0,  95,   0 };
+    const RGBColor RGBColor::GRAY             { 127, 127, 127 };
+    const RGBColor RGBColor::LIGHT_BLUE       {   0, 255, 255 };
+    const RGBColor RGBColor::LIGHT_GRAY       { 191, 191, 191 };
+    const RGBColor RGBColor::LIGHT_GREEN      {   0, 255,   0 };
+    const RGBColor RGBColor::NAVY_BLUE        {   0,   0,  63 };
+    const RGBColor RGBColor::ORANGE           { 255, 127,   0 };
+    const RGBColor RGBColor::RED              { 255,   0,   0 };
+    const RGBColor RGBColor::YELLOW           { 255, 255,   0 };
+    const RGBColor RGBColor::WHITE            { 255, 255, 255 };
 
-    const RGBColor RGBColor::TARGET_WHITE{ 255, 255, 255 };
-    const RGBColor RGBColor::TARGET_BLACK{ 0, 0, 0 };
-    const RGBColor RGBColor::TARGET_BLUE{ 65, 181, 200 };
-    const RGBColor RGBColor::TARGET_RED{ 255, 37, 21 };
-    const RGBColor RGBColor::TARGET_GOLD{ 255, 245, 55 };
+    const RGBColor RGBColor::TARGET_WHITE     { 255, 255, 255 };
+    const RGBColor RGBColor::TARGET_BLACK     {   0,   0,   0 };
+    const RGBColor RGBColor::TARGET_BLUE      {  65, 181, 200 };
+    const RGBColor RGBColor::TARGET_RED       { 255,  37,  21 };
+    const RGBColor RGBColor::TARGET_GOLD      { 255, 245,  55 };
 
-    const RGBColor RGBColor::TARGET_BLUE_6{ 17, 165, 255 };
-    const RGBColor RGBColor::TARGET_BLUE_NFAA{ 63, 63, 95 };
+    const RGBColor RGBColor::TARGET_BLUE_6    {  17, 165, 255 };
+    const RGBColor RGBColor::TARGET_BLUE_NFAA {  63,  63,  95 };
 
 }
