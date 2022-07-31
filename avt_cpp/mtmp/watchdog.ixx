@@ -145,6 +145,7 @@ export namespace mtmp
             reset();
         }
 
+
         //---   Specific Exceptions   ---------------------------------------
         /** @brief Exception on erroneous instantiation of this class. */
         class StartException : public std::exception

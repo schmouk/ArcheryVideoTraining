@@ -23,7 +23,13 @@ module;
 
 #include <atomic>
 #include <exception>
+#include <iostream>
+#include <cstring>
 #include <thread>
+
+#include <windows.h>
+#include <processthreadsapi.h>
+
 
 export module mtmp.thread;
 
@@ -57,9 +63,25 @@ export namespace mtmp
     class Thread
     {
     public:
+        //---   Class Data   ------------------------------------------------
+        static constexpr long PRI_IDLE         = THREAD_PRIORITY_IDLE;          // win32 const
+        static constexpr long PRI_LOWEST       = THREAD_PRIORITY_LOWEST;        // win32 const
+        static constexpr long PRI_BELOW_NORMAL = THREAD_PRIORITY_BELOW_NORMAL;  // win32 const
+        static constexpr long PRI_NORMAL       = THREAD_PRIORITY_NORMAL;        // win32 const
+        static constexpr long PRI_ABOVE_NORMAL = THREAD_PRIORITY_ABOVE_NORMAL;  // win32 const
+        static constexpr long PRI_HIGHEST      = THREAD_PRIORITY_HIGHEST;       // win32 const
+        static constexpr long PRI_CRITICAL     = THREAD_PRIORITY_TIME_CRITICAL;  // win32 const
+
+
         //---   Constructors / Destructor   ---------------------------------
-        /** @brief Default Constructor. */
+        /** @brief Default constructor. */
         inline Thread() noexcept
+            : m_name{}, m_priority{ PRI_NORMAL }
+        {}
+
+        /** @brief Named constructor + optional priority setting. */
+        inline Thread(const std::string& name, const long priority = PRI_NORMAL)
+            : m_name{ name }, m_priority{ priority }
         {}
 
         /** @brief Default Copy constructor. */
@@ -124,6 +146,35 @@ export namespace mtmp
             }
         }
 
+        /** @brief Sets the background mode for this thread (to false or true).
+        *
+        * Returns true if setting was ok, or false otherwise.
+        */
+        inline bool set_background_mode(const bool b_to_background = true)
+        {
+            if (is_ok()) [[likely]] {
+                return SetThreadPriority(mp_thread->native_handle(),
+                                         b_to_background ? THREAD_MODE_BACKGROUND_BEGIN : THREAD_MODE_BACKGROUND_END);
+            }
+            else [[unlikely]] {
+                return false;
+            }
+        }
+
+        /** @brief Sets the priority level for this running thread.
+        *
+        * Returns true if priority level setting was ok, or false otherwise.
+        */
+        inline bool set_priority(const long priority)
+        {
+            if (is_ok()) [[likely]] {
+                return SetThreadPriority(mp_thread->native_handle(), priority) != 0;  // win32 function
+            }
+            else [[unlikely]] {
+                return false;
+            }
+        }
+
         /** @brief Puts this thread to sleep for a fractional count of seconds. */
         inline void sleep_s(const double duration_seconds) noexcept
         {
@@ -143,9 +194,12 @@ export namespace mtmp
                 throw mtmp::Thread::StartedException();
             }
             else {
+                // launches the thread
                 mp_thread = new std::thread([this]() { this->_run(); });  // got it?
                 if (mp_thread == nullptr)
                     throw mtmp::Thread::CreationException();
+                // then sets its priority level
+                set_priority(m_priority);
             }
         }
 
@@ -205,6 +259,7 @@ export namespace mtmp
             m_is_running.store(true);
             m_already_started.store(true);
             ms_active_threads_count++;
+            std::cout << "in _prepare_run(), active threads count = " << ms_active_threads_count.load() << std::endl;
         }
 
         /** @brief The internal running method.
@@ -230,6 +285,8 @@ export namespace mtmp
         std::atomic_bool m_already_started{ false };
         std::atomic_bool m_is_running{ false };
         std::thread* mp_thread{ nullptr };
+        std::string m_name;
+        long m_priority;
     };
 
     std::atomic_long Thread::ms_active_threads_count{ 0 };

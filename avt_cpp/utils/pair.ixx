@@ -66,7 +66,7 @@ export namespace avt {
         using MyBaseClass = std::pair<T, T>;  //!< Wrapper to the base class
 
 
-        //--- Constructors / Destructor -------------------------------------
+        //---   Constructors / Destructor   ---------------------------------
         /** @brief Default constructor. */
         inline Pair_() noexcept
             : MyBaseClass{}
@@ -89,7 +89,7 @@ export namespace avt {
         {}
 
 
-        //--- Indexing ------------------------------------------------------
+        //---   Indexing   --------------------------------------------------
         /** @brief Indexed accessor. */
         const T operator[] (const size_t index) const noexcept(false)
         {
@@ -99,7 +99,7 @@ export namespace avt {
             case 1:
                 return this->second; // inherited from base class
             default:
-                throw(index_exception(index));
+                throw(IndexException());  // (index));
             }
         }
 
@@ -112,7 +112,7 @@ export namespace avt {
             case 1:
                 return this->second; // inherited from base class
             default:
-                throw(index_exception(index));
+                throw(IndexException());  // (index));
             }
         }
 
@@ -126,7 +126,7 @@ export namespace avt {
         virtual ~Pair_() noexcept = default;
 
 
-        //--- Assignements --------------------------------------------------
+        //---   Assignements   ----------------------------------------------
         /** @brief Default Copy assignment. */
         Pair_& operator= (const Pair_&) noexcept = default;
 
@@ -144,14 +144,19 @@ export namespace avt {
         }
 
 
-    private:
-        /** @brief private internal exception to be thrown on erroneous indexing. */
-        inline static std::out_of_range& index_exception(const size_t index) noexcept(false)
+        //---   Specific Exceptions   ---------------------------------------
+        /** @brief Exception on erroneous instantiation of this class. */
+        class IndexException : public std::exception
         {
-            constexpr std::string error_format =
-                "ERROR: trying to index a pair with index value = {} (should be either 0 or 1)";
-            return std::out_of_range(std::format(error_format, index));
-        }
+            const char* what() const noexcept
+            {
+                //constexpr std::string m_error_format =
+                //    "!!! Error: trying to index a pair with index value = {} (should be either 0 or 1)";
+                //return std::out_of_range(std::format(m_error_format, index));
+                return "!!! Error: trying to index a pair with wrong index value (should be either 0 or 1)";
+            }
+        };
+
     };
 
 }

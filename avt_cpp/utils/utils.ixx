@@ -42,10 +42,10 @@ export namespace avt::utils
     {
         constexpr U _min = U(std::numeric_limits<T>::lowest());
         constexpr U _max = U(std::numeric_limits<T>::max());
-        if (std::is_integral_v<U>) {
+        if (std::is_integral_v<U>) [[likely]] {
             return T(std::clamp(value, _min, _max));
         }
-        else {
+        else [[unlikely]]  {
             const U val = U(std::round(value));
             return T(std::clamp(val, _min, _max));
         }

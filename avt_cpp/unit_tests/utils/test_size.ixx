@@ -34,7 +34,6 @@ export module unit_tests.utils.test_size;
 import utils.size;
 
 
-
 //===========================================================================
 export namespace avt::unit_tests
 {
