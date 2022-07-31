@@ -126,10 +126,16 @@
     <ClCompile Include="unit_tests\shapes\test_rect.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="mtmp\scheduler.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>
