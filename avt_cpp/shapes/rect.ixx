@@ -47,11 +47,11 @@ export namespace avt::shapes
     //=======================================================================
     /** @brief The class of graphical rectangles.
     *
-    * Rectangles are defined by their top-left and bottom-right  corners
-    * for  which coordinates are resp.: '.x', '.y' (top-left corner) and
-    * '.end.x' and 'end.y' (bottom-right corner).
-    * Meanwhile, methods '.top_left()' and '.bottom_right()' give access
-    * to the related corner position.
+    * Rectangles are defined by their top-left and bottom-right corners  for
+    * which coordinates are resp.: '.x', '.y' (top-left corner) and '.end.x' 
+    * and 'end.y' (bottom-right corner).
+    * Meanwhile,  accessors and mutators '.top_left()' and '.bottom_right()' 
+    * give access to the related corner position.
     */
     class Rect : public avt::shapes::Line
     {
@@ -106,6 +106,32 @@ export namespace avt::shapes
 
         /** @brief Default destructor. */
         virtual ~Rect() noexcept = default;
+
+
+        //---   Accesors / Mutators   ---------------------------------------
+        /** @brief Accessor to top-left corner. */
+        inline const avt::utils::Coords2D top_left() const noexcept
+        {
+            return avt::utils::Coords2D{ x, y };
+        }
+
+        /** @brief Accessor to bottom-right corner. */
+        inline const avt::utils::Coords2D& bottom_right() const noexcept
+        {
+            return end;
+        }
+
+        /** @brief Mutator on top-left corner. */
+        inline avt::utils::Coords2D top_left() noexcept
+        {
+            return avt::utils::Coords2D{ x, y };
+        }
+
+        /** @brief Mutator on bottom-right corner. */
+        inline avt::utils::Coords2D& bottom_right() noexcept
+        {
+            return end;
+        }
 
 
         //---   Assignments   -----------------------------------------------
