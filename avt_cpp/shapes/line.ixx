@@ -42,7 +42,7 @@ import utils;
 export namespace avt::shapes
 {
     //=======================================================================
-    /** @brief The class of graphical libes.
+    /** @brief The class of graphical lines.
     *
     * Lines get a starting point, which coordinates are '.x' and '.y',
     * and an ending point which corrdinates are 'end.x' and 'end.y'.

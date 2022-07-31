@@ -164,6 +164,7 @@
     <ClCompile Include="mtmp\watchdog.ixx" />
     <ClCompile Include="shapes\line.ixx" />
     <ClCompile Include="shapes\point.ixx" />
+    <ClCompile Include="shapes\rect.ixx" />
     <ClCompile Include="shapes\shape.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_barrier.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_mutex.ixx" />
