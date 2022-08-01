@@ -32,44 +32,45 @@ module;
 #include "utils/types.h"
 
 
-export module unit_tests.shapes.test_point;
+export module unit_tests.gui.shapes.test_point;
 
+import utils.coords2d;
 import types.pair;
+import gui.shapes.point;
 import utils.rgba_color;
-import shapes.point;
 
 
 //===========================================================================
-export namespace avt::unit_tests
+export namespace avt::unit_tests::gui::shapes
 {
     //=======================================================================
     void test_point()
     {
         std::cout << "-- TEST avt::utils::Point\n";
 
-        avt::shapes::Point s0;
+        avt::gui::shapes::Point s0;
         assert(s0.x == 0);
         assert(s0.y == 0);
         assert(s0.color == avt::utils::RGBAColor(0, 0, 0));
 
-        avt::shapes::Point s1(1, 2, avt::utils::RGBAColor(11, 22, 33));
+        avt::gui::shapes::Point s1(1, 2, avt::utils::RGBAColor(11, 22, 33));
         assert(s1.x == 1);
         assert(s1.y == 2);
         assert(s1.color == avt::utils::RGBAColor(11, 22, 33));
 
-        avt::shapes::Point s2(avt::utils::Coords2D(200, 100), avt::utils::RGBAColor(44, 55, 66, 256));
+        avt::gui::shapes::Point s2(avt::utils::Coords2D(200, 100), avt::utils::RGBAColor(44, 55, 66, 256));
         assert(s2.x == 200);
         assert(s2.y == 100);
         assert(s2.color == avt::utils::RGBAColor(44, 55, 66));
         assert(s2.color.a == avt::Byte(255));
         assert(s2 == avt::utils::Coords2D(200, 100));
 
-        avt::shapes::Point s3(std::array<long, 2>{25, 15}, avt::utils::RGBAColor(1, 2, 3));
+        avt::gui::shapes::Point s3(std::array<long, 2>{25, 15}, avt::utils::RGBAColor(1, 2, 3));
         assert(s3.x == 25);
         assert(s3.y == 15);
         assert(s3.color == avt::utils::RGBAColor(1, 2, 3));
 
-        avt::shapes::Point s4(s3);
+        avt::gui::shapes::Point s4(s3);
         assert(s4.x == 25);
         assert(s4.y == 15);
         assert(s4.color == avt::utils::RGBAColor(1, 2, 3));

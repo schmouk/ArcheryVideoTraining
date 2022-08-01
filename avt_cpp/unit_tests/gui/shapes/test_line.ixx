@@ -32,22 +32,22 @@ module;
 #include "utils/types.h"
 
 
-export module unit_tests.shapes.test_line;
+export module unit_tests.gui.shapes.test_line;
 
-import shapes.line;
+import gui.shapes.line;
 import types.pair;
 import utils.rgba_color;
 
 
 //===========================================================================
-export namespace avt::unit_tests
+export namespace avt::unit_tests::gui::shapes
 {
     //=======================================================================
     void test_line()
     {
-        std::cout << "-- TEST avt::utils::Line\n";
+        std::cout << "-- TEST avt::gui::shapes::Line\n";
 
-        avt::shapes::Line l0;
+        avt::gui::shapes::Line l0;
         assert(l0.x == 0);
         assert(l0.y == 0);
         assert(l0.end.x == 0);
@@ -55,7 +55,7 @@ export namespace avt::unit_tests
         assert(l0.thickness == 1);
         assert(l0.color == avt::utils::RGBAColor(0, 0, 0, 255));
 
-        avt::shapes::Line l1({ 1,2 }, std::array<float, 2>{111.39f, 21.50f}, avt::utils::RGBAColor(11, 22, 33), 3);
+        avt::gui::shapes::Line l1({ 1,2 }, std::array<float, 2>{111.39f, 21.50f}, avt::utils::RGBAColor(11, 22, 33), 3);
         assert(l1.x == 1);
         assert(l1.y == 2);
         assert(l1.end.x == 111);
@@ -63,7 +63,7 @@ export namespace avt::unit_tests
         assert(l1.thickness == 3);
         assert(l1.color == avt::utils::RGBAColor(11, 22, 33, 255));
 
-        avt::shapes::Line l2 = l1;
+        avt::gui::shapes::Line l2 = l1;
         assert(l2.x == 1);
         assert(l2.y == 2);
         assert(l2.end.x == 111);
@@ -71,7 +71,7 @@ export namespace avt::unit_tests
         assert(l2.thickness == 3);
         assert(l2.color == avt::utils::RGBAColor(11, 22, 33, 255));
 
-        avt::shapes::Line l3{ l2 };
+        avt::gui::shapes::Line l3{ l2 };
         l3.thickness = 1;
         assert(l3.x == 1);
         assert(l3.y == 2);
@@ -83,7 +83,7 @@ export namespace avt::unit_tests
         assert(l1 == l2);
         assert(l3 != l1);
 
-        avt::shapes::Line l4 = l2;
+        avt::gui::shapes::Line l4 = l2;
 
         l4.move(-20, 10.5f);
         assert(l4.x == -19);
@@ -101,7 +101,7 @@ export namespace avt::unit_tests
         assert(l4.thickness == 3);
         assert(l4.color == avt::utils::RGBAColor(11, 22, 33, 255));
 
-        avt::shapes::Line l5 = l4;
+        avt::gui::shapes::Line l5 = l4;
         l5 += std::vector<double>{10., 30.};
         assert(l5.x == 5);
         assert(l5.y == 15);

@@ -32,23 +32,23 @@ module;
 #include "utils/types.h"
 
 
-export module unit_tests.shapes.test_rect;
+export module unit_tests.gui.shapes.test_rect;
 
-import shapes.line;
+import gui.shapes.line;
 import types.pair;
-import shapes.rect;
+import gui.shapes.rect;
 import utils.rgba_color;
 
 
 //===========================================================================
-export namespace avt::unit_tests
+export namespace avt::unit_tests::gui::shapes
 {
     //=======================================================================
     void test_rect()
     {
         std::cout << "-- TEST avt::utils::Rect\n";
 
-        avt::shapes::Rect r0;
+        avt::gui::shapes::Rect r0;
         assert(r0.x == 0);
         assert(r0.y == 0);
         assert(r0.end.x == 0);
@@ -56,7 +56,7 @@ export namespace avt::unit_tests
         assert(r0.thickness == 1);
         assert(r0.color == avt::utils::RGBAColor(0, 0, 0, 255));
 
-        avt::shapes::Rect r1({ 1,2 }, std::array<float, 2>{111.39f, 21.50f}, avt::utils::RGBAColor(11, 22, 33), 3);
+        avt::gui::shapes::Rect r1({ 1,2 }, std::array<float, 2>{111.39f, 21.50f}, avt::utils::RGBAColor(11, 22, 33), 3);
         assert(r1.x == 1);
         assert(r1.y == 2);
         assert(r1.end.x == 111);
@@ -64,7 +64,7 @@ export namespace avt::unit_tests
         assert(r1.thickness == 3);
         assert(r1.color == avt::utils::RGBAColor(11, 22, 33, 255));
 
-        avt::shapes::Rect r2 = r1;
+        avt::gui::shapes::Rect r2 = r1;
         assert(r2.x == 1);
         assert(r2.y == 2);
         assert(r2.end.x == 111);
@@ -72,7 +72,7 @@ export namespace avt::unit_tests
         assert(r2.thickness == 3);
         assert(r2.color == avt::utils::RGBAColor(11, 22, 33, 255));
 
-        avt::shapes::Rect r3{ r2 };
+        avt::gui::shapes::Rect r3{ r2 };
         r3.thickness = 1;
         assert(r3.x == 1);
         assert(r3.y == 2);
@@ -84,7 +84,7 @@ export namespace avt::unit_tests
         assert(r1 == r2);
         assert(r3 != r1);
 
-        avt::shapes::Rect r4 = r2;
+        avt::gui::shapes::Rect r4 = r2;
 
         r4.move(-20, 10.5f);
         assert(r4.x == -19);
@@ -102,7 +102,7 @@ export namespace avt::unit_tests
         assert(r4.thickness == 3);
         assert(r4.color == avt::utils::RGBAColor(11, 22, 33, 255));
 
-        avt::shapes::Rect r5 = r4;
+        avt::gui::shapes::Rect r5 = r4;
         r5 += std::vector<double>{10., 30.};
         assert(r5.x == 5);
         assert(r5.y == 15);
@@ -159,7 +159,7 @@ export namespace avt::unit_tests
         assert(r2.thickness == 3);
         assert(r2.color == avt::utils::RGBAColor(13, 26, 40, 255));
 
-        r2 = avt::shapes::Rect({ 11, 22 }, { 333.3, 443.7 }, avt::utils::RGBAColor(127, 128, 129, 130), 15);
+        r2 = avt::gui::shapes::Rect({ 11, 22 }, { 333.3, 443.7 }, avt::utils::RGBAColor(127, 128, 129, 130), 15);
         assert(r2.x == 11);
         assert(r2.y == 22);
         assert(r2.end.x == 333);
@@ -167,7 +167,7 @@ export namespace avt::unit_tests
         assert(r2.thickness == 15);
         assert(r2.color == avt::utils::RGBAColor(127, 128, 129, 130));
 
-        r2.top_left() = std::vector<long>{-1, -22, -331};
+        r2.top_left(std::vector<long>{-1, -22, -331});
         assert(r2.x == -1);
         assert(r2.y == -22);
         assert(r2.end.x == 333);

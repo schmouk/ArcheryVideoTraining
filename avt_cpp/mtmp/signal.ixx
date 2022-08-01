@@ -24,11 +24,11 @@ module;
 #include <chrono>
 #include <semaphore>
 
-export module mtmp.signal;
+export module avt.mtmp.signal;
 
 
 //===========================================================================
-export namespace mtmp
+export namespace avt::mtmp
 {
     //=======================================================================
     /** @brief The class for Signals.

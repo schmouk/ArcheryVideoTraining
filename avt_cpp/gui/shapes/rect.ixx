@@ -31,18 +31,18 @@ module;
 #include "utils/types.h"
 
 
-export module shapes.rect;
+export module gui.shapes.rect;
 
 import utils.coords2d;
 import video.frame;
-import shapes.line;
+import gui.shapes.line;
 import utils.rgba_color;
-import shapes.shape;
+import gui.shapes.shape;
 import utils;
 
 
 //===========================================================================
-export namespace avt::shapes
+export namespace avt::gui::shapes
 {
     //=======================================================================
     /** @brief The class of graphical rectangles.
@@ -53,11 +53,11 @@ export namespace avt::shapes
     * Meanwhile,  accessors and mutators '.top_left()' and '.bottom_right()' 
     * give access to the related corner position.
     */
-    class Rect : public avt::shapes::Line
+    class Rect : public avt::gui::shapes::Line
     {
     public:
         //--- Wrappers ------------------------------------------------------
-        using MyBaseType = avt::shapes::Line;
+        using MyBaseType = avt::gui::shapes::Line;
 
 
         //--- Constructors / Destructors ------------------------------------
@@ -94,7 +94,7 @@ export namespace avt::shapes
         {}
 
         /** @brief Constructor from line. */
-        inline explicit Rect(const avt::shapes::Line& line) noexcept
+        inline explicit Rect(const avt::gui::shapes::Line& line) noexcept
             : MyBaseType(line)
         {}
 
@@ -121,10 +121,29 @@ export namespace avt::shapes
             return end;
         }
 
-        /** @brief Mutator on top-left corner. */
-        inline avt::utils::Coords2D top_left() noexcept
+        /** @brief "Mutator" on top-left corner (two scalar coordinates). */
+        template<typename X, typename Y>
+            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
+        inline void top_left(const X new_x, const Y new_y)
         {
-            return avt::utils::Coords2D{ x, y };
+            x = new_x;
+            y = new_y;
+        }
+
+        /** @brief "Mutator" on top-left corner (one 2D-coords). */
+        inline void top_left(const avt::utils::Coords2D& new_pos)
+        {
+            x = new_pos.x;
+            y = new_pos.y;
+        }
+
+        /** @brief "Mutator" on top-left corner (one pair of coordinates). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline void top_left(const P& new_pos)
+        {
+            x = new_pos[0];
+            y = new_pos[1];
         }
 
         /** @brief Mutator on bottom-right corner. */
@@ -148,10 +167,19 @@ export namespace avt::shapes
             return *this;
         }
 
-        /** @brief Line reference assignment. */
-        Rect& operator= (const avt::shapes::Line& line) noexcept
+        /** @brief New position assignment. */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        Rect& operator= (const P& new_pos) noexcept
         {
-            *this = avt::shapes::Rect(line);
+            move_at(new_pos[0], new_pos[1]);
+            return *this;
+        }
+
+        /** @brief Line reference assignment. */
+        Rect& operator= (const avt::gui::shapes::Line& line) noexcept
+        {
+            return *this = avt::gui::shapes::Rect(line);
         }
 
 

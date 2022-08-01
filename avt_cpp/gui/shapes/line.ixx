@@ -29,17 +29,17 @@ module;
 #include "utils/types.h"
 
 
-export module shapes.line;
+export module gui.shapes.line;
 
 import utils.coords2d;
 import video.frame;
 import utils.rgba_color;
-import shapes.shape;
+import gui.shapes.shape;
 import utils;
 
 
 //===========================================================================
-export namespace avt::shapes
+export namespace avt::gui::shapes
 {
     //=======================================================================
     /** @brief The class of graphical lines.
@@ -47,11 +47,11 @@ export namespace avt::shapes
     * Lines get a starting point, which coordinates are '.x' and '.y',
     * and an ending point which corrdinates are 'end.x' and 'end.y'.
     */
-    class Line : public avt::shapes::Shape
+    class Line : public avt::gui::shapes::Shape
     {
     public:
         //--- Wrappers ------------------------------------------------------
-        using MyBaseType = avt::shapes::Shape;
+        using MyBaseType = avt::gui::shapes::Shape;
 
 
         //--- Constructors / Destructors ------------------------------------

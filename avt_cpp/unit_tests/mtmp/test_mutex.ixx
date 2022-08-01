@@ -30,19 +30,19 @@ module;
 
 export module unit_tests.mtmp.test_mutex;
 
-import mtmp.mutex;
-import mtmp.thread;
+import avt.mtmp.mutex;
+import avt.mtmp.thread;
 
 
 //===========================================================================
-namespace mtmp::unit_tests
+namespace avt::unit_tests::mtmp::mutex
 {
     //=======================================================================
-    class ThreadA : public mtmp::Thread
+    class ThreadA : public avt::mtmp::Thread
     {
     public:
-        inline ThreadA(mtmp::Mutex* p_mutex) noexcept
-            : mtmp::Thread(), mp_mutex(p_mutex)
+        inline ThreadA(avt::mtmp::Mutex* p_mutex) noexcept
+            : avt::mtmp::Thread(), mp_mutex(p_mutex)
         {}
 
         inline virtual ~ThreadA() noexcept
@@ -60,15 +60,15 @@ namespace mtmp::unit_tests
         }
 
     private:
-        mtmp::Mutex* mp_mutex;
+        avt::mtmp::Mutex* mp_mutex;
     };
 
     //=======================================================================
-    class ThreadB : public mtmp::Thread
+    class ThreadB : public avt::mtmp::Thread
     {
     public:
-        inline ThreadB(const char id, mtmp::Mutex* p_mutex) noexcept
-            : mtmp::Thread(), m_id(id), mp_mutex(p_mutex)
+        inline ThreadB(const char id, avt::mtmp::Mutex* p_mutex) noexcept
+            : avt::mtmp::Thread(), m_id(id), mp_mutex(p_mutex)
         {}
 
         inline virtual ~ThreadB() noexcept
@@ -86,7 +86,7 @@ namespace mtmp::unit_tests
         }
 
     private:
-        mtmp::Mutex* mp_mutex;
+        avt::mtmp::Mutex* mp_mutex;
         char m_id;
 
     };
@@ -94,12 +94,12 @@ namespace mtmp::unit_tests
     //=======================================================================
     export void test_mutex()
     {
-        std::cout << "-- TEST mtmp::Mutex\n";
+        std::cout << "-- TEST avt::mtmp::Mutex\n";
 
-        mtmp::Mutex the_mutex;
-        mtmp::unit_tests::ThreadA a(&the_mutex);
-        mtmp::unit_tests::ThreadB b1('1', &the_mutex);
-        mtmp::unit_tests::ThreadB b2('2', &the_mutex);
+        avt::mtmp::Mutex the_mutex;
+        ThreadA a(&the_mutex);
+        ThreadB b1('1', &the_mutex);
+        ThreadB b2('2', &the_mutex);
 
         a.start();
         b1.start();
