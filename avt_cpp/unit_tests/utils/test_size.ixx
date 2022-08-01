@@ -35,7 +35,7 @@ import utils.size;
 
 
 //===========================================================================
-export namespace avt::unit_tests
+export namespace avt::unit_tests::utils
 {
     //=======================================================================
     void test_size()

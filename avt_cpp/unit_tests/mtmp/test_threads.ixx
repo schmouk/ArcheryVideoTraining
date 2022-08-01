@@ -31,19 +31,19 @@ module;
 
 export module unit_tests.mtmp.test_threads;
 
-import mtmp.thread;
+import avt.mtmp.thread;
 
 
 
 //===========================================================================
-namespace mtmp::unit_tests::threads
+namespace avt::unit_tests::mtmp::threads
 {
     //=======================================================================
-    class ThreadA : public mtmp::Thread
+    class ThreadA : public avt::mtmp::Thread
     {
     public:
         inline ThreadA() noexcept
-            : mtmp::Thread()
+            : avt::mtmp::Thread()
         {}
 
         inline virtual ~ThreadA() noexcept
@@ -63,11 +63,11 @@ namespace mtmp::unit_tests::threads
     };
 
     //=======================================================================
-    class ThreadB : public mtmp::Thread
+    class ThreadB : public avt::mtmp::Thread
     {
     public:
         inline ThreadB() noexcept
-            : mtmp::Thread()
+            : avt::mtmp::Thread()
         {}
 
         inline virtual ~ThreadB() noexcept
@@ -90,20 +90,20 @@ namespace mtmp::unit_tests::threads
     //=======================================================================
     export void test_threads()
     {
-        std::cout << "-- TEST mtmp::Thread\n";
+        std::cout << "-- TEST avt::mtmp::Thread\n";
 
-        mtmp::unit_tests::threads::ThreadA a;
-        mtmp::unit_tests::threads::ThreadB b;
+        ThreadA a;
+        ThreadB b;
 
         std::cout << a.get_id() << " / " << b.get_id() << std::endl;
 
-        assert(mtmp::Thread::get_running_threads_count() == 0);
+        assert(avt::mtmp::Thread::get_running_threads_count() == 0);
 
         a.start();
         b.start();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
-        assert(mtmp::Thread::get_running_threads_count() == 2);
+        assert(avt::mtmp::Thread::get_running_threads_count() == 2);
 
         std::cout << a.get_id() << " / " << b.get_id() << std::endl;
 
@@ -113,13 +113,13 @@ namespace mtmp::unit_tests::threads
         a.join();
 
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
-        assert(mtmp::Thread::get_running_threads_count() == 1);
+        assert(avt::mtmp::Thread::get_running_threads_count() == 1);
 
         b.join();
         std::cout << "main thread has sucessfully joined\n";
 
         std::this_thread::sleep_for(std::chrono::milliseconds(16));
-        assert(mtmp::Thread::get_running_threads_count() == 0);
+        assert(avt::mtmp::Thread::get_running_threads_count() == 0);
 
         std::cout << "   All tests OK\n\n";
     }

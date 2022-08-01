@@ -31,19 +31,19 @@ module;
 
 export module unit_tests.mtmp.test_watchdog;
 
-import mtmp.watchdog;
+import avt.mtmp.watchdog;
 
 
 
 //===========================================================================
-namespace mtmp::unit_tests
+namespace avt::unit_tests::mtmp::watchdog
 {
     //=======================================================================
-    class MyWatchdog : public mtmp::Watchdog
+    class MyWatchdog : public avt::mtmp::Watchdog
     {
     public:
         inline MyWatchdog(const char name, const double duration_ms) noexcept
-            : mtmp::Watchdog{ duration_ms, name }, m_name{ name }
+            : avt::mtmp::Watchdog{ duration_ms, name }, m_name{ name }
         {}
 
     protected:
@@ -60,10 +60,10 @@ namespace mtmp::unit_tests
     //=======================================================================
     export void test_watchdog()
     {
-        std::cout << "-- TEST mtmp::Watchdog\n";
+        std::cout << "-- TEST avt::mtmp::Watchdog\n";
 
-        mtmp::unit_tests::MyWatchdog a{ 'X', 1311 };
-        mtmp::unit_tests::MyWatchdog b{ 'Y', 1763.49 };
+        MyWatchdog a{ 'X', 1311 };
+        MyWatchdog b{ 'Y', 1763.49 };
 
         std::cout << "  -- " << std::chrono::system_clock::now() << "\n\n";
 

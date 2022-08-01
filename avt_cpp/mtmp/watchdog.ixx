@@ -22,19 +22,18 @@ SOFTWARE.
 module;
 
 #include <atomic>
-//#include <iostream>
 #include <chrono>
 #include <thread>
 
 
-export module mtmp.watchdog;
+export module avt.mtmp.watchdog;
 
-import mtmp.thread;
-import mtmp.timer;
+import avt.mtmp.thread;
+import avt.mtmp.timer;
 
 
 //===========================================================================
-export namespace mtmp
+export namespace avt::mtmp
 {
     export class Watchdog;
 
@@ -46,7 +45,7 @@ export namespace mtmp
     * leads  to  the running again of their timing count-down before waking 
     * up.
     *
-    * @sa mtmp::Timer.
+    * @sa avt::mtmp::Timer.
     *
     * Correct usage is:
     *   - Define a new class inheriting from this one;
@@ -98,7 +97,6 @@ export namespace mtmp
         /** @brief Resets the time count-down for this watchdog. */
         inline void reset() noexcept(false)
         {
-            //std::cout << "- " << mp_timer << " - in " << m_name << " mtmp::Watchdog::reset() (" << std::chrono::system_clock::now() << ")\n";
             if (mp_timer != nullptr) {
                 mp_timer->b_reset.store(true);
             }
@@ -109,17 +107,14 @@ export namespace mtmp
         /** @brief Starts this watchdog. */
         virtual void start() noexcept(false)
         {
-            //std::cout << "- " << mp_timer << " - in " << m_name << " mtmp::Watchdog::start() (" << std::chrono::system_clock::now() << ")\n";
-
             if (mp_timer != nullptr)
                 stop();
 
             mp_timer = new _Timer(this, (const double)m_time_countdown_ms);
 
             if (mp_timer == nullptr)
-                throw mtmp::Watchdog::StartException();
+                throw avt::mtmp::Watchdog::StartException();
             else {
-                //std::cout << "- " << mp_timer << " - " << m_name << " launches mp_timer          (" << std::chrono::system_clock::now() << ")\n";
                 mp_timer->start();
             }
         }
@@ -128,7 +123,6 @@ export namespace mtmp
         void stop() noexcept
         {
             if (mp_timer != nullptr) {
-                //std::cout << "- " << mp_timer << " - in " << m_name << " mtmp::Watchdog::stop()  (" << std::chrono::system_clock::now() << ")\n";
                 mp_timer->stop();
                 mp_timer->join();
                 delete mp_timer;
@@ -140,7 +134,7 @@ export namespace mtmp
         void set_time_countdown_ms(const double time_countdown_ms) noexcept(false)
         {
             if (time_countdown_ms < 0.5)
-                throw mtmp::Watchdog::TimeCountdownException();
+                throw avt::mtmp::Watchdog::TimeCountdownException();
             m_time_countdown_ms = time_countdown_ms;
             reset();
         }
@@ -168,19 +162,17 @@ export namespace mtmp
         * down  completes.  Inheriting classes should override it.
         */
         virtual inline void run()
-        {
-            //std::cout << "- " << mp_timer << " - in " << m_name << " mtmp::Watchdog.run()\n";
-        }
+        {}
 
 
     private:
         //---   Internal implementation   -----------------------------------
-        class _Timer : public mtmp::Timer {
+        class _Timer : public avt::mtmp::Timer {
         public:
             inline _Timer(Watchdog* parent_watchdog,
                           const double time_countdown_ms) noexcept
                 : mp_parent{ parent_watchdog },
-                  mtmp::Timer(time_countdown_ms, 1, true)  //false)  // 
+                  avt::mtmp::Timer(time_countdown_ms, 1, true)  //false)  // 
             {
                 b_reset.store(false);
             }
@@ -199,17 +191,12 @@ export namespace mtmp
 
             virtual inline void run() override
             {
-                //std::this_thread::sleep_for(std::chrono::milliseconds(5));
-                //std::cout << "\n- " << this << " - in " << mp_parent->m_name << " mtmp::Watchdog::_Timer.run()  (" << std::chrono::system_clock::now() << ")\n";
                 if (!b_reset.load()) {
                     mp_parent->run();
                 }
-                else {
-                    //std::cout << "\n- " << this << " - in " << mp_parent->m_name << " mtmp::Watchdog::_Timer.run()  (resetted)\n";
-                }
             }
 
-            mtmp::Watchdog*  mp_parent;
+            avt::mtmp::Watchdog*  mp_parent;
         };
 
 
