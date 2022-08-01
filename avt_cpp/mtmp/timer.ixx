@@ -26,13 +26,13 @@ module;
 #include <thread>
 
 
-export module mtmp.timer;
+export module avt.mtmp.timer;
 
-import mtmp.thread;
+import avt.mtmp.thread;
 
 
 //===========================================================================
-export namespace mtmp
+export namespace avt::mtmp
 {
     //=======================================================================
     /** @brief The base class for Timers.
@@ -40,7 +40,7 @@ export namespace mtmp
     * Timers are threads that repeat a same task on a periodical time and 
     * for a specified overall duration.
     * 
-    * @sa mtmp::Thread.
+    * @sa avt::mtmp::Thread.
     *
     * Correct usage is:
     *   - Define a new class inheriting from this one;
@@ -59,7 +59,7 @@ export namespace mtmp
     *  Notice:  a stopped timer SHOULD NOT be started  again.  Attempting
     *     to do so leads to the throwing of a dedicated exception.
     */
-    class Timer : public mtmp::Thread
+    class Timer : public avt::mtmp::Thread
     {
     public:
         //---   Constructors / Destructor   ---------------------------------
@@ -73,7 +73,7 @@ export namespace mtmp
         */
         inline Timer(const double period_ms,
                      const bool   b_delay = false) noexcept
-            : mtmp::Thread{},
+            : avt::mtmp::Thread{},
               m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
               m_n_repeats{ 0 },
               m_b_delay{ b_delay }
@@ -92,7 +92,7 @@ export namespace mtmp
         inline Timer(const double period_ms,
                      const size_t n_repeats,
                      const bool   b_delay = false) noexcept
-            : mtmp::Thread{},
+            : avt::mtmp::Thread{},
               m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
               m_n_repeats{ n_repeats },
               m_b_delay{ b_delay }
@@ -108,7 +108,7 @@ export namespace mtmp
         /** @brief Destructor. */
         virtual inline ~Timer() noexcept
         {
-            //std::cout << "\n- " << this << " - in mtmp::Timer::delete()  (" << std::chrono::system_clock::now() << ")\n";
+            //std::cout << "\n- " << this << " - in avt::mtmp::Timer::delete()  (" << std::chrono::system_clock::now() << ")\n";
         }
 
 
@@ -127,11 +127,11 @@ export namespace mtmp
         * This methods does nothing in this generic class. Inheriting
         * classes  can  override  it  to implement their own repeated
         * processing.
-        * @sa as an example class mtmp::Watchdog.
+        * @sa as an example class avt::mtmp::Watchdog.
         */
         virtual inline void run() override
         {
-            //std::cout << "\n- " << this << "in mtmp::Timer::run()  (" << std::chrono::system_clock::now() << ")\n";
+            //std::cout << "\n- " << this << "in avt::mtmp::Timer::run()  (" << std::chrono::system_clock::now() << ")\n";
         }
 
 

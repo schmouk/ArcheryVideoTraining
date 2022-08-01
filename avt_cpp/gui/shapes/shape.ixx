@@ -27,7 +27,7 @@ module;
 
 #include "utils/types.h"
 
-export module shapes.shape;
+export module gui.shapes.shape;
 
 import utils.coords2d;
 import video.frame;
@@ -36,7 +36,7 @@ import utils;
 
 
 //===========================================================================
-export namespace avt::shapes
+export namespace avt::gui::shapes
 {
     //=======================================================================
     /** @brief The base class for all graphical shapes. */

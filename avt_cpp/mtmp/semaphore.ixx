@@ -26,11 +26,11 @@ module;
 #include <cstddef>
 #include <semaphore>
 
-export module mtmp.semaphore;
+export module avt.mtmp.semaphore;
 
 
 //===========================================================================
-export namespace mtmp
+export namespace avt::mtmp
 {
     //=======================================================================
     /** @brief The class for Semaphores. */

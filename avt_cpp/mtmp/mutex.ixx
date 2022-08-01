@@ -28,11 +28,11 @@ module;
 #include <mutex>
 
 
-export module mtmp.mutex;
+export module avt.mtmp.mutex;
 
 
 //===========================================================================
-export namespace mtmp
+export namespace avt::mtmp
 {
     //=======================================================================
     /** @brief The class of mutexes, with timeout processing if needed. */

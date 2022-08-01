@@ -36,7 +36,7 @@ import utils.gray_color;
 
 
 //===========================================================================
-export namespace avt::unit_tests
+export namespace avt::unit_tests::utils
 {
     //=======================================================================
     void test_gray_color()
