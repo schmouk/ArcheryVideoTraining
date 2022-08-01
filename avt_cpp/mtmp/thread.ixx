@@ -165,10 +165,13 @@ export namespace mtmp
         *
         * Returns true if priority level setting was ok, or false otherwise.
         */
-        inline bool set_priority(const long priority)
+        bool set_priority(const long priority)
         {
             if (is_ok()) [[likely]] {
-                return SetThreadPriority(mp_thread->native_handle(), priority) != 0;  // win32 function
+                if (priority == m_priority)
+                    return true;
+                else
+                    return SetThreadPriority(mp_thread->native_handle(), priority) != 0;  // win32 function
             }
             else [[unlikely]] {
                 return false;
