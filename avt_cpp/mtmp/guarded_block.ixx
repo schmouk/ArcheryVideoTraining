@@ -22,13 +22,13 @@ SOFTWARE.
 */
 
 //===========================================================================
-export module mtmp.guarded_block;
+export module avt.mtmp.guarded_block;
 
-import mtmp.mutex;
+import avt.mtmp.mutex;
 
 
 //===========================================================================
-export namespace mtmp
+export namespace avt::mtmp
 {
     //=======================================================================
     /** @brief The class for Guarded Blocks of code. */
@@ -37,7 +37,7 @@ export namespace mtmp
     public:
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Default Constructor. */
-        inline GuardedBlock(mtmp::Mutex* p_mtx) noexcept
+        inline GuardedBlock(avt::mtmp::Mutex* p_mtx) noexcept
             : mp_mtx{ p_mtx }
         {
             if (mp_mtx != nullptr)
@@ -58,7 +58,7 @@ export namespace mtmp
 
 
     private:
-        mtmp::Mutex* mp_mtx;
+        avt::mtmp::Mutex* mp_mtx;
     };
 
 }

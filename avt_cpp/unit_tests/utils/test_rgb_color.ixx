@@ -40,7 +40,7 @@ import utils.rgb_color;
 
 
 //===========================================================================
-export namespace avt::unit_tests
+export namespace avt::unit_tests::utils
 {
     //=======================================================================
     void test_rgb_color()

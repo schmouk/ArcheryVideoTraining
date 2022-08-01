@@ -31,28 +31,28 @@ module;
 
 export module unit_tests.mtmp.test_timers;
 
-import mtmp.timer;
+import avt.mtmp.timer;
 
 
 
 //===========================================================================
-namespace mtmp::unit_tests
+namespace avt::unit_tests::mtmp::timer
 {
     //=======================================================================
-    class TimerA : public mtmp::Timer
+    class TimerA : public avt::mtmp::Timer
     {
     public:
         inline TimerA(const char   name,
                       const double period_ms,
                       const bool   b_delay = false) noexcept
-            : mtmp::Timer{ period_ms, b_delay }, m_name{ name }
+            : avt::mtmp::Timer{ period_ms, b_delay }, m_name{ name }
         {}
 
         inline TimerA(const char   name,
                       const double period_ms,
                       const size_t n_repeats,
                       const bool   b_delay = false) noexcept
-            : mtmp::Timer{ period_ms, n_repeats, b_delay }, m_name{ name }
+            : avt::mtmp::Timer{ period_ms, n_repeats, b_delay }, m_name{ name }
         {}
 
     protected:
@@ -69,10 +69,10 @@ namespace mtmp::unit_tests
     //=======================================================================
     export void test_timers()
     {
-        std::cout << "-- TEST mtmp::Timer\n";
+        std::cout << "-- TEST avt::mtmp::Timer\n";
 
-        mtmp::unit_tests::TimerA a{ 'A', 311, true };
-        mtmp::unit_tests::TimerA b{ 'B', 463.49, 20, false };
+        TimerA a{ 'A', 311, true };
+        TimerA b{ 'B', 463.49, 20, false };
 
         a.start();
         b.start();
@@ -85,7 +85,7 @@ namespace mtmp::unit_tests
         a.join();
         b.join();
 
-        assert(mtmp::Thread::get_running_threads_count() == 0);
+        assert(avt::mtmp::Thread::get_running_threads_count() == 0);
 
         std::cout << "   All tests OK\n\n";
     }

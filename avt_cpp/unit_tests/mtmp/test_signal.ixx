@@ -30,19 +30,19 @@ module;
 
 export module unit_tests.mtmp.test_signal;
 
-import mtmp.signal;
-import mtmp.thread;
+import avt.mtmp.signal;
+import avt.mtmp.thread;
 
 
 //===========================================================================
-namespace mtmp::unit_tests::test_signal
+namespace avt::unit_tests::mtmp::signal
 {
     //=======================================================================
-    class ThreadA : public mtmp::Thread
+    class ThreadA : public avt::mtmp::Thread
     {
     public:
-        inline ThreadA(mtmp::Signal* p_signal) noexcept
-            : mtmp::Thread(), mp_signal(p_signal)
+        inline ThreadA(avt::mtmp::Signal* p_signal) noexcept
+            : avt::mtmp::Thread(), mp_signal(p_signal)
         {
             std::cout << "instantiates Thread A\n";
         }
@@ -63,15 +63,15 @@ namespace mtmp::unit_tests::test_signal
         }
 
     private:
-        mtmp::Signal* mp_signal;
+        avt::mtmp::Signal* mp_signal;
     };
 
     //=======================================================================
-    class ThreadB : public mtmp::Thread
+    class ThreadB : public avt::mtmp::Thread
     {
     public:
-        inline ThreadB(const char id, mtmp::Signal* p_signal) noexcept
-            : mtmp::Thread(), m_id(id), mp_signal(p_signal)
+        inline ThreadB(const char id, avt::mtmp::Signal* p_signal) noexcept
+            : avt::mtmp::Thread(), m_id(id), mp_signal(p_signal)
         {
             std::cout << "instantiates Thread B(" << m_id << ")\n";
         }
@@ -91,7 +91,7 @@ namespace mtmp::unit_tests::test_signal
         }
 
     private:
-        mtmp::Signal* mp_signal;
+        avt::mtmp::Signal* mp_signal;
         char m_id;
 
     };
@@ -99,12 +99,12 @@ namespace mtmp::unit_tests::test_signal
     //=======================================================================
     export void test_signal()
     {
-        std::cout << "-- TEST mtmp::Signal\n";
+        std::cout << "-- TEST avt::mtmp::Signal\n";
 
-        mtmp::Signal the_signal;
-        mtmp::unit_tests::test_signal::ThreadA a(&the_signal);
-        mtmp::unit_tests::test_signal::ThreadB b1('1', &the_signal);
-        mtmp::unit_tests::test_signal::ThreadB b2('2', &the_signal);
+        avt::mtmp::Signal the_signal;
+        ThreadA a(&the_signal);
+        ThreadB b1('1', &the_signal);
+        ThreadB b2('2', &the_signal);
 
         b1.start();
         b2.start();

@@ -96,34 +96,34 @@
     <ClCompile Include="utils\utils.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="shapes\shape.ixx">
+    <ClCompile Include="gui\shapes\shape.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="video\frame.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unit_tests\shapes\test_shape.ixx">
+    <ClCompile Include="unit_tests\gui\shapes\test_shape.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="shapes\point.ixx">
+    <ClCompile Include="gui\shapes\point.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unit_tests\shapes\test_point.ixx">
+    <ClCompile Include="unit_tests\gui\shapes\test_point.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utils\rgba_color.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="shapes\line.ixx">
+    <ClCompile Include="gui\shapes\line.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unit_tests\shapes\test_line.ixx">
+    <ClCompile Include="unit_tests\gui\shapes\test_line.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="shapes\rect.ixx">
+    <ClCompile Include="gui\shapes\rect.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unit_tests\shapes\test_rect.ixx">
+    <ClCompile Include="unit_tests\gui\shapes\test_rect.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mtmp\scheduler.ixx">

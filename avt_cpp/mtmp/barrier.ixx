@@ -28,16 +28,16 @@ module;
 #include <thread>
 #include <vector>
 
-export module mtmp.barrier;
+export module avt.mtmp.barrier;
 
-import mtmp.guarded_block;
-import mtmp.mutex;
-import mtmp.signal;
-import mtmp.thread;
+import avt.mtmp.guarded_block;
+import avt.mtmp.mutex;
+import avt.mtmp.signal;
+import avt.mtmp.thread;
 
 
 //===========================================================================
-export namespace mtmp
+export namespace avt::mtmp
 {
     //=======================================================================
     /** @brief The class for Barriers.
@@ -58,37 +58,6 @@ export namespace mtmp
     class Barrier
     {
     public:
-
-        /**
-        class Barrier :
-            def __init__ ( self , n ):
-                self . n = n
-                self . count = 0
-                self . mutex = Semaphore (1)
-                self . turnstile = Semaphore (0)
-                self . turnstile2 = Semaphore (0)
-
-            def phase1 ( self ):
-                self . mutex . wait ()
-                self . count += 1
-                if self . count == self . n :
-                self . turnstile . signal ( self . n )
-                self . mutex . signal ()
-                self . turnstile . wait ()
-
-             def phase2 ( self ):
-                self . mutex . wait ()
-                self . count -= 1
-                if self . count == 0:
-                self . turnstile2 . signal ( self . n )
-                self . mutex . signal ()
-                self . turnstile2 . wait ()
-
-             def wait ( self ):
-                self . phase1 ()
-                self . phase2 ()
-        **/
-
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Constructor. */
         inline Barrier(const unsigned long synchronizing_threads_count) noexcept(false)
@@ -124,14 +93,14 @@ export namespace mtmp
         /** @brief Returns the number of threads to be synchronized with this barrier. */
         inline const unsigned long get_synchronized_threads() noexcept
         {
-            mtmp::GuardedBlock guard(&m_guard_mtx);
+            avt::mtmp::GuardedBlock guard(&m_guard_mtx);
             return m_sync_threads_count;
         }
 
         /** @brief Returns the count of threads that are currently waiting for this barrier. */
         inline const unsigned long get_waiting_threads_count() noexcept
         {
-            mtmp::GuardedBlock guard(&m_guard_mtx);
+            avt::mtmp::GuardedBlock guard(&m_guard_mtx);
             return m_waiting_threads_count;
         }
 
@@ -142,7 +111,7 @@ export namespace mtmp
         {
             // First synchronizing step - on turnstile 1
             {
-                mtmp::GuardedBlock guard{ &m_guard_mtx };
+                avt::mtmp::GuardedBlock guard{ &m_guard_mtx };
                 m_waiting_threads_count++;
                 if (m_waiting_threads_count == m_sync_threads_count) {
                     m_turnstile_2.wait();
@@ -154,7 +123,7 @@ export namespace mtmp
 
             // Second synchronizing step - on turnstile 2
             {
-                mtmp::GuardedBlock guard{ &m_guard_mtx };
+                avt::mtmp::GuardedBlock guard{ &m_guard_mtx };
                 m_waiting_threads_count--;
                 if (m_waiting_threads_count == 0) {
                     m_turnstile_1.wait();
@@ -188,7 +157,7 @@ export namespace mtmp
 
             // First synchronizing step - on turnstile 1
             {
-                mtmp::GuardedBlock guard{ &m_guard_mtx };
+                avt::mtmp::GuardedBlock guard{ &m_guard_mtx };
                 m_waiting_threads_count++;
                 if (m_waiting_threads_count == m_sync_threads_count) {
                     no_timeout = no_timeout && m_turnstile_2.wait_ms(timeout_ms);
@@ -200,7 +169,7 @@ export namespace mtmp
 
             // Second synchronizing step - on turnstile 2
             {
-                mtmp::GuardedBlock guard{ &m_guard_mtx };
+                avt::mtmp::GuardedBlock guard{ &m_guard_mtx };
                 m_waiting_threads_count--;
                 if (m_waiting_threads_count == 0) {
                     no_timeout = no_timeout && m_turnstile_1.wait_ms(timeout_ms);
@@ -212,7 +181,6 @@ export namespace mtmp
 
             return no_timeout;
         }
-
 
 
         //---   Specific Exceptions   ---------------------------------------
@@ -231,11 +199,11 @@ export namespace mtmp
 
     private:
         //---   Attributes   ------------------------------------------------
-        unsigned long   m_sync_threads_count;
-        unsigned long   m_waiting_threads_count;
-        mtmp::Mutex     m_guard_mtx;
-        mtmp::Signal    m_turnstile_1;
-        mtmp::Signal    m_turnstile_2;
+        unsigned long       m_sync_threads_count;
+        unsigned long       m_waiting_threads_count;
+        avt::mtmp::Mutex    m_guard_mtx;
+        avt::mtmp::Signal   m_turnstile_1;
+        avt::mtmp::Signal   m_turnstile_2;
     };
 
 }

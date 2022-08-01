@@ -31,33 +31,37 @@ module;
 #include "utils/types.h"
 
 
-export module shapes.point;
+export module gui.shapes.point;
 
 import utils.coords2d;
 import video.frame;
 import utils.rgba_color;
-import shapes.shape;
+import gui.shapes.shape;
 import utils;
 
 
 //===========================================================================
-export namespace avt::shapes
+export namespace avt::gui::shapes
 {
     //=======================================================================
     /** @brief The base class for all graphical shapes. */
-    class Point : public avt::shapes::Shape
+    class Point : public avt::gui::shapes::Shape
     {
     public:
+        //--- Wrappers ------------------------------------------------------
+        using MyBaseType = avt::gui::shapes::Shape;
+
+
         //--- Constructors / Destructors ------------------------------------
         /** @brief Default constructor (1/7). */
         inline Point() noexcept
-            : avt::shapes::Shape{}, radius{ 0 }
+            : MyBaseType{}, radius{ 0 }
         {}
 
         /** @brief Constructor (2/7). */
         inline Point(const avt::utils::Coords2D&  _coords,
                      const avt::utils::RGBAColor& _color) noexcept
-            : avt::shapes::Shape(_coords, _color), radius{ avt::Byte(0) }
+            : MyBaseType(_coords, _color), radius{ avt::Byte(0) }
         {}
 
         /** @brief Constructor (3/7). */
@@ -66,14 +70,14 @@ export namespace avt::shapes
         inline Point(const avt::utils::Coords2D& _coords,
                      const avt::utils::RGBAColor& _color,
                      const R                      _radius) noexcept
-            : avt::shapes::Shape(_coords, _color), radius{ avt::utils::clamp_s(_radius) }
+            : MyBaseType(_coords, _color), radius{ avt::utils::clamp_s(_radius) }
         {}
 
         /** @brief Constructor (4/7). */
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline Point(const P _pair, const avt::utils::RGBAColor& _color) noexcept(false)
-            : avt::shapes::Shape(_pair, _color), radius{ avt::Byte(0) }
+            : MyBaseType(_pair, _color), radius{ avt::Byte(0) }
         {}
 
         /** @brief Constructor (5/7). */
@@ -82,14 +86,14 @@ export namespace avt::shapes
         inline Point(const P                      _pair,
                      const avt::utils::RGBAColor& _color,
                      const R                      _radius) noexcept(false)
-            : avt::shapes::Shape(_pair, _color), radius{ _radius }
+            : MyBaseType(_pair, _color), radius{ _radius }
         {}
 
         /** @brief Constructor (6/7). */
         template<typename X, typename Y>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline Point(const X x, const Y y, const avt::utils::RGBAColor& _color) noexcept
-            : avt::shapes::Shape(x, y, _color ), radius{ avt::Byte(0) }
+            : MyBaseType(x, y, _color ), radius{ avt::Byte(0) }
         {}
 
         /** @brief Constructor (7/7). */
@@ -98,7 +102,7 @@ export namespace avt::shapes
         inline Point(const X x, const Y y,
                      const avt::utils::RGBAColor& _color,
                      const avt::CoordsType        _radius) noexcept
-            : avt::shapes::Shape(x, y, _color), radius{ _radius }
+            : MyBaseType(x, y, _color), radius{ _radius }
         {}
 
         /** @brief Default Copy constructor. */
