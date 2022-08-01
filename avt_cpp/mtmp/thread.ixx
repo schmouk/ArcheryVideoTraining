@@ -31,11 +31,11 @@ module;
 #include <processthreadsapi.h>
 
 
-export module mtmp.thread;
+export module avt.mtmp.thread;
 
 
 //===========================================================================
-export namespace mtmp
+export namespace avt::mtmp
 {
     //=======================================================================
     /** @brief The base class for Threads.
@@ -194,13 +194,13 @@ export namespace mtmp
         virtual void start() noexcept(false)
         {
             if (m_already_started.load()) {
-                throw mtmp::Thread::StartedException();
+                throw avt::mtmp::Thread::StartedException();
             }
             else {
                 // launches the thread
                 mp_thread = new std::thread([this]() { this->_run(); });  // got it?
                 if (mp_thread == nullptr)
-                    throw mtmp::Thread::CreationException();
+                    throw avt::mtmp::Thread::CreationException();
                 // then sets its priority level
                 set_priority(m_priority);
             }
