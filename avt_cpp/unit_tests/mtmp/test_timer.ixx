@@ -31,7 +31,7 @@ module;
 
 export module unit_tests.mtmp.test_timers;
 
-import avt.mtmp.timer;
+import mtmp.timer;
 
 
 

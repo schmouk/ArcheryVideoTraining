@@ -28,7 +28,7 @@ module;
 #include <mutex>
 
 
-export module avt.mtmp.mutex;
+export module mtmp.mutex;
 
 
 //===========================================================================

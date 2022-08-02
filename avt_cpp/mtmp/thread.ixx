@@ -31,7 +31,7 @@ module;
 #include <processthreadsapi.h>
 
 
-export module avt.mtmp.thread;
+export module mtmp.thread;
 
 
 //===========================================================================
