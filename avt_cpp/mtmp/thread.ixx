@@ -229,6 +229,7 @@ export namespace avt::mtmp
             return ms_active_threads_count.load();
         }
 
+
         //---   Specific Exceptions   ---------------------------------------
         /** @brief Exception on erroneous instantiation of this class. */
         class CreationException : public std::exception

@@ -156,6 +156,7 @@
     <ClCompile Include="devices\monitors_list.ixx" />
     <ClCompile Include="avt_config.ixx" />
     <ClCompile Include="gui\avt_window.ixx" />
+    <ClCompile Include="gui\items\cursor.ixx" />
     <ClCompile Include="mtmp\barrier.ixx" />
     <ClCompile Include="mtmp\guarded_block.ixx" />
     <ClCompile Include="mtmp\mutex.ixx" />

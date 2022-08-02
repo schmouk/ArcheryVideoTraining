@@ -62,8 +62,9 @@ export namespace avt::gui
               b_full_screen{ true },
               b_fixed_size{ true }
         {
-            _set_default_id();
-            _set_default_title();
+            m_set_default_id();
+            m_create_window();
+            m_set_default_title();
         }
 
         /** @brief Constructor with specified ID - full screen size. */
@@ -76,7 +77,8 @@ export namespace avt::gui
               b_full_screen{ true },
               b_fixed_size{ true }
         {
-            _set_default_title();
+            m_create_window();
+            m_set_default_title();
         }
 
         /** @brief Constructor with specified ID and title - full screen size. */
@@ -90,6 +92,7 @@ export namespace avt::gui
               b_full_screen{ true },
               b_fixed_size{ true }
         {
+            m_create_window();
             set_title(window_title);
         }
 
@@ -107,7 +110,8 @@ export namespace avt::gui
               b_full_screen{ false },
               b_fixed_size{ true }
         {
-            _set_default_title();
+            m_create_window();
+            m_set_default_title();
         }
 
         /** @brief Constructor with ID and size. */
@@ -121,7 +125,8 @@ export namespace avt::gui
               b_full_screen{ false },
               b_fixed_size{ true }
         {
-            _set_default_title();
+            m_create_window();
+            m_set_default_title();
         }
 
         /** @brief Constructor with ID, title and dims. */
@@ -139,6 +144,7 @@ export namespace avt::gui
               b_full_screen{ false },
               b_fixed_size{ true }
         {
+            m_create_window();
             set_title(window_title);
         }
 
@@ -154,6 +160,7 @@ export namespace avt::gui
               b_full_screen{ false },
               b_fixed_size{ true }
         {
+            m_create_window();
             set_title(window_title);
         }
 
@@ -227,16 +234,29 @@ export namespace avt::gui
 
 
     private:
-        static inline std::atomic<long> _windows_count = 0;
+        static inline std::atomic<long> m_windows_count = 0;
+
+        /** @brief Creates the OpenCV window. */
+        void m_create_window() noexcept
+        {
+            if (b_full_screen) {
+                cv::namedWindow(id, cv::WINDOW_FULLSCREEN);
+            }
+            else {
+                cv::namedWindow(id, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
+                cv::resizeWindow(id, size.width, size.height);
+                //Cursor_NORMAL.activate()
+            }
+        }
 
         /** @brief Sets a default ID for this AVT window. */
-        inline void _set_default_id()
+        inline void m_set_default_id()
         {
-            id = cv::String(std::format("AVT-Window-{:03d}", _windows_count++).c_str());
+            id = cv::String(std::format("AVT-Window-{:03d}", ++m_windows_count).c_str());
         }
 
         /** @brief Sets a default title for this AVT window. */
-        inline void _set_default_title()
+        inline void m_set_default_title()
         {
             title = id;
         }
