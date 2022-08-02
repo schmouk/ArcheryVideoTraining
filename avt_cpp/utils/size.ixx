@@ -104,6 +104,21 @@ export namespace avt::utils
             return *this;
         }
 
+
+        //---   Casting   ---------------------------------------------------
+        /** @brief Casts this Size to a cv::Size_<avt::DimsType>. */
+        inline operator avt::CVSize()
+        {
+            return avt::CVSize(width, height);
+        }
+
+        /** @brief Casts this Size to a const cv::Size_<avt::DimsType>. */
+        inline operator avt::CVSize() const
+        {
+            return avt::CVSize(width, height);
+        }
+
+
         //---   Comparisons   -----------------------------------------------
         /** @brief Returns true if sizes are the same, or false otherwise. */
         inline const bool operator== (const Size& rhs) const noexcept
