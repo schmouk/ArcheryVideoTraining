@@ -132,7 +132,7 @@
     <ClCompile Include="gui\avt_window.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gui\avt_config.ixx">
+    <ClCompile Include="avt_config.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -154,7 +154,7 @@
     <ClCompile Include="avt.cpp" />
     <ClCompile Include="devices\display_monitor.ixx" />
     <ClCompile Include="devices\monitors_list.ixx" />
-    <ClCompile Include="gui\avt_config.ixx" />
+    <ClCompile Include="avt_config.ixx" />
     <ClCompile Include="gui\avt_window.ixx" />
     <ClCompile Include="mtmp\barrier.ixx" />
     <ClCompile Include="mtmp\guarded_block.ixx" />
