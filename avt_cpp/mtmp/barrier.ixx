@@ -28,12 +28,12 @@ module;
 #include <thread>
 #include <vector>
 
-export module avt.mtmp.barrier;
+export module mtmp.barrier;
 
-import avt.mtmp.guarded_block;
-import avt.mtmp.mutex;
-import avt.mtmp.signal;
-import avt.mtmp.thread;
+import mtmp.guarded_block;
+import mtmp.mutex;
+import mtmp.signal;
+import mtmp.thread;
 
 
 //===========================================================================

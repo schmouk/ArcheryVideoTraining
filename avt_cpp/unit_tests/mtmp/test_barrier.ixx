@@ -33,10 +33,10 @@ module;
 
 export module unit_tests.mtmp.test_barrier;
 
-import avt.mtmp.barrier;
-import avt.mtmp.guarded_block;
-import avt.mtmp.mutex;
-import avt.mtmp.thread;
+import mtmp.barrier;
+import mtmp.guarded_block;
+import mtmp.mutex;
+import mtmp.thread;
 
 
 //===========================================================================

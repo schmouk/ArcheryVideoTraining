@@ -126,8 +126,8 @@ export namespace avt::gui::shapes
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline void top_left(const X new_x, const Y new_y)
         {
-            x = new_x;
-            y = new_y;
+            x = avt::utils::clamp_s(new_x);
+            y = avt::utils::clamp_s(new_y);
         }
 
         /** @brief "Mutator" on top-left corner (one 2D-coords). */
@@ -142,8 +142,8 @@ export namespace avt::gui::shapes
             requires avt::is_pair_type_v<P>
         inline void top_left(const P& new_pos)
         {
-            x = new_pos[0];
-            y = new_pos[1];
+            x = avt::utils::clamp_s(new_pos[0]);
+            y = avt::utils::clamp_s(new_pos[1]);
         }
 
         /** @brief Mutator on bottom-right corner. */

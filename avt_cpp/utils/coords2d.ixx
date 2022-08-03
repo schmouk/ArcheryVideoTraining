@@ -40,15 +40,16 @@ export namespace avt::utils
 {
     //=======================================================================
     /** @brief The class of 2D short integer coordinates. */
-    class Coords2D : public cv::Point_<avt::CoordsType>
+    class Coords2D : public avt::CVPoint
     {
     public:
 
-        //-------------------------------------------------------------------
-        using MyBaseType = cv::Point_<avt::CoordsType>; //!< wrapper to the base class
+        //---   Wrappers   --------------------------------------------------
+        using MyBaseType = avt::CVPoint;              //!< wrapper to the base class
+        using ValueType  = avt::CVPoint::value_type;  //!< wrapper to the type of coordinates.
 
 
-        //--- Constructors / Destructors ------------------------------------
+        //---   Constructors / Destructors   --------------------------------
         /** @brief Default constructor. */
         inline Coords2D() noexcept
             : MyBaseType{}
@@ -149,7 +150,7 @@ export namespace avt::utils
             requires avt::is_pair_type_v<P>
         inline void move(const P& offset) noexcept
         {
-            move(offset.x, offset.y);
+            move(offset[0], offset[1]);
         }
 
         /** @brief Absolute move of this position (two scalar new coordinates). */
@@ -172,7 +173,7 @@ export namespace avt::utils
             requires avt::is_pair_type_v<P>
         inline void move_at(const P& offset) noexcept
         {
-            move_at(offset.x, offset.y);
+            move_at(offset[0], offset[1]);
         }
 
 

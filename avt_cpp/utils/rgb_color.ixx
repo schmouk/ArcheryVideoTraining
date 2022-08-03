@@ -135,6 +135,12 @@ export namespace avt::utils
             return avt::CVScalarByte(b, g, r, avt::Byte(255));
         }
 
+        /** @brief Casts this RGB color to a cv::Scalar_<avt::Byte> (i.e. 4 bytes, the fourth one being 255). */
+        virtual inline operator avt::CVScalarByte() const
+        {
+            return avt::CVScalarByte(b, g, r, avt::Byte(255));
+        }
+
         /** @brief Creates an instance of cv::Scalar with transparency. */
         template<typename T>
             requires std::is_arithmetic_v<T>

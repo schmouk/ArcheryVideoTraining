@@ -31,7 +31,7 @@ module;
 #include <processthreadsapi.h>
 
 
-export module avt.mtmp.thread;
+export module mtmp.thread;
 
 
 //===========================================================================
@@ -228,6 +228,7 @@ export namespace avt::mtmp
         {
             return ms_active_threads_count.load();
         }
+
 
         //---   Specific Exceptions   ---------------------------------------
         /** @brief Exception on erroneous instantiation of this class. */

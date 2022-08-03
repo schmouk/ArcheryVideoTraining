@@ -31,7 +31,7 @@ module;
 
 export module unit_tests.mtmp.test_watchdog;
 
-import avt.mtmp.watchdog;
+import mtmp.watchdog;
 
 
 

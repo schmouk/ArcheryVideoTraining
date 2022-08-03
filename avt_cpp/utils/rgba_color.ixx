@@ -150,6 +150,12 @@ export namespace avt::utils
             return avt::CVScalarByte(b, g, r, a);
         }
 
+        /** @brief Casts this RGBA color to a const cv::Scalar_<avt::Byte> (i.e. 4 bytes). */
+        virtual inline operator avt::CVScalarByte() const
+        {
+            return avt::CVScalarByte(b, g, r, a);
+        }
+
 
         //---   Assignments   -----------------------------------------------
         /** @brief Copy assignment. */

@@ -30,8 +30,8 @@ module;
 
 export module unit_tests.mtmp.test_signal;
 
-import avt.mtmp.signal;
-import avt.mtmp.thread;
+import mtmp.signal;
+import mtmp.thread;
 
 
 //===========================================================================
