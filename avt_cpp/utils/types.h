@@ -38,10 +38,10 @@ namespace avt
     using CoordsType = short;           //!< the type of avt 2D-coordinates
     using DimsType   = unsigned short;  //!< the type of avt dimensions values
 
-    using CVSize       = cv::Size_<avt::CoordsType>;    //!< OpenCV-like Size_ wrapper
     using CVPoint      = cv::Point_<avt::CoordsType>;   //!< OpenCV-like Point_ wrapper
     using CVRect       = cv::Rect_<avt::CoordsType>;    //!< OpenCV-like Rect_ wrapper
     using CVScalarByte = cv::Scalar_<avt::Byte>;        //!< OpenCV-like Scalar wrapper
+    using CVSize = cv::Size_<avt::CoordsType>;    //!< OpenCV-like Size_ wrapper
 
 
     //---   is_pair_type   --------------------------------------------------

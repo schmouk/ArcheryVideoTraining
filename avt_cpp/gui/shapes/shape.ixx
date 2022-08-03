@@ -107,38 +107,6 @@ export namespace avt::gui::shapes
         virtual inline void draw(avt::video::Frame&)
         {}
 
-        /** @brief Relative move of the base coordinantes of this shape (2 offsets). */
-        template<typename X, typename Y>
-            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
-        inline void move(const X dx, const Y dy)
-        {
-            *this += MyBaseType(dx, dy);
-        }
-
-        /** @brief Relative move of the base coordinantes of this shape (2-components container). */
-        template<typename P>
-            requires avt::is_pair_type_v<P>
-        inline void move(const P& offset) noexcept(false)
-        {
-            move(offset[0], offset[1]);
-        }
-
-        /** @brief Absolute move of the base coordinates of this shape (2 offsets). */
-        template<typename X, typename Y>
-            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
-        inline void move_at(const X new_x, const Y new_y)
-        {
-            move(new_x - x, new_y - y);
-        }
-
-        /** @brief Relative move of the base coordinates of this shape (2-components container). */
-        template<typename P>
-            requires avt::is_pair_type_v<P>
-        inline void move_at(const P& new_pos) noexcept(false)
-        {
-            move_at(new_pos[0], new_pos[1]);
-        }
-        
 
         //---   Attributes   ------------------------------------------------
         avt::utils::RGBAColor color;
