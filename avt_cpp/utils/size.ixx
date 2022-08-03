@@ -45,16 +45,16 @@ export namespace avt::utils
     //=======================================================================
     /** @brief The class of 2D sizes.
     */
-    class Size : public cv::Size_<avt::utils::SizeValueType>
+    class Size : public avt::CVSize
         /* Notice: Due to inheritance, gets access to
         *  - double aspectRatio () const   (i.e. width/height)
         *  - bool   empty () const
         */
     {
     public:
-
-        using ValueType = avt::utils::SizeValueType;  //!< wrapper to the width and height type.
-        using MyBaseType = cv::Size_<ValueType>;      //!< wrapper to the base class.
+        //---   Wrappers   --------------------------------------------------
+        using MyBaseType = avt::CVSize;              //!< wrapper to the base class.
+        using ValueType  = avt::CVSize::value_type;  //!< wrapper to the type of widths and heights.
 
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Empty constructor. */
@@ -103,6 +103,7 @@ export namespace avt::utils
             height = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[1])>(rhs[1]);
             return *this;
         }
+
 
         //---   Comparisons   -----------------------------------------------
         /** @brief Returns true if sizes are the same, or false otherwise. */

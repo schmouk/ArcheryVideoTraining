@@ -26,9 +26,9 @@ module;
 #include <thread>
 
 
-export module avt.mtmp.timer;
+export module mtmp.timer;
 
-import avt.mtmp.thread;
+import mtmp.thread;
 
 
 //===========================================================================

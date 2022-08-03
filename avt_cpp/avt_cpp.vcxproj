@@ -154,6 +154,10 @@
     <ClCompile Include="avt.cpp" />
     <ClCompile Include="devices\display_monitor.ixx" />
     <ClCompile Include="devices\monitors_list.ixx" />
+    <ClCompile Include="avt_config.ixx" />
+    <ClCompile Include="gui\avt_window.ixx" />
+    <ClCompile Include="gui\items\cursor.ixx" />
+    <ClCompile Include="gui\items\view.ixx" />
     <ClCompile Include="mtmp\barrier.ixx" />
     <ClCompile Include="mtmp\guarded_block.ixx" />
     <ClCompile Include="mtmp\mutex.ixx" />
@@ -192,9 +196,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

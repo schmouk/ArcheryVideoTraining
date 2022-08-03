@@ -26,10 +26,10 @@ module;
 #include <thread>
 
 
-export module avt.mtmp.watchdog;
+export module mtmp.watchdog;
 
-import avt.mtmp.thread;
-import avt.mtmp.timer;
+import mtmp.thread;
+import mtmp.timer;
 
 
 //===========================================================================

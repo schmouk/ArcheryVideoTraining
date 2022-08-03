@@ -30,8 +30,8 @@ module;
 
 export module unit_tests.mtmp.test_mutex;
 
-import avt.mtmp.mutex;
-import avt.mtmp.thread;
+import mtmp.mutex;
+import mtmp.thread;
 
 
 //===========================================================================

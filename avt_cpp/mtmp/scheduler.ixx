@@ -34,7 +34,7 @@ export module mtmp.scheduler;
 
 
 //===========================================================================
-namespace mtmp
+namespace avt::mtmp
 {
     //=======================================================================
     /** @brief The class of mutexes, with timeout processing if needed. */

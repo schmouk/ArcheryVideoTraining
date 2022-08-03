@@ -9,6 +9,7 @@ in the Software without restriction,  including without limitation the  rights
 to use,  copy,  modify,  merge,  publish,  distribute, sublicense, and/or sell
 copies of the Software,  and  to  permit  persons  to  whom  the  Software  is
 furnished to do so, subject to the following conditions:
+
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -22,43 +23,21 @@ SOFTWARE.
 */
 
 //===========================================================================
-export module mtmp.guarded_block;
+module;
 
-import mtmp.mutex;
+#include <opencv2/core/mat.hpp>
+
+
+export module avt.config;
+
+import utils.rgb_color;
 
 
 //===========================================================================
-export namespace avt::mtmp
+export namespace avt::config
 {
     //=======================================================================
-    /** @brief The class for Guarded Blocks of code. */
-    class GuardedBlock
-    {
-    public:
-        //---   Constructors / Destructor   ---------------------------------
-        /** @brief Default Constructor. */
-        inline GuardedBlock(avt::mtmp::Mutex* p_mtx) noexcept
-            : mp_mtx{ p_mtx }
-        {
-            if (mp_mtx != nullptr)
-                mp_mtx->lock();
-        }
-
-        /** @brief Default Destructor. */
-        virtual inline ~GuardedBlock() noexcept
-        {
-            if (mp_mtx != nullptr)
-                mp_mtx->unlock();
-        }
-
-        GuardedBlock(const GuardedBlock&) = delete;
-        GuardedBlock(GuardedBlock&&) = delete;
-        GuardedBlock& operator=(const GuardedBlock&) = delete;
-        GuardedBlock& operator=(GuardedBlock&&) = delete;
-
-
-    private:
-        avt::mtmp::Mutex* mp_mtx;
-    };
+    constexpr long        CAMERAS_MAX_COUNT = 4;
+    avt::utils::RGBColor  DEFAULT_BACKGROUND = avt::utils::RGBColor::ANTHRACITE;
 
 }

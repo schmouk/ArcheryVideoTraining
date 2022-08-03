@@ -28,7 +28,7 @@ SOFTWARE.
 //===========================================================================
 #include <iostream>
 
-/**/
+/** /
 import unit_tests.utils.test_gray_color;
 import unit_tests.utils.test_rgb_color;
 import unit_tests.utils.test_size;
@@ -52,7 +52,7 @@ int main()
     std::cout << "\n=====   UNIT TESTS - Archery Video Training   =====";
     std::cout << "\n===================================================\n\n";
 
-    /**/
+    /** /
     avt::unit_tests::utils::test_rgb_color();
     avt::unit_tests::utils::test_gray_color();
     avt::unit_tests::utils::test_size();
