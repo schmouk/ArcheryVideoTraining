@@ -25,6 +25,7 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <algorithm>
 #include <opencv2/core/mat.hpp>
 
 #include "utils/types.h"
@@ -34,6 +35,7 @@ export module gui.views.view;
 
 import avt.config;
 import utils.coords2d;
+import video.frame;
 import utils.rgba_color;
 import utils.size;
 import utils;
@@ -44,9 +46,14 @@ export namespace avt::gui::views
 {
     //=======================================================================
     /** @brief The base class for displayed items. */
-    class View
+    class View : public avt::utils::Coords2D, public avt::utils::Size
     {
     public:
+        //---   Wrappers   --------------------------------------------------
+        using PosType  = avt::utils::Coords2D;  //!< wrapper to the Coords2D base class
+        using SizeType = avt::utils::Size;      //!< wrapper to the Size base class
+
+
         //---   Constructors / Destructors   --------------------------------
         /** @brief Value Constructor (4 scalars + 1 color). */
         template<typename X, typename Y, typename H, typename W>
@@ -58,19 +65,19 @@ export namespace avt::gui::views
                     const H height,
                     const avt::utils::RGBAColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : p_view(parent_view),
-              top_left(x, y),
-              size(width, height),
+              PosType(x, y),
+              SizeType(width, height),
               content(height, width, CV_8UC3, (avt::CVScalarByte)bg_color)
         {}
 
         /** @brief Value Constructor (1 pos + 1 size + 1 color). */
         inline View(const View*                  parent_view,
-                    const avt::utils::Coords2D&  top_left_,
-                    const avt::utils::Size&      size_,
+                    const avt::utils::Coords2D&  top_left,
+                    const avt::utils::Size&      size,
                     const avt::utils::RGBAColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : p_view(parent_view),
-              top_left(top_left_),
-              size(size_),
+              PosType(top_left),
+              SizeType(size),
               content((avt::CVSize)size, CV_8UC3, (avt::CVScalarByte)bg_color)
         {}
 
@@ -79,8 +86,8 @@ export namespace avt::gui::views
                     const avt::CVRect&           rect,
                     const avt::utils::RGBAColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : p_view(parent_view),
-              top_left(rect.x, rect.y),
-              size(rect.width, rect.height),
+              PosType(rect.x, rect.y),
+              SizeType(rect.width, rect.height),
               content(rect.size(), CV_8UC3, (avt::CVScalarByte)bg_color)
         {}
 
@@ -103,29 +110,60 @@ export namespace avt::gui::views
 
 
         //---   Operations   ------------------------------------------------
+        /** @brief Draws this view into the specified video frame.
+        *
+        * Caution: this is not thread safe.
+        */
+        inline void draw(avt::video::Frame& frame) noexcept
+        {
+            const avt::utils::Coords2D abs_pos    = get_absolute_pos();
+            const avt::utils::Size     final_size = m_clipping_size(abs_pos, size(), frame);
+            content.copyTo(frame(avt::CVRect(abs_pos, final_size)));
+        }
+
         /** @brief Returns the absolute position of this view in the root View. */
         inline avt::utils::Coords2D get_absolute_pos() noexcept
         {
             return m_get_abs_pos(this);
         }
 
+        /** @brief Returns a reference to the avt::utils::Size size of this view. */
+        inline avt::utils::Size size() noexcept
+        {
+            return (avt::utils::Size)*this;
+        }
+
+        /** @brief Returns a const reference to the avt::utils::Size size of this view. */
+        inline avt::utils::Size size() const noexcept
+        {
+            return (avt::utils::Size)(*this);
+        }
+
 
         //---   Attributes   ------------------------------------------------
         const avt::gui::views::View* p_view;
-        avt::utils::Coords2D         top_left;
-        avt::utils::Size             size;
         cv::Mat                      content;
 
 
     private:
+        /** @brief Evaluates the clipped size of this view when displayed in a frame. */
+        avt::utils::Size m_clipping_size(const avt::utils::Coords2D& abs_pos,
+                                          const avt::utils::Size& size,
+                                          avt::video::Frame& frame)
+        {
+            const avt::DimsType width  = std::max(0, std::min(int(size.width) , frame.cols - abs_pos.x));
+            const avt::DimsType height = std::max(0, std::min(int(size.height), frame.rows - abs_pos.y));
+            return avt::utils::Size(width, height);
+        }
+
         /** @brief Evaluates the absolute position of this view within the root View. */
         avt::utils::Coords2D m_get_abs_pos(const View* p_current_view) noexcept
         {
             if (p_current_view->p_view == nullptr) {
-                return p_current_view->top_left;
+                return *p_current_view;
             }
             else {
-                return p_current_view->top_left + m_get_abs_pos(p_current_view->p_view);
+                return *p_current_view + m_get_abs_pos(p_current_view->p_view);
             }
         }
 

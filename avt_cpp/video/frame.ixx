@@ -38,4 +38,7 @@ export namespace avt::video
     /** @brief The base class for Video Frames. */
     using Frame = cv::Mat;
 
+    /** @brief The base class for parts of frames. */
+    using SubFrame = cv::Mat;
+
 }
