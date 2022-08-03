@@ -114,7 +114,7 @@ export namespace avt::gui::views
         *
         * Caution: this is not thread safe.
         */
-        inline void draw(avt::video::Frame& frame) noexcept
+        inline void draw(avt::video::Frame& frame) const noexcept
         {
             const avt::utils::Coords2D abs_pos    = get_absolute_pos();
             const avt::utils::Size     final_size = m_clipping_size(abs_pos, size(), frame);
@@ -122,7 +122,7 @@ export namespace avt::gui::views
         }
 
         /** @brief Returns the absolute position of this view in the root View. */
-        inline avt::utils::Coords2D get_absolute_pos() noexcept
+        inline avt::utils::Coords2D get_absolute_pos() const noexcept
         {
             return m_get_abs_pos(this);
         }
@@ -149,7 +149,7 @@ export namespace avt::gui::views
         /** @brief Evaluates the clipped size of this view when displayed in a frame. */
         avt::utils::Size m_clipping_size(const avt::utils::Coords2D& abs_pos,
                                           const avt::utils::Size& size,
-                                          avt::video::Frame& frame)
+                                          avt::video::Frame& frame) const noexcept
         {
             const avt::DimsType width  = std::max(0, std::min(int(size.width) , frame.cols - abs_pos.x));
             const avt::DimsType height = std::max(0, std::min(int(size.height), frame.rows - abs_pos.y));
@@ -157,7 +157,7 @@ export namespace avt::gui::views
         }
 
         /** @brief Evaluates the absolute position of this view within the root View. */
-        avt::utils::Coords2D m_get_abs_pos(const View* p_current_view) noexcept
+        avt::utils::Coords2D m_get_abs_pos(const View* p_current_view) const noexcept
         {
             if (p_current_view->p_view == nullptr) {
                 return *p_current_view;
