@@ -31,7 +31,7 @@ module;
 #include "utils/types.h"
 
 
-export module gui.views.view;
+export module gui.items.view;
 
 import avt.config;
 import utils.coords2d;
@@ -42,7 +42,7 @@ import utils;
 
 
 //===========================================================================
-export namespace avt::gui::views
+export namespace avt::gui::items
 {
     //=======================================================================
     /** @brief The base class for displayed items. */
@@ -141,7 +141,7 @@ export namespace avt::gui::views
 
 
         //---   Attributes   ------------------------------------------------
-        const avt::gui::views::View* p_view;
+        const avt::gui::items::View* p_view;
         cv::Mat                      content;
 
 

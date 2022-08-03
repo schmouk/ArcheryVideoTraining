@@ -138,7 +138,7 @@
     <ClCompile Include="gui\items\cursor.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gui\views\view.ixx">
+    <ClCompile Include="gui\items\view.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

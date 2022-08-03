@@ -41,7 +41,7 @@ import video.frame;
 import mtmp.mutex;
 import utils.rgb_color;
 import utils.size;
-import gui.views.view;
+import gui.items.view;
 
 
 //===========================================================================
@@ -210,7 +210,7 @@ export namespace avt::gui
 
 
         /** @brief Draws a specified View in this window content. */
-        inline void draw_view(const avt::gui::views::View& view) noexcept
+        inline void draw_view(const avt::gui::items::View& view) noexcept
         {
             view.draw(window_content);
         }
