@@ -157,6 +157,7 @@
     <ClCompile Include="avt_config.ixx" />
     <ClCompile Include="gui\avt_window.ixx" />
     <ClCompile Include="gui\fonts\bold_font.ixx" />
+    <ClCompile Include="gui\fonts\bold_italic_font.ixx" />
     <ClCompile Include="gui\fonts\font.ixx" />
     <ClCompile Include="gui\fonts\italic_font.ixx" />
     <ClCompile Include="gui\items\cursor.ixx" />

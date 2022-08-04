@@ -23,7 +23,7 @@ SOFTWARE.
 */
 
 //===========================================================================
-export module gui.fonts.italic_font;
+export module gui.fonts.bold_italic_font;
 
 import gui.fonts.font;
 
@@ -37,7 +37,7 @@ export namespace avt::gui::fonts
     *   Notice: This is a minimal implementation that should help using
     *           OpenCV when putting text in video frames.
     */
-    class ItalicFont : public avt::gui::fonts::Font
+    class BoldItalicFont : public avt::gui::fonts::Font
     {
     public:
         //---   Wrappers   --------------------------------------------------
@@ -57,10 +57,10 @@ export namespace avt::gui::fonts
         *   false to get a 'serif' police.
         *   Defauts to true (i.e. 'sans-serif' police).
         */
-        inline ItalicFont(const int                   size,
-                          const avt::utils::RGBColor& color = avt::utils::RGBColor::WHITE,
-                          const bool                  b_sans_serif = true) noexcept
-            : MyBaseType(size, color, false, true, b_sans_serif)
+        inline BoldItalicFont(const int                   size,
+                              const avt::utils::RGBColor& color = avt::utils::RGBColor::WHITE,
+                              const bool                  b_sans_serif = true) noexcept
+            : MyBaseType(size, color, true, true, b_sans_serif)
         {}
 
         /** @brief Value Constructor with specified color and background color.
@@ -84,29 +84,29 @@ export namespace avt::gui::fonts
         *   false to get a 'serif' police.
         *   Defauts to true (i.e. 'sans-serif' police).
         */
-        ItalicFont(const int                   size,
-                   const avt::utils::RGBColor& color,
-                   const avt::utils::RGBColor& bg_color,
-                   const bool                  b_sans_serif = true) noexcept
-            : MyBaseType(size, color, bg_color, false, true, b_sans_serif)
+        BoldItalicFont(const int                   size,
+                       const avt::utils::RGBColor& color,
+                       const avt::utils::RGBColor& bg_color,
+                       const bool                  b_sans_serif = true) noexcept
+            : MyBaseType(size, color, bg_color, true, true, b_sans_serif)
         {}
 
         /** @brief Default Copy constructor. */
-        ItalicFont(const ItalicFont&) = default;
+        BoldItalicFont(const BoldItalicFont&) = default;
 
         /** @brief Default Move constructor. */
-        ItalicFont(ItalicFont&&) = default;
+        BoldItalicFont(BoldItalicFont&&) = default;
 
         /** @brief Default destructor. */
-        virtual ~ItalicFont() noexcept = default;
+        virtual ~BoldItalicFont() noexcept = default;
 
 
         //---   Assignments   -----------------------------------------------
         /** @brief Default Copy assignment. */
-        ItalicFont& operator= (const ItalicFont&) = default;
+        BoldItalicFont& operator= (const BoldItalicFont&) = default;
 
         /** @brief Default Move assignment. */
-        ItalicFont& operator= (ItalicFont&&) = default;
+        BoldItalicFont& operator= (BoldItalicFont&&) = default;
     };
 
 }
