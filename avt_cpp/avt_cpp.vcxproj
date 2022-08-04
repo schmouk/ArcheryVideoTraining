@@ -156,6 +156,7 @@
     <ClCompile Include="devices\monitors_list.ixx" />
     <ClCompile Include="avt_config.ixx" />
     <ClCompile Include="gui\avt_window.ixx" />
+    <ClCompile Include="gui\fonts\boldfont.ixx" />
     <ClCompile Include="gui\fonts\font.ixx" />
     <ClCompile Include="gui\items\cursor.ixx" />
     <ClCompile Include="gui\items\view.ixx" />

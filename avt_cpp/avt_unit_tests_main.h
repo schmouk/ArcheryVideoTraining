@@ -43,6 +43,8 @@ import unit_tests.gui.shapes.test_point;
 import unit_tests.gui.shapes.test_line;
 import unit_tests.gui.shapes.test_rect;
 /**/
+import gui.fonts.font;
+import gui.fonts.bold_font;
 
 
 //===========================================================================

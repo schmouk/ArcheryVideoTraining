@@ -144,6 +144,9 @@
     <ClCompile Include="gui\fonts\font.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gui\fonts\boldfont.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

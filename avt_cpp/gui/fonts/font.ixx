@@ -34,7 +34,7 @@ module;
 #include "utils/types.h"
 
 
-export module gui.fonts;
+export module gui.fonts.font;
 
 import utils.coords2d;
 import video.frame;
