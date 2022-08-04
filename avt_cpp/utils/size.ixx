@@ -80,7 +80,12 @@ export namespace avt::utils
         /** @brief Default Copy Constructor. */
         Size(const Size&) noexcept = default;
 
-        /** @brief Default Move COnstructor. */
+        /** @brief Default Copy Constructor. */
+        inline explicit Size(const avt::CVSize& cv_size)
+            : MyBaseType{ cv_size }
+        {}
+
+        /** @brief Default Move Constructor. */
         Size(Size&&) noexcept(false) = default;
 
         /** @brief Default Destructor. */

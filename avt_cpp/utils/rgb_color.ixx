@@ -36,6 +36,7 @@ module;
 
 #include "utils/types.h"
 
+
 export module utils.rgb_color;
 
 import utils;
@@ -585,7 +586,7 @@ export namespace avt::utils
             return RGBColor(rhs._div(value, rhs.r), rhs._div(value, rhs.g), rhs._div(value, rhs.b));
         }
 
-        /** @brief Divides RGBColor * one std::vector. */
+        /** @brief Divides RGBColor / one std::vector. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (RGBColor lhs, const std::vector<T>& rhs) noexcept(false)
@@ -594,7 +595,7 @@ export namespace avt::utils
             return lhs /= rhs;
         }
 
-        /** @brief Divides one std::vector * RGBColor. */
+        /** @brief Divides one std::vector / RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (const std::vector<T>& lhs, RGBColor rhs) noexcept(false)
@@ -603,7 +604,7 @@ export namespace avt::utils
             return RGBColor(rhs._div(lhs[0], rhs.r), rhs._div(lhs[1], rhs.g), rhs._div(lhs[2], rhs.b));
         }
 
-        /** @brief Divides RGBColor * one std::array. */
+        /** @brief Divides RGBColor / one std::array. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (RGBColor lhs, const std::array<T, 3>& rhs) noexcept(false)
@@ -611,7 +612,7 @@ export namespace avt::utils
             return lhs /= rhs;
         }
 
-        /** @brief Divides one std::array * RGBColor. */
+        /** @brief Divides one std::array / RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (const std::array<T, 3>& lhs, RGBColor rhs) noexcept(false)
@@ -637,6 +638,8 @@ export namespace avt::utils
 
         //---   Predefined colors   -----------------------------------------
         static const RGBColor
+            NULL_COLOR,
+
             ANTHRACITE,
             BLACK,
             BLUE,
@@ -687,6 +690,8 @@ export namespace avt::utils
     };
 
     //-----------------------------------------------------------------------
+    const RGBColor RGBColor::NULL_COLOR       {};
+
     const RGBColor RGBColor::ANTHRACITE       {  31,  31,  31 };
     const RGBColor RGBColor::BLACK            {   0,   0,   0 };
     const RGBColor RGBColor::BLUE             {   0,   0, 255 };

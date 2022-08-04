@@ -30,6 +30,8 @@ module;
 
 export module avt.config;
 
+import gui.fonts.bold_font;
+import gui.fonts.font;
 import utils.rgb_color;
 
 
@@ -37,7 +39,10 @@ import utils.rgb_color;
 export namespace avt::config
 {
     //=======================================================================
-    constexpr long        CAMERAS_MAX_COUNT = 4;
-    avt::utils::RGBColor  DEFAULT_BACKGROUND = avt::utils::RGBColor::ANTHRACITE;
+    constexpr long        CAMERAS_MAX_COUNT = 4; //!< AVT will not manage more than this count of input cameras
+    avt::utils::RGBColor  DEFAULT_BACKGROUND = avt::utils::RGBColor::ANTHRACITE; //!< default background is very dark
+
+    avt::gui::fonts::Font AVTConsoleFont = avt::gui::fonts::Font(13, avt::utils::RGBColor::YELLOW - 16); //!< small console font for AVT
+    avt::gui::fonts::Font AVTDefaultFont = avt::gui::fonts::BoldFont(20, avt::utils::RGBColor::YELLOW);  //!< default font for every AVT text duisplay
 
 }
