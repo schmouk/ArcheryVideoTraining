@@ -144,7 +144,10 @@
     <ClCompile Include="gui\fonts\font.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gui\fonts\boldfont.ixx">
+    <ClCompile Include="gui\fonts\bold_font.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\fonts\italic_font.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
