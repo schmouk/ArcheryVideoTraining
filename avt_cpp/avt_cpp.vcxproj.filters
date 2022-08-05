@@ -153,6 +153,9 @@
     <ClCompile Include="gui\fonts\bold_italic_font.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="interactions\mouse_control.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

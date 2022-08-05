@@ -70,6 +70,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -162,6 +168,7 @@
     <ClCompile Include="gui\fonts\italic_font.ixx" />
     <ClCompile Include="gui\items\cursor.ixx" />
     <ClCompile Include="gui\items\view.ixx" />
+    <ClCompile Include="interactions\mouse_control.ixx" />
     <ClCompile Include="mtmp\barrier.ixx" />
     <ClCompile Include="mtmp\guarded_block.ixx" />
     <ClCompile Include="mtmp\mutex.ixx" />

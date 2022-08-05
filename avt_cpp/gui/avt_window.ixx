@@ -165,16 +165,24 @@ export namespace avt::gui
         }
 
         /** Deleted Copy constructor. */
-        AVTWindow(const AVTWindow&) = delete;
+        AVTWindow(const AVTWindow&) noexcept = delete;
 
         /** Deleted Move constructor. */
-        AVTWindow(AVTWindow&&) = delete;
+        AVTWindow(AVTWindow&&) noexcept = delete;
 
         /** @brief Destructor. */
-        inline ~AVTWindow()
+        inline ~AVTWindow() noexcept
         {
             cv::destroyWindow(window_id);
         }
+
+
+        //---   Assignments   -----------------------------------------------
+        /** @brief Deleted Copy assignment. */
+        AVTWindow& operator= (const AVTWindow&) = delete;
+
+        /** @brief Deleted Move assignment. */
+        AVTWindow& operator= (AVTWindow&&) = delete;
 
 
         //---   Operations   ------------------------------------------------
