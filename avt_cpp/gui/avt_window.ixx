@@ -55,7 +55,7 @@ export namespace avt::gui
         //---   Constructors / Destructors   --------------------------------
         /** @brief Empty constructor. */
         AVTWindow() noexcept
-            : size{},
+            : size {},
               mutex{},
               bg_color{ avt::config::DEFAULT_BACKGROUND },
               b_full_screen{ true },
@@ -165,16 +165,24 @@ export namespace avt::gui
         }
 
         /** Deleted Copy constructor. */
-        AVTWindow(const AVTWindow&) = delete;
+        AVTWindow(const AVTWindow&) noexcept = delete;
 
         /** Deleted Move constructor. */
-        AVTWindow(AVTWindow&&) = delete;
+        AVTWindow(AVTWindow&&) noexcept = delete;
 
         /** @brief Destructor. */
-        inline ~AVTWindow()
+        inline ~AVTWindow() noexcept
         {
             cv::destroyWindow(window_id);
         }
+
+
+        //---   Assignments   -----------------------------------------------
+        /** @brief Deleted Copy assignment. */
+        AVTWindow& operator= (const AVTWindow&) = delete;
+
+        /** @brief Deleted Move assignment. */
+        AVTWindow& operator= (AVTWindow&&) = delete;
 
 
         //---   Operations   ------------------------------------------------
@@ -254,14 +262,14 @@ export namespace avt::gui
 
 
         //---   Attributes   ------------------------------------------------
-        avt::video::Frame       window_content;
-        avt::utils::Size        size;
-        avt::mtmp::Mutex        mutex;
-        cv::String              window_id;
-        cv::String              title;
-        avt::utils::RGBColor    bg_color;
-        bool                    b_full_screen;
-        bool                    b_fixed_size;
+        avt::video::Frame               window_content;
+        avt::utils::Size                size;
+        avt::mtmp::Mutex                mutex;
+        cv::String                      window_id;
+        cv::String                      title;
+        avt::utils::RGBColor            bg_color;
+        bool                            b_full_screen;
+        bool                            b_fixed_size;
 
 
     private:
