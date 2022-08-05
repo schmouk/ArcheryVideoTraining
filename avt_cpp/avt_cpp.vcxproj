@@ -168,6 +168,7 @@
     <ClCompile Include="gui\fonts\italic_font.ixx" />
     <ClCompile Include="gui\items\cursor.ixx" />
     <ClCompile Include="gui\items\view.ixx" />
+    <ClCompile Include="interactions\app_automaton.ixx" />
     <ClCompile Include="interactions\mouse_control.ixx" />
     <ClCompile Include="mtmp\barrier.ixx" />
     <ClCompile Include="mtmp\guarded_block.ixx" />

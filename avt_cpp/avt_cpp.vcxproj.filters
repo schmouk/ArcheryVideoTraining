@@ -156,6 +156,9 @@
     <ClCompile Include="interactions\mouse_control.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="interactions\app_automaton.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

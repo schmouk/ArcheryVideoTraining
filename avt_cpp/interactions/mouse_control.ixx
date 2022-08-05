@@ -32,6 +32,7 @@ module;
 
 export module interactions.mouse;
 
+import interactions.app_automaton;
 import gui.avt_window;
 
 
@@ -46,10 +47,9 @@ namespace avt::interactions
         //--- Constructors / Destructors ------------------------------------
         /** @brief Value Constructor. */
         MouseControl(avt::gui::AVTWindow* p_avt_window) noexcept
-            : mp_avt_window( p_avt_window )
+            : mp_automaton{ p_avt_window }
         {
-            // sets this mouse controller callback
-            cv::setMouseCallback(mp_avt_window->window_id, controller, mp_avt_window);
+            cv::setMouseCallback(p_avt_window->window_id, controller, this);
         }
 
         /** @brief Deleted Copy constructor. */
@@ -86,7 +86,9 @@ namespace avt::interactions
         static void controller(int event, int x, int y, int flags, void* user_data)
         {
             // reinterprets the user_data type
-            avt::gui::AVTWindow* p_avt_window = reinterpret_cast<avt::gui::AVTWindow*>(user_data);
+            avt::interactions::MouseControl* p_mouse_control = reinterpret_cast<avt::interactions::MouseControl*>(user_data);
+            if (p_mouse_control == nullptr)
+                return;
 
             // sets modifiers flags status
             const bool b_alt_key_mod   = (flags & cv::EVENT_FLAG_ALTKEY)   != 0;
@@ -156,7 +158,7 @@ namespace avt::interactions
             } break;
 
             default: {
-                // should never happen...
+                // should never happen!
             }
 
             } // ...end of switch
@@ -165,40 +167,7 @@ namespace avt::interactions
 
     private:
         //---   Attributes   ------------------------------------------------
-        avt::gui::AVTWindow* mp_avt_window;
+        avt::interactions::AppAutomaton mp_automaton;
     };
-
-
-    //=======================================================================
-    void mouse_controller(int event, int x, int y, int flags, void* user_data)
-    {
-        // reinterprets the user_data type
-        avt::gui::AVTWindow* p_avt_window = reinterpret_cast<avt::gui::AVTWindow*>(user_data);
-
-        // sets modifiers flags status
-        const bool b_alt_key_mod   = (flags & cv::EVENT_FLAG_ALTKEY)   != 0;
-        const bool b_ctrl_key_mod  = (flags & cv::EVENT_FLAG_CTRLKEY)  != 0;
-        const bool b_shift_key_mod = (flags & cv::EVENT_FLAG_SHIFTKEY) != 0;
-
-        // controls mouse event
-        switch (event) {
-        case cv::EVENT_MOUSEHWHEEL: {
-            // horizontal mouse wheel scrolling
-
-        } break;
-
-        case cv::EVENT_MOUSEMOVE: {
-            // mouse position moving
-
-        } break;
-
-        case cv::EVENT_MBUTTONDBLCLK: {
-            // mouse middle button double click
-
-        } break;
-
-
-        }
-    }
 
 }
