@@ -9,7 +9,6 @@ in the Software without restriction,  including without limitation the  rights
 to use,  copy,  modify,  merge,  publish,  distribute, sublicense, and/or sell
 copies of the Software,  and  to  permit  persons  to  whom  the  Software  is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -25,19 +24,35 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <opencv2/core/mat.hpp>
+#include <cstdlib>
 
-export module video.frame;
+#include <windows.h>
+
+
+module devices.monitors_list;
+
+import devices.display_monitor;
 
 
 //===========================================================================
-export namespace avt::video
+namespace avt::devices
 {
-    //=======================================================================
-    /** @brief The base class for Video Frames. */
-    using Frame = cv::Mat3b;
+    /** @brief the internal initialization callback. */
+    BOOL CALLBACK MonitorsList::m_init_callback(HMONITOR monitor_handle, HDC dc_handle, LPRECT monitor_display_rect, LPARAM params)
+    {
+        MonitorsList* monitors = reinterpret_cast<MonitorsList*>(params);
 
-    /** @brief The base class for parts of frames. */
-    using SubFrame = cv::Mat3b;
+        monitors->push_back(
+            DisplayMonitor(
+                monitor_handle,
+                dc_handle,
+                monitor_display_rect->left,
+                monitor_display_rect->top,
+                std::abs(monitor_display_rect->right - monitor_display_rect->left),
+                std::abs(monitor_display_rect->bottom - monitor_display_rect->top)
+            )
+        );
 
+        return true;
+    }
 }

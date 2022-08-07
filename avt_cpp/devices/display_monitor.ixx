@@ -68,23 +68,13 @@ export namespace avt::devices
 
 
         //---   Constructors / Destructor   ---------------------------------
-        /** @brief Default constructor. */
-        inline DisplayMonitor(const HMONITOR monitor_handle = 0,
-                              const HDC      display_context_handle = 0 ,
-                              const int      left_x = 0,
-                              const int      top_y = 0,
-                              const int      width = 0,
-                              const int      height = 0) noexcept
-            : win_handle(monitor_handle),
-              win_dc_handle(display_context_handle),
-              x(left_x),
-              y(top_y),
-              width(width),
-              height(height)
-        {
-            if (is_ok())
-                set_system_data();
-        }
+        /** @brief Value constructor. */
+        DisplayMonitor(const HMONITOR monitor_handle = 0,
+                       const HDC      display_context_handle = 0,
+                       const int      left_x = 0,
+                       const int      top_y = 0,
+                       const int      width = 0,
+                       const int      height = 0) noexcept;
 
 
         DisplayMonitor(const DisplayMonitor&) = default;
@@ -104,26 +94,7 @@ export namespace avt::devices
         }
 
         /** @brief Sets Windows additional features associated with this display monitor. */
-        void set_system_data()
-        {
-            MONITORINFO my_info;
-            my_info.cbSize = sizeof(my_info);
-            GetMonitorInfoA(win_handle, &my_info);
-            is_primary_screen = ((my_info.dwFlags & MONITORINFOF_PRIMARY) == MONITORINFOF_PRIMARY);
-
-            GetDpiForMonitor(win_handle, MDT_RAW_DPI, &raw_dpiX, &raw_dpiY);
-            GetDpiForMonitor(win_handle, MDT_EFFECTIVE_DPI, &scaled_dpiX, &scaled_dpiY);
-
-            width_mm = GetDeviceCaps(win_dc_handle, HORZSIZE);
-            height_mm = GetDeviceCaps(win_dc_handle, VERTSIZE);
-
-            if (width_mm == 0) {
-                width_mm = lround(width * 25.4 / raw_dpiX);
-                height_mm = lround(height * 25.4 / raw_dpiY);
-            }
-
-            vertical_refresh_rate = GetDeviceCaps(win_dc_handle, VREFRESH);
-        }
+        void set_system_data();
     };
 
 }

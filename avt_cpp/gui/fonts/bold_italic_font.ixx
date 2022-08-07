@@ -84,10 +84,10 @@ export namespace avt::gui::fonts
         *   false to get a 'serif' police.
         *   Defauts to true (i.e. 'sans-serif' police).
         */
-        BoldItalicFont(const int                   size,
-                       const avt::utils::RGBColor& color,
-                       const avt::utils::RGBColor& bg_color,
-                       const bool                  b_sans_serif = true) noexcept
+        inline BoldItalicFont(const int                   size,
+                              const avt::utils::RGBColor& color,
+                              const avt::utils::RGBColor& bg_color,
+                              const bool                  b_sans_serif = true) noexcept
             : MyBaseType(size, color, bg_color, true, true, b_sans_serif)
         {}
 

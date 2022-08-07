@@ -9,7 +9,6 @@ in the Software without restriction,  including without limitation the  rights
 to use,  copy,  modify,  merge,  publish,  distribute, sublicense, and/or sell
 copies of the Software,  and  to  permit  persons  to  whom  the  Software  is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -25,19 +24,32 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <opencv2/core/mat.hpp>
+#include <algorithm>
 
-export module video.frame;
+#include <Windows.h>
+#include <timeapi.h>
+
+module mtmp.scheduler;
 
 
 //===========================================================================
-export namespace avt::video
+namespace avt::mtmp
 {
-    //=======================================================================
-    /** @brief The base class for Video Frames. */
-    using Frame = cv::Mat3b;
+    const unsigned int Scheduler::_clamp(const unsigned int time_slice_ms) noexcept
+    {
+        if (!_already_inited) {
+            TIMECAPS device_caps;  // win32 structure
+            if (timeGetDevCaps(&device_caps, sizeof(device_caps)) == MMSYSERR_NOERROR) {  // win32 function and const
+                _MIN_TIME_SLICE_ms = device_caps.wPeriodMin;
+                _MAX_TIME_SLICE_ms = device_caps.wPeriodMax;
+            }
+            else {
+                _MIN_TIME_SLICE_ms = 3;
+                _MAX_TIME_SLICE_ms = 24;
+            }
+            _already_inited = true;
+        }
 
-    /** @brief The base class for parts of frames. */
-    using SubFrame = cv::Mat3b;
-
+        return std::clamp<unsigned int>(time_slice_ms, _MIN_TIME_SLICE_ms, _MAX_TIME_SLICE_ms);
+    }
 }

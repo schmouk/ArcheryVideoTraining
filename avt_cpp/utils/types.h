@@ -41,7 +41,7 @@ namespace avt
     using CVPoint      = cv::Point_<avt::CoordsType>;   //!< OpenCV-like Point_ wrapper
     using CVRect       = cv::Rect_<avt::CoordsType>;    //!< OpenCV-like Rect_ wrapper
     using CVScalarByte = cv::Scalar_<avt::Byte>;        //!< OpenCV-like Scalar wrapper
-    using CVSize = cv::Size_<avt::CoordsType>;    //!< OpenCV-like Size_ wrapper
+    using CVSize       = cv::Size_<avt::DimsType>;      //!< OpenCV-like Size_ wrapper
 
 
     //---   is_pair_type   --------------------------------------------------

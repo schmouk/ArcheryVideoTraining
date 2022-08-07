@@ -27,6 +27,7 @@ module;
 
 #include <algorithm>
 #include <opencv2/core/mat.hpp>
+#include <opencv2/core/types.hpp>
 
 #include "utils/types.h"
 
@@ -36,7 +37,7 @@ export module gui.items.view;
 import avt.config;
 import utils.coords2d;
 import video.frame;
-import utils.rgba_color;
+import utils.rgb_color;
 import utils.size;
 import utils;
 
@@ -57,45 +58,48 @@ export namespace avt::gui::items
         //---   Constructors / Destructors   --------------------------------
         /** @brief Value Constructor (4 scalars + 1 color). */
         template<typename X, typename Y, typename H, typename W>
-            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y> && std::is_arithmetic_v<H> && std::is_arithmetic_v<H>
+            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>&& std::is_arithmetic_v<H>&& std::is_arithmetic_v<W>
         inline View(const View* parent_view,
                     const X x,
                     const Y y,
                     const W width,
                     const H height,
-                    const avt::utils::RGBAColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+                    const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : p_view(parent_view),
               PosType(x, y),
-              SizeType(width, height),
-              content(height, width, CV_8UC3, (avt::CVScalarByte)bg_color)
-        {}
+              SizeType(width, height)
+        {
+            m_create_content();
+        }
 
         /** @brief Value Constructor (1 pos + 1 size + 1 color). */
-        inline View(const View*                  parent_view,
-                    const avt::utils::Coords2D&  top_left,
-                    const avt::utils::Size&      size,
-                    const avt::utils::RGBAColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+        inline View(const View* parent_view,
+                    const avt::utils::Coords2D& top_left,
+                    const avt::utils::Size& size,
+                    const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : p_view(parent_view),
               PosType(top_left),
-              SizeType(size),
-              content((avt::CVSize)size, CV_8UC3, (avt::CVScalarByte)bg_color)
-        {}
+              SizeType(size)
+        {
+            m_create_content();
+        }
 
         /** @brief Value Constructor (1 rect + 1 color). */
-        inline View(const View*                  parent_view,
-                    const avt::CVRect&           rect,
-                    const avt::utils::RGBAColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+        inline View(const View* parent_view,
+                    const avt::CVRect& rect,
+                    const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : p_view(parent_view),
-              PosType(rect.x, rect.y),
-              SizeType(rect.width, rect.height),
-              content(rect.size(), CV_8UC3, (avt::CVScalarByte)bg_color)
-        {}
+              PosType(rect.tl()),
+              SizeType(rect.size())
+        {
+            m_create_content();
+        }
 
         /** @brief Default Copy Constructor. */
-        View(const View&) noexcept = default;
+        View(const View&) noexcept = delete; // default;
 
         /** @brief Default Move COnstructor. */
-        View(View&&) noexcept = default;
+        View(View&&) noexcept = delete; //default;
 
         /** @brief Default Destructor. */
         ~View() noexcept = default;
@@ -103,10 +107,10 @@ export namespace avt::gui::items
 
         //---   Assignments   -----------------------------------------------
         /** @brief Default Copy assignment. */
-        View& operator= (const View&) noexcept = default;
+        View& operator= (const View&) noexcept = delete; //default;
 
         /** @brief Default Move assignment. */
-        View& operator= (View&&) noexcept = default;
+        View& operator= (View&&) noexcept = delete; //default;
 
 
         //---   Operations   ------------------------------------------------
@@ -114,12 +118,7 @@ export namespace avt::gui::items
         *
         * Caution: this is not thread safe.
         */
-        inline void draw(avt::video::Frame& frame) const noexcept
-        {
-            const avt::utils::Coords2D abs_pos    = get_absolute_pos();
-            const avt::utils::Size     final_size = m_clipping_size(abs_pos, size(), frame);
-            content.copyTo(frame(avt::CVRect(abs_pos, final_size)));
-        }
+        void draw(avt::video::Frame& frame) noexcept;
 
         /** @brief Returns the absolute position of this view in the root View. */
         inline avt::utils::Coords2D get_absolute_pos() const noexcept
@@ -127,46 +126,47 @@ export namespace avt::gui::items
             return m_get_abs_pos(this);
         }
 
-        /** @brief Returns a reference to the avt::utils::Size size of this view. */
-        inline avt::utils::Size size() noexcept
+        /** @brief Returns the avt::utils::Coords2D position of this view in its parent view. */
+        inline avt::utils::Coords2D pos() noexcept
         {
-            return (avt::utils::Size)*this;
+            return *dynamic_cast<avt::utils::Coords2D*>(this);
         }
 
-        /** @brief Returns a const reference to the avt::utils::Size size of this view. */
+        /** @brief Returns the const avt::utils::Coords2D position of this view in its parent view. */
+        inline avt::utils::Coords2D pos() const noexcept
+        {
+            return *dynamic_cast<const avt::utils::Coords2D*>(this);
+        }
+
+        /** @brief Returns the avt::utils::Size size of this view. */
+        inline avt::utils::Size size() noexcept
+        {
+            return *dynamic_cast<avt::utils::Size*>(this);
+        }
+
+        /** @brief Returns the const avt::utils::Size size of this view. */
         inline avt::utils::Size size() const noexcept
         {
-            return (avt::utils::Size)(*this);
+            return *dynamic_cast<const avt::utils::Size*>(this);
         }
 
 
         //---   Attributes   ------------------------------------------------
-        const avt::gui::items::View* p_view;
-        cv::Mat                      content;
+        const avt::gui::items::View* p_view{ nullptr };
+        //avt::video::Frame            content;
 
 
     private:
         /** @brief Evaluates the clipped size of this view when displayed in a frame. */
         avt::utils::Size m_clipping_size(const avt::utils::Coords2D& abs_pos,
-                                          const avt::utils::Size& size,
-                                          avt::video::Frame& frame) const noexcept
-        {
-            const avt::DimsType width  = std::max(0, std::min(int(size.width) , frame.cols - abs_pos.x));
-            const avt::DimsType height = std::max(0, std::min(int(size.height), frame.rows - abs_pos.y));
-            return avt::utils::Size(width, height);
-        }
+                                         const avt::utils::Size&     size,
+                                         avt::video::Frame&          frame) const noexcept;
+
+        /** @brief Internally creates the content for this view. */
+        void m_create_content();
 
         /** @brief Evaluates the absolute position of this view within the root View. */
-        avt::utils::Coords2D m_get_abs_pos(const View* p_current_view) const noexcept
-        {
-            if (p_current_view->p_view == nullptr) {
-                return *p_current_view;
-            }
-            else {
-                return *p_current_view + m_get_abs_pos(p_current_view->p_view);
-            }
-        }
-
+        avt::utils::Coords2D m_get_abs_pos(const View* p_current_view) const noexcept;
     };
 
 }

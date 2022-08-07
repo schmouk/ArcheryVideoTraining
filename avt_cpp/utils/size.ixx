@@ -102,9 +102,9 @@ export namespace avt::utils
         /** @brief Assignment operator (2-components container). */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        inline Size& operator= (const P& rhs) noexcept(false)
+        Size& operator= (const P& rhs) noexcept(false)
         {
-            width = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[0])>(rhs[0]);
+            width  = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[0])>(rhs[0]);
             height = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[1])>(rhs[1]);
             return *this;
         }
@@ -122,8 +122,7 @@ export namespace avt::utils
             requires avt::is_pair_type_v<P>
         inline const bool operator== (const P& rhs) const noexcept(false)
         {
-            width == rhs[0];
-            height == rhs[1];
+            return width  == rhs[0] && height == rhs[1];
         }
 
         /** @brief Returns true if sizes are not the same, or false otherwise. */
@@ -143,7 +142,7 @@ export namespace avt::utils
 
         //---   Adding   ----------------------------------------------------
         /** @brief In-place adds a 2D-coords. */
-        inline Size& operator+= (const Size& rhs) noexcept
+        Size& operator+= (const Size& rhs) noexcept
         {
             width = avt::utils::clamp_us(_ConvertType(width) + _ConvertType(rhs.width));
             height = avt::utils::clamp_us(_ConvertType(height) + _ConvertType(rhs.height));
@@ -194,7 +193,7 @@ export namespace avt::utils
 
         //---   Subtracting   -----------------------------------------------
         /** @brief In-place subtracts a 2D-components. */
-        inline Size& operator-= (const Size& rhs) noexcept
+        Size& operator-= (const Size& rhs) noexcept
         {
             width = avt::utils::clamp_us(_ConvertType{ width } - _ConvertType{ rhs.width });
             height = avt::utils::clamp_us(_ConvertType{ height } - _ConvertType{ rhs.height });

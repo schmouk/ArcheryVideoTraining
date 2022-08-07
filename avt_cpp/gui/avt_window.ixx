@@ -36,12 +36,13 @@ module;
 export module gui.avt_window;
 
 import avt.config;
+import utils.coords2d;
 import gui.items.cursor;
 import video.frame;
 import mtmp.mutex;
 import utils.rgb_color;
 import utils.size;
-import gui.items.view;
+//import gui.items.view;
 
 
 //===========================================================================
@@ -218,10 +219,12 @@ export namespace avt::gui
 
 
         /** @brief Draws a specified View in this window content. */
-        inline void draw_view(const avt::gui::items::View& view) noexcept
+        /** /
+        inline void draw_view(avt::gui::items::View& view) noexcept
         {
             view.draw(window_content);
         }
+        /**/
 
 
         /** @brief Returns the current (x, y) position of this window, expressed in pixels. */
@@ -287,7 +290,7 @@ export namespace avt::gui
                 cv::resizeWindow(window_id, size.width, size.height);
             }
 
-            window_content = avt::video::Frame{ size, CV_8UC3, avt::config::DEFAULT_BACKGROUND };
+            window_content = avt::video::Frame{ size, avt::config::DEFAULT_BACKGROUND };
 
             avt::gui::items::Cursor_NORMAL.activate();
         }

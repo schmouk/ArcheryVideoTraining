@@ -22,7 +22,6 @@ SOFTWARE.
 module;
 
 #include <chrono>
-//#include <iostream>
 #include <thread>
 
 
@@ -71,13 +70,8 @@ export namespace avt::mtmp
         * repetead  task,  or set it to false to get this running as soon
         * as '.start()' is called.
         */
-        inline Timer(const double period_ms,
-                     const bool   b_delay = false) noexcept
-            : avt::mtmp::Thread{},
-              m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
-              m_n_repeats{ 0 },
-              m_b_delay{ b_delay }
-        {}
+        Timer(const double period_ms,
+              const bool   b_delay = false) noexcept;
 
         /** @brief Constructor.
         *
@@ -89,15 +83,9 @@ export namespace avt::mtmp
         * N.B. 'n_repeats' set to 0 means infinite repeating.  The timer 
         * must then be explicitely stopped to complete.
         */
-        inline Timer(const double period_ms,
-                     const size_t n_repeats,
-                     const bool   b_delay = false) noexcept
-            : avt::mtmp::Thread{},
-              m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
-              m_n_repeats{ n_repeats },
-              m_b_delay{ b_delay }
-        {}
-
+        Timer(const double period_ms,
+              const size_t n_repeats,
+              const bool   b_delay = false) noexcept;
 
         /** @brief Default Copy constructor. */
         Timer(const Timer&) = delete;
@@ -107,9 +95,7 @@ export namespace avt::mtmp
 
         /** @brief Destructor. */
         virtual inline ~Timer() noexcept
-        {
-            //std::cout << "\n- " << this << " - in avt::mtmp::Timer::delete()  (" << std::chrono::system_clock::now() << ")\n";
-        }
+        {}
 
 
         //---   Assignments   -----------------------------------------------
@@ -130,9 +116,7 @@ export namespace avt::mtmp
         * @sa as an example class avt::mtmp::Watchdog.
         */
         virtual inline void run() override
-        {
-            //std::cout << "\n- " << this << "in avt::mtmp::Timer::run()  (" << std::chrono::system_clock::now() << ")\n";
-        }
+        {}
 
 
         //---   Internal processing stuff   ---------------------------------
@@ -141,26 +125,7 @@ export namespace avt::mtmp
         * Launches the protected method '.run()' which must be implemented
         * in inheriting classes.
         */
-        virtual void _run() noexcept
-        {
-            _prepare_run();
-
-            size_t count{ 1 };
-            std::chrono::system_clock::time_point start_time = std::chrono::system_clock::now();
-            
-            if (m_b_delay) {
-                std::this_thread::sleep_until(start_time + m_period_ms);
-                count++;
-            }
-
-            while (this->is_running() && (m_n_repeats == 0 || count <= m_n_repeats)) {
-                run();
-                std::this_thread::sleep_until(start_time + count * m_period_ms);
-                count++;
-            }
-
-            _terminate_run();
-        }
+        virtual void _run() noexcept;
 
         //---   Attributes   ------------------------------------------------
         std::chrono::milliseconds m_period_ms;
