@@ -37,6 +37,7 @@ namespace avt
     using Byte       = unsigned char;   //!< the unsigned 8-bits integer values type
     using CoordsType = short;           //!< the type of avt 2D-coordinates
     using DimsType   = unsigned short;  //!< the type of avt dimensions values
+    using PixelType  = cv::Vec3b;       //!< the type of frame pixels
 
     using CVPoint      = cv::Point_<avt::CoordsType>;   //!< OpenCV-like Point_ wrapper
     using CVRect       = cv::Rect_<avt::CoordsType>;    //!< OpenCV-like Rect_ wrapper

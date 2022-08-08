@@ -171,7 +171,6 @@
     <ClCompile Include="gui\fonts\italic_font.ixx" />
     <ClCompile Include="gui\items\cursor.ixx" />
     <ClCompile Include="gui\items\view.cpp" />
-    <ClCompile Include="gui\items\view.ixx" />
     <ClCompile Include="interactions\app_automaton.ixx" />
     <ClCompile Include="interactions\mouse_control.cpp" />
     <ClCompile Include="interactions\mouse_control.ixx" />
@@ -218,6 +217,7 @@
     <ClCompile Include="video\frame.ixx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="gui\items\view.h" />
     <ClInclude Include="utils\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

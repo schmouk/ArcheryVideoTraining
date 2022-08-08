@@ -81,6 +81,7 @@ export namespace avt::devices
         DisplayMonitor(DisplayMonitor&&) = default;
         virtual ~DisplayMonitor() = default;
 
+
         //---   Assignments   -----------------------------------------------
         DisplayMonitor& operator= (const DisplayMonitor&) = default;
         DisplayMonitor& operator= (DisplayMonitor&&) = default;

@@ -60,6 +60,7 @@ export namespace avt::devices
         /** @brief Default Destructor. */
         ~MonitorsList() = default;
 
+
         //---   Assignments   -----------------------------------------------
         /** @brief Deleted Copy assignment. */
         MonitorsList& operator= (const MonitorsList&) = delete;

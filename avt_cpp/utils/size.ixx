@@ -25,6 +25,7 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <exception>
 #include <opencv2/core/types.hpp>
 
 #include "utils/types.h"
@@ -55,6 +56,7 @@ export namespace avt::utils
         //---   Wrappers   --------------------------------------------------
         using MyBaseType = avt::CVSize;              //!< wrapper to the base class.
         using ValueType  = avt::CVSize::value_type;  //!< wrapper to the type of widths and heights.
+
 
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Empty constructor. */
@@ -90,6 +92,20 @@ export namespace avt::utils
 
         /** @brief Default Destructor. */
         virtual ~Size() noexcept = default;
+
+
+        //---   Specific Exceptions   ---------------------------------------
+        /** @brief Exception on negative values for scaling size. */
+        class ScalingValueException : public std::exception
+        {
+            const char* what() const noexcept { return "!!! Error: the scaling factors for views must be positive numbers\n"; }
+        };
+
+        /** @brief Exception on null value for shrinking size. */
+        class NullValueException : public std::exception
+        {
+            const char* what() const noexcept { return "!!! Error: the dividing factors for views cannot be 0\n"; }
+        };
 
 
         //---   Assignments   -----------------------------------------------
@@ -246,8 +262,10 @@ export namespace avt::utils
         /** @brief In-place multiplies (one single factor). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        Size& operator*= (const T factor) noexcept
+        Size& operator*= (const T factor) noexcept(false)
         {
+            if (factor < T(0))
+                throw ScalingValueException();
             const long xf = std::lround(double(width) * double(factor));
             const long yf = std::lround(double(height) * double(factor));
             width = avt::utils::clamp<MyBaseType::value_type, long>(xf);
@@ -279,7 +297,10 @@ export namespace avt::utils
             requires std::is_arithmetic_v<T>
         inline Size operator/= (const T factor) noexcept(false)
         {
-            assert(factor > 0);
+            if (factor == T(0))
+                throw NullValueException();
+            if (factor < T(0))
+                throw ScalingValueException();
             return *this *= 1.0 / factor;;
         }
 
