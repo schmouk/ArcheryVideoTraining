@@ -175,14 +175,6 @@ export namespace avt::unit_tests::utils
         assert(r6.bgr[1] == 2);
         assert(r6.bgr[2] == 3);
 
-        r6.set({ -1, 127, 0x7fff'ffff });
-        assert(r6.r == 0);
-        assert(r6.g == 127);
-        assert(r6.b == 255);
-        assert(r6.bgr[0] == 255);
-        assert(r6.bgr[1] == 127);
-        assert(r6.bgr[2] == 0);
-
         r6.set(std::array<long long, 3>{1LL, 128LL, 254LL});
         assert(r6.r == 1);
         assert(r6.g == 128);
