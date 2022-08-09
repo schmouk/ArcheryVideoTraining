@@ -25,6 +25,8 @@ SOFTWARE.
 
 //===========================================================================
 #include <algorithm>
+
+#include <opencv2/imgproc.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
 
@@ -65,8 +67,7 @@ namespace avt::gui::items
                     const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(height, width, (cv::Vec3b)bg_color),
               p_view(parent_view),
-              pos(x, y),
-              size(width, height)
+              pos(x, y)
         {}
 
         /** @brief Value Constructor (1 pos + 1 size + 1 color). */
@@ -76,8 +77,7 @@ namespace avt::gui::items
                     const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(size.height, size.width, (cv::Vec3b)bg_color),
               p_view(parent_view),
-              pos(top_left),
-              size(size)
+              pos(top_left)
         {}
 
         /** @brief Value Constructor (1 rect + 1 color). */
@@ -86,14 +86,13 @@ namespace avt::gui::items
                     const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(rect.height, rect.width, (cv::Vec3b)bg_color),
               p_view(parent_view),
-              pos(rect.tl()),
-              size(rect.size())
+              pos(rect.tl())
         {}
 
         /** @brief Default Copy Constructor. */
         View(const View&) noexcept = default;
 
-        /** @brief Default Move COnstructor. */
+        /** @brief Default Move Constructor. */
         View(View&&) noexcept = default;
 
         /** @brief Default Destructor. */
@@ -123,7 +122,7 @@ namespace avt::gui::items
 
         /** @brief Moves this view within its parent view (relative offset). */
         template<typename X, typename Y>
-            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
+            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
         inline void move(const X dx, const Y dy)
         {
             pos.move(dx, dy);
@@ -139,7 +138,7 @@ namespace avt::gui::items
 
         /** @brief Moves this view within its parent view (absolute pos). */
         template<typename X, typename Y>
-            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
+            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
         inline void move_at(const X new_x, const Y new_y)
         {
             pos.move_at(new_x, new_y);
@@ -159,13 +158,15 @@ namespace avt::gui::items
             pos.move_at(new_pos);
         }
 
+        /** @brief Resizes the content of this view according to new size specification. */
+        void resize(const avt::utils::Size& new_size) noexcept;
+
         /** @brief Resizes this view. */
         template<typename W, typename H>
-            requires std::is_arithmetic_v<W> && std::is_arithmetic_v<H>
+            requires std::is_arithmetic_v<W>&& std::is_arithmetic_v<H>
         inline void resize(const W new_width, const H new_height)
         {
-            size.width = new_width;
-            size.height = new_height;
+            resize(avt::utils::Size{ new_width, new_height });
         }
 
         /** @brief Resizes this view with multiplying factor - negative values for scaling factor throw exception Size::ScalingValueException. */
@@ -173,7 +174,7 @@ namespace avt::gui::items
             requires std::is_arithmetic_v<T>
         inline void resize(const T factor) noexcept(false)
         {
-            size *= factor;
+            resize(size() * factor);
         }
 
         /** @brief Scales this view - negative values for scaling factor throw exception Size::ScalingValueException. */
@@ -181,23 +182,35 @@ namespace avt::gui::items
             requires std::is_arithmetic_v<T>
         inline void scale(const T factor) noexcept(false)
         {
-            pos  *= factor;
-            size *= factor;
+            resize(factor);
+            pos *= factor;
+        }
+
+
+        //---   Accessors   -------------------------------------------------
+        /** @brief Returns the number of pixels contained in this view. */
+        inline const size_t area() const noexcept
+        {
+            return total();
+        }
+
+        /** @brief Returns the size of this view. */
+        inline const avt::utils::Size size() const noexcept
+        {
+            return avt::utils::Size(cols, rows);
         }
 
 
         //---   Attributes   ------------------------------------------------
-        cv::Mat3b                    content;
-        PosType                      pos;
-        SizeType                     size;
-        const avt::gui::items::View* p_view{ nullptr };
+        PosType                      pos;               //!< the position in the parent view of this view's top-left corner 
+        const avt::gui::items::View* p_view{ nullptr }; //!< a ppointer to this view's parent view
 
 
     private:
         /** @brief Evaluates the clipped size of this view when displayed in a frame. */
-        avt::utils::Size m_clipping_size(const PosType&     abs_pos,
-                                         const SizeType&    size,
-                                         avt::video::Frame& frame) const noexcept;
+        avt::utils::Size m_clipping_size(const PosType&          abs_pos,
+                                         const avt::utils::Size& size,
+                                         avt::video::Frame&      frame) const noexcept;
 
         /** @brief Evaluates the absolute position of this view within the root View. */
         avt::utils::Coords2D m_get_abs_pos(const View* p_current_view) const noexcept;

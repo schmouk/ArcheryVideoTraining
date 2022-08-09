@@ -120,7 +120,7 @@ export namespace avt::utils
             requires avt::is_pair_type_v<P>
         Size& operator= (const P& rhs) noexcept(false)
         {
-            width  = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[0])>(rhs[0]);
+            width = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[0])>(rhs[0]);
             height = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[1])>(rhs[1]);
             return *this;
         }
@@ -131,6 +131,18 @@ export namespace avt::utils
         inline const bool operator== (const Size& rhs) const noexcept
         {
             return width == rhs.width && height == rhs.height;
+        }
+
+        /** @brief Returns true if sizes are the same, or false otherwise. */
+        inline const bool operator== (const cv::Size& rhs) const noexcept
+        {
+            return width == rhs.width && height == rhs.height;
+        }
+
+        /** @brief Returns true if sizes are the same, or false otherwise. */
+        friend inline const bool operator== (const cv::Size& lhs, const avt::utils::Size& rhs) noexcept
+        {
+            return rhs == lhs;
         }
 
         /** @brief Returns true if this size and 2-components container are the ame, or false otherwise. */
@@ -145,6 +157,18 @@ export namespace avt::utils
         inline const bool operator!= (const Size& rhs) const noexcept
         {
             return !(*this == rhs);
+        }
+
+        /** @brief Returns true if sizes are not the same, or false otherwise. */
+        inline const bool operator!= (const cv::Size& rhs) const noexcept
+        {
+            return !(*this == rhs);
+        }
+
+        /** @brief Returns true if sizes are the same, or false otherwise. */
+        friend inline const bool operator!= (const cv::Size& lhs, const avt::utils::Size& rhs) noexcept
+        {
+            return !(rhs == lhs);
         }
 
         /** @brief Returns true if this size and 2-components container are not the ame, or false otherwise. */
@@ -316,14 +340,6 @@ export namespace avt::utils
 
     private:
         using _ConvertType = long;  //!< type for the conversion of coordinates on internal operations.
-
-        //---   Miscelaneous   ----------------------------------------------
-        /** @brief Evaluates the area of this Size. */
-        const unsigned long area() const
-        {
-            return (unsigned long)width * (unsigned long)height;
-        }
-
     };
 
 }

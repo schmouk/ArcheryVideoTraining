@@ -47,17 +47,17 @@ namespace avt::gui::items
     void View::draw(avt::video::Frame& frame) noexcept
     {
         const avt::utils::Coords2D abs_pos = get_absolute_pos();
-        const avt::utils::Size     final_size = m_clipping_size(abs_pos, size, frame);
+        const avt::utils::Size     final_size = m_clipping_size(abs_pos, size(), frame);
         copyTo(frame(avt::CVRect(abs_pos, final_size)));
     }
 
     /** Evaluates the clipped size of this view when displayed in a frame. */
-    avt::utils::Size View::m_clipping_size(const avt::utils::Coords2D& abs_pos,
+    avt::utils::Size View::m_clipping_size(const avt::utils::Coords2D& abs_pos_,
                                            const avt::utils::Size&     size_,
-                                           avt::video::Frame&          frame) const noexcept
+                                           avt::video::Frame&          frame_) const noexcept
     {
-        const avt::DimsType width  = std::max(0, std::min(int(size_.width), frame.cols - abs_pos.x));
-        const avt::DimsType height = std::max(0, std::min(int(size_.height), frame.rows - abs_pos.y));
+        const avt::DimsType width  = std::max(0, std::min(int(size_.width) , frame_.cols - abs_pos_.x));
+        const avt::DimsType height = std::max(0, std::min(int(size_.height), frame_.rows - abs_pos_.y));
         return avt::utils::Size(width, height);
     }
 
@@ -70,6 +70,20 @@ namespace avt::gui::items
         else {
             return p_current_view->pos + m_get_abs_pos(p_current_view->p_view);
         }
+    }
+
+    /** @brief Resizes the content of this view according to new size specification. */
+    void View::resize(const avt::utils::Size& new_size) noexcept
+    {
+        if (size() == new_size)
+            return;
+
+        MyBaseType dst;
+        if (new_size.area() < area())
+            cv::resize(*this, dst, cv::Size(new_size.width, new_size.height), 0.0, 0.0, cv::INTER_LINEAR);
+        else
+            cv::resize(*this, dst, cv::Size(new_size.width, new_size.height), 0.0, 0.0, cv::INTER_LANCZOS4);
+        dst.copyTo(*this);
     }
 
 }
