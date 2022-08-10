@@ -27,6 +27,7 @@ module;
 
 #include <atomic>
 #include <cstring>
+#include <exception>
 #include <format>
 
 #include <opencv2/core/cvstd.hpp>
@@ -118,6 +119,16 @@ export namespace avt::gui
         AVTWindow& operator= (AVTWindow&&) = delete;
 
 
+        //---   Exceptions   -----------------------------------------------
+        class ViewCreationException : public std::exception
+        {
+            const char* what() const noexcept
+            {
+                return "!!! Error: cannot create content for the main window of application Archery Video Training";
+            }
+        };
+
+
         //---   Operations   ------------------------------------------------
         /** @brief Draws a content into this window.
 
@@ -142,8 +153,7 @@ export namespace avt::gui
             @return The integer code of the key that was hit while displaying 
             this content, or -1 if no key was hit after expressed delay.
         */
-        const int draw(const bool b_forced = false,
-                       const int  hit_delay_ms = 1) noexcept;
+        const int draw(const int hit_delay_ms = 1) noexcept;
 
 
         /** @brief Draws a specified View in this window content. */
@@ -193,21 +203,21 @@ export namespace avt::gui
 
 
         //---   Attributes   ------------------------------------------------
-        avt::gui::items::View*          p_main_view{ nullptr };
-        avt::utils::Size                size;
-        avt::mtmp::Mutex                mutex;
-        cv::String                      window_id;
-        cv::String                      title;
-        avt::utils::RGBColor            bg_color;
-        bool                            b_full_screen;
-        bool                            b_fixed_size;
+        avt::gui::items::View*  p_main_view{ nullptr };
+        avt::utils::Size        size;
+        avt::mtmp::Mutex        mutex;
+        cv::String              window_id;
+        cv::String              title;
+        avt::utils::RGBColor    bg_color;
+        bool                    b_full_screen;
+        bool                    b_fixed_size;
 
 
     private:
         static inline std::atomic<long> m_windows_count = 0;
 
         /** @brief Creates the OpenCV window. */
-        void m_create_window() noexcept;
+        void m_create_window() noexcept(false);
 
         /** @brief Creates all the embedded sub-views. */
         void m_create_subviews() noexcept;
@@ -224,6 +234,7 @@ export namespace avt::gui
             title = window_id;
         }
     };
+
 
     //=======================================================================
     // TEMPLATES IMPLEMENTATION

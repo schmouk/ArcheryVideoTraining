@@ -27,6 +27,7 @@ SOFTWARE.
 
 //===========================================================================
 #include <iostream>
+#include <opencv2/highgui.hpp>
 
 //import unit_tests.utils.test_gray_color;
 //import unit_tests.utils.test_rgb_color;
@@ -45,7 +46,9 @@ SOFTWARE.
 //import gui.fonts.bold_font;
 //import gui.fonts.italic_font;
 //import gui.fonts.bold_italic_font;
-import unit_tests.gui.items.test_view;
+//import unit_tests.gui.items.test_view;
+
+import unit_tests.gui.test_avt_window;
 
 
 //===========================================================================
@@ -55,8 +58,8 @@ int main()
     std::cout << "\n=====   UNIT TESTS - Archery Video Training   =====";
     std::cout << "\n===================================================\n\n";
 
-    //avt::unit_tests::utils::test_rgb_color();
     //avt::unit_tests::utils::test_gray_color();
+    //avt::unit_tests::utils::test_rgb_color();
     //avt::unit_tests::utils::test_size();
     //avt::unit_tests::mtmp::threads::test_threads();
     //avt::unit_tests::mtmp::signal::test_signal();
@@ -68,7 +71,9 @@ int main()
     //avt::unit_tests::gui::shapes::test_point();
     //avt::unit_tests::gui::shapes::test_line();
     //avt::unit_tests::gui::shapes::test_rect();
-    avt::unit_tests::gui::items::test_view();
+    //avt::unit_tests::gui::items::test_view();
+    avt::unit_tests::gui::test_main_window();
+
 
     std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";
 }

@@ -48,7 +48,7 @@ export namespace avt::unit_tests::gui::items
     //=======================================================================
     void test_view()
     {
-        std::cout << "-- TEST avt::utils::View\n";
+        std::cout << "-- TEST avt::gui::items::View\n";
 
         avt::gui::items::View v0(nullptr, 10, 5, 1000, 640);
         assert(v0.pos.x == 10);

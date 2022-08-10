@@ -66,7 +66,7 @@ export namespace avt::gui::items
         ~Cursor() noexcept
         {
             if (m_b_restore_normal_cursor)
-                SetCursor(LoadCursorW(0, IDC_ARROW));  // win32 specifics
+                SetCursor(LoadCursor(0, IDC_ARROW));  // win32 specifics
         }
 
 
@@ -83,7 +83,7 @@ export namespace avt::gui::items
         void activate() noexcept(false)
         {
             try {
-                SetCursor(LoadCursorW(0, m_cursor_id));
+                SetCursor(LoadCursor(0, m_cursor_id));  // win32 specifics
                 show();
             }
             catch (...) {
@@ -117,7 +117,7 @@ export namespace avt::gui::items
         */
         inline void set_pos(const avt::utils::Coords2D& new_pos) noexcept
         {
-            SetCursorPos(new_pos.x, new_pos.y);
+            SetCursorPos(int(new_pos.x), int(new_pos.y));
         }
 
         /** @brief Forces the cursor position.
@@ -128,7 +128,7 @@ export namespace avt::gui::items
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         void set_pos(const X new_x, const Y new_y) noexcept
         {
-            SetCursorPos(long(new_x), long(new_y));
+            SetCursorPos(int(new_x), int(new_y));
         }
 
         /** @brief Forces the cursor position.

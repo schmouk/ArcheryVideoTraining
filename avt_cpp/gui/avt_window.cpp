@@ -147,7 +147,7 @@ namespace avt::gui
         @return The integer code of the key that was hit while displaying
         this content, or -1 if no key was hit after expressed delay.
     */
-    const int AVTWindow::draw(const bool b_forced, const int  hit_delay_ms) noexcept
+    const int AVTWindow::draw(const int hit_delay_ms) noexcept
     {
         cv::imshow(window_id, *p_main_view);
         return cv::waitKey(hit_delay_ms);
@@ -163,20 +163,28 @@ namespace avt::gui
     /**/
 
     /** @brief Creates the OpenCV window. */
-    void AVTWindow::m_create_window() noexcept
+    void AVTWindow::m_create_window() noexcept(false)
     {
         // sets size and creates the associated OpenCV named window
         if (b_full_screen) {
-            cv::namedWindow(window_id, cv::WINDOW_FULLSCREEN);
-            size = get_size();
+
+            cv::namedWindow(window_id, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
+            cv::moveWindow(window_id, -10'000, 0);
+            cv::setWindowProperty(window_id, cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
+            cv::moveWindow(window_id, 0, 0);
         }
         else {
             cv::namedWindow(window_id, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
             cv::resizeWindow(window_id, size.width, size.height);
         }
+        size = get_size();
 
         // creates the associated main view
-        p_main_view = new avt::gui::items::View(nullptr, avt::utils::Coords2D{ 0, 0 }, size, avt::config::DEFAULT_BACKGROUND);
+        p_main_view = new avt::gui::items::View(nullptr, avt::utils::Coords2D{ 0, 0 }, size, bg_color);
+        if (p_main_view == nullptr)
+            throw ViewCreationException();
+        cv::imshow(window_id, *p_main_view);
+        cv::waitKey(1);
 
         // creates the emebedded views
         m_create_subviews();
