@@ -25,8 +25,6 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <cstring>
-
 #include <opencv2/highgui.hpp>
 
 
@@ -37,7 +35,7 @@ import gui.avt_window;
 
 
 //===========================================================================
-namespace avt::interactions
+export namespace avt::interactions
 {
     //=======================================================================
     /** @brief The class of mouse interactions. */
@@ -46,11 +44,7 @@ namespace avt::interactions
     public:
         //--- Constructors / Destructors ------------------------------------
         /** @brief Value Constructor. */
-        MouseControl(avt::gui::AVTWindow* p_avt_window) noexcept
-            : mp_automaton{ p_avt_window }
-        {
-            cv::setMouseCallback(p_avt_window->window_id, controller, this);
-        }
+        MouseControl(avt::gui::AVTWindow* p_avt_window) noexcept;
 
         /** @brief Deleted Copy constructor. */
         MouseControl(const MouseControl&) = delete;
@@ -83,86 +77,7 @@ namespace avt::interactions
         *   A pointer to the passed parameters at call time.
         *   @see MouseControl() constructor.
         */
-        static void controller(int event, int x, int y, int flags, void* user_data)
-        {
-            // reinterprets the user_data type
-            avt::interactions::MouseControl* p_mouse_control = reinterpret_cast<avt::interactions::MouseControl*>(user_data);
-            if (p_mouse_control == nullptr)
-                return;
-
-            // sets modifiers flags status
-            const bool b_alt_key_mod   = (flags & cv::EVENT_FLAG_ALTKEY)   != 0;
-            const bool b_ctrl_key_mod  = (flags & cv::EVENT_FLAG_CTRLKEY)  != 0;
-            const bool b_shift_key_mod = (flags & cv::EVENT_FLAG_SHIFTKEY) != 0;
-
-            // controls mouse event
-            switch (event) {
-            case cv::EVENT_MOUSEMOVE: {
-                // mouse position moving
-
-            } break;
-
-            case cv::EVENT_MOUSEHWHEEL: {
-                // horizontal mouse wheel scrolling
-
-            } break;
-
-            case cv::EVENT_MOUSEWHEEL: {
-                // vertical mouse wheel scrolling
-
-            } break;
-
-            case cv::EVENT_LBUTTONDBLCLK: {
-                // mouse left button double click
-
-            } break;
-
-            case cv::EVENT_LBUTTONDOWN: {
-                // mouse left button pressed
-
-            } break;
-
-            case cv::EVENT_LBUTTONUP: {
-                // mouse left button released
-
-            } break;
-
-            case cv::EVENT_MBUTTONDBLCLK: {
-                // mouse middle button double click
-
-            } break;
-
-            case cv::EVENT_MBUTTONDOWN: {
-                // mouse middle button pressed
-
-            } break;
-
-            case cv::EVENT_MBUTTONUP: {
-                // mouse middle button released
-
-            } break;
-
-            case cv::EVENT_RBUTTONDBLCLK: {
-                // mouse right button double click
-
-            } break;
-
-            case cv::EVENT_RBUTTONDOWN: {
-                // mouse right button pressed
-
-            } break;
-
-            case cv::EVENT_RBUTTONUP: {
-                // mouse right button released
-
-            } break;
-
-            default: {
-                // should never happen!
-            }
-
-            } // ...end of switch
-        }
+        static void controller(int event, int x, int y, int flags, void* user_data);
 
 
     private:

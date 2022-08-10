@@ -100,7 +100,7 @@ export namespace avt::gui::shapes
         Line& operator= (Line&&) noexcept = default;
 
         /** @brief New position assignment. */
-        Line& operator= (const avt::utils::Coords2D& new_pos)
+        inline Line& operator= (const avt::utils::Coords2D& new_pos)
         {
             move_at(new_pos.x, new_pos.y);
             return *this;

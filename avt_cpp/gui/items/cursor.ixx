@@ -44,10 +44,10 @@ export namespace avt::gui::items
 {
     //=======================================================================
     /** @brief The class of mouse cursors. */
-    class Cursor : public avt::utils::Coords2D
+    class Cursor
     {
     public:
-        //--- Constructors / Destructors ------------------------------------
+        //---   Constructors / Destructors   --------------------------------
         /** @brief Default constructor.
         
             @arg cursor_id: int
@@ -59,14 +59,14 @@ export namespace avt::gui::items
             'normal' cursor otherwise. Defaults to true.
         */
         Cursor(wchar_t* cursor_id, const bool b_restore_normal_cursor = true) noexcept
-            : m_cursor_id{ cursor_id }, m_b_restore_normal_cursor{ b_restore_normal_cursor }
+            : m_cursor_id { cursor_id }, m_b_restore_normal_cursor{ b_restore_normal_cursor }
         {}
 
         /** @brief Destructor. */
         ~Cursor() noexcept
         {
             if (m_b_restore_normal_cursor)
-                SetCursor(LoadCursorW(0, IDC_ARROW));  // win32 specifics
+                SetCursor(LoadCursor(0, IDC_ARROW));  // win32 specifics
         }
 
 
@@ -78,13 +78,12 @@ export namespace avt::gui::items
         };
 
 
-
         //---   Operations   ------------------------------------------------
         /** @brief Activates this cursor and shows it. */
         void activate() noexcept(false)
         {
             try {
-                SetCursor(LoadCursorW(0, m_cursor_id));
+                SetCursor(LoadCursor(0, m_cursor_id));  // win32 specifics
                 show();
             }
             catch (...) {
@@ -118,7 +117,7 @@ export namespace avt::gui::items
         */
         inline void set_pos(const avt::utils::Coords2D& new_pos) noexcept
         {
-            SetCursorPos(new_pos.x, new_pos.y);
+            SetCursorPos(int(new_pos.x), int(new_pos.y));
         }
 
         /** @brief Forces the cursor position.
@@ -129,7 +128,7 @@ export namespace avt::gui::items
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         void set_pos(const X new_x, const Y new_y) noexcept
         {
-            SetCursorPos(long(new_x), long(new_y));
+            SetCursorPos(int(new_x), int(new_y));
         }
 
         /** @brief Forces the cursor position.
@@ -161,24 +160,24 @@ export namespace avt::gui::items
 
 
     //=======================================================================
-    Cursor Cursor_CROSSHAIR(IDC_CROSS, true);
-    Cursor Cursor_HAND(IDC_HAND, true);
-    Cursor Cursor_HELP(IDC_HELP, true);
-    Cursor Cursor_NORMAL(IDC_ARROW, true);
-    Cursor Cursor_SIZEALL(IDC_SIZEALL, true);
-    Cursor Cursor_SIZE_DOWN(IDC_SIZENS, true);
-    Cursor Cursor_SIZE_DOWN_LEFT(IDC_SIZENESW, true);
-    Cursor Cursor_SIZE_DOWN_RIGHT(IDC_SIZENWSE, true);
-    Cursor Cursor_SIZE_LEFT(IDC_SIZEWE, true);
-    Cursor Cursor_SIZE_LEFT_RIGHT(IDC_SIZEWE, true);
-    Cursor Cursor_SIZE_RIGHT(IDC_SIZEWE, true);
-    Cursor Cursor_SIZE_UP(IDC_UPARROW, true);
-    Cursor Cursor_SIZE_UP_DOWN(IDC_SIZENS, true);
-    Cursor Cursor_SIZE_UP_LEFT(IDC_SIZENWSE, true);
-    Cursor Cursor_SIZE_UP_RIGHT(IDC_SIZENESW, true);
-    Cursor Cursor_SLASHED_CIRCLE(IDC_NO, true);
-    Cursor Cursor_TEXT(IDC_IBEAM, true);
-    Cursor Cursor_WAIT(IDC_WAIT, true);
-    Cursor Cursor_WAIT_ARROW(IDC_APPSTARTING, true);
+    Cursor Cursor_CROSSHAIR      (IDC_CROSS      , true);
+    Cursor Cursor_HAND           (IDC_HAND       , true);
+    Cursor Cursor_HELP           (IDC_HELP       , true);
+    Cursor Cursor_NORMAL         (IDC_ARROW      , true);
+    Cursor Cursor_SIZEALL        (IDC_SIZEALL    , true);
+    Cursor Cursor_SIZE_DOWN      (IDC_SIZENS     , true);
+    Cursor Cursor_SIZE_DOWN_LEFT (IDC_SIZENESW   , true);
+    Cursor Cursor_SIZE_DOWN_RIGHT(IDC_SIZENWSE   , true);
+    Cursor Cursor_SIZE_LEFT      (IDC_SIZEWE     , true);
+    Cursor Cursor_SIZE_LEFT_RIGHT(IDC_SIZEWE     , true);
+    Cursor Cursor_SIZE_RIGHT     (IDC_SIZEWE     , true);
+    Cursor Cursor_SIZE_UP        (IDC_UPARROW    , true);
+    Cursor Cursor_SIZE_UP_DOWN   (IDC_SIZENS     , true);
+    Cursor Cursor_SIZE_UP_LEFT   (IDC_SIZENWSE   , true);
+    Cursor Cursor_SIZE_UP_RIGHT  (IDC_SIZENESW   , true);
+    Cursor Cursor_SLASHED_CIRCLE (IDC_NO         , true);
+    Cursor Cursor_TEXT           (IDC_IBEAM      , true);
+    Cursor Cursor_WAIT           (IDC_WAIT       , true);
+    Cursor Cursor_WAIT_ARROW     (IDC_APPSTARTING, true);
 
 }

@@ -27,21 +27,24 @@ module;
 
 #include <atomic>
 #include <cstring>
+#include <exception>
 #include <format>
 
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/highgui.hpp>
 
+#include "gui/items/view.h"
+
 
 export module gui.avt_window;
 
 import avt.config;
+import utils.coords2d;
 import gui.items.cursor;
 import video.frame;
 import mtmp.mutex;
 import utils.rgb_color;
 import utils.size;
-import gui.items.view;
 
 
 //===========================================================================
@@ -54,47 +57,16 @@ export namespace avt::gui
     public:
         //---   Constructors / Destructors   --------------------------------
         /** @brief Empty constructor. */
-        AVTWindow() noexcept
-            : size {},
-              mutex{},
-              bg_color{ avt::config::DEFAULT_BACKGROUND },
-              b_full_screen{ true },
-              b_fixed_size{ true }
-        {
-            m_set_default_id();
-            m_create_window();
-            m_set_default_title();
-        }
+        AVTWindow() noexcept;
 
         /** @brief Constructor with specified ID - full screen size. */
         AVTWindow(const std::string&          window_id,
-                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
-            : window_id{ window_id },
-              size{},
-              mutex{},
-              bg_color{ bg_color },
-              b_full_screen{ true },
-              b_fixed_size{ true }
-        {
-            m_create_window();
-            m_set_default_title();
-        }
+                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept;
 
         /** @brief Constructor with specified ID and title - full screen size. */
         AVTWindow(const cv::String&           window_id,
                   const cv::String&           window_title,
-                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
-            : window_content{},
-              window_id{ window_id },
-              size{},
-              mutex{},
-              bg_color{ bg_color },
-              b_full_screen{ true },
-              b_fixed_size{ true }
-        {
-            m_create_window();
-            set_title(window_title);
-        }
+                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept;
 
         /** @brief Constructor with ID and dims. */
         template<typename W, typename H>
@@ -102,32 +74,12 @@ export namespace avt::gui
         AVTWindow(const cv::String&           window_id,
                   const W                     width,
                   const H                     height,
-                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
-            : window_id{ window_id },
-              size(width, height),
-              mutex{},
-              bg_color{ bg_color },
-              b_full_screen{ false },
-              b_fixed_size{ true }
-        {
-            m_create_window();
-            m_set_default_title();
-        }
+                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept;
 
         /** @brief Constructor with ID and size. */
         AVTWindow(const cv::String&           window_id,
                   const utils::Size&          size,
-                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
-            : window_id{ window_id },
-              size{ size },
-              mutex{},
-              bg_color{ bg_color },
-              b_full_screen{ false },
-              b_fixed_size{ true }
-        {
-            m_create_window();
-            m_set_default_title();
-        }
+                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept;
 
         /** @brief Constructor with ID, title and dims. */
         template<typename W, typename H>
@@ -136,33 +88,13 @@ export namespace avt::gui
                   const cv::String&           window_title,
                   const W                     width,
                   const H                     height,
-                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
-            : window_id{ window_id },
-              size(width, height),
-              mutex{},
-              bg_color{ bg_color },
-              b_full_screen{ false },
-              b_fixed_size{ true }
-        {
-            m_create_window();
-            set_title(window_title);
-        }
+                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept;
 
         /** @brief Constructor with ID, title and size. */
         AVTWindow(const cv::String&           window_id,
                   const cv::String&           window_title,
                   const utils::Size&          size,
-                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
-            : window_id{ window_id },
-              size{ size },
-              mutex{},
-              bg_color{ bg_color },
-              b_full_screen{ false },
-              b_fixed_size{ true }
-        {
-            m_create_window();
-            set_title(window_title);
-        }
+                  const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept;
 
         /** Deleted Copy constructor. */
         AVTWindow(const AVTWindow&) noexcept = delete;
@@ -174,6 +106,8 @@ export namespace avt::gui
         inline ~AVTWindow() noexcept
         {
             cv::destroyWindow(window_id);
+            if (p_main_view != nullptr)
+                delete p_main_view;
         }
 
 
@@ -183,6 +117,16 @@ export namespace avt::gui
 
         /** @brief Deleted Move assignment. */
         AVTWindow& operator= (AVTWindow&&) = delete;
+
+
+        //---   Exceptions   -----------------------------------------------
+        class ViewCreationException : public std::exception
+        {
+            const char* what() const noexcept
+            {
+                return "!!! Error: cannot create content for the main window of application Archery Video Training";
+            }
+        };
 
 
         //---   Operations   ------------------------------------------------
@@ -209,19 +153,16 @@ export namespace avt::gui
             @return The integer code of the key that was hit while displaying 
             this content, or -1 if no key was hit after expressed delay.
         */
-        const int draw(const bool b_forced = false,
-                       const int  hit_delay_ms = 1) noexcept
-        {
-            cv::imshow(window_id, window_content);
-            return cv::waitKey(hit_delay_ms);
-        }
+        const int draw(const int hit_delay_ms = 1) noexcept;
 
 
         /** @brief Draws a specified View in this window content. */
-        inline void draw_view(const avt::gui::items::View& view) noexcept
+        /** /
+        inline void draw_view(avt::gui::items::View& view) noexcept
         {
             view.draw(window_content);
         }
+        /**/
 
 
         /** @brief Returns the current (x, y) position of this window, expressed in pixels. */
@@ -262,35 +203,24 @@ export namespace avt::gui
 
 
         //---   Attributes   ------------------------------------------------
-        avt::video::Frame               window_content;
-        avt::utils::Size                size;
-        avt::mtmp::Mutex                mutex;
-        cv::String                      window_id;
-        cv::String                      title;
-        avt::utils::RGBColor            bg_color;
-        bool                            b_full_screen;
-        bool                            b_fixed_size;
+        avt::gui::items::View*  p_main_view{ nullptr };
+        avt::utils::Size        size;
+        avt::mtmp::Mutex        mutex;
+        cv::String              window_id;
+        cv::String              title;
+        avt::utils::RGBColor    bg_color;
+        bool                    b_full_screen;
+        bool                    b_fixed_size;
 
 
     private:
         static inline std::atomic<long> m_windows_count = 0;
 
         /** @brief Creates the OpenCV window. */
-        void m_create_window() noexcept
-        {
-            if (b_full_screen) {
-                cv::namedWindow(window_id, cv::WINDOW_FULLSCREEN);
-                size = get_size();
-            }
-            else {
-                cv::namedWindow(window_id, cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO | cv::WINDOW_GUI_EXPANDED);
-                cv::resizeWindow(window_id, size.width, size.height);
-            }
+        void m_create_window() noexcept(false);
 
-            window_content = avt::video::Frame{ size, CV_8UC3, avt::config::DEFAULT_BACKGROUND };
-
-            avt::gui::items::Cursor_NORMAL.activate();
-        }
+        /** @brief Creates all the embedded sub-views. */
+        void m_create_subviews() noexcept;
 
         /** @brief Sets a default ID for this AVT window. */
         inline void m_set_default_id()
@@ -304,5 +234,46 @@ export namespace avt::gui
             title = window_id;
         }
     };
+
+
+    //=======================================================================
+    // TEMPLATES IMPLEMENTATION
+
+    /** @brief Constructor with ID and dims. */
+    template<typename W, typename H>
+        requires std::is_arithmetic_v<W>&& std::is_arithmetic_v<H>
+    AVTWindow::AVTWindow(const cv::String&           window_id,
+                         const W                     width,
+                         const H                     height,
+                         const avt::utils::RGBColor& bg_color) noexcept
+        : window_id{ window_id },
+          size(width, height),
+          mutex{},
+          bg_color{ bg_color },
+          b_full_screen{ false },
+          b_fixed_size{ true }
+    {
+        m_create_window();
+        m_set_default_title();
+    }
+
+    /** @brief Constructor with ID, title and dims. */
+    template<typename W, typename H>
+        requires std::is_arithmetic_v<W>&& std::is_arithmetic_v<H>
+    AVTWindow::AVTWindow(const cv::String&           window_id,
+                         const cv::String&           window_title,
+                         const W                     width,
+                         const H                     height,
+                         const avt::utils::RGBColor& bg_color) noexcept
+        : window_id{ window_id },
+          size(width, height),
+          mutex{},
+          bg_color{ bg_color },
+          b_full_screen{ false },
+          b_fixed_size{ true }
+    {
+        m_create_window();
+        set_title(window_title);
+    }
 
 }

@@ -158,31 +158,43 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="avt.cpp" />
+    <ClCompile Include="devices\display_monitor.cpp" />
     <ClCompile Include="devices\display_monitor.ixx" />
+    <ClCompile Include="devices\monitors_list.cpp" />
     <ClCompile Include="devices\monitors_list.ixx" />
     <ClCompile Include="avt_config.ixx" />
+    <ClCompile Include="gui\avt_window.cpp" />
     <ClCompile Include="gui\avt_window.ixx" />
     <ClCompile Include="gui\fonts\bold_font.ixx" />
     <ClCompile Include="gui\fonts\bold_italic_font.ixx" />
+    <ClCompile Include="gui\fonts\font.cpp" />
     <ClCompile Include="gui\fonts\font.ixx" />
     <ClCompile Include="gui\fonts\italic_font.ixx" />
     <ClCompile Include="gui\items\cursor.ixx" />
-    <ClCompile Include="gui\items\view.ixx" />
+    <ClCompile Include="gui\items\view.cpp" />
     <ClCompile Include="interactions\app_automaton.ixx" />
+    <ClCompile Include="interactions\mouse_control.cpp" />
     <ClCompile Include="interactions\mouse_control.ixx" />
+    <ClCompile Include="mtmp\barrier.cpp" />
     <ClCompile Include="mtmp\barrier.ixx" />
     <ClCompile Include="mtmp\guarded_block.ixx" />
     <ClCompile Include="mtmp\mutex.ixx" />
+    <ClCompile Include="mtmp\scheduler.cpp" />
     <ClCompile Include="mtmp\scheduler.ixx" />
     <ClCompile Include="mtmp\semaphore.ixx" />
     <ClCompile Include="mtmp\signal.ixx" />
+    <ClCompile Include="mtmp\thread.cpp" />
+    <ClCompile Include="mtmp\timer.cpp" />
     <ClCompile Include="mtmp\timer.ixx" />
     <ClCompile Include="mtmp\thread.ixx" />
+    <ClCompile Include="mtmp\watchdog.cpp" />
     <ClCompile Include="mtmp\watchdog.ixx" />
     <ClCompile Include="gui\shapes\line.ixx" />
     <ClCompile Include="gui\shapes\point.ixx" />
     <ClCompile Include="gui\shapes\rect.ixx" />
     <ClCompile Include="gui\shapes\shape.ixx" />
+    <ClCompile Include="unit_tests\gui\items\test_view.ixx" />
+    <ClCompile Include="unit_tests\gui\test_avt_window.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_barrier.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_mutex.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_signal.ixx" />
@@ -207,6 +219,7 @@
     <ClCompile Include="video\frame.ixx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="gui\items\view.h" />
     <ClInclude Include="utils\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

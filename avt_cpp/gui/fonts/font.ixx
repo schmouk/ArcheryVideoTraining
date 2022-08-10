@@ -79,26 +79,10 @@ export namespace avt::gui::fonts
         *   Defauts to true (i.e. 'sans-serif' police).
         */
         Font(const int                   size_,
-             const avt::utils::RGBColor& color_        = avt::utils::RGBColor::WHITE,
-             const bool                  b_bold_       = false,
-             const bool                  b_italic_     = false,
-             const bool                  b_sans_serif_ = true) noexcept
-            : color{ color_},
-              font_scale{},
-              bg_color{},
-              size{},
-              thickness{ b_bold_ ? 2 : 1 },
-              cv_font{ b_sans_serif_ ? cv::FONT_HERSHEY_SIMPLEX : cv::FONT_HERSHEY_COMPLEX },
-              b_bold{ b_bold_ },
-              b_italic{ b_italic_ },
-              b_sans_serif{ b_sans_serif_ },
-              b_force_bgcolor{ false }
-        {
-            if (b_italic_)
-                cv_font |= cv::FONT_ITALIC;
-            set_color(color_);
-            set_size(size);
-        }
+             const avt::utils::RGBColor& color_ = avt::utils::RGBColor::WHITE,
+             const bool                  b_bold_ = false,
+             const bool                  b_italic_ = false,
+             const bool                  b_sans_serif_ = true) noexcept;
 
         /** @brief Value Constructor with specified color and background color.
         *
@@ -129,28 +113,12 @@ export namespace avt::gui::fonts
         *   false to get a 'serif' police.
         *   Defauts to true (i.e. 'sans-serif' police).
         */
-        Font(const int                  size_,
-            const avt::utils::RGBColor& color_,
-            const avt::utils::RGBColor& bg_color_,
-            const bool                  b_bold_ = false,
-            const bool                  b_italic_ = false,
-            const bool                  b_sans_serif_ = true) noexcept
-            : color{ color_ },
-              bg_color{ bg_color_ },
-              font_scale{},
-              size{},
-              thickness{ b_bold_ ? 2 : 1 },
-              cv_font{ b_sans_serif_ ? cv::FONT_HERSHEY_SIMPLEX : cv::FONT_HERSHEY_COMPLEX },
-              b_bold{ b_bold_ },
-              b_italic{ b_italic_ },
-              b_sans_serif{ b_sans_serif_ },
-              b_force_bgcolor{ true }
-        {
-            if (b_italic_)
-                cv_font |= cv::FONT_ITALIC;
-            set_color(color_);
-            set_size(size);
-        }
+        Font(const int                   size_,
+             const avt::utils::RGBColor& color_,
+             const avt::utils::RGBColor& bg_color_,
+             const bool                  b_bold_ = false,
+             const bool                  b_italic_ = false,
+             const bool                  b_sans_serif_ = true) noexcept;
 
         /** @brief Default Copy constructor. */
         Font(const Font&) = default;
@@ -189,40 +157,7 @@ export namespace avt::gui::fonts
         void draw_text(const std::string&          text,
                        avt::video::Frame&          frame,
                        const avt::utils::Coords2D& pos,
-                       const bool                  b_shadow)
-        {
-            if (b_force_bgcolor) {
-                // let's put text over a background solid color
-                cv::Size text_size = get_text_size(text);
-                cv::Point final_pos = pos;
-                final_pos.y -= thickness;
-                cv::rectangle(frame, cv::Rect(final_pos, text_size), cv::Scalar(bg_color), cv::FILLED);
-            }
-            else {
-                // let's draw shadow artifact, if asked for
-                if (b_shadow) {
-                    avt::utils::RGBColor shadow_color{ color * 0.6f };
-                    cv::putText(frame, 
-                                text,
-                                pos + avt::utils::Coords2D{1, 1},
-                                cv_font,
-                                font_scale,
-                                (cv::Scalar)shadow_color,
-                                1,
-                                cv::LINE_AA);
-                }
-            }
-
-            // then, let's draw the final text
-            cv::putText(frame,
-                        text,
-                        pos,
-                        cv_font,
-                        font_scale,
-                        (cv::Scalar)color,
-                        thickness,
-                        cv::LINE_AA);
-        }
+                       const bool                  b_shadow);
 
 
         //---   Operations on colors   --------------------------------------
@@ -268,14 +203,7 @@ export namespace avt::gui::fonts
         }
 
         /** @brief Returns the width and height (in pixels) associated with the specified text when drawn with this font. */
-        inline avt::utils::Size get_text_size(const std::string& text, int* baseline = nullptr) noexcept
-        {
-            int the_baseline;
-            cv::Size the_size = cv::getTextSize(text, cv_font, font_scale, thickness, &the_baseline);
-            if (baseline != nullptr)
-                *baseline = the_baseline + thickness;
-            return avt::utils::Size(the_size);
-        }
+        avt::utils::Size get_text_size(const std::string& text, int* baseline = nullptr) noexcept;
 
         /** @brief Returns the width (in pixels) of specified text when drawn with this font. */
         inline int get_text_width(const std::string& text) noexcept
