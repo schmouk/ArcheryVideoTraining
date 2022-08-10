@@ -42,7 +42,7 @@ import utils;
 
 
 //===========================================================================
-namespace avt::gui::items
+namespace avt::gui::views
 {
     //=======================================================================
     /** @brief The base class for all displayed items. */
@@ -203,7 +203,7 @@ namespace avt::gui::items
 
         //---   Attributes   ------------------------------------------------
         PosType                      pos;               //!< the position in the parent view of this view's top-left corner 
-        const avt::gui::items::View* p_view{ nullptr }; //!< a ppointer to this view's parent view
+        const avt::gui::views::View* p_view{ nullptr }; //!< a ppointer to this view's parent view
 
 
     private:

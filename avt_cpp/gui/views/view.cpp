@@ -29,7 +29,7 @@ SOFTWARE.
 
 #include "utils/types.h"
 
-#include "gui/items/view.h"
+#include "gui/views/view.h"
 
 
 import avt.config;
@@ -41,7 +41,7 @@ import utils;
 
 
 //===========================================================================
-namespace avt::gui::items
+namespace avt::gui::views
 {
     /** Draws this view into the specified video frame. */
     void View::draw(avt::video::Frame& frame) noexcept

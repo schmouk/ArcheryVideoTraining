@@ -32,7 +32,7 @@ module;
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/highgui.hpp>
 
-#include "gui/items/view.h"
+#include "gui/views/view.h"
 
 
 module gui.avt_window;
@@ -180,7 +180,7 @@ namespace avt::gui
         size = get_size();
 
         // creates the associated main view
-        p_main_view = new avt::gui::items::View(nullptr, avt::utils::Coords2D{ 0, 0 }, size, bg_color);
+        p_main_view = new avt::gui::views::View(nullptr, avt::utils::Coords2D{ 0, 0 }, size, bg_color);
         if (p_main_view == nullptr)
             throw ViewCreationException();
         cv::imshow(window_id, *p_main_view);

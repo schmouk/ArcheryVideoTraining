@@ -33,7 +33,7 @@ module;
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/highgui.hpp>
 
-#include "gui/items/view.h"
+#include "gui/views/view.h"
 
 
 export module gui.avt_window;
@@ -158,7 +158,7 @@ export namespace avt::gui
 
         /** @brief Draws a specified View in this window content. */
         /** /
-        inline void draw_view(avt::gui::items::View& view) noexcept
+        inline void draw_view(avt::gui::views::View& view) noexcept
         {
             view.draw(window_content);
         }
@@ -203,7 +203,7 @@ export namespace avt::gui
 
 
         //---   Attributes   ------------------------------------------------
-        avt::gui::items::View*  p_main_view{ nullptr };
+        avt::gui::views::View*  p_main_view{ nullptr };
         avt::utils::Size        size;
         avt::mtmp::Mutex        mutex;
         cv::String              window_id;

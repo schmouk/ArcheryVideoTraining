@@ -156,7 +156,7 @@
     <ClCompile Include="interactions\app_automaton.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="unit_tests\gui\items\test_view.ixx">
+    <ClCompile Include="unit_tests\gui\views\test_view.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mtmp\barrier.cpp">
@@ -186,7 +186,7 @@
     <ClCompile Include="devices\monitors_list.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gui\items\view.cpp">
+    <ClCompile Include="gui\views\view.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gui\avt_window.cpp">
@@ -200,7 +200,7 @@
     <ClInclude Include="utils\types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gui\items\view.h">
+    <ClInclude Include="gui\views\view.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
