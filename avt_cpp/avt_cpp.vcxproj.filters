@@ -195,6 +195,12 @@
     <ClCompile Include="unit_tests\gui\test_avt_window.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gui\views\control_view.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\views\control_view.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

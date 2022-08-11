@@ -100,7 +100,7 @@ export namespace avt::unit_tests::gui::views
         assert(abs_pos.y == 22);
 
 
-        avt::video::Frame frame = cv::Mat3b::zeros(1200, 1920);
+        avt::gui::views::View frame{ nullptr, 0, 0, 1920, 1080, avt::utils::RGBColor{0} };
 
         v3.draw(frame);
         assert(frame(21, 41) == cv::Vec3b(0, 0, 0));

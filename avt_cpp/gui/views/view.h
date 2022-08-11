@@ -35,7 +35,6 @@ SOFTWARE.
 
 import avt.config;
 import utils.coords2d;
-import video.frame;
 import utils.rgb_color;
 import utils.size;
 import utils;
@@ -46,7 +45,7 @@ namespace avt::gui::views
 {
     //=======================================================================
     /** @brief The base class for all displayed items. */
-    class View : public cv::Mat3b
+    class View : public avt::ImageType
     {
     private:
         using RGBColor = avt::utils::RGBColor;  //!< internal wrapper to the class of colors.
@@ -54,7 +53,7 @@ namespace avt::gui::views
 
     public:
         //---   Wrappers   --------------------------------------------------
-        using MyBaseType = cv::Mat3b;             //!< wrapper to the base class
+        using MyBaseType = avt::ImageType;        //!< wrapper to the base class
         using PosType    = avt::utils::Coords2D;  //!< wrapper to the Coords2D class
         using SizeType   = avt::utils::Size;      //!< wrapper to the Size class
 
@@ -132,11 +131,11 @@ namespace avt::gui::views
 
 
         //---   Operations   ------------------------------------------------
-        /** @brief Draws this view into the specified video frame.
+        /** @brief Draws this view into the specified image.
         *
         * Caution: this is not thread safe.
         */
-        void draw(View frame) noexcept;
+        void draw(avt::ImageType& image) noexcept;
 
         /** @brief Returns the absolute position of this view in the root View. */
         inline avt::utils::Coords2D get_absolute_pos() const noexcept
@@ -244,15 +243,15 @@ namespace avt::gui::views
 
 
         //---   Attributes   ------------------------------------------------
-        PosType     pos;            //!< the position in the parent view of this view's top-left corner 
-        const View* p_parent_view;  //!< a pointer to this view's parent view
+        PosType pos;            //!< the position in the parent view of this view's top-left corner 
+        View*   p_parent_view;  //!< a pointer to this view's parent view
 
 
     private:
         /** @brief Evaluates the clipped size of this view when displayed in a frame. */
         avt::utils::Size m_clipping_size(const PosType&          abs_pos,
                                          const avt::utils::Size& size,
-                                         avt::video::Frame&      frame) const noexcept;
+                                         avt::ImageType&         image) const noexcept;
 
         /** @brief Evaluates the absolute position of this view within the root View. */
         avt::utils::Coords2D m_get_abs_pos(const View* p_current_view) const noexcept;

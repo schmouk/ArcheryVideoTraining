@@ -25,7 +25,8 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <opencv2/core/mat.hpp>
+#include "utils/types.h"
+
 
 export module video.frame;
 
@@ -35,9 +36,9 @@ export namespace avt::video
 {
     //=======================================================================
     /** @brief The base class for Video Frames. */
-    using Frame = cv::Mat3b;
+    using Frame = avt::ImageType;
 
     /** @brief The base class for parts of frames. */
-    using SubFrame = cv::Mat3b;
+    using SubFrame = avt::ImageType;
 
 }

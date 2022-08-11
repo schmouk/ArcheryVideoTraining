@@ -34,7 +34,6 @@ SOFTWARE.
 
 import avt.config;
 import utils.coords2d;
-import video.frame;
 import utils.rgb_color;
 import utils.size;
 import utils;
@@ -44,20 +43,20 @@ import utils;
 namespace avt::gui::views
 {
     /** Draws this view into the specified video frame. */
-    void View::draw(View frame) noexcept
+    void View::draw(avt::ImageType& image) noexcept
     {
         const avt::utils::Coords2D abs_pos = get_absolute_pos();
-        const avt::utils::Size     final_size = m_clipping_size(abs_pos, size(), frame);
-        copyTo(frame(avt::CVRect(abs_pos, final_size)));
+        const avt::utils::Size     final_size = m_clipping_size(abs_pos, size(), image);
+        copyTo(image(avt::CVRect(abs_pos, final_size)));
     }
 
     /** Evaluates the clipped size of this view when displayed in a frame. */
     avt::utils::Size View::m_clipping_size(const avt::utils::Coords2D& abs_pos_,
                                            const avt::utils::Size&     size_,
-                                           avt::video::Frame&          frame_) const noexcept
+                                           avt::ImageType&             image_) const noexcept
     {
-        const avt::DimsType width  = std::max(0, std::min(int(size_.width) , frame_.cols - abs_pos_.x));
-        const avt::DimsType height = std::max(0, std::min(int(size_.height), frame_.rows - abs_pos_.y));
+        const avt::DimsType width  = std::max(0, std::min(int(size_.width) , image_.cols - abs_pos_.x));
+        const avt::DimsType height = std::max(0, std::min(int(size_.height), image_.rows - abs_pos_.y));
         return avt::utils::Size(width, height);
     }
 
