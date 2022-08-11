@@ -60,6 +60,12 @@ export namespace avt::gui::views
     */
     class ControlView : public avt::gui::views::View, public avt::mtmp::Timer
     {
+    private:
+        using RGBColor = avt::utils::RGBColor;      //!< internal wrapper to the class of colors.
+        using Font     = avt::gui::fonts::Font;     //!< internal wrapper to the class of fonts.
+        using BoldFont = avt::gui::fonts::BoldFont; //!< internal wrapper to the class of bolded fonts.
+
+
     public:
         //---   Wrappers   --------------------------------------------------
         using ThreadType = avt::mtmp::Timer;
@@ -178,10 +184,10 @@ export namespace avt::gui::views
 
 
         protected:
-            static constexpr int                _FONT_SIZE = 14;
-            static inline avt::gui::fonts::Font _FONT_ACTIVE{ _FONT_SIZE, RGBColor::YELLOW };
-            static inline avt::gui::fonts::Font _FONT_DISABLED{ _FONT_SIZE, RGBColor::DEEP_GRAY };
-            static inline avt::gui::fonts::Font _FONT_ENABLED{ _FONT_SIZE, RGBColor::LIGHT_GRAY };
+            static constexpr int  _FONT_SIZE = 14;
+            static inline Font    _FONT_ACTIVE{ _FONT_SIZE, RGBColor::YELLOW };
+            static inline Font    _FONT_DISABLED{ _FONT_SIZE, RGBColor::DEEP_GRAY };
+            static inline Font    _FONT_ENABLED{ _FONT_SIZE, RGBColor::LIGHT_GRAY };
         };
 
         //===================================================================
@@ -228,9 +234,9 @@ export namespace avt::gui::views
 
 
         protected:
-            static inline avt::gui::fonts::BoldFont _FONT_NOT_OK{ 13, RGBColor::ANTHRACITE };
-            static inline avt::gui::fonts::BoldFont _FONT_OFF{ 13, RGBColor::GRAY };
-            static inline avt::gui::fonts::BoldFont _FONT_ON{ 13, RGBColor::YELLOW };
+            static inline BoldFont _FONT_NOT_OK{ 13, RGBColor::ANTHRACITE };
+            static inline BoldFont _FONT_OFF{ 13, RGBColor::GRAY };
+            static inline BoldFont _FONT_ON{ 13, RGBColor::YELLOW };
             //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/switch-off.png');
             //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/switch-on.png');
             //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/switch-disabled.png');
@@ -238,108 +244,57 @@ export namespace avt::gui::views
             //static const int HEIGHT = _ICON_ON.rows;
         };
 
+        //===================================================================
+        //---   Class for the Delay Control   -------------------------------
+        /** @brief Manages the delay control. */
+        class _CtrlDelay : public _CtrlBase
+        {
+        public:
+            //--- Constructors/Destructors ----------------------------------
+            /** @brief Value Constructor (2 coordinates). */
+            template<typename X, typename Y>
+                requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+            inline _CtrlDelay(const X x_, const Y y_, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ x_, y_, enabled, active }
+            {
+                m_create_slider(x, y);  // remember: x and y are base class attributes
+            }
 
+            /** @brief Value Constructor (1 position). */
+            inline _CtrlDelay(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {
+                m_create_slider(x, y);  // remember: x and y are base class attributes
+            }
+
+            //--- Drawing operation -----------------------------------------
+            /** @brief Draws a control in its embedding content. */
+            virtual void draw(avt::ImageType& image) noexcept;
+
+            /** @brief Default Destructor. */
+            virtual ~_CtrlDelay() noexcept = default;
+
+            //--- Attributes ------------------------------------------------
+            //avt::gui::items::Slider slider;
+
+
+        protected:
+            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/delay-disabled.png')
+            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/delay-off.png')
+            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/delay-on.png')
+            //static inline int _SIZE = _ICON_ON.width();
+            static constexpr int _TICKS_FONT_SIZE = 8;
+            static inline Font   _TICKS_FONT_ENABLED{ _TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
+
+
+        private:
+            /** @brief Creates the associated slider. */
+            void m_create_slider(const avt::CoordsType x, const avt::CoordsType y) noexcept;
+        };
 
 
 
         /** /
-
-
-    #-------------------------------------------------------------------------
-
-    #-------------------------------------------------------------------------
-    class _CtrlCamera( _CtrlBase ):
-        '''The cameras controls.
-        '''
-        #---------------------------------------------------------------------
-        _FONT_NOT_OK   = BoldFont( 13, ANTHRACITE )
-        _FONT_OFF      = BoldFont( 13, GRAY )
-        _FONT_ON       = BoldFont( 13, YELLOW )
-        _ICON_OFF      = cv2.imread( '../picts/controls/switch-off.png' )
-        _ICON_ON       = cv2.imread( '../picts/controls/switch-on.png' )
-        _ICON_DISABLED = cv2.imread( '../picts/controls/switch-disabled.png' )
-        _HEIGHT, _WIDTH = _ICON_ON.shape[ :2 ]
-
-
-    #-------------------------------------------------------------------------
-    class _CtrlDelay( _CtrlBase ):
-        '''The delay control.
-        '''
-        #---------------------------------------------------------------------
-        def __init__(self, x: int = None,
-                           y: int = None,
-                           enabled: bool = True,
-                           active : bool = False,
-                           *,
-                           pos: Point = None) -> None:
-            '''Constructor
-
-            Args:
-                x, y: int
-                    The top-left position of  this  control  in
-                    the  ControlView.  Ignored if 'pos' is set.
-                    Must be set if 'pos' is  None.  Defaults to
-                    None (i.e. 'pos' should be set instead).
-                enabled: bool
-                    Set this to True to get this control enabl-
-                    ed  or set it to False otherwise.  Defaults
-                    to False.
-                active: bool
-                    Set this to True to get this control active
-                    or  set  it  to  False  to get it inactive.
-                    Defaults to False.
-                pos: Point
-                    The top-left position of  this  control  in
-                    the ControlView.  Takes precedence over 'x'
-                    and 'y' if set. This argument must be named
-                    if set. Defaults to None.
-
-            Raises:
-                AssertionError:  x, y and pos are all None, or
-                    pos is None and either x or y is None also.
-            '''
-            super().__init__( x, y, enabled, active, pos=pos )
-            self.slider = IntSlider( x = (x if x else pos.x) + 5,
-                                     y = (y if y is not None else pos.y) + self._SIZE + 8,
-                                     width = ControlView.WIDTH - 12*2,
-                                     height = 5,
-                                     min_value = 5,
-                                     max_value = 12,
-                                     current_value = 7,
-                                     bar_color = GRAY,
-                                     cursor_color = self._TICKS_FONT_ENABLED.color,
-                                     text_font = self._TICKS_FONT_ENABLED,
-                                     shadow_height = 0,
-                                     visible = True,
-                                     enabled = enabled,
-                                     active = active   )
-
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            x = (view.WIDTH - self._SIZE) // 2
-            y = self.y + 1
-            if self.enabled:
-                img = self._ICON_ON if self.is_active else self._ICON_OFF
-            else:
-                img = self._ICON_DISABLED
-            view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
-
-            ##font.draw_text( view, Point(self.x + 5, self.y + self._FONT_SIZE), 'Delay' )
-            self.slider.draw( view )
-
-        #---------------------------------------------------------------------
-        _ICON_DISABLED = cv2.imread( '../picts/controls/delay-disabled.png' )
-        _ICON_OFF      = cv2.imread( '../picts/controls/delay-off.png' )
-        _ICON_ON       = cv2.imread( '../picts/controls/delay-on.png' )
-        _SIZE = _ICON_ON.shape[ 0 ]
-        _TICKS_FONT_SIZE = 8
-        _TICKS_FONT_ENABLED = Font( _TICKS_FONT_SIZE, YELLOW // 1.33 )
-
 
     #-------------------------------------------------------------------------
     class _CtrlExit( _CtrlBase ):

@@ -167,7 +167,7 @@ namespace avt::gui::views
     /**/
     }
 
-    /** Draws a control in its embedding content. */
+    /** Draws a control in its embedding content - Controls Base class. */
     void ControlView::_CtrlBase::draw(avt::ImageType& image) noexcept
     {
         avt::gui::fonts::Font font;
@@ -181,7 +181,7 @@ namespace avt::gui::views
         catch(...) {}
     }
 
-    /** Draws a control in its embedding content. */
+    /** Draws a control in its embedding content - Camera Controls. */
     void ControlView::_CtrlCamera::draw(avt::ImageType& image) noexcept
     {
         try {
@@ -211,90 +211,49 @@ namespace avt::gui::views
         catch (...) {}
     }
 
+    /** Draws a control in its embedding content - Delay Control. */
+    void ControlView::_CtrlDelay::draw(avt::ImageType& image) noexcept
+    {
+        /*** /
+        x = (view.WIDTH - self._SIZE) // 2
+        y = self.y + 1
+        if self.enabled:
+            img = self._ICON_ON if self.is_active else self._ICON_OFF
+        else:
+            img = self._ICON_DISABLED
+        view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
 
+        ##font.draw_text( view, Point(self.x + 5, self.y + self._FONT_SIZE), 'Delay' )
+        self.slider.draw( view )
+        /***/
+    }
 
-
+    /** Creates the associated slider - Delay Control. */
+    void ControlView::_CtrlDelay::m_create_slider(const avt::CoordsType x, const avt::CoordsType y) noexcept
+    {
         /** /
-    #-------------------------------------------------------------------------
-    class _CtrlDelay( _CtrlBase ):
-        '''The delay control.
-        '''
-        #---------------------------------------------------------------------
-        def __init__(self, x: int = None,
-                           y: int = None,
-                           enabled: bool = True,
-                           active : bool = False,
-                           *,
-                           pos: Point = None) -> None:
-            '''Constructor
-
-            Args:
-                x, y: int
-                    The top-left position of  this  control  in
-                    the  ControlView.  Ignored if 'pos' is set.
-                    Must be set if 'pos' is  None.  Defaults to
-                    None (i.e. 'pos' should be set instead).
-                enabled: bool
-                    Set this to True to get this control enabl-
-                    ed  or set it to False otherwise.  Defaults
-                    to False.
-                active: bool
-                    Set this to True to get this control active
-                    or  set  it  to  False  to get it inactive.
-                    Defaults to False.
-                pos: Point
-                    The top-left position of  this  control  in
-                    the ControlView.  Takes precedence over 'x'
-                    and 'y' if set. This argument must be named
-                    if set. Defaults to None.
-
-            Raises:
-                AssertionError:  x, y and pos are all None, or
-                    pos is None and either x or y is None also.
-            '''
-            super().__init__( x, y, enabled, active, pos=pos )
-            self.slider = IntSlider( x = (x if x else pos.x) + 5,
-                                     y = (y if y is not None else pos.y) + self._SIZE + 8,
-                                     width = ControlView.WIDTH - 12*2,
-                                     height = 5,
-                                     min_value = 5,
-                                     max_value = 12,
-                                     current_value = 7,
-                                     bar_color = GRAY,
-                                     cursor_color = self._TICKS_FONT_ENABLED.color,
-                                     text_font = self._TICKS_FONT_ENABLED,
-                                     shadow_height = 0,
-                                     visible = True,
-                                     enabled = enabled,
-                                     active = active   )
-
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            x = (view.WIDTH - self._SIZE) // 2
-            y = self.y + 1
-            if self.enabled:
-                img = self._ICON_ON if self.is_active else self._ICON_OFF
-            else:
-                img = self._ICON_DISABLED
-            view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
-
-            ##font.draw_text( view, Point(self.x + 5, self.y + self._FONT_SIZE), 'Delay' )
-            self.slider.draw( view )
-
-        #---------------------------------------------------------------------
-        _ICON_DISABLED = cv2.imread( '../picts/controls/delay-disabled.png' )
-        _ICON_OFF      = cv2.imread( '../picts/controls/delay-off.png' )
-        _ICON_ON       = cv2.imread( '../picts/controls/delay-on.png' )
-        _SIZE = _ICON_ON.shape[ 0 ]
-        _TICKS_FONT_SIZE = 8
-        _TICKS_FONT_ENABLED = Font( _TICKS_FONT_SIZE, YELLOW // 1.33 )
+        self.slider = IntSlider( x = (x if x else pos.x) + 5,
+                                 y = (y if y is not None else pos.y) + self._SIZE + 8,
+                                 width = ControlView.WIDTH - 12*2,
+                                 height = 5,
+                                 min_value = 5,
+                                 max_value = 12,
+                                 current_value = 7,
+                                 bar_color = GRAY,
+                                 cursor_color = self._TICKS_FONT_ENABLED.color,
+                                 text_font = self._TICKS_FONT_ENABLED,
+                                 shadow_height = 0,
+                                 visible = True,
+                                 enabled = enabled,
+                                 active = active   )
+        /**/
+    }
 
 
+
+
+
+    /** /
     #-------------------------------------------------------------------------
     class _CtrlExit( _CtrlBase ):
         '''The exit button control.
