@@ -48,6 +48,10 @@ namespace avt::gui::views
     /** @brief The base class for all displayed items. */
     class View : public cv::Mat3b
     {
+    private:
+        using RGBColor = avt::utils::RGBColor;  //!< internal wrapper to the class of colors.
+
+
     public:
         //---   Wrappers   --------------------------------------------------
         using MyBaseType = cv::Mat3b;             //!< wrapper to the base class
@@ -59,35 +63,55 @@ namespace avt::gui::views
         /** @brief Value Constructor (4 scalars + 1 color). */
         template<typename X, typename Y, typename H, typename W>
             requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>&& std::is_arithmetic_v<H>&& std::is_arithmetic_v<W>
-        inline View(const View* parent_view,
+        inline View(View* p_parent_view,
                     const X x,
                     const Y y,
                     const W width,
                     const H height,
-                    const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(height, width, (cv::Vec3b)bg_color),
-              p_view(parent_view),
+              p_parent_view(p_parent_view),
               pos(x, y)
         {}
 
         /** @brief Value Constructor (1 pos + 1 size + 1 color). */
-        inline View(const View* parent_view,
+        inline View(View* p_parent_view,
                     const avt::utils::Coords2D& top_left,
                     const avt::utils::Size& size,
-                    const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(size.height, size.width, (cv::Vec3b)bg_color),
-              p_view(parent_view),
+              p_parent_view(p_parent_view),
               pos(top_left)
         {}
 
         /** @brief Value Constructor (1 rect + 1 color). */
-        inline View(const View* parent_view,
+        inline View(View* p_parent_view,
                     const avt::CVRect& rect,
-                    const avt::utils::RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(rect.height, rect.width, (cv::Vec3b)bg_color),
-              p_view(parent_view),
+              p_parent_view(p_parent_view),
               pos(rect.tl())
         {}
+
+        /** @brief Main View Constructor (2 scalars + 1 color). */
+        template<typename H, typename W>
+            requires std::is_arithmetic_v<H> && std::is_arithmetic_v<W>
+        inline View(const W width,
+                    const H height,
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+            : MyBaseType(height, width, (cv::Vec3b)bg_color),
+              p_parent_view(nullptr),
+              pos(0, 0)
+        {}
+
+        /** @brief Value Constructor (1 size + 1 color). */
+        inline View(const avt::utils::Size& size,
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+            : MyBaseType(size.height, size.width, (cv::Vec3b)bg_color),
+              p_parent_view(nullptr),
+              pos(0, 0)
+        {}
+
 
         /** @brief Default Copy Constructor. */
         View(const View&) noexcept = default;
@@ -96,7 +120,7 @@ namespace avt::gui::views
         View(View&&) noexcept = default;
 
         /** @brief Default Destructor. */
-        ~View() noexcept = default;
+        virtual ~View() noexcept = default;
 
 
         //---   Assignments   -----------------------------------------------
@@ -112,7 +136,7 @@ namespace avt::gui::views
         *
         * Caution: this is not thread safe.
         */
-        void draw(avt::video::Frame& frame) noexcept;
+        void draw(View frame) noexcept;
 
         /** @brief Returns the absolute position of this view in the root View. */
         inline avt::utils::Coords2D get_absolute_pos() const noexcept
@@ -194,16 +218,34 @@ namespace avt::gui::views
             return total();
         }
 
+        /** @brief Returns the height of this view (unit: pixels). */
+        inline const int height() const noexcept
+        {
+            return rows;
+        }
+
+        /** @brief Returns true if this View is NULL_VIEW, or false otherwise. */
+        inline const bool is_null() const noexcept
+        {
+            return empty();
+        }
+
         /** @brief Returns the size of this view. */
         inline const avt::utils::Size size() const noexcept
         {
             return avt::utils::Size(cols, rows);
         }
 
+        /** @brief Returns the width of this view (unit: pixels). */
+        inline const int width() const noexcept
+        {
+            return cols;
+        }
+
 
         //---   Attributes   ------------------------------------------------
-        PosType                      pos;               //!< the position in the parent view of this view's top-left corner 
-        const avt::gui::views::View* p_view{ nullptr }; //!< a ppointer to this view's parent view
+        PosType     pos;            //!< the position in the parent view of this view's top-left corner 
+        const View* p_parent_view;  //!< a pointer to this view's parent view
 
 
     private:

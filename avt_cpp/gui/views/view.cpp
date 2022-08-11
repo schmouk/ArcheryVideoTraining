@@ -44,7 +44,7 @@ import utils;
 namespace avt::gui::views
 {
     /** Draws this view into the specified video frame. */
-    void View::draw(avt::video::Frame& frame) noexcept
+    void View::draw(View frame) noexcept
     {
         const avt::utils::Coords2D abs_pos = get_absolute_pos();
         const avt::utils::Size     final_size = m_clipping_size(abs_pos, size(), frame);
@@ -64,11 +64,11 @@ namespace avt::gui::views
     /** @brief Evaluates the absolute position of this view within the root View. */
     avt::utils::Coords2D View::m_get_abs_pos(const View* p_current_view) const noexcept
     {
-        if (p_current_view->p_view == nullptr) {
+        if (p_current_view->p_parent_view == nullptr) {
             return p_current_view->pos;
         }
         else {
-            return p_current_view->pos + m_get_abs_pos(p_current_view->p_view);
+            return p_current_view->pos + m_get_abs_pos(p_current_view->p_parent_view);
         }
     }
 
