@@ -111,6 +111,8 @@ namespace avt::gui::views
               pos(0, 0)
         {}
 
+        /** @brief Default Empty Constructor. */
+        View() noexcept = default;
 
         /** @brief Default Copy Constructor. */
         View(const View&) noexcept = default;
@@ -207,6 +209,21 @@ namespace avt::gui::views
         {
             resize(factor);
             pos *= factor;
+        }
+
+        /** @brief Sets position and parent view (2 coordinates). */
+        template<typename X, typename Y>
+            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
+        inline void set(const X x_, const Y y_, View* p_parent_view_ = nullptr)
+        {
+            move_at(x_, y_);
+            p_parent_view = p_parent_view_;
+        }
+
+        /** @brief Sets position and parent view (1 position). */
+        inline void set(const avt::utils::Coords2D& pos, View* p_parent_view = nullptr)
+        {
+            set(pos.x, pos.y, p_parent_view);
         }
 
 

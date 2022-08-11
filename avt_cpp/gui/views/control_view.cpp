@@ -249,52 +249,33 @@ namespace avt::gui::views
         /**/
     }
 
+    /** Value Constructor - Exit Control. */
+    ControlView::_CtrlExit::_CtrlExit(const int view_width, const int view_height) noexcept
+        : _CtrlBase{}
+    {
+        /*** /
+            self.height, self.width = self._ICON_EXIT.shape[:2]
+        /***/
+        //set((view_width - width) / 2, view_height - height - 12);
+    }
+
+    /** Draws a control in its embedding content - Exit Control. */
+    void ControlView::_CtrlExit::draw(avt::ImageType& image) noexcept
+    {
+        /*** /
+        try:
+            view.content[ self.y:self.y+self.height,
+                            self.x:self.x+self.width , : ] = self._ICON_EXIT[ :, :, : ]
+        except:
+            pass
+        /***/
+    }
+
 
 
 
 
     /** /
-    #-------------------------------------------------------------------------
-    class _CtrlExit( _CtrlBase ):
-        '''The exit button control.
-        '''
-        #---------------------------------------------------------------------
-        def __init__(self, view_width: int, view_height: int) -> None:
-            '''Constructor
-
-            Args:
-                view_width: int
-                    The width of the embedding view. Ignored if
-                    'pos' is set.  Must be set if 'pos' is None.
-                    Defaults to None (i.e. 'pos' should be  set
-                    instead).
-                view_height: int
-                    The height of the embedding  view.  Ignored
-                    if  'pos'  is set.  Must be set if 'pos' is
-                    None.  Defaults to None (i.e. 'pos'  should
-                    be set instead).
-            '''
-            self.height, self.width = self._ICON_EXIT.shape[:2]
-            super().__init__( (view_width - self.width) // 2,
-                              view_height - self.height - 12  )
-
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            try:
-                view.content[ self.y:self.y+self.height,
-                              self.x:self.x+self.width , : ] = self._ICON_EXIT[ :, :, : ]
-            except:
-                pass
-
-        #---------------------------------------------------------------------
-        _ICON_EXIT = cv2.imread( '../picts/controls/exit-48.png' )
-
-
     #-------------------------------------------------------------------------
     class _CtrlLines( _CtrlBase ):
         '''The lines control.

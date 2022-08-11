@@ -165,6 +165,9 @@ export namespace avt::gui::views
                 text_pos = avt::utils::Coords2D(pos.x, pos.y + ControlView::ICON_HEIGHT + _FONT_SIZE);
             }
 
+            /** @brief Default Empty Constructor. */
+            _CtrlBase() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlBase() noexcept = default;
 
@@ -279,9 +282,9 @@ export namespace avt::gui::views
 
 
         protected:
-            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/delay-disabled.png')
-            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/delay-off.png')
-            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/delay-on.png')
+            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/delay-disabled.png');
+            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/delay-off.png');
+            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/delay-on.png');
             //static inline int _SIZE = _ICON_ON.width();
             static constexpr int _TICKS_FONT_SIZE = 8;
             static inline Font   _TICKS_FONT_ENABLED{ _TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
@@ -292,50 +295,26 @@ export namespace avt::gui::views
             void m_create_slider(const avt::CoordsType x, const avt::CoordsType y) noexcept;
         };
 
+        //===================================================================
+        //---   Class for the Exit Control   --------------------------------
+        /** @brief Manages the exit control. */
+        class _CtrlExit : public _CtrlBase
+        {
+        public:
+            //--- Constructors/Destructors ----------------------------------
+            /** @brief Value Constructor. */
+            _CtrlExit(const int view_width, const int view_height) noexcept;
 
+            //--- Drawing operation -----------------------------------------
+            /** @brief Draws a control in its embedding content. */
+            void draw(avt::ImageType& image) noexcept;
+
+
+        protected:
+            //static inline avt::Image _ICON_EXIT = cv2.imread( '../picts/controls/exit-48.png' );
+        };
 
         /** /
-
-    #-------------------------------------------------------------------------
-    class _CtrlExit( _CtrlBase ):
-        '''The exit button control.
-        '''
-        #---------------------------------------------------------------------
-        def __init__(self, view_width: int, view_height: int) -> None:
-            '''Constructor
-
-            Args:
-                view_width: int
-                    The width of the embedding view. Ignored if
-                    'pos' is set.  Must be set if 'pos' is None.
-                    Defaults to None (i.e. 'pos' should be  set
-                    instead).
-                view_height: int
-                    The height of the embedding  view.  Ignored
-                    if  'pos'  is set.  Must be set if 'pos' is
-                    None.  Defaults to None (i.e. 'pos'  should
-                    be set instead).
-            '''
-            self.height, self.width = self._ICON_EXIT.shape[:2]
-            super().__init__( (view_width - self.width) // 2,
-                              view_height - self.height - 12  )
-
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            try:
-                view.content[ self.y:self.y+self.height,
-                              self.x:self.x+self.width , : ] = self._ICON_EXIT[ :, :, : ]
-            except:
-                pass
-
-        #---------------------------------------------------------------------
-        _ICON_EXIT = cv2.imread( '../picts/controls/exit-48.png' )
-
 
     #-------------------------------------------------------------------------
     class _CtrlLines( _CtrlBase ):
