@@ -38,6 +38,7 @@ module;
 
 export module gui.views.control_view;
 
+import gui.fonts.bold_font;
 import avt.config;
 import utils.coords2d;
 import gui.items.cursor;
@@ -125,7 +126,7 @@ export namespace avt::gui::views
         /** @brief Draws all controls in this control view. */
         void m_draw_controls() noexcept;
 
-
+        //===================================================================
         //---   Base class for all controls types   -------------------------
         /** @brief The base class for all internal controls.
         *
@@ -136,7 +137,7 @@ export namespace avt::gui::views
         {
         public:
             //--- Constructors/Destructors ----------------------------------
-            /** @brief Value Constructor. */
+            /** @brief Value Constructor (2 coordinates). */
             template<typename X, typename Y>
                 requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
             _CtrlBase(const X x_, const Y y_, const bool enabled_ = true, const bool active_ = false) noexcept
@@ -148,6 +149,16 @@ export namespace avt::gui::views
                 text_pos = avt::utils::Coords2D(x_, y_ + ControlView::ICON_HEIGHT + _FONT_SIZE);
             }
 
+            /** @brief Value Constructor (1 position). */
+            _CtrlBase(const avt::utils::Coords2D& pos, const bool enabled_ = true, const bool active_ = false) noexcept
+                : x{ pos.x },
+                  y{ pos.y },
+                  enabled{ enabled_ },
+                  active{ active_ }
+            {
+                text_pos = avt::utils::Coords2D(pos.x, pos.y + ControlView::ICON_HEIGHT + _FONT_SIZE);
+            }
+
             /** @brief Default Destructor. */
             virtual ~_CtrlBase() noexcept = default;
 
@@ -156,7 +167,7 @@ export namespace avt::gui::views
             *
             * This method SHOULD BE overwritten in inheriting classes.
             */
-            virtual void draw(avt::gui::views::View& view) noexcept;
+            virtual void draw(avt::ImageType& image) noexcept;
 
             //--- Attributes ------------------------------------------------
             avt::utils::Coords2D text_pos;  //!< Position of text associated with this control
@@ -167,13 +178,72 @@ export namespace avt::gui::views
 
 
         protected:
-            static constexpr int         _FONT_SIZE = 14;
+            static constexpr int                _FONT_SIZE = 14;
             static inline avt::gui::fonts::Font _FONT_ACTIVE{ _FONT_SIZE, RGBColor::YELLOW };
             static inline avt::gui::fonts::Font _FONT_DISABLED{ _FONT_SIZE, RGBColor::DEEP_GRAY };
             static inline avt::gui::fonts::Font _FONT_ENABLED{ _FONT_SIZE, RGBColor::LIGHT_GRAY };
-
         };
+
+        //===================================================================
+        //---   Class for Camera controls   ---------------------------------
+        /** @brief Manages all the controls related to cameras interfacing. */
+        class _CtrlCamera : public _CtrlBase
+        {
+        public:
+            //--- Constructors/Destructors ----------------------------------
+            /** @brief Value Constructor (2 coordinates). */
+            template<typename X, typename Y>
+                requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+            _CtrlCamera( /*avt::cameras::Camera& camera, */const X x, const Y y)
+                : //camera{ camera },
+                  _CtrlBase{ x, y }
+            {
+                //is_on = camera.is_ok();
+            }
+
+            /** @brief Value Constructor (1 position). */
+            _CtrlCamera( /*avt::cameras::Camera& camera, */const avt::utils::Coords2D& pos)
+                : //camera{ camera },
+                  _CtrlBase{ pos }
+            {
+                //is_on = camera.is_ok();
+            }
+
+            /** @brief Default Destructor. */
+            virtual ~_CtrlCamera() noexcept = default;
+
+            //--- Drawing operation -----------------------------------------
+            /** @brief Draws a control in its embedding content. */
+            virtual void draw(avt::ImageType& image) noexcept;
+
+            //--- Other operations ------------------------------------------
+            inline void toggle_switch() noexcept
+            {
+                //is_on = !is_on;
+            }
+
+            //--- Attributes ------------------------------------------------
+            //avt::cameras::Camera camera;  //!< reference to the related camera
+            //bool is_on;                   //!< true if this camera control-switch os ON, or false if it is OFF
+
+
+        protected:
+            static inline avt::gui::fonts::BoldFont _FONT_NOT_OK{ 13, RGBColor::ANTHRACITE };
+            static inline avt::gui::fonts::BoldFont _FONT_OFF{ 13, RGBColor::GRAY };
+            static inline avt::gui::fonts::BoldFont _FONT_ON{ 13, RGBColor::YELLOW };
+            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/switch-off.png');
+            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/switch-on.png');
+            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/switch-disabled.png');
+            //static const int WIDTH = _ICON_ON.cols;
+            //static const int HEIGHT = _ICON_ON.rows;
+        };
+
+
+
+
+
         /** /
+
 
     #-------------------------------------------------------------------------
 
@@ -181,77 +251,6 @@ export namespace avt::gui::views
     class _CtrlCamera( _CtrlBase ):
         '''The cameras controls.
         '''
-        #---------------------------------------------------------------------
-        def __init__(self, camera: Camera    ,
-                           x     : int = None,
-                           y     : int = None,
-                           *,
-                           pos   : Point = None) -> None:
-            '''Constructor
-
-            Args:
-                camera: Camera
-                    A reference to the asdsociated camera.
-                x: int
-                    The left position of  this  control  in the
-                    ControlView.  Ignored  if 'pos' is set.  If
-                    None, the control is horizontally centered
-                    in the ControlView. Defaults to None.
-                y: int
-                    The top position of  this  control  in  the
-                    ControlView.  Ignored if 'pos' is set. Must
-                    be set if 'pos' is  None.  Defaults to None
-                    (i.e. 'pos' should be set instead).
-                pos: Point
-                    The top-left position of  this  control  in
-                    the ControlView.  Takes precedence over 'x'
-                    and 'y' if set. This argument must be named
-                    if set. Defaults to None.
-            Raises:
-                AssertionError:  x, y and pos are all None,  or
-                    pos is None and y is None also.
-            '''
-            self.camera = camera
-            self.is_on = camera.is_ok()
-            if pos is None:
-                super().__init__( x or (ControlView.WIDTH - self._WIDTH) // 2, y )
-            else:
-                super().__init__( pos=pos )
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            try:
-                if self.camera.is_ok():
-                    if self.is_on:
-                        img = self._ICON_ON
-                        font = self._FONT_ON
-                        x_id = ControlView.WIDTH // 2 - 5
-                    else:
-                        img = self._ICON_OFF
-                        font = self._FONT_OFF
-                        x_id = ControlView.WIDTH // 2 - 9
-                else:
-                    img = self._ICON_DISABLED
-                    font = self._FONT_NOT_OK
-                    x_id = ControlView.WIDTH // 2 - 9
-
-                view.content[ self.y:self.y+self._HEIGHT,
-                              self.x:self.x+self._WIDTH , : ] = img[ :, :, : ]
-                font.draw_text( view,
-                                Point(x_id, self.y + self._HEIGHT//2 + font.size//2),
-                                str(self.camera.get_id()),
-                                b_shadow=self.camera.is_ok() )
-            except Exception as e:
-                print( 'caught exception', str(e) )
-        #---------------------------------------------------------------------
-        def switch(self) -> bool:
-            '''Changes the status of this camera switch.
-            '''
-            self.is_on = not self.is_on
         #---------------------------------------------------------------------
         _FONT_NOT_OK   = BoldFont( 13, ANTHRACITE )
         _FONT_OFF      = BoldFont( 13, GRAY )

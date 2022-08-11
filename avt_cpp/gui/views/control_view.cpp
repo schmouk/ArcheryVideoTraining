@@ -167,7 +167,8 @@ namespace avt::gui::views
     /**/
     }
 
-    void ControlView::_CtrlBase::draw(avt::gui::views::View& view) noexcept
+    /** Draws a control in its embedding content. */
+    void ControlView::_CtrlBase::draw(avt::ImageType& image) noexcept
     {
         avt::gui::fonts::Font font;
         try {
@@ -175,77 +176,16 @@ namespace avt::gui::views
                 font = active ? _FONT_ACTIVE : _FONT_ENABLED;
             else
                 font = _FONT_DISABLED;
-            font.draw_text(typeid(*this).name(), view, text_pos, false);
+            font.draw_text(typeid(*this).name(), image, text_pos, false);
         }
         catch(...) {}
     }
-        /** /
 
-        #---------------------------------------------------------------------
-        
-            try:
-                if self.enabled:
-                    font = self._FONT_ACTIVE if self.is_active else self._FONT_ENABLED
-                else:
-                    font = self._FONT_DISABLED
-                font.draw_text( view, self.text_pos, self.__class__.__name__[5:] )
-            except:
-                raise
-        #---------------------------------------------------------------------
-        _FONT_SIZE     = 14
-        _FONT_ACTIVE   = Font( _FONT_SIZE, YELLOW )
-        _FONT_DISABLED = Font( _FONT_SIZE, DEEP_GRAY )
-        _FONT_ENABLED  = Font( _FONT_SIZE, LIGHT_GRAY )
-
-
-    #-------------------------------------------------------------------------
-    class _CtrlCamera( _CtrlBase ):
-        '''The cameras controls.
-        '''
-        #---------------------------------------------------------------------
-        def __init__(self, camera: Camera    ,
-                           x     : int = None,
-                           y     : int = None,
-                           *,
-                           pos   : Point = None) -> None:
-            '''Constructor
-
-            Args:
-                camera: Camera
-                    A reference to the asdsociated camera.
-                x: int
-                    The left position of  this  control  in the
-                    ControlView.  Ignored  if 'pos' is set.  If
-                    None, the control is horizontally centered
-                    in the ControlView. Defaults to None.
-                y: int
-                    The top position of  this  control  in  the
-                    ControlView.  Ignored if 'pos' is set. Must
-                    be set if 'pos' is  None.  Defaults to None
-                    (i.e. 'pos' should be set instead).
-                pos: Point
-                    The top-left position of  this  control  in
-                    the ControlView.  Takes precedence over 'x'
-                    and 'y' if set. This argument must be named
-                    if set. Defaults to None.
-            Raises:
-                AssertionError:  x, y and pos are all None,  or
-                    pos is None and y is None also.
-            '''
-            self.camera = camera
-            self.is_on = camera.is_ok()
-            if pos is None:
-                super().__init__( x or (ControlView.WIDTH - self._WIDTH) // 2, y )
-            else:
-                super().__init__( pos=pos )
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            try:
+    /** Draws a control in its embedding content. */
+    void ControlView::_CtrlCamera::draw(avt::ImageType& image) noexcept
+    {
+        try {
+            /*** /
                 if self.camera.is_ok():
                     if self.is_on:
                         img = self._ICON_ON
@@ -266,23 +206,15 @@ namespace avt::gui::views
                                 Point(x_id, self.y + self._HEIGHT//2 + font.size//2),
                                 str(self.camera.get_id()),
                                 b_shadow=self.camera.is_ok() )
-            except Exception as e:
-                print( 'caught exception', str(e) )
-        #---------------------------------------------------------------------
-        def switch(self) -> bool:
-            '''Changes the status of this camera switch.
-            '''
-            self.is_on = not self.is_on
-        #---------------------------------------------------------------------
-        _FONT_NOT_OK   = BoldFont( 13, ANTHRACITE )
-        _FONT_OFF      = BoldFont( 13, GRAY )
-        _FONT_ON       = BoldFont( 13, YELLOW )
-        _ICON_OFF      = cv2.imread( '../picts/controls/switch-off.png' )
-        _ICON_ON       = cv2.imread( '../picts/controls/switch-on.png' )
-        _ICON_DISABLED = cv2.imread( '../picts/controls/switch-disabled.png' )
-        _HEIGHT, _WIDTH = _ICON_ON.shape[ :2 ]
+            /***/
+        }
+        catch (...) {}
+    }
 
 
+
+
+        /** /
     #-------------------------------------------------------------------------
     class _CtrlDelay( _CtrlBase ):
         '''The delay control.
