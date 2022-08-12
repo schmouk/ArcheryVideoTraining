@@ -271,53 +271,40 @@ namespace avt::gui::views
         /***/
     }
 
+    /** Draws a control in its embedding content - Lines Control. */
+    void ControlView::_CtrlLines::draw(avt::ImageType& image) noexcept
+    {
+        const avt::utils::Coords2D diagonal_offset{ 1, 1 };
+        avt::utils::Coords2D       start_pt;
+        avt::utils::Coords2D       end_pt;
+        int                        x_;
+        int                        y_;
+
+        RGBColor color;
+        if (enabled)
+            color = active ? RGBColor::YELLOW : RGBColor::GRAY;
+        else
+            color = RGBColor::ANTHRACITE / 2;
+
+        x_       = x + 13;
+        y_       = y + ControlView::ICON_HEIGHT / 2;
+        start_pt = { x_, y_ };
+        end_pt   = { x_ + _LINE_LENGTH, y_ };
+        cv::line(image, start_pt + diagonal_offset, end_pt + diagonal_offset, color / 2, _LINE_THICKNESS, cv::LINE_AA);
+        cv::line(image, start_pt, end_pt, color, _LINE_THICKNESS, cv::LINE_AA);
+
+        x_       = (ControlView::WIDTH + x_ + _LINE_LENGTH) / 2;
+        y_       = (y + ControlView::ICON_HEIGHT - _LINE_LENGTH) / 2;
+        start_pt = { x_, y_ };
+        end_pt   = { x_ + _LINE_LENGTH, y_ };
+        cv::line(image, start_pt + diagonal_offset, end_pt + diagonal_offset, color / 2, _LINE_THICKNESS, cv::LINE_AA);
+        cv::line(image, start_pt, end_pt, color, _LINE_THICKNESS, cv::LINE_AA);
+    }
 
 
 
 
     /** /
-    #-------------------------------------------------------------------------
-    class _CtrlLines( _CtrlBase ):
-        '''The lines control.
-        '''
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            if self.enabled:
-                color = YELLOW if self.is_active else GRAY
-            else:
-                color = ANTHRACITE // 2
-
-            x = self.x + 13
-            y = self.y + view.ICON_HEIGHT // 2
-            cv2.line( view.content,
-                      (x+1, y+1),
-                      (x+1 + self._LINE_LENGTH, y+1),
-                      (color//2).color, self._LINE_THICKNESS, cv2.LINE_AA )
-            cv2.line( view.content,
-                      (x, y),
-                      (x + self._LINE_LENGTH, y),
-                      color.color, self._LINE_THICKNESS, cv2.LINE_AA )
-
-            x = (view.WIDTH + x + self._LINE_LENGTH) // 2
-            y = self.y + (view.ICON_HEIGHT - self._LINE_LENGTH) // 2
-            cv2.line( view.content,
-                      (x+1, y+1),
-                      (x+1, y+1 + self._LINE_LENGTH),
-                      (color//2).color, self._LINE_THICKNESS, cv2.LINE_AA )
-            cv2.line( view.content,
-                      (x, y),
-                      (x, y + self._LINE_LENGTH),
-                      color.color, self._LINE_THICKNESS, cv2.LINE_AA )
-
-        #---------------------------------------------------------------------
-        _LINE_LENGTH = 35
-        _LINE_THICKNESS = 7
-
     #-------------------------------------------------------------------------
     class _CtrlMatch( _CtrlBase ):
         '''The match simulation control.

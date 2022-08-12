@@ -256,7 +256,7 @@ export namespace avt::gui::views
             //--- Constructors/Destructors ----------------------------------
             /** @brief Value Constructor (2 coordinates). */
             template<typename X, typename Y>
-                requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+                requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
             inline _CtrlDelay(const X x_, const Y y_, const bool enabled = true, const bool active = false) noexcept
                 : _CtrlBase{ x_, y_, enabled, active }
             {
@@ -314,49 +314,38 @@ export namespace avt::gui::views
             //static inline avt::Image _ICON_EXIT = cv2.imread( '../picts/controls/exit-48.png' );
         };
 
+        //===================================================================
+        //---   Class for the Lines Control   --------------------------------
+        /** @brief Manages the lines control. */
+        class _CtrlLines : public _CtrlBase
+        {
+        public:
+            //--- Constructors/Destructors ----------------------------------
+            /** @brief Value Constructor (2 coordinates). */
+            template<typename X, typename Y>
+                requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
+            inline _CtrlLines(const X x_, const Y y_, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ x_, y_, enabled, active }
+            {}
+
+            /** @brief Value Constructor (1 position). */
+            inline _CtrlLines(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            //--- Drawing operation -----------------------------------------
+            /** @brief Draws a control in its embedding content. */
+            void draw(avt::ImageType& image) noexcept;
+
+
+        protected:
+            static constexpr int _LINE_LENGTH = 35;
+            static constexpr int _LINE_THICKNESS = 7;
+        };
+
+
+
         /** /
-
-    #-------------------------------------------------------------------------
-    class _CtrlLines( _CtrlBase ):
-        '''The lines control.
-        '''
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            if self.enabled:
-                color = YELLOW if self.is_active else GRAY
-            else:
-                color = ANTHRACITE // 2
-
-            x = self.x + 13
-            y = self.y + view.ICON_HEIGHT // 2
-            cv2.line( view.content,
-                      (x+1, y+1),
-                      (x+1 + self._LINE_LENGTH, y+1),
-                      (color//2).color, self._LINE_THICKNESS, cv2.LINE_AA )
-            cv2.line( view.content,
-                      (x, y),
-                      (x + self._LINE_LENGTH, y),
-                      color.color, self._LINE_THICKNESS, cv2.LINE_AA )
-
-            x = (view.WIDTH + x + self._LINE_LENGTH) // 2
-            y = self.y + (view.ICON_HEIGHT - self._LINE_LENGTH) // 2
-            cv2.line( view.content,
-                      (x+1, y+1),
-                      (x+1, y+1 + self._LINE_LENGTH),
-                      (color//2).color, self._LINE_THICKNESS, cv2.LINE_AA )
-            cv2.line( view.content,
-                      (x, y),
-                      (x, y + self._LINE_LENGTH),
-                      color.color, self._LINE_THICKNESS, cv2.LINE_AA )
-
-        #---------------------------------------------------------------------
-        _LINE_LENGTH = 35
-        _LINE_THICKNESS = 7
 
     #-------------------------------------------------------------------------
     class _CtrlMatch( _CtrlBase ):
