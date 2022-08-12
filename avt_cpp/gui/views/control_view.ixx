@@ -383,35 +383,45 @@ export namespace avt::gui::views
             //static inline int _SIZE = _ICON_ON.rows;
         };
 
+        //===================================================================
+        //---   Class for the Overlays Control   --------------------------------
+        /** @brief Manages the match control. */
+        class _CtrlOverlays : public _CtrlBase
+        {
+        public:
+            //--- Constructors/Destructors ----------------------------------
+            /** @brief Value Constructor (2 coordinates). */
+            template<typename X, typename Y>
+                requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+            inline _CtrlOverlays(const X x_, const Y y_, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ x_, y_, enabled, active }
+            {}
+
+            /** @brief Value Constructor (1 position). */
+            inline _CtrlOverlays(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            /** @brief Default Destructor. */
+            virtual ~_CtrlOverlays() noexcept = default;
+
+            //--- Drawing operation -----------------------------------------
+            /** @brief Draws a control in its embedding content. */
+            void draw(avt::ImageType& image) noexcept;
+
+
+        protected:
+            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/overlays-disabled.png');
+            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/overlays-off.png');
+            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/overlays-on.png');
+            //static inline int _SIZE = _ICON_ON.rows;
+        };
+
+
+
 
 
         /** /
-
-    #-------------------------------------------------------------------------
-    class _CtrlOverlays( _CtrlBase ):
-        '''The video overlays control.
-        '''
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            x = (view.WIDTH - self._SIZE) // 2
-            y = self.y + 5
-            if self.enabled:
-                img = self._ICON_ON if self.is_active else self._ICON_OFF
-            else:
-                img = self._ICON_DISABLED
-            view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
-
-        #---------------------------------------------------------------------
-        _ICON_DISABLED = cv2.imread( '../picts/controls/overlays-disabled.png' )
-        _ICON_OFF      = cv2.imread( '../picts/controls/overlays-off.png' )
-        _ICON_ON       = cv2.imread( '../picts/controls/overlays-on.png' )
-        _SIZE = _ICON_ON.shape[ 0 ]
-
 
     #-------------------------------------------------------------------------
     class _CtrlRecord( _CtrlBase ):

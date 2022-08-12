@@ -315,36 +315,25 @@ namespace avt::gui::views
         /***/
     }
 
+    /** Draws a control in its embedding content - Overlays Control. */
+    void ControlView::_CtrlOverlays::draw(avt::ImageType& image) noexcept
+    {
+        /*** /
+        x = (view.WIDTH - self._SIZE) // 2
+        y = self.y + 5
+        if self.enabled:
+            img = self._ICON_ON if self.is_active else self._ICON_OFF
+        else:
+            img = self._ICON_DISABLED
+        view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
+        /***/
+    }
+
 
 
 
     /** /
-    * 
-    #-------------------------------------------------------------------------
-    class _CtrlOverlays( _CtrlBase ):
-        '''The video overlays control.
-        '''
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            x = (view.WIDTH - self._SIZE) // 2
-            y = self.y + 5
-            if self.enabled:
-                img = self._ICON_ON if self.is_active else self._ICON_OFF
-            else:
-                img = self._ICON_DISABLED
-            view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
-
-        #---------------------------------------------------------------------
-        _ICON_DISABLED = cv2.imread( '../picts/controls/overlays-disabled.png' )
-        _ICON_OFF      = cv2.imread( '../picts/controls/overlays-off.png' )
-        _ICON_ON       = cv2.imread( '../picts/controls/overlays-on.png' )
-        _SIZE = _ICON_ON.shape[ 0 ]
-
+    
 
     #-------------------------------------------------------------------------
     class _CtrlRecord( _CtrlBase ):
