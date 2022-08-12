@@ -417,114 +417,68 @@ export namespace avt::gui::views
             //static inline int _SIZE = _ICON_ON.rows;
         };
 
+        //===================================================================
+        //---   Class for the Record Control   --------------------------------
+        /** @brief Manages the match control. */
+        class _CtrlRecord : public _CtrlBase
+        {
+        public:
+            //--- Constructors/Destructors ----------------------------------
+            /** @brief Value Constructor (2 coordinates). */
+            template<typename X, typename Y>
+                requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+            inline _CtrlRecord(const X x_, const Y y_, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ x_, y_, enabled, active }
+            {
+                m_create_slider();
+            }
+
+            /** @brief Value Constructor (1 position). */
+            inline _CtrlRecord(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {
+                m_create_slider();
+            }
+
+            /** @brief Default Destructor. */
+            virtual ~_CtrlRecord() noexcept = default;
+
+            //--- Drawing operation -----------------------------------------
+            /** @brief Draws a control in its embedding content. */
+            void draw(avt::ImageType& image) noexcept;
+
+            //--- Attributes ------------------------------------------------
+            //FloatSlider slider{};
+
+
+        protected:
+            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/record-disabled.png');
+            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/record-off.png');
+            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/record-on.png');
+            //static inline int _SIZE = _ICON_ON.rows;
+            static constexpr int _FONT_3_SIZE = 8;
+            static constexpr int _FONT_2_SIZE = 11;
+            static inline Font   _FONT_3_DISABLED   { _FONT_3_SIZE, RGBColor::GRAY };
+            static inline Font   _FONT_3_OFF        { _FONT_3_SIZE, RGBColor::LIGHT_GRAY };
+            static inline Font   _FONT_3_ON         { _FONT_3_SIZE, RGBColor::YELLOW };
+            static inline Font   _FONT_2_DISABLED   { _FONT_2_SIZE, RGBColor::GRAY };
+            static inline Font   _FONT_2_OFF        { _FONT_2_SIZE, RGBColor::LIGHT_GRAY };
+            static inline Font   _FONT_2_ON         { _FONT_2_SIZE, RGBColor::YELLOW };
+            static constexpr int _TICKS_FONT_SIZE = 8;
+            static inline Font   _TICKS_FONT_ENABLED{ _TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
+
+
+        private:
+            /** @brief Creates the associated slider. */
+            void m_create_slider() noexcept;
+        };
+
 
 
 
 
         /** /
 
-    #-------------------------------------------------------------------------
-    class _CtrlRecord( _CtrlBase ):
-        '''The video recording control.
-        '''
-        #---------------------------------------------------------------------
-        def __init__(self, x: int = None,
-                           y: int = None,
-                           enabled: bool = True,
-                           active : bool = False,
-                           *,
-                           pos: Point = None) -> None:
-            '''Constructor
-
-            Args:
-                x, y: int
-                    The top-left position of  this  control  in
-                    the  ControlView.  Ignored if 'pos' is set.
-                    Must be set if 'pos' is  None.  Defaults to
-                    None (i.e. 'pos' should be set instead).
-                enabled: bool
-                    Set this to True to get this control enabl-
-                    ed  or set it to False otherwise.  Defaults
-                    to False.
-                active: bool
-                    Set this to True to get this control active
-                    or  set  it  to  False  to get it inactive.
-                    Defaults to False.
-                pos: Point
-                    The top-left position of  this  control  in
-                    the ControlView.  Takes precedence over 'x'
-                    and 'y' if set. This argument must be named
-                    if set. Defaults to None.
-
-            Raises:
-                AssertionError:  x, y and pos are all None, or
-                    pos is None and either x or y is None also.
-            '''
-            super().__init__( x, y, enabled, active, pos=pos )
-            self.slider = FloatSlider( x = (x if x else pos.x) + 5,
-                                       y = (y if y is not None else pos.y) + self._ICON_SIZE + 8,
-                                       width = ControlView.WIDTH - 12*2,
-                                       height = 5,
-                                       min_value = 20,
-                                       max_value = 130,
-                                       current_value = 60,
-                                       bar_color = GRAY,
-                                       cursor_color = self._TICKS_FONT_ENABLED.color,
-                                       text_font = self._TICKS_FONT_ENABLED,
-                                       shadow_height = 0,
-                                       visible = True,
-                                       enabled = enabled,
-                                       active = active,
-                                       show_cursor_text = False )
-
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            cursor_text = str( self.slider.value )
-
-            if self.enabled:
-                if self.is_active:
-                    img = self._ICON_ON
-                    font = self._FONT_2_ON if len(cursor_text) < 3 else self._FONT_3_ON
-                else:
-                    img = self._ICON_OFF
-                    font = self._FONT_2_OFF if len(cursor_text) < 3 else self._FONT_3_OFF
-            else:
-                img = self._ICON_DISABLED
-                font = self._FONT_2_DISABLED if len(cursor_text) < 3 else self._FONT_3_DISABLED
-
-            x = (view.WIDTH - self._ICON_SIZE) // 2
-            y = self.y + 1
-
-            view.content[ y:y+self._ICON_SIZE, x:x+self._ICON_SIZE, : ] = img[ :, :, : ]
-
-            cursor_text_width = font.get_text_width( cursor_text )
-            x = (view.WIDTH - cursor_text_width ) // 2 + 1
-            y = self.y + (self._ICON_SIZE + self._FONT_SIZE) // 2 - (2 if len(cursor_text) < 3 else 4)
-            font.draw_text( view, Point(x,y), cursor_text, True )
-
-            ##font.draw_text( view, Point(self.x + 5, self.y + self._FONT_SIZE), 'Delay' )
-            self.slider.draw( view )
-
-        #---------------------------------------------------------------------
-        _FONT_3_SIZE        = 8
-        _FONT_2_SIZE        = 11
-        _FONT_3_DISABLED    = Font( _FONT_3_SIZE, GRAY )
-        _FONT_3_OFF         = Font( _FONT_3_SIZE, LIGHT_GRAY )
-        _FONT_3_ON          = Font( _FONT_3_SIZE, YELLOW )
-        _FONT_2_DISABLED    = Font( _FONT_2_SIZE, GRAY )
-        _FONT_2_OFF         = Font( _FONT_2_SIZE, LIGHT_GRAY )
-        _FONT_2_ON          = Font( _FONT_2_SIZE, YELLOW )
-        _ICON_DISABLED      = cv2.imread( '../picts/controls/record-disabled.png' )
-        _ICON_OFF           = cv2.imread( '../picts/controls/record-off.png' )
-        _ICON_ON            = cv2.imread( '../picts/controls/record-on.png' )
-        _ICON_SIZE          = _ICON_ON.shape[ 0 ]
-        _TICKS_FONT_SIZE    = 8
-        _TICKS_FONT_ENABLED = Font( _TICKS_FONT_SIZE, YELLOW // 1.33 )
 
 
     #-------------------------------------------------------------------------
