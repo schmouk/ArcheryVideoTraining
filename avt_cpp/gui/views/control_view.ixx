@@ -556,6 +556,52 @@ export namespace avt::gui::views
             //static inline int _SIZE = _ICON_ON.rows;
         };
 
+        //===================================================================
+        //---   Class for the Time Control   --------------------------------
+        /** @brief Manages the Time control. */
+        class _CtrlTime : public _CtrlBase
+        {
+        public:
+            //--- Constructors/Destructors ----------------------------------
+            /** @brief Value Constructor (2 coordinates). */
+            template<typename X, typename Y>
+                requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+            inline _CtrlTime(const X x_, const Y y_, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ x_, y_, false, true }
+            {
+                m_create_labels();
+            }
+
+            /** @brief Value Constructor (1 position). */
+            inline _CtrlTime(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, false, true }
+            {
+                m_create_labels();
+            }
+
+            /** @brief Default Destructor. */
+            virtual ~_CtrlTime() noexcept = default;
+
+            //--- Drawing operation -----------------------------------------
+            /** @brief Draws a control in its embedding content. */
+            void draw(avt::ImageType& image) noexcept;
+
+
+        protected:
+            //static inline gui::items::Label duration_label;
+            //static inline gui::items::Label time_label;
+            static constexpr int _DURATION_TEXT_SIZE = 11;
+            static constexpr int _PADDING            = 11;
+            static constexpr int _TIME_TEXT_SIZE     = 15;
+            static constexpr int _FULL_HEIGHT        = _TIME_TEXT_SIZE + _PADDING + _DURATION_TEXT_SIZE;
+
+
+        private:
+            /** @brief Creates the labels that are associated with the Time control. */
+            void m_create_labels() noexcept;
+        };
+
+
 
 
 
@@ -563,88 +609,6 @@ export namespace avt::gui::views
 
         /** /
 
-
-    #-------------------------------------------------------------------------
-    class _CtrlTarget( _CtrlBase ):
-        '''The target control.
-        '''
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            x = (ControlView.WIDTH  - self._SIZE) // 2
-            y = self.y + (ControlView.ICON_HEIGHT - self._SIZE) // 2
-            if self.enabled:
-                img = self._ICON_ACTIVE if self.is_active else self._ICON_INACTIVE
-            else:
-                img = self._ICON_DISABLED
-            view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
-
-        #---------------------------------------------------------------------
-        _ICON_ACTIVE = cv2.imread( '../picts/controls/target-on.png' )
-        _ICON_INACTIVE = cv2.imread( '../picts/controls/target-off.png' )
-        _ICON_DISABLED = cv2.imread( '../picts/controls/target-disabled.png' )
-        _SIZE          = _ICON_ACTIVE.shape[0]
-
-
-    #-------------------------------------------------------------------------
-    class _CtrlTime( _CtrlBase ):
-        '''The time and session duration control.
-        '''
-        #---------------------------------------------------------------------
-        def __init__(self, x:int, y: int) -> None:
-            '''Constructor.
-
-            Args:
-                x, y: top-left position of this control.
-            '''
-            super().__init__( x, y, False, True )
-            self.time_label = Label( x=x,
-                                     y=y+self._TIME_TEXT_SIZE,
-                                     text_font=Font(self._TIME_TEXT_SIZE, YELLOW-32, bold=True) )
-            self.duration_label = Label( x=x,
-                                         y=y+self._FULL_HEIGHT,
-                                         text_font=Font(self._DURATION_TEXT_SIZE, YELLOW) )
-
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            date = time.localtime()
-            self.time_label.text = f"{date.tm_hour:02d}:{date.tm_min:02d}"
-            time_label_width = self.time_label.get_text_width()
-
-            duration = time.perf_counter()
-            hr = int( duration // 3600 )
-            mn = int( (duration - 3600 * hr) // 60 )
-            sc = int( duration % 60 )
-            self.duration_label.text = f"({hr:d}:{mn:02d}:{sc:02d})"
-            duration_label_width = self.duration_label.get_text_width()
-
-            cv2.rectangle( view.content,
-                           (self.x, self.y-3),
-                           (view.width-self.x-2, self.y+self._FULL_HEIGHT + 3),
-                           AVTConfig.DEFAULT_BACKGROUND.color,
-                           -1 )
-
-            self.time_label.draw_at( (view.width - time_label_width) // 2,
-                                     self.time_label.pos.y,
-                                     view )
-            self.duration_label.draw_at( (view.width - duration_label_width) // 2,
-                                          self.duration_label.pos.y,
-                                          view )
-
-        #---------------------------------------------------------------------
-        _DURATION_TEXT_SIZE = 11
-        _PADDING            = 11
-        _TIME_TEXT_SIZE     = 15
-        _FULL_HEIGHT        = _TIME_TEXT_SIZE + _PADDING + _DURATION_TEXT_SIZE
 
 
     #-------------------------------------------------------------------------
