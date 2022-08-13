@@ -65,54 +65,54 @@ export namespace avt::gui::views
         //---   Constructors / Destructors   --------------------------------
         /** @brief Value Constructor (4 scalars + 1 color). */
         template<typename X, typename Y, typename H, typename W>
-            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>&& std::is_arithmetic_v<H>&& std::is_arithmetic_v<W>
+            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y> && std::is_arithmetic_v<H> && std::is_arithmetic_v<W>
         inline View(View* p_parent_view,
-            const X x,
-            const Y y,
-            const W width,
-            const H height,
-            const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+                    const X x,
+                    const Y y,
+                    const W width,
+                    const H height,
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(height, width, (cv::Vec3b)bg_color),
-            p_parent_view(p_parent_view),
-            pos(x, y)
+              p_parent_view(p_parent_view),
+              pos(x, y)
         {}
 
         /** @brief Value Constructor (1 pos + 1 size + 1 color). */
         inline View(View* p_parent_view,
-            const avt::utils::Coords2D& top_left,
-            const avt::utils::Size& size,
-            const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+                    const avt::utils::Coords2D& top_left,
+                    const avt::utils::Size& size,
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(size.height, size.width, (cv::Vec3b)bg_color),
-            p_parent_view(p_parent_view),
-            pos(top_left)
+              p_parent_view(p_parent_view),
+              pos(top_left)
         {}
 
         /** @brief Value Constructor (1 rect + 1 color). */
         inline View(View* p_parent_view,
-            const avt::CVRect& rect,
-            const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+                    const avt::CVRect& rect,
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(rect.height, rect.width, (cv::Vec3b)bg_color),
-            p_parent_view(p_parent_view),
-            pos(rect.tl())
+              p_parent_view(p_parent_view),
+              pos(rect.tl())
         {}
 
         /** @brief Main View Constructor (2 scalars + 1 color). */
         template<typename H, typename W>
             requires std::is_arithmetic_v<H>&& std::is_arithmetic_v<W>
         inline View(const W width,
-            const H height,
-            const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+                    const H height,
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(height, width, (cv::Vec3b)bg_color),
-            p_parent_view(nullptr),
-            pos(0, 0)
+              p_parent_view(nullptr),
+              pos(0, 0)
         {}
 
         /** @brief Value Constructor (1 size + 1 color). */
         inline View(const avt::utils::Size& size,
-            const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(size.height, size.width, (cv::Vec3b)bg_color),
-            p_parent_view(nullptr),
-            pos(0, 0)
+              p_parent_view(nullptr),
+              pos(0, 0)
         {}
 
         /** @brief Default Empty Constructor. */
@@ -151,7 +151,7 @@ export namespace avt::gui::views
 
         /** @brief Moves this view within its parent view (relative offset). */
         template<typename X, typename Y>
-            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline void move(const X dx, const Y dy)
         {
             pos.move(dx, dy);
@@ -167,7 +167,7 @@ export namespace avt::gui::views
 
         /** @brief Moves this view within its parent view (absolute pos). */
         template<typename X, typename Y>
-            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline void move_at(const X new_x, const Y new_y)
         {
             pos.move_at(new_x, new_y);
@@ -192,7 +192,7 @@ export namespace avt::gui::views
 
         /** @brief Resizes this view. */
         template<typename W, typename H>
-            requires std::is_arithmetic_v<W>&& std::is_arithmetic_v<H>
+            requires std::is_arithmetic_v<W> && std::is_arithmetic_v<H>
         inline void resize(const W new_width, const H new_height)
         {
             resize(avt::utils::Size{ new_width, new_height });
@@ -217,7 +217,7 @@ export namespace avt::gui::views
 
         /** @brief Sets position and parent view (2 coordinates). */
         template<typename X, typename Y>
-            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline void set(const X x_, const Y y_, View* p_parent_view_ = nullptr)
         {
             move_at(x_, y_);
@@ -271,8 +271,8 @@ export namespace avt::gui::views
     private:
         /** @brief Evaluates the clipped size of this view when displayed in a frame. */
         avt::utils::Size m_clipping_size(const PosType& abs_pos,
-            const avt::utils::Size& size,
-            avt::ImageType& image) const noexcept;
+                                         const avt::utils::Size& size,
+                                         avt::ImageType& image) const noexcept;
 
         /** @brief Evaluates the absolute position of this view within the root View. */
         avt::utils::Coords2D m_get_abs_pos(const View* p_current_view) const noexcept;
