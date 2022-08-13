@@ -33,7 +33,7 @@ module;
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/highgui.hpp>
 
-#include "gui/views/view.h"
+#include "utils/types.h"
 
 
 export module gui.views.control_view;
@@ -47,6 +47,8 @@ import mtmp.mutex;
 import utils.rgb_color;
 import utils.size;
 import mtmp.timer;
+import utils;
+import gui.views.view;
 
 
 //===========================================================================
