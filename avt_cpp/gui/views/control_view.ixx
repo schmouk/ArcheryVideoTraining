@@ -522,6 +522,40 @@ export namespace avt::gui::views
             static inline int _SIZE = 25; //_ICON_PLAY_ON.rows;
         };
 
+        //===================================================================
+        //---   Class for the Target Control   --------------------------------
+        /** @brief Manages the Target control. */
+        class _CtrlTarget : public _CtrlBase
+        {
+        public:
+            //--- Constructors/Destructors ----------------------------------
+            /** @brief Value Constructor (2 coordinates). */
+            template<typename X, typename Y>
+                requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+            inline _CtrlTarget(const X x_, const Y y_, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ x_, y_, enabled, active }
+            {}
+
+            /** @brief Value Constructor (1 position). */
+            inline _CtrlTarget(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            /** @brief Default Destructor. */
+            virtual ~_CtrlTarget() noexcept = default;
+
+            //--- Drawing operation -----------------------------------------
+            /** @brief Draws a control in its embedding content. */
+            void draw(avt::ImageType& image) noexcept;
+
+
+        protected:
+            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/target-disabled.png');
+            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/target-off.png');
+            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/target-on.png');
+            //static inline int _SIZE = _ICON_ON.rows;
+        };
+
 
 
 

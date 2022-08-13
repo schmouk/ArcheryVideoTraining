@@ -431,6 +431,20 @@ namespace avt::gui::views
         /***/
     }
 
+    /** Draws a control in its embedding content - Target Control. */
+    void ControlView::_CtrlTarget::draw(avt::ImageType& image) noexcept
+    {
+        /*** /
+        x = (ControlView.WIDTH  - self._SIZE) // 2
+        y = self.y + (ControlView.ICON_HEIGHT - self._SIZE) // 2
+        if self.enabled:
+            img = self._ICON_ACTIVE if self.is_active else self._ICON_INACTIVE
+        else:
+            img = self._ICON_DISABLED
+        view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
+        /***/
+    }
+
 
 
 
