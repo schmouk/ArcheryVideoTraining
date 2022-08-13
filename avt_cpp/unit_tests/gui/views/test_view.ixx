@@ -30,7 +30,6 @@ module;
 #include <opencv2/core/types.hpp>
 
 #include "utils/types.h"
-#include "gui/views/view.h"
 
 
 export module unit_tests.gui.views.test_view;
@@ -40,6 +39,7 @@ import utils.coords2d;
 import video.frame;
 import utils.rgb_color;
 import utils.size;
+import gui.views.view;
 
 
 //===========================================================================

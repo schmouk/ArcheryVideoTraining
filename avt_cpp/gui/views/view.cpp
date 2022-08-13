@@ -23,20 +23,25 @@ SOFTWARE.
 */
 
 //===========================================================================
+module;
+
 #include <algorithm>
+
+#include <opencv2/imgproc.hpp>
 #include <opencv2/core/mat.hpp>
 #include <opencv2/core/types.hpp>
 
 #include "utils/types.h"
 
-#include "gui/views/view.h"
 
+module gui.views.view;
 
 import avt.config;
 import utils.coords2d;
 import utils.rgb_color;
 import utils.size;
 import utils;
+import gui.views.view;
 
 
 //===========================================================================

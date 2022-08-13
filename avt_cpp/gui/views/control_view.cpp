@@ -32,8 +32,9 @@ module;
 
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 
-#include "gui/views/view.h"
+#include "utils/types.h"
 
 
 module gui.views.control_view;
@@ -45,6 +46,7 @@ import gui.fonts.font;
 import mtmp.mutex;
 import utils.rgb_color;
 import utils.size;
+import gui.views.view;
 
 
 //===========================================================================
