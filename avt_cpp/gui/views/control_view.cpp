@@ -474,6 +474,7 @@ namespace avt::gui::views
                                         view )
         /***/
     }
+
     /** Creates the labels that are associated with the Time control. */
     void ControlView::_CtrlTime::m_create_labels() noexcept
     {
@@ -487,37 +488,18 @@ namespace avt::gui::views
         /***/
     }
 
-
-
-
-    /** /
-    
-
-
-    #-------------------------------------------------------------------------
-    class _CtrlTimer( _CtrlBase ):
-        '''The timer control.
-        '''
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
-            x = (view.WIDTH - self._SIZE) // 2
-            y = self.y + 1
-            if self.enabled:
-                img = self._ICON_ON if self.is_active else self._ICON_OFF
-            else:
-                img = self._ICON_DISABLED
-            view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
-
-        #---------------------------------------------------------------------
-        _ICON_DISABLED = cv2.imread( '../picts/controls/timer-disabled.png' )
-        _ICON_OFF      = cv2.imread( '../picts/controls/timer-off.png' )
-        _ICON_ON       = cv2.imread( '../picts/controls/timer-on.png' )
-        _SIZE          = _ICON_ON.shape[ 0 ]
-    /**/
+    /** Draws a control in its embedding content - Time Control. */
+    void ControlView::_CtrlTimer::draw(avt::ImageType& image) noexcept
+    {
+        /*** /
+        x = (view.WIDTH - self._SIZE) // 2
+        y = self.y + 1
+        if self.enabled:
+            img = self._ICON_ON if self.is_active else self._ICON_OFF
+        else:
+            img = self._ICON_DISABLED
+        view.content[ y:y+self._SIZE, x:x+self._SIZE, : ] = img[ :, :, : ]
+        /***/
+    }
 
 }
