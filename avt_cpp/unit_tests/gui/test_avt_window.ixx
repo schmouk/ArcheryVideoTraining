@@ -34,7 +34,6 @@ module;
 #include <opencv2/core/types.hpp>
 
 #include "utils/types.h"
-#include "gui/views/view.h"
 
 
 export module unit_tests.gui.test_avt_window;
@@ -42,6 +41,7 @@ export module unit_tests.gui.test_avt_window;
 
 import gui.avt_window;
 import avt.config;
+import gui.views.view;
 
 
 //===========================================================================

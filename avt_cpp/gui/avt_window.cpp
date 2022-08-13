@@ -32,8 +32,6 @@ module;
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/highgui.hpp>
 
-#include "gui/views/view.h"
-
 
 module gui.avt_window;
 
@@ -44,7 +42,7 @@ import video.frame;
 import mtmp.mutex;
 import utils.rgb_color;
 import utils.size;
-
+import gui.views.view;
 
 
 //===========================================================================
