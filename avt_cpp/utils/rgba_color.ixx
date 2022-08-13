@@ -310,7 +310,7 @@ export namespace avt::utils
 
         //---   Subtracting colors   ----------------------------------------
         /** @brief In-place subtracts one RGB color. */
-        inline RGBAColor& operator-= (const RGBAColor& rhs) noexcept
+        RGBAColor& operator-= (const RGBAColor& rhs) noexcept
         {
             const double my_alpha = a / 255.0;
             const double rhs_alpha = rhs.a / 255.0;

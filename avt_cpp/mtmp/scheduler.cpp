@@ -9,7 +9,6 @@ in the Software without restriction,  including without limitation the  rights
 to use,  copy,  modify,  merge,  publish,  distribute, sublicense, and/or sell
 copies of the Software,  and  to  permit  persons  to  whom  the  Software  is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -25,26 +24,32 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <filesystem>
-#include <opencv2/core/mat.hpp>
+#include <algorithm>
 
+#include <Windows.h>
+#include <timeapi.h>
 
-export module avt.config;
-
-import gui.fonts.bold_font;
-import gui.fonts.font;
-import utils.rgb_color;
+module mtmp.scheduler;
 
 
 //===========================================================================
-export namespace avt::config
+namespace avt::mtmp
 {
-    //=======================================================================
-    constexpr long        CAMERAS_MAX_COUNT = 4; //!< AVT will not manage more than this count of input cameras
-    avt::utils::RGBColor  DEFAULT_BACKGROUND = avt::utils::RGBColor::ANTHRACITE; //!< default background is very dark
+    const unsigned int Scheduler::_clamp(const unsigned int time_slice_ms) noexcept
+    {
+        if (!_already_inited) {
+            TIMECAPS device_caps;  // win32 structure
+            if (timeGetDevCaps(&device_caps, sizeof(device_caps)) == MMSYSERR_NOERROR) {  // win32 function and const
+                _MIN_TIME_SLICE_ms = device_caps.wPeriodMin;
+                _MAX_TIME_SLICE_ms = device_caps.wPeriodMax;
+            }
+            else {
+                _MIN_TIME_SLICE_ms = 3;
+                _MAX_TIME_SLICE_ms = 24;
+            }
+            _already_inited = true;
+        }
 
-    avt::gui::fonts::Font AVTConsoleFont = avt::gui::fonts::Font(13, avt::utils::RGBColor::YELLOW - 16); //!< small console font for AVT
-    avt::gui::fonts::Font AVTDefaultFont = avt::gui::fonts::BoldFont(20, avt::utils::RGBColor::YELLOW);  //!< default font for every AVT text duisplay
-
-    std::filesystem::path PICTURES_DIR{ "../picts" };
+        return std::clamp<unsigned int>(time_slice_ms, _MIN_TIME_SLICE_ms, _MAX_TIME_SLICE_ms);
+    }
 }

@@ -9,7 +9,6 @@ in the Software without restriction,  including without limitation the  rights
 to use,  copy,  modify,  merge,  publish,  distribute, sublicense, and/or sell
 copies of the Software,  and  to  permit  persons  to  whom  the  Software  is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -25,26 +24,35 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <filesystem>
-#include <opencv2/core/mat.hpp>
+#include <cstdlib>
+
+#include <windows.h>
 
 
-export module avt.config;
+module devices.monitors_list;
 
-import gui.fonts.bold_font;
-import gui.fonts.font;
-import utils.rgb_color;
+import devices.display_monitor;
 
 
 //===========================================================================
-export namespace avt::config
+namespace avt::devices
 {
-    //=======================================================================
-    constexpr long        CAMERAS_MAX_COUNT = 4; //!< AVT will not manage more than this count of input cameras
-    avt::utils::RGBColor  DEFAULT_BACKGROUND = avt::utils::RGBColor::ANTHRACITE; //!< default background is very dark
+    /** @brief the internal initialization callback. */
+    BOOL CALLBACK MonitorsList::m_init_callback(HMONITOR monitor_handle, HDC dc_handle, LPRECT monitor_display_rect, LPARAM params)
+    {
+        MonitorsList* monitors = reinterpret_cast<MonitorsList*>(params);
 
-    avt::gui::fonts::Font AVTConsoleFont = avt::gui::fonts::Font(13, avt::utils::RGBColor::YELLOW - 16); //!< small console font for AVT
-    avt::gui::fonts::Font AVTDefaultFont = avt::gui::fonts::BoldFont(20, avt::utils::RGBColor::YELLOW);  //!< default font for every AVT text duisplay
+        monitors->push_back(
+            DisplayMonitor(
+                monitor_handle,
+                dc_handle,
+                monitor_display_rect->left,
+                monitor_display_rect->top,
+                std::abs(monitor_display_rect->right - monitor_display_rect->left),
+                std::abs(monitor_display_rect->bottom - monitor_display_rect->top)
+            )
+        );
 
-    std::filesystem::path PICTURES_DIR{ "../picts" };
+        return true;
+    }
 }

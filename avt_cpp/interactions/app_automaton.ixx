@@ -25,26 +25,43 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <filesystem>
-#include <opencv2/core/mat.hpp>
+#include <cstring>
+
+#include <opencv2/highgui.hpp>
 
 
-export module avt.config;
+export module interactions.app_automaton;
 
-import gui.fonts.bold_font;
-import gui.fonts.font;
-import utils.rgb_color;
+import gui.avt_window;
 
 
 //===========================================================================
-export namespace avt::config
+export namespace avt::interactions
 {
     //=======================================================================
-    constexpr long        CAMERAS_MAX_COUNT = 4; //!< AVT will not manage more than this count of input cameras
-    avt::utils::RGBColor  DEFAULT_BACKGROUND = avt::utils::RGBColor::ANTHRACITE; //!< default background is very dark
+    /** @brief The class of the AVT application interactions automaton. */
+    class AppAutomaton
+    {
+    public:
+        //--- Constructors / Destructors ------------------------------------
+        /** @brief Value Constructor. */
+        AppAutomaton(avt::gui::AVTWindow* p_avt_window) noexcept
+            : mp_avt_window(p_avt_window)
+        {}
 
-    avt::gui::fonts::Font AVTConsoleFont = avt::gui::fonts::Font(13, avt::utils::RGBColor::YELLOW - 16); //!< small console font for AVT
-    avt::gui::fonts::Font AVTDefaultFont = avt::gui::fonts::BoldFont(20, avt::utils::RGBColor::YELLOW);  //!< default font for every AVT text duisplay
+        /** @brief Default Copy constructor. */
+        AppAutomaton(const AppAutomaton&) = default;
 
-    std::filesystem::path PICTURES_DIR{ "../picts" };
+        /** @brief Default Move constructor. */
+        AppAutomaton(AppAutomaton&&) = default;
+
+        /** @brief Default Destructor. */
+        ~AppAutomaton() = default;
+
+
+    private:
+        //---   Attributes   ------------------------------------------------
+        avt::gui::AVTWindow* mp_avt_window;
+    };
+
 }

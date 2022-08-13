@@ -55,9 +55,14 @@ export namespace avt::utils
             : MyBaseType{}
         {}
 
+        /** @brief Copy Constructor (1 cv::Point_<>). */
+        inline Coords2D(const avt::CVPoint& pos) noexcept
+            : MyBaseType(pos)
+        {}
+
         /** @brief Constructor (2 values). */
         template<typename X, typename Y>
-            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
+            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
         inline Coords2D(const X x, const Y y) noexcept
             : MyBaseType{ avt::utils::clamp<MyBaseType::value_type, X>(x),
                           avt::utils::clamp<MyBaseType::value_type, Y>(y) }
@@ -68,7 +73,7 @@ export namespace avt::utils
             requires avt::is_pair_type_v<P>
         inline Coords2D(const P pair) noexcept(false)
             : MyBaseType{ avt::utils::clamp<MyBaseType::value_type, decltype(pair[0])>(pair[0]),
-                          avt::utils::clamp<MyBaseType::value_type, decltype(pair[1])>(pair[1])}
+                          avt::utils::clamp<MyBaseType::value_type, decltype(pair[1])>(pair[1]) }
         {}
 
         /** @brief Default Copy constructor. */
@@ -132,7 +137,7 @@ export namespace avt::utils
         //---   Moving   ----------------------------------------------------
         /** @brief Relative move of this position (two scalar offsets). */
         template<typename X, typename Y>
-            requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
+            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
         inline void move(const X dx, const Y dy) noexcept
         {
             x = avt::utils::clamp_s(_ConvertType(x) + dx);

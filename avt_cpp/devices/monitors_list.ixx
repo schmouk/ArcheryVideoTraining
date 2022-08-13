@@ -26,7 +26,6 @@ module;
 
 #include <windows.h>
 
-#include <cstdlib>
 #include <vector>
 
 
@@ -45,44 +44,39 @@ export namespace avt::devices
     public:
 
         //---   Constructors / Destructor   ---------------------------------
-        /** @brief Default COnstructor. */
+        /** @brief Default Constructor. */
         inline MonitorsList() noexcept
             : std::vector<DisplayMonitor>()
         {
             EnumDisplayMonitors(nullptr, nullptr, m_init_callback, (LPARAM)this);  // Windows function
         }
 
-
-        //---   Destructor   ------------------------------------------------
+        /** @brief Deleted Copy constructor. */
         MonitorsList(const DisplayMonitor&) = delete;
+
+        /** @brief Deleted Move constructor. */
         MonitorsList(DisplayMonitor&&) = delete;
+
+        /** @brief Default Destructor. */
+        ~MonitorsList() = default;
+
+
+        //---   Assignments   -----------------------------------------------
+        /** @brief Deleted Copy assignment. */
         MonitorsList& operator= (const MonitorsList&) = delete;
+
+        /** @brief Deleted Move assignment. */
         MonitorsList& operator= (MonitorsList&&) = delete;
 
 
     private:
         /** @brief the internal initialization callback. */
-        static BOOL CALLBACK m_init_callback(HMONITOR monitor_handle, HDC dc_handle, LPRECT monitor_display_rect, LPARAM params)
-        {
-            MonitorsList* monitors = reinterpret_cast<MonitorsList*>(params);
-
-            monitors->push_back(
-                DisplayMonitor(
-                    monitor_handle,
-                    dc_handle,
-                    monitor_display_rect->left,
-                    monitor_display_rect->top,
-                    std::abs(monitor_display_rect->right - monitor_display_rect->left),
-                    std::abs(monitor_display_rect->bottom - monitor_display_rect->top)
-                )
-            );
-
-            return true;
-        }
+        static BOOL CALLBACK m_init_callback(HMONITOR monitor_handle, HDC dc_handle, LPRECT monitor_display_rect, LPARAM params);
     };
 
 
     //=======================================================================
     /** @brief The (single) global instance of the display monitors list. */
     MonitorsList monitors_list;  
+
 }

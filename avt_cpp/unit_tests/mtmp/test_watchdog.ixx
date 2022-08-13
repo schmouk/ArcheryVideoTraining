@@ -26,6 +26,7 @@ module;
 
 #include <cassert>
 #include <chrono>
+#include <cstring>
 #include <iostream>
 #include <thread>
 
@@ -42,7 +43,7 @@ namespace avt::unit_tests::mtmp::watchdog
     class MyWatchdog : public avt::mtmp::Watchdog
     {
     public:
-        inline MyWatchdog(const char name, const double duration_ms) noexcept
+        inline MyWatchdog(const std::string& name, const double duration_ms) noexcept
             : avt::mtmp::Watchdog{ duration_ms, name }, m_name{ name }
         {}
 
@@ -54,7 +55,7 @@ namespace avt::unit_tests::mtmp::watchdog
         }
 
     private:
-        char m_name;
+        std::string m_name;
     };
 
     //=======================================================================
@@ -62,8 +63,8 @@ namespace avt::unit_tests::mtmp::watchdog
     {
         std::cout << "-- TEST avt::mtmp::Watchdog\n";
 
-        MyWatchdog a{ 'X', 1311 };
-        MyWatchdog b{ 'Y', 1763.49 };
+        MyWatchdog a{ "X", 1311 };
+        MyWatchdog b{ "Y", 1763.49 };
 
         std::cout << "  -- " << std::chrono::system_clock::now() << "\n\n";
 
