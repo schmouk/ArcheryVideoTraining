@@ -383,24 +383,10 @@ namespace avt::gui::views
         /***/
     }
 
-
-
-
-    /** /
-    
-
-
-    #-------------------------------------------------------------------------
-    class _CtrlReplay( _CtrlBase ):
-        '''The replay control.
-        '''
-        #---------------------------------------------------------------------
-        def draw(self, view: View) -> None:
-            '''Draws a control in its embedding content.
-            Args:
-                view: View
-                    A reference to the embedding view.
-            '''
+    /** Draws a control in its embedding content - Replay Control. */
+    void ControlView::_CtrlReplay::draw(avt::ImageType& image) noexcept
+    {
+        /*** /
             if self.enabled:
                 if self.is_active:
                     icons = (self._ICON_STEP_BW_ON,
@@ -442,27 +428,14 @@ namespace avt::gui::views
 
             view.content[ y2:y2+self._SIZE,
                           x2:x2+self._SIZE, : ] = icons[4][:,:,:]
+        /***/
+    }
 
-        #---------------------------------------------------------------------
-        _ICON_FBW_DISABLED     = cv2.imread( '../picts/controls/fbw-25-disabled.png' )
-        _ICON_FBW_OFF          = cv2.imread( '../picts/controls/fbw-25-off.png' )
-        _ICON_FBW_ON           = cv2.imread( '../picts/controls/fbw-25-on.png' )
-        _ICON_FFW_DISABLED     = cv2.imread( '../picts/controls/ffw-25-disabled.png' )
-        _ICON_FFW_OFF          = cv2.imread( '../picts/controls/ffw-25-off.png' )
-        _ICON_FFW_ON           = cv2.imread( '../picts/controls/ffw-25-on.png' )
-        _ICON_PAUSE_DISABLED   = cv2.imread( '../picts/controls/pause-25-disabled.png' )
-        _ICON_PAUSE_OFF        = cv2.imread( '../picts/controls/pause-25-off.png' )
-        _ICON_PAUSE_ON         = cv2.imread( '../picts/controls/pause-25-on.png' )
-        _ICON_PLAY_DISABLED    = cv2.imread( '../picts/controls/play-25-disabled.png' )
-        _ICON_PLAY_OFF         = cv2.imread( '../picts/controls/play-25-off.png' )
-        _ICON_PLAY_ON          = cv2.imread( '../picts/controls/play-25-on.png' )
-        _ICON_STEP_BW_DISABLED = cv2.imread( '../picts/controls/step-bw-25-disabled.png' )
-        _ICON_STEP_BW_OFF      = cv2.imread( '../picts/controls/step-bw-25-off.png' )
-        _ICON_STEP_BW_ON       = cv2.imread( '../picts/controls/step-bw-25-on.png' )
-        _ICON_STEP_FW_DISABLED = cv2.imread( '../picts/controls/step-fw-25-disabled.png' )
-        _ICON_STEP_FW_OFF      = cv2.imread( '../picts/controls/step-fw-25-off.png' )
-        _ICON_STEP_FW_ON       = cv2.imread( '../picts/controls/step-fw-25-on.png' )
-        _SIZE = 25 ##_ICON_PLAY_ON.shape[0]
+
+
+
+    /** /
+    
 
 
     #-------------------------------------------------------------------------
