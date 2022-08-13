@@ -46,7 +46,7 @@ export namespace avt::utils
 
         //---   Wrappers   --------------------------------------------------
         using MyBaseType = avt::CVPoint;              //!< wrapper to the base class
-        using ValueType = avt::CVPoint::value_type;  //!< wrapper to the type of coordinates.
+        using ValueType  = avt::CVPoint::value_type;  //!< wrapper to the type of coordinates.
 
 
         //---   Constructors / Destructors   --------------------------------

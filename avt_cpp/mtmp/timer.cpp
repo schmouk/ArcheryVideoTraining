@@ -22,6 +22,7 @@ SOFTWARE.
 module;
 
 #include <chrono>
+#include <cstring>
 #include <thread>
 
 
@@ -36,20 +37,38 @@ namespace avt::mtmp
     /** Constructor. */
     Timer::Timer(const double period_ms, const bool b_delay) noexcept
         : avt::mtmp::Thread{},
-        m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
-        m_n_repeats{ 0 },
-        m_b_delay{ b_delay }
+          m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
+          m_n_repeats{ 0 },
+          m_b_delay{ b_delay }
     {}
 
     /** Constructor. */
-    Timer::Timer(const double period_ms,
-                 const size_t n_repeats,
-                 const bool   b_delay) noexcept
-        : avt::mtmp::Thread{},
-            m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
-            m_n_repeats{ n_repeats },
-            m_b_delay{ b_delay }
+    Timer::Timer(const std::string& name, const double period_ms, const bool b_delay) noexcept
+        : avt::mtmp::Thread{ name },
+          m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
+          m_n_repeats{ 0 },
+          m_b_delay{ b_delay }
     {}
+
+    /** Constructor. */
+    Timer::Timer(const double period_ms, const size_t n_repeats, const bool b_delay) noexcept
+        : avt::mtmp::Thread{},
+          m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
+          m_n_repeats{ n_repeats },
+          m_b_delay{ b_delay }
+    {}
+
+    /** Constructor */
+    Timer::Timer(const std::string& name,
+                 const double       period_ms,
+                 const size_t       n_repeats,
+                 const bool         b_delay) noexcept
+        : avt::mtmp::Thread{ name },
+          m_period_ms{ std::chrono::milliseconds(llround(period_ms)) },
+          m_n_repeats{ n_repeats },
+          m_b_delay{ b_delay }
+    {}
+
 
     /** The internal running method. */
     void Timer::_run() noexcept

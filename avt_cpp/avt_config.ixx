@@ -25,6 +25,7 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <filesystem>
 #include <opencv2/core/mat.hpp>
 
 
@@ -45,4 +46,5 @@ export namespace avt::config
     avt::gui::fonts::Font AVTConsoleFont = avt::gui::fonts::Font(13, avt::utils::RGBColor::YELLOW - 16); //!< small console font for AVT
     avt::gui::fonts::Font AVTDefaultFont = avt::gui::fonts::BoldFont(20, avt::utils::RGBColor::YELLOW);  //!< default font for every AVT text duisplay
 
+    std::filesystem::path PICTURES_DIR{ "../picts" };
 }

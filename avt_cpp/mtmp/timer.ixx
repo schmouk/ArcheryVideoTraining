@@ -22,6 +22,7 @@ SOFTWARE.
 module;
 
 #include <chrono>
+#include <cstring>
 #include <thread>
 
 
@@ -75,6 +76,18 @@ export namespace avt::mtmp
 
         /** @brief Constructor.
         *
+        * On call of '.start()', infinitely repeats the task described in
+        * method '.run()' unless '.stop()' is called.
+        * Set b_delay to true to get a waiting period before running  the
+        * repetead  task,  or set it to false to get this running as soon
+        * as '.start()' is called.
+        */
+        Timer(const std::string& name,
+              const double       period_ms,
+              const bool         b_delay = false) noexcept;
+
+        /** @brief Constructor.
+        *
         * On call of '.start()',  repeats the task described  in  method 
         * '.run()' at most n times or unless '.stop()' is called.
         * Set b_delay to true to get a waiting period before running the
@@ -86,6 +99,21 @@ export namespace avt::mtmp
         Timer(const double period_ms,
               const size_t n_repeats,
               const bool   b_delay = false) noexcept;
+
+        /** @brief Constructor.
+        *
+        * On call of '.start()',  repeats the task described  in  method
+        * '.run()' at most n times or unless '.stop()' is called.
+        * Set b_delay to true to get a waiting period before running the
+        * repetead  task, or set it to false to get this running as soon
+        * as '.start()' is called.
+        * N.B. 'n_repeats' set to 0 means infinite repeating.  The timer
+        * must then be explicitely stopped to complete.
+        */
+        Timer(const std::string& name,
+              const double       period_ms,
+              const size_t       n_repeats,
+              const bool         b_delay = false) noexcept;
 
         /** @brief Default Copy constructor. */
         Timer(const Timer&) = delete;
@@ -113,7 +141,7 @@ export namespace avt::mtmp
         * This methods does nothing in this generic class. Inheriting
         * classes  can  override  it  to implement their own repeated
         * processing.
-        * @sa as an example class avt::mtmp::Watchdog.
+        * @sa as an example of inheriting: class avt::mtmp::Watchdog.
         */
         virtual inline void run() override
         {}

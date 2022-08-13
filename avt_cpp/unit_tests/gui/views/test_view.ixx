@@ -30,10 +30,10 @@ module;
 #include <opencv2/core/types.hpp>
 
 #include "utils/types.h"
-#include "gui/items/view.h"
+#include "gui/views/view.h"
 
 
-export module unit_tests.gui.items.test_view;
+export module unit_tests.gui.views.test_view;
 
 import avt.config;
 import utils.coords2d;
@@ -43,42 +43,42 @@ import utils.size;
 
 
 //===========================================================================
-export namespace avt::unit_tests::gui::items
+export namespace avt::unit_tests::gui::views
 {
     //=======================================================================
     void test_view()
     {
-        std::cout << "-- TEST avt::gui::items::View\n";
+        std::cout << "-- TEST avt::gui::views::View\n";
 
-        avt::gui::items::View v0(nullptr, 10, 5, 1000, 640);
+        avt::gui::views::View v0(nullptr, 10, 5, 1000, 640);
         assert(v0.pos.x == 10);
         assert(v0.pos.y == 5);
         assert(v0.size().width == 1000);
         assert(v0.size().height == 640);
         assert(v0(1, 1) == avt::config::DEFAULT_BACKGROUND);
 
-        avt::gui::items::View v1(&v0, avt::utils::Coords2D(11, 6), avt::utils::Size(1000, 640), avt::config::DEFAULT_BACKGROUND);
+        avt::gui::views::View v1(&v0, avt::utils::Coords2D(11, 6), avt::utils::Size(1000, 640), avt::config::DEFAULT_BACKGROUND);
         assert(v1.pos.x == 11);
         assert(v1.pos.y == 6);
         assert(v1.size().width == 1000);
         assert(v1.size().height == 640);
         assert(v1(639, 999) == avt::config::DEFAULT_BACKGROUND);
 
-        avt::gui::items::View v2(&v1, cv::Rect(21, 11, 201, 102), avt::utils::RGBColor::YELLOW);
+        avt::gui::views::View v2(&v1, cv::Rect(21, 11, 201, 102), avt::utils::RGBColor::YELLOW);
         assert(v2.pos.x == 21);
         assert(v2.pos.y == 11);
         assert(v2.size().width == 201);
         assert(v2.size().height == 102);
         assert(v2(0, 0) == cv::Vec3b(0, 255, 255));
 
-        avt::gui::items::View v3{ v2 };
+        avt::gui::views::View v3{ v2 };
         assert(v3.pos.x == 21);
         assert(v3.pos.y == 11);
         assert(v3.size().width == 201);
         assert(v3.size().height == 102);
         assert(v3(101, 200) == cv::Vec3b(0, 255, 255));
 
-        avt::gui::items::View v4 = v1;
+        avt::gui::views::View v4 = v1;
         assert(v4.pos.x == 11);
         assert(v4.pos.y == 6);
         assert(v4.size().width == 1000);
@@ -100,7 +100,7 @@ export namespace avt::unit_tests::gui::items
         assert(abs_pos.y == 22);
 
 
-        avt::video::Frame frame = cv::Mat3b::zeros(1200, 1920);
+        avt::gui::views::View frame{ nullptr, 0, 0, 1920, 1080, avt::utils::RGBColor{0} };
 
         v3.draw(frame);
         assert(frame(21, 41) == cv::Vec3b(0, 0, 0));

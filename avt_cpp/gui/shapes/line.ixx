@@ -122,10 +122,10 @@ export namespace avt::gui::shapes
             draw(frame, thickness);
         }
 
-        /** @brief Draws this line in the specified frame with the specified radius. */
+        /** @brief Draws this line in the specified frame with the specified thickness. */
         inline void draw(avt::video::Frame& frame, const int thickness)
         {
-            cv::line(frame, *this, end, (cv::Scalar)color, thickness, cv::LINE_8, 0);
+            cv::line(frame, *this, end, (cv::Scalar)color, thickness, cv::LINE_AA, 0);
         }
 
 

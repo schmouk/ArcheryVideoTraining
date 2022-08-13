@@ -23,6 +23,7 @@ module;
 
 #include <atomic>
 #include <chrono>
+#include <cstring>
 #include <thread>
 
 
@@ -66,7 +67,7 @@ export namespace avt::mtmp
     public:
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Constructor. */
-        Watchdog(const double time_countdown_ms, const char name) noexcept;
+        Watchdog(const double time_countdown_ms, const std::string& name) noexcept;
 
         /** @brief Default Copy constructor. */
         Watchdog(const Watchdog&) = delete;
@@ -149,9 +150,9 @@ export namespace avt::mtmp
 
 
         //---   Attributes   ------------------------------------------------
-        _Timer* mp_timer;
-        double  m_time_countdown_ms;
-        char    m_name;
+        double      m_time_countdown_ms;
+        std::string m_name;
+        _Timer*     mp_timer;
     };
 
 }

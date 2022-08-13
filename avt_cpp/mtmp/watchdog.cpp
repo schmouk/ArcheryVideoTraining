@@ -23,6 +23,7 @@ module;
 
 #include <atomic>
 #include <chrono>
+#include <cstring>
 #include <thread>
 
 
@@ -36,11 +37,12 @@ import mtmp.timer;
 namespace avt::mtmp
 {
     /** Constructor. */
-    Watchdog::Watchdog(const double time_countdown_ms, const char name) noexcept
+    Watchdog::Watchdog(const double time_countdown_ms, const std::string& name) noexcept
         : mp_timer{ nullptr },
           m_time_countdown_ms{ time_countdown_ms },
           m_name{ name }
     {}
+
 
     /** Resets the time count-down for this watchdog. */
     void Watchdog::reset() noexcept(false)
@@ -89,7 +91,7 @@ namespace avt::mtmp
 
     inline Watchdog::_Timer::_Timer(Watchdog* parent_watchdog, const double time_countdown_ms) noexcept
         : mp_parent{ parent_watchdog },
-        avt::mtmp::Timer(time_countdown_ms, 1, true)  //false)  // 
+          avt::mtmp::Timer(mp_parent->m_name, time_countdown_ms, 1, true)
     {
         b_reset.store(false);
     }

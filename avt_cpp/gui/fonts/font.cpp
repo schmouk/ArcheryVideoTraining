@@ -37,7 +37,6 @@ module;
 module gui.fonts.font;
 
 import utils.coords2d;
-import video.frame;
 import utils.rgb_color;
 import utils.size;
 
@@ -46,11 +45,11 @@ import utils.size;
 namespace avt::gui::fonts
 {
     /** Value Constructor with no background color. */
-    Font::Font(const int                   size_,
-               const avt::utils::RGBColor& color_,
-               const bool                  b_bold_,
-               const bool                  b_italic_,
-               const bool                  b_sans_serif_) noexcept
+    Font::Font(const int       size_,
+               const RGBColor& color_,
+               const bool      b_bold_,
+               const bool      b_italic_,
+               const bool      b_sans_serif_) noexcept
         : color{ color_ },
           font_scale{},
           bg_color{},
@@ -69,12 +68,12 @@ namespace avt::gui::fonts
     }
 
     /** Value Constructor with specified color and background color. */
-    Font::Font(const int                   size_,
-               const avt::utils::RGBColor& color_,
-               const avt::utils::RGBColor& bg_color_,
-               const bool                  b_bold_,
-               const bool                  b_italic_,
-               const bool                  b_sans_serif_) noexcept
+    Font::Font(const int       size_,
+               const RGBColor& color_,
+               const RGBColor& bg_color_,
+               const bool      b_bold_,
+               const bool      b_italic_,
+               const bool      b_sans_serif_) noexcept
         : color{ color_ },
           bg_color{ bg_color_ },
           font_scale{},
@@ -94,7 +93,7 @@ namespace avt::gui::fonts
 
     /** Draws specified text with this font. */
     void Font::draw_text(const std::string&          text,
-                         avt::video::Frame&          frame,
+                         avt::ImageType&             image,
                          const avt::utils::Coords2D& pos,
                          const bool                  b_shadow)
     {
@@ -103,13 +102,13 @@ namespace avt::gui::fonts
             cv::Size text_size = get_text_size(text);
             cv::Point final_pos = pos;
             final_pos.y -= thickness;
-            cv::rectangle(frame, cv::Rect(final_pos, text_size), cv::Scalar(bg_color), cv::FILLED);
+            cv::rectangle(image, cv::Rect(final_pos, text_size), cv::Scalar(bg_color), cv::FILLED);
         }
         else {
             // let's draw shadow artifact, if asked for
             if (b_shadow) {
-                avt::utils::RGBColor shadow_color{ color * 0.6f };
-                cv::putText(frame,
+                RGBColor shadow_color{ color * 0.6f };
+                cv::putText(image,
                     text,
                     pos + avt::utils::Coords2D{ 1, 1 },
                     cv_font,
@@ -121,7 +120,7 @@ namespace avt::gui::fonts
         }
 
         // then, let's draw the final text
-        cv::putText(frame,
+        cv::putText(image,
             text,
             pos,
             cv_font,

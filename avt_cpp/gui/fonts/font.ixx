@@ -37,24 +37,26 @@ module;
 export module gui.fonts.font;
 
 import utils.coords2d;
-import video.frame;
 import utils.rgb_color;
 import utils.size;
 
 
 //===========================================================================
-export namespace avt::gui::fonts
+namespace avt::gui::fonts
 {
+    //---   internal wrappers   -----------------------------------------
+    using RGBColor = avt::utils::RGBColor;
+
     //=======================================================================
     /** @brief The base class for all fonts.
     *
     *   Notice: This is a minimal implementation that should help using 
     *           OpenCV when putting text in video frames.
     */
-    class Font
+    export class Font
     {
     public:
-        //--- Constructors / Destructors ------------------------------------
+        //---   Constructors / Destructors   --------------------------------
         /** @brief Value Constructor with no background color.
         *
         * Notice: mode 'italic' is not available with 'sans-serif'  fonts.
@@ -78,11 +80,11 @@ export namespace avt::gui::fonts
         *   false to get a 'serif' police.
         *   Defauts to true (i.e. 'sans-serif' police).
         */
-        Font(const int                   size_,
-             const avt::utils::RGBColor& color_ = avt::utils::RGBColor::WHITE,
-             const bool                  b_bold_ = false,
-             const bool                  b_italic_ = false,
-             const bool                  b_sans_serif_ = true) noexcept;
+        Font(const int       size_,
+             const RGBColor& color_ = RGBColor::WHITE,
+             const bool      b_bold_ = false,
+             const bool      b_italic_ = false,
+             const bool      b_sans_serif_ = true) noexcept;
 
         /** @brief Value Constructor with specified color and background color.
         *
@@ -113,18 +115,21 @@ export namespace avt::gui::fonts
         *   false to get a 'serif' police.
         *   Defauts to true (i.e. 'sans-serif' police).
         */
-        Font(const int                   size_,
-             const avt::utils::RGBColor& color_,
-             const avt::utils::RGBColor& bg_color_,
-             const bool                  b_bold_ = false,
-             const bool                  b_italic_ = false,
-             const bool                  b_sans_serif_ = true) noexcept;
+        Font(const int       size_,
+             const RGBColor& color_,
+             const RGBColor& bg_color_,
+             const bool      b_bold_ = false,
+             const bool      b_italic_ = false,
+             const bool      b_sans_serif_ = true) noexcept;
+
+        /** @brief Default empty constructor. */
+        Font() noexcept = default;
 
         /** @brief Default Copy constructor. */
-        Font(const Font&) = default;
+        Font(const Font&) noexcept = default;
 
         /** @brief Default Move constructor. */
-        Font(Font&&) = default;
+        Font(Font&&) noexcept = default;
 
         /** @brief Default destructor. */
         virtual ~Font() noexcept = default;
@@ -155,26 +160,26 @@ export namespace avt::gui::fonts
         *   false otherwise. Defaults to true.
         */
         void draw_text(const std::string&          text,
-                       avt::video::Frame&          frame,
+                       avt::ImageType&             image,
                        const avt::utils::Coords2D& pos,
-                       const bool                  b_shadow);
+                       const bool                  b_shadow = false);
 
 
         //---   Operations on colors   --------------------------------------
         /** @brief Suppresses the background color (i.e. no background filling under displayed text. */
         inline void clear_bg_color() noexcept
         {
-            bg_color = avt::utils::RGBColor::NULL_COLOR;
+            bg_color = RGBColor::NULL_COLOR;
         }
 
         /** @brief Modifies the background color for this font. */
-        inline void set_bg_color(const avt::utils::RGBColor& new_bg_color) noexcept
+        inline void set_bg_color(const RGBColor& new_bg_color) noexcept
         {
             bg_color = new_bg_color;
         }
 
         /** @brief Modifies the text color for this font. */
-        inline void set_color(const avt::utils::RGBColor& new_color) noexcept
+        inline void set_color(const RGBColor& new_color) noexcept
         {
             color = new_color;
         }
@@ -214,16 +219,16 @@ export namespace avt::gui::fonts
 
     protected:
         //---   Attributes   ------------------------------------------------
-        avt::utils::RGBColor color;
-        avt::utils::RGBColor bg_color;
-        double               font_scale;
-        int                  size;
-        int                  thickness;
-        int                  cv_font;
-        bool                 b_bold;
-        bool                 b_italic;
-        bool                 b_sans_serif;
-        bool                 b_force_bgcolor;
+        RGBColor color;
+        RGBColor bg_color;
+        double   font_scale;
+        int      size;
+        int      thickness;
+        int      cv_font;
+        bool     b_bold;
+        bool     b_italic;
+        bool     b_sans_serif;
+        bool     b_force_bgcolor;
     };
 
 }
