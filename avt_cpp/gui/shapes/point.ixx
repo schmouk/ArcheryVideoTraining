@@ -34,7 +34,6 @@ module;
 export module gui.shapes.point;
 
 import utils.coords2d;
-import video.frame;
 import utils.rgba_color;
 import gui.shapes.shape;
 import utils;
@@ -133,24 +132,24 @@ export namespace avt::gui::shapes
 
         //---   Operations   ------------------------------------------------
         /** @brief Draws this point in the specified frame. */
-        virtual inline void draw(avt::video::Frame& frame)
+        virtual inline void draw(avt::ImageType& frame)
         {
             draw(frame, radius);
         }
 
         /** @brief Draws this point in the specified frame with the specified radius. */
-        inline void draw(avt::video::Frame& frame, const avt::CoordsType radius)
+        inline void draw(avt::ImageType& frame, const avt::CoordsType radius)
         {
             if (radius > 1)
                 cv::circle(frame,
                     *this,
                     radius,
-                    (cv::Scalar)color,
+                    color,
                     cv::FILLED,
                     cv::LINE_8,
                     0);
             else
-                frame.at<cv::Vec3b>(y,x) = (cv::Vec3b)color;
+                frame.at<cv::Vec3b>(y,x) = color;
         }
 
 

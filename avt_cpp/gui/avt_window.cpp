@@ -38,7 +38,6 @@ module gui.avt_window;
 import avt.config;
 import utils.coords2d;
 import gui.items.cursor;
-import video.frame;
 import mtmp.mutex;
 import utils.rgb_color;
 import utils.size;

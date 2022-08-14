@@ -32,7 +32,6 @@ module;
 export module gui.shapes.line;
 
 import utils.coords2d;
-import video.frame;
 import utils.rgba_color;
 import gui.shapes.shape;
 import utils;
@@ -117,15 +116,15 @@ export namespace avt::gui::shapes
 
         //---   Operations   ------------------------------------------------
        /** @brief Draws this line in the specified frame. */
-        virtual inline void draw(avt::video::Frame& frame)
+        virtual inline void draw(avt::ImageType& frame)
         {
             draw(frame, thickness);
         }
 
         /** @brief Draws this line in the specified frame with the specified thickness. */
-        inline void draw(avt::video::Frame& frame, const int thickness)
+        inline void draw(avt::ImageType& frame, const int thickness)
         {
-            cv::line(frame, *this, end, (cv::Scalar)color, thickness, cv::LINE_AA, 0);
+            cv::line(frame, *this, end, color, thickness, cv::LINE_AA, 0);
         }
 
 

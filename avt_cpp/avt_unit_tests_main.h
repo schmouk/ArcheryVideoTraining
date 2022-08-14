@@ -48,7 +48,7 @@ SOFTWARE.
 //import gui.fonts.bold_italic_font;
 //import unit_tests.gui.views.test_view;
 //import unit_tests.gui.test_avt_window;
-import unit_tests.gui.items.test_picture;
+//import unit_tests.gui.items.test_picture;
 
 
 //===========================================================================
@@ -73,7 +73,7 @@ int main()
     //avt::unit_tests::gui::shapes::test_rect();
     //avt::unit_tests::gui::views::test_view();
     //avt::unit_tests::gui::test_main_window();
-    avt::unit_tests::gui::items::test_picture();
+    //avt::unit_tests::gui::items::test_picture();
 
 
     std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";

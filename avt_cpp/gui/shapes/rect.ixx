@@ -34,7 +34,6 @@ module;
 export module gui.shapes.rect;
 
 import utils.coords2d;
-import video.frame;
 import gui.shapes.line;
 import utils.rgba_color;
 import gui.shapes.shape;
@@ -193,15 +192,15 @@ export namespace avt::gui::shapes
 
         //---   Operations   ------------------------------------------------
         /** @brief Draws this line in the specified frame. */
-        virtual inline void draw(avt::video::Frame& frame)
+        virtual inline void draw(avt::ImageType& frame)
         {
             draw(frame, thickness);
         }
 
         /** @brief Draws this line in the specified frame with the specified radius. */
-        inline void draw(avt::video::Frame& frame, const int thickness)
+        inline void draw(avt::ImageType& frame, const int thickness)
         {
-            cv::rectangle(frame, *this, end, (cv::Scalar)color, thickness, cv::LINE_8, 0);
+            cv::rectangle(frame, *this, end, color, thickness, cv::LINE_8, 0);
         }
     };
 
