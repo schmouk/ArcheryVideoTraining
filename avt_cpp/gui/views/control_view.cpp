@@ -43,9 +43,8 @@ import avt.config;
 import utils.coords2d;
 import gui.items.cursor;
 import gui.fonts.font;
-import mtmp.mutex;
+import gui.items.picture;
 import utils.rgb_color;
-import utils.size;
 import gui.views.view;
 
 

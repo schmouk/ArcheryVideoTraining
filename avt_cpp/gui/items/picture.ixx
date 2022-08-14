@@ -45,6 +45,12 @@ import utils.coords2d;
 export namespace avt::gui::items
 {
     //=======================================================================
+    // This module defines:
+    //  - class Picture
+    //  - using Icon
+    // 
+    
+    //=======================================================================
     /** @brief The class of picture loaders.
     *
     * This is a helper class for the loading of pictures from disk.
@@ -86,8 +92,7 @@ export namespace avt::gui::items
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline void draw(const X x, const Y y, avt::ImageType& image) noexcept
         {
-            cv::Rect roi{ x, y, width(), height() };
-            content.copyTo(cv::Mat3b(image, roi));
+            content.copyTo(cv::Mat3b(image, cv::Rect{ x, y, width(), height() }));
         }
 
         /** @brief Draws this picture into an Image (1 2D-coords position). */
@@ -129,5 +134,10 @@ export namespace avt::gui::items
         //---   Attributes   ------------------------------------------------
         avt::ImageType content{};  //!< the content of this picture.
     };
+
+
+    //=======================================================================
+    /** @brief The class of Icons. */
+    using Icon = Picture;
 
 }
