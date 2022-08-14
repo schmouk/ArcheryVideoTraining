@@ -43,9 +43,8 @@ import avt.config;
 import utils.coords2d;
 import gui.items.cursor;
 import gui.fonts.font;
-import mtmp.mutex;
+import gui.items.picture;
 import utils.rgb_color;
-import utils.size;
 import mtmp.timer;
 import utils;
 import gui.views.view;
@@ -63,9 +62,10 @@ export namespace avt::gui::views
     class ControlView : public avt::gui::views::View, public avt::mtmp::Timer
     {
     private:
-        using RGBColor = avt::utils::RGBColor;      //!< internal wrapper to the class of colors.
-        using Font     = avt::gui::fonts::Font;     //!< internal wrapper to the class of fonts.
         using BoldFont = avt::gui::fonts::BoldFont; //!< internal wrapper to the class of bolded fonts.
+        using Font     = avt::gui::fonts::Font;     //!< internal wrapper to the class of fonts.
+        using Icon     = avt::gui::items::Icon;     //!< internal wrapper to the class of Icons.
+        using RGBColor = avt::utils::RGBColor;      //!< internal wrapper to the class of colors.
 
 
     public:
@@ -189,6 +189,7 @@ export namespace avt::gui::views
 
 
         protected:
+            //--- Constants -------------------------------------------------
             static constexpr int  _FONT_SIZE = 14;
             static inline Font    _FONT_ACTIVE{ _FONT_SIZE, RGBColor::YELLOW };
             static inline Font    _FONT_DISABLED{ _FONT_SIZE, RGBColor::DEEP_GRAY };
@@ -230,23 +231,23 @@ export namespace avt::gui::views
             //--- Other operations ------------------------------------------
             inline void toggle_switch() noexcept
             {
-                //is_on = !is_on;
+                is_on = !is_on;
             }
 
             //--- Attributes ------------------------------------------------
             //avt::cameras::Camera camera;  //!< reference to the related camera
-            //bool is_on;                   //!< true if this camera control-switch os ON, or false if it is OFF
+            bool is_on{ true };               //!< true if this camera control-switch os ON, or false if it is OFF
 
 
         protected:
             static inline BoldFont _FONT_NOT_OK{ 13, RGBColor::ANTHRACITE };
             static inline BoldFont _FONT_OFF{ 13, RGBColor::GRAY };
             static inline BoldFont _FONT_ON{ 13, RGBColor::YELLOW };
-            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/switch-off.png');
-            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/switch-on.png');
-            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/switch-disabled.png');
-            //static const int WIDTH = _ICON_ON.cols;
-            //static const int HEIGHT = _ICON_ON.rows;
+            static inline Icon     _ICON_OFF{ "controls/switch-off.png" };
+            static inline Icon     _ICON_ON{ "controls/switch-on.png" };
+            static inline Icon     _ICON_DISABLED{ "controls/switch-disabled.png" };
+            int WIDTH  = _ICON_ON.width();
+            int HEIGHT = _ICON_ON.height();
         };
 
         //===================================================================
@@ -284,10 +285,10 @@ export namespace avt::gui::views
 
 
         protected:
-            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/delay-disabled.png');
-            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/delay-off.png');
-            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/delay-on.png');
-            //static inline int _SIZE = _ICON_ON.rows;
+            static inline Icon   _ICON_OFF{ "controls/delay-off.png" };
+            static inline Icon   _ICON_ON{ "controls/delay-on.png" };
+            static inline Icon   _ICON_DISABLED{ "controls/delay-disabled.png" };
+            int _SIZE = _ICON_ON.width();
             static constexpr int _TICKS_FONT_SIZE = 8;
             static inline Font   _TICKS_FONT_ENABLED{ _TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
 
@@ -317,6 +318,7 @@ export namespace avt::gui::views
 
         protected:
             //static inline avt::Image _ICON_EXIT = cv2.imread( '../picts/controls/exit-48.png' );
+            static inline Icon _ICON_EXIT{ "controls/exit-48.png" };
         };
 
         //===================================================================
@@ -379,10 +381,10 @@ export namespace avt::gui::views
 
 
         protected:
-            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/match-disabled.png');
-            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/match-off.png');
-            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/match-on.png');
-            //static inline int _SIZE = _ICON_ON.rows;
+            static inline Icon _ICON_OFF{ "controls/match-off.png" };
+            static inline Icon _ICON_ON{ "controls/match-on.png" };
+            static inline Icon _ICON_DISABLED{ "controls/match-disabled.png" };
+            int _SIZE = _ICON_ON.width();
         };
 
         //===================================================================
@@ -413,10 +415,10 @@ export namespace avt::gui::views
 
 
         protected:
-            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/overlays-disabled.png');
-            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/overlays-off.png');
-            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/overlays-on.png');
-            //static inline int _SIZE = _ICON_ON.rows;
+            static inline Icon _ICON_OFF{ "controls/overlays-off.png" };
+            static inline Icon _ICON_ON{ "controls/overlays-on.png" };
+            static inline Icon _ICON_DISABLED{ "controls/overlays-disabled.png" };
+            int _SIZE = _ICON_ON.width();
         };
 
         //===================================================================
@@ -454,10 +456,10 @@ export namespace avt::gui::views
 
 
         protected:
-            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/record-disabled.png');
-            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/record-off.png');
-            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/record-on.png');
-            //static inline int _SIZE = _ICON_ON.rows;
+            static inline Icon   _ICON_OFF{ "controls/record-off.png" };
+            static inline Icon   _ICON_ON{ "controls/record-on.png" };
+            static inline Icon   _ICON_DISABLED{ "controls/record-disabled.png" };
+            int _SIZE = _ICON_ON.width();
             static constexpr int _FONT_3_SIZE = 8;
             static constexpr int _FONT_2_SIZE = 11;
             static inline Font   _FONT_3_DISABLED   { _FONT_3_SIZE, RGBColor::GRAY };
@@ -503,24 +505,30 @@ export namespace avt::gui::views
 
 
         protected:
-            //static inline avt::Image _ICON_FBW_DISABLED = cv2.imread('../picts/controls/fbw-25-disabled.png');
-            //static inline avt::Image _ICON_FBW_OFF = cv2.imread('../picts/controls/fbw-25-off.png');
-            //static inline avt::Image _ICON_FBW_ON = cv2.imread('../picts/controls/fbw-25-on.png');
-            //static inline avt::Image _ICON_FFW_DISABLED = cv2.imread('../picts/controls/ffw-25-disabled.png');
-            //static inline avt::Image _ICON_FFW_OFF = cv2.imread('../picts/controls/ffw-25-off.png');
-            //static inline avt::Image _ICON_FFW_ON = cv2.imread('../picts/controls/ffw-25-on.png');
-            //static inline avt::Image _ICON_PAUSE_DISABLED = cv2.imread('../picts/controls/pause-25-disabled.png');
-            //static inline avt::Image _ICON_PAUSE_OFF = cv2.imread('../picts/controls/pause-25-off.png');
-            //static inline avt::Image _ICON_PAUSE_ON = cv2.imread('../picts/controls/pause-25-on.png');
-            //static inline avt::Image _ICON_PLAY_DISABLED = cv2.imread('../picts/controls/play-25-disabled.png');
-            //static inline avt::Image _ICON_PLAY_OFF = cv2.imread('../picts/controls/play-25-off.png');
-            //static inline avt::Image _ICON_PLAY_ON = cv2.imread('../picts/controls/play-25-on.png');
-            //static inline avt::Image _ICON_STEP_BW_DISABLED = cv2.imread('../picts/controls/step-bw-25-disabled.png');
-            //static inline avt::Image _ICON_STEP_BW_OFF = cv2.imread('../picts/controls/step-bw-25-off.png');
-            //static inline avt::Image _ICON_STEP_BW_ON = cv2.imread('../picts/controls/step-bw-25-on.png');
-            //static inline avt::Image _ICON_STEP_FW_DISABLED = cv2.imread('../picts/controls/step-fw-25-disabled.png');
-            //static inline avt::Image _ICON_STEP_FW_OFF = cv2.imread('../picts/controls/step-fw-25-off.png');
-            //static inline avt::Image _ICON_STEP_FW_ON = cv2.imread('../picts/controls/step-fw-25-on.png');
+            static inline Icon   _ICON_FBW_OFF{ "controls/fbw-25-off.png" };
+            static inline Icon   _ICON_FBW_ON{ "controls/fbw-25-on.png" };
+            static inline Icon   _ICON_FBW_DISABLED{ "controls/fbw-25-disabled.png" };
+
+            static inline Icon   _ICON_FFW_OFF{ "controls/ffw-25-off.png" };
+            static inline Icon   _ICON_FFW_ON{ "controls/ffw-25-on.png" };
+            static inline Icon   _ICON_FFW_DISABLED{ "controls/ffw-25-disabled.png" };
+
+            static inline Icon   _ICON_PAUSE_OFF{ "controls/pause-25-off.png" };
+            static inline Icon   _ICON_PAUSE_ON{ "controls/pause-25-on.png" };
+            static inline Icon   _ICON_PAUSE_DISABLED{ "controls/pause-25.png" };
+
+            static inline Icon   _ICON_PLAY_OFF{ "controls/play-25-off.png" };
+            static inline Icon   _ICON_PLAY_ON{ "controls/play-25-on.png" };
+            static inline Icon   _ICON_PLAY_DISABLED{ "controls/play-25.png" };
+
+            static inline Icon   _ICON_STEP_BW_OFF{ "controls/step-bw-25-off.png" };
+            static inline Icon   _ICON_STEP_BW_ON{ "controls/step-bw-25-on.png" };
+            static inline Icon   _ICON_STEP_BW_DISABLED{ "controls/step-bw-25-disabled.png" };
+
+            static inline Icon   _ICON_STEP_FW_OFF{ "controls/step-fw-25-off.png" };
+            static inline Icon   _ICON_STEP_FW_ON{ "controls/step-fw-25-on.png" };
+            static inline Icon   _ICON_STEP_FW_DISABLED{ "controls/step-fw-25-disabled.png" };
+
             static inline int _SIZE = 25; //_ICON_PLAY_ON.rows;
         };
 
@@ -552,10 +560,10 @@ export namespace avt::gui::views
 
 
         protected:
-            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/target-disabled.png');
-            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/target-off.png');
-            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/target-on.png');
-            //static inline int _SIZE = _ICON_ON.rows;
+            static inline Icon   _ICON_OFF{ "controls/target-off.png" };
+            static inline Icon   _ICON_ON{ "controls/target-on.png" };
+            static inline Icon   _ICON_DISABLED{ "controls/target-disabled.png" };
+            int _SIZE = _ICON_ON.width();
         };
 
         //===================================================================
@@ -631,10 +639,10 @@ export namespace avt::gui::views
 
 
         protected:
-            //static inline avt::Image _ICON_DISABLED = cv2.imread('../picts/controls/timer-disabled.png');
-            //static inline avt::Image _ICON_OFF = cv2.imread('../picts/controls/timer-off.png');
-            //static inline avt::Image _ICON_ON = cv2.imread('../picts/controls/timer-on.png');
-            //static inline int _SIZE = _ICON_ON.rows;
+            static inline Icon _ICON_OFF{ "controls/timer-off.png" };
+            static inline Icon _ICON_ON{ "controls/timer-on.png" };
+            static inline Icon _ICON_DISABLED{ "controls/timer-disabled.png" };
+            int _SIZE = _ICON_ON.width();
         };
 
     };
