@@ -87,7 +87,7 @@ export namespace avt::gui::items
         inline void draw(const X x, const Y y, avt::ImageType& image) noexcept
         {
             cv::Rect roi{ x, y, width(), height() };
-            cv::Mat3b(image, roi) = content;
+            content.copyTo(cv::Mat3b(image, roi));
         }
 
         /** @brief Draws this picture into an Image (1 2D-coords position). */

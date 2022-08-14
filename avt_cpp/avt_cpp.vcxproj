@@ -197,6 +197,7 @@
     <ClCompile Include="gui\shapes\point.ixx" />
     <ClCompile Include="gui\shapes\rect.ixx" />
     <ClCompile Include="gui\shapes\shape.ixx" />
+    <ClCompile Include="unit_tests\gui\items\test_picture.ixx" />
     <ClCompile Include="unit_tests\gui\views\test_view.ixx" />
     <ClCompile Include="unit_tests\gui\test_avt_window.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_barrier.ixx" />
