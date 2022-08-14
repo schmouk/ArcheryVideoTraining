@@ -28,12 +28,12 @@ module;
 #include <thread>
 #include <vector>
 
-export module avt.mtmp.barrier;
+export module mtmp.barrier;
 
-import avt.mtmp.guarded_block;
-import avt.mtmp.mutex;
-import avt.mtmp.signal;
-import avt.mtmp.thread;
+import mtmp.guarded_block;
+import mtmp.mutex;
+import mtmp.signal;
+import mtmp.thread;
 
 
 //===========================================================================
@@ -60,16 +60,7 @@ export namespace avt::mtmp
     public:
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Constructor. */
-        inline Barrier(const unsigned long synchronizing_threads_count) noexcept(false)
-            : m_sync_threads_count{ synchronizing_threads_count },
-              m_waiting_threads_count{ 0 },
-              m_guard_mtx{},
-              m_turnstile_1{ false },
-              m_turnstile_2{ true }
-        {
-            if (synchronizing_threads_count < 1)
-                throw CreationValueException();
-        }
+        Barrier(const unsigned long synchronizing_threads_count) noexcept(false);
 
         /** @brief Default Copy constructor. */
         Barrier(const Barrier&) noexcept = delete;
@@ -107,32 +98,7 @@ export namespace avt::mtmp
 
         //---   Barriers operations   ---------------------------------------
         /** @brief Makes all threads to wait on this barrier then run altogether. */
-        void wait() noexcept(false)
-        {
-            // First synchronizing step - on turnstile 1
-            {
-                avt::mtmp::GuardedBlock guard{ &m_guard_mtx };
-                m_waiting_threads_count++;
-                if (m_waiting_threads_count == m_sync_threads_count) {
-                    m_turnstile_2.wait();
-                    m_turnstile_1.emit();
-                }
-            }
-            m_turnstile_1.wait();
-            m_turnstile_1.emit();
-
-            // Second synchronizing step - on turnstile 2
-            {
-                avt::mtmp::GuardedBlock guard{ &m_guard_mtx };
-                m_waiting_threads_count--;
-                if (m_waiting_threads_count == 0) {
-                    m_turnstile_1.wait();
-                    m_turnstile_2.emit();
-                }
-            }
-            m_turnstile_2.wait();
-            m_turnstile_2.emit();
-        }
+        void wait() noexcept(false);
 
         /** @brief Timed out waiting for this barrier (seconds).
         *
@@ -151,36 +117,7 @@ export namespace avt::mtmp
         * false otherwise.
         * May throw std::system_error or a timeout-related exception.
         */
-        bool wait_ms(const double timeout_ms) noexcept(false)
-        {
-            bool no_timeout = true;
-
-            // First synchronizing step - on turnstile 1
-            {
-                avt::mtmp::GuardedBlock guard{ &m_guard_mtx };
-                m_waiting_threads_count++;
-                if (m_waiting_threads_count == m_sync_threads_count) {
-                    no_timeout = no_timeout && m_turnstile_2.wait_ms(timeout_ms);
-                    m_turnstile_1.emit();
-                }
-            }
-            no_timeout = no_timeout && m_turnstile_1.wait_ms(timeout_ms);
-            m_turnstile_1.emit();
-
-            // Second synchronizing step - on turnstile 2
-            {
-                avt::mtmp::GuardedBlock guard{ &m_guard_mtx };
-                m_waiting_threads_count--;
-                if (m_waiting_threads_count == 0) {
-                    no_timeout = no_timeout && m_turnstile_1.wait_ms(timeout_ms);
-                    m_turnstile_2.emit();
-                }
-            }
-            no_timeout = no_timeout && m_turnstile_2.wait_ms(timeout_ms);
-            m_turnstile_2.emit();
-
-            return no_timeout;
-        }
+        bool wait_ms(const double timeout_ms) noexcept(false);
 
 
         //---   Specific Exceptions   ---------------------------------------

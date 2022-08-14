@@ -25,6 +25,7 @@ SOFTWARE.
 //===========================================================================
 module;
 
+#include <exception>
 #include <opencv2/core/types.hpp>
 
 #include "utils/types.h"
@@ -45,16 +46,17 @@ export namespace avt::utils
     //=======================================================================
     /** @brief The class of 2D sizes.
     */
-    class Size : public cv::Size_<avt::utils::SizeValueType>
+    class Size : public avt::CVSize
         /* Notice: Due to inheritance, gets access to
         *  - double aspectRatio () const   (i.e. width/height)
         *  - bool   empty () const
         */
     {
     public:
+        //---   Wrappers   --------------------------------------------------
+        using MyBaseType = avt::CVSize;              //!< wrapper to the base class.
+        using ValueType  = avt::CVSize::value_type;  //!< wrapper to the type of widths and heights.
 
-        using ValueType = avt::utils::SizeValueType;  //!< wrapper to the width and height type.
-        using MyBaseType = cv::Size_<ValueType>;      //!< wrapper to the base class.
 
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Empty constructor. */
@@ -80,11 +82,30 @@ export namespace avt::utils
         /** @brief Default Copy Constructor. */
         Size(const Size&) noexcept = default;
 
-        /** @brief Default Move COnstructor. */
+        /** @brief Default Copy Constructor. */
+        inline explicit Size(const avt::CVSize& cv_size)
+            : MyBaseType{ cv_size }
+        {}
+
+        /** @brief Default Move Constructor. */
         Size(Size&&) noexcept(false) = default;
 
         /** @brief Default Destructor. */
         virtual ~Size() noexcept = default;
+
+
+        //---   Specific Exceptions   ---------------------------------------
+        /** @brief Exception on negative values for scaling size. */
+        class ScalingValueException : public std::exception
+        {
+            const char* what() const noexcept { return "!!! Error: the scaling factors for views must be positive numbers\n"; }
+        };
+
+        /** @brief Exception on null value for shrinking size. */
+        class NullValueException : public std::exception
+        {
+            const char* what() const noexcept { return "!!! Error: the dividing factors for views cannot be 0\n"; }
+        };
 
 
         //---   Assignments   -----------------------------------------------
@@ -97,12 +118,8 @@ export namespace avt::utils
         /** @brief Assignment operator (2-components container). */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        inline Size& operator= (const P& rhs) noexcept(false)
-        {
-            width = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[0])>(rhs[0]);
-            height = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[1])>(rhs[1]);
-            return *this;
-        }
+        Size& operator= (const P& rhs) noexcept(false);
+
 
         //---   Comparisons   -----------------------------------------------
         /** @brief Returns true if sizes are the same, or false otherwise. */
@@ -111,19 +128,42 @@ export namespace avt::utils
             return width == rhs.width && height == rhs.height;
         }
 
+        /** @brief Returns true if sizes are the same, or false otherwise. */
+        inline const bool operator== (const cv::Size& rhs) const noexcept
+        {
+            return width == rhs.width && height == rhs.height;
+        }
+
+        /** @brief Returns true if sizes are the same, or false otherwise. */
+        friend inline const bool operator== (const cv::Size& lhs, const avt::utils::Size& rhs) noexcept
+        {
+            return rhs == lhs;
+        }
+
         /** @brief Returns true if this size and 2-components container are the ame, or false otherwise. */
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline const bool operator== (const P& rhs) const noexcept(false)
         {
-            width == rhs[0];
-            height == rhs[1];
+            return width  == rhs[0] && height == rhs[1];
         }
 
         /** @brief Returns true if sizes are not the same, or false otherwise. */
         inline const bool operator!= (const Size& rhs) const noexcept
         {
             return !(*this == rhs);
+        }
+
+        /** @brief Returns true if sizes are not the same, or false otherwise. */
+        inline const bool operator!= (const cv::Size& rhs) const noexcept
+        {
+            return !(*this == rhs);
+        }
+
+        /** @brief Returns true if sizes are the same, or false otherwise. */
+        friend inline const bool operator!= (const cv::Size& lhs, const avt::utils::Size& rhs) noexcept
+        {
+            return !(rhs == lhs);
         }
 
         /** @brief Returns true if this size and 2-components container are not the ame, or false otherwise. */
@@ -139,7 +179,7 @@ export namespace avt::utils
         /** @brief In-place adds a 2D-coords. */
         inline Size& operator+= (const Size& rhs) noexcept
         {
-            width = avt::utils::clamp_us(_ConvertType(width) + _ConvertType(rhs.width));
+            width  = avt::utils::clamp_us(_ConvertType(width)  + _ConvertType(rhs.width));
             height = avt::utils::clamp_us(_ConvertType(height) + _ConvertType(rhs.height));
             return *this;
         }
@@ -147,21 +187,7 @@ export namespace avt::utils
         /** @brief In-place adds a 2-components container. */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        Size& operator+= (const P& rhs) noexcept(false)
-        {
-            using T = decltype(rhs[0]);
-            if (std::is_integral_v<T>) {
-                width = avt::utils::clamp_us(_ConvertType(width) + _ConvertType(rhs[0]));
-                height = avt::utils::clamp_us(_ConvertType(height) + _ConvertType(rhs[1]));
-            }
-            else {
-                const T w = rhs[0] + (rhs[0] >= T(0) ? T(0.5) :T(-0.5));
-                width = avt::utils::clamp_us(_ConvertType(width) + _ConvertType(w));
-                const T h = rhs[1] + (rhs[1] >= T(0) ? T(0.5) : T(-0.5));
-                height = avt::utils::clamp_us(_ConvertType(height) + _ConvertType(h));
-            }
-            return *this;
-        }
+        Size& operator+= (const P& rhs) noexcept(false);
 
         /** @brief Adds Size + Size. */
         friend inline Size operator+ (Size lhs, const Size& rhs) noexcept
@@ -190,7 +216,7 @@ export namespace avt::utils
         /** @brief In-place subtracts a 2D-components. */
         inline Size& operator-= (const Size& rhs) noexcept
         {
-            width = avt::utils::clamp_us(_ConvertType{ width } - _ConvertType{ rhs.width });
+            width  = avt::utils::clamp_us(_ConvertType{ width }  - _ConvertType{ rhs.width });
             height = avt::utils::clamp_us(_ConvertType{ height } - _ConvertType{ rhs.height });
             return *this;
         }
@@ -198,21 +224,7 @@ export namespace avt::utils
         /** @brief In-place subtracts a 2-components container. */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        Size& operator-= (const P& rhs) noexcept(false)
-        {
-            using T = decltype(rhs[0]);
-            if (std::is_integral_v<T>) {
-                width = avt::utils::clamp_us(_ConvertType(width) - _ConvertType(rhs[0]));
-                height = avt::utils::clamp_us(_ConvertType(height) - _ConvertType(rhs[1]));
-            }
-            else {
-                const T w = rhs[0] + (rhs[0] >= T(0) ? T(0.5) : T(-0.5));
-                width = avt::utils::clamp_us(_ConvertType(width) - _ConvertType(w));
-                const T h = rhs[1] + (rhs[1] >= T(0) ? T(0.5) : T(-0.5));
-                height = avt::utils::clamp_us(_ConvertType(height) - _ConvertType(h));
-            }
-            return *this;
-        }
+        Size& operator-= (const P& rhs) noexcept(false);
 
         /** @brief subtracts Size - Size. */
         friend inline Size operator- (Size lhs, const Size& rhs) noexcept
@@ -241,14 +253,7 @@ export namespace avt::utils
         /** @brief In-place multiplies (one single factor). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        Size& operator*= (const T factor) noexcept
-        {
-            const long xf = std::lround(double(width) * double(factor));
-            const long yf = std::lround(double(height) * double(factor));
-            width = avt::utils::clamp<MyBaseType::value_type, long>(xf);
-            height = avt::utils::clamp<MyBaseType::value_type, long>(yf);
-            return *this;
-        }
+        Size& operator*= (const T factor) noexcept(false);
 
         /** @brief Mulitplies by a factor (post). */
         template<typename T>
@@ -272,11 +277,7 @@ export namespace avt::utils
         /** @brief In-place divides (one single factor). */
         template<typename T>
             requires std::is_arithmetic_v<T>
-        inline Size operator/= (const T factor) noexcept(false)
-        {
-            assert(factor > 0);
-            return *this *= 1.0 / factor;;
-        }
+        inline Size operator/= (const T factor) noexcept(false);
 
         /** @brief Divides by a factor (post-). */
         template<typename T>
@@ -290,14 +291,85 @@ export namespace avt::utils
 
     private:
         using _ConvertType = long;  //!< type for the conversion of coordinates on internal operations.
-
-        //---   Miscelaneous   ----------------------------------------------
-        /** @brief Evaluates the area of this Size. */
-        const unsigned long area() const
-        {
-            return (unsigned long)width * (unsigned long)height;
-        }
-
     };
+
+
+    //=======================================================================
+    //---   TEMPLATES IMPLEMENTATION   --------------------------------------
+
+    /** @brief Assignment operator (2-components container). */
+    template<typename P>
+        requires avt::is_pair_type_v<P>
+    Size& Size::operator= (const P& rhs) noexcept(false)
+    {
+        width = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[0])>(rhs[0]);
+        height = avt::utils::clamp<MyBaseType::value_type, decltype(rhs[1])>(rhs[1]);
+        return *this;
+    }
+
+    /** @brief In-place adds a 2-components container. */
+    template<typename P>
+        requires avt::is_pair_type_v<P>
+    Size& Size::operator+= (const P& rhs) noexcept(false)
+    {
+        using T = decltype(rhs[0]);
+        if (std::is_integral_v<T>) {
+            width = avt::utils::clamp_us(_ConvertType(width) + _ConvertType(rhs[0]));
+            height = avt::utils::clamp_us(_ConvertType(height) + _ConvertType(rhs[1]));
+        }
+        else {
+            const T w = rhs[0] + (rhs[0] >= T(0) ? T(0.5) : T(-0.5));
+            width = avt::utils::clamp_us(_ConvertType(width) + _ConvertType(w));
+            const T h = rhs[1] + (rhs[1] >= T(0) ? T(0.5) : T(-0.5));
+            height = avt::utils::clamp_us(_ConvertType(height) + _ConvertType(h));
+        }
+        return *this;
+    }
+
+
+    /** @brief In-place subtracts a 2-components container. */
+    template<typename P>
+        requires avt::is_pair_type_v<P>
+    Size& Size::operator-= (const P& rhs) noexcept(false)
+    {
+        using T = decltype(rhs[0]);
+        if (std::is_integral_v<T>) {
+            width = avt::utils::clamp_us(_ConvertType(width) - _ConvertType(rhs[0]));
+            height = avt::utils::clamp_us(_ConvertType(height) - _ConvertType(rhs[1]));
+        }
+        else {
+            const T w = rhs[0] + (rhs[0] >= T(0) ? T(0.5) : T(-0.5));
+            width = avt::utils::clamp_us(_ConvertType(width) - _ConvertType(w));
+            const T h = rhs[1] + (rhs[1] >= T(0) ? T(0.5) : T(-0.5));
+            height = avt::utils::clamp_us(_ConvertType(height) - _ConvertType(h));
+        }
+        return *this;
+    }
+
+    /** @brief In-place multiplies (one single factor). */
+    template<typename T>
+        requires std::is_arithmetic_v<T>
+    Size& Size::operator*= (const T factor) noexcept(false)
+    {
+        if (factor < T(0))
+            throw ScalingValueException();
+        const long xf = std::lround(double(width) * double(factor));
+        const long yf = std::lround(double(height) * double(factor));
+        width = avt::utils::clamp<MyBaseType::value_type, long>(xf);
+        height = avt::utils::clamp<MyBaseType::value_type, long>(yf);
+        return *this;
+    }
+
+    /** @brief In-place divides (one single factor). */
+    template<typename T>
+        requires std::is_arithmetic_v<T>
+    inline Size Size::operator/= (const T factor) noexcept(false)
+    {
+        if (factor == T(0))
+            throw NullValueException();
+        if (factor < T(0))
+            throw ScalingValueException();
+        return *this *= 1.0 / factor;;
+    }
 
 }

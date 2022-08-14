@@ -24,7 +24,7 @@ module;
 #include <chrono>
 #include <semaphore>
 
-export module avt.mtmp.signal;
+export module mtmp.signal;
 
 
 //===========================================================================

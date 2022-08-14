@@ -100,7 +100,7 @@ export namespace avt::gui::shapes
         Line& operator= (Line&&) noexcept = default;
 
         /** @brief New position assignment. */
-        Line& operator= (const avt::utils::Coords2D& new_pos)
+        inline Line& operator= (const avt::utils::Coords2D& new_pos)
         {
             move_at(new_pos.x, new_pos.y);
             return *this;
@@ -122,10 +122,10 @@ export namespace avt::gui::shapes
             draw(frame, thickness);
         }
 
-        /** @brief Draws this line in the specified frame with the specified radius. */
+        /** @brief Draws this line in the specified frame with the specified thickness. */
         inline void draw(avt::video::Frame& frame, const int thickness)
         {
-            cv::line(frame, *this, end, (cv::Scalar)color, thickness, cv::LINE_8, 0);
+            cv::line(frame, *this, end, (cv::Scalar)color, thickness, cv::LINE_AA, 0);
         }
 
 

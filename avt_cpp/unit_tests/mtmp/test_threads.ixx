@@ -31,7 +31,7 @@ module;
 
 export module unit_tests.mtmp.test_threads;
 
-import avt.mtmp.thread;
+import mtmp.thread;
 
 
 

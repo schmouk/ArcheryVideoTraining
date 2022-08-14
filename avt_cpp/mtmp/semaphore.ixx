@@ -26,7 +26,7 @@ module;
 #include <cstddef>
 #include <semaphore>
 
-export module avt.mtmp.semaphore;
+export module mtmp.semaphore;
 
 
 //===========================================================================

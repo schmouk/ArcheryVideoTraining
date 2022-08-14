@@ -23,7 +23,6 @@ module;
 
 #include <atomic>
 #include <exception>
-#include <iostream>
 #include <cstring>
 #include <thread>
 
@@ -31,7 +30,7 @@ module;
 #include <processthreadsapi.h>
 
 
-export module avt.mtmp.thread;
+export module mtmp.thread;
 
 
 //===========================================================================
@@ -91,12 +90,7 @@ export namespace avt::mtmp
         Thread(Thread&&) noexcept = default;
 
         /** @brief Destructor. */
-        virtual inline ~Thread() noexcept
-        {
-            stop();
-            if (is_ok())
-                delete mp_thread;
-        }
+        virtual ~Thread() noexcept;
 
 
         //---   Assignments   -----------------------------------------------
@@ -165,18 +159,7 @@ export namespace avt::mtmp
         *
         * Returns true if priority level setting was ok, or false otherwise.
         */
-        bool set_priority(const long priority)
-        {
-            if (is_ok()) [[likely]] {
-                if (priority == m_priority)
-                    return true;
-                else
-                    return SetThreadPriority(mp_thread->native_handle(), priority) != 0;  // win32 function
-            }
-            else [[unlikely]] {
-                return false;
-            }
-        }
+        bool set_priority(const long priority);
 
         /** @brief Puts this thread to sleep for a fractional count of seconds. */
         inline void sleep_s(const double duration_seconds) noexcept
@@ -191,20 +174,7 @@ export namespace avt::mtmp
         }
 
         /** @brief Starts (at will) the processing of this thread. */
-        virtual void start() noexcept(false)
-        {
-            if (m_already_started.load()) {
-                throw avt::mtmp::Thread::StartedException();
-            }
-            else {
-                // launches the thread
-                mp_thread = new std::thread([this]() { this->_run(); });  // got it?
-                if (mp_thread == nullptr)
-                    throw avt::mtmp::Thread::CreationException();
-                // then sets its priority level
-                set_priority(m_priority);
-            }
-        }
+        virtual void start() noexcept(false);
 
         /** @brief Asks for the stopping of the processing of this thread.
         *
@@ -212,14 +182,7 @@ export namespace avt::mtmp
         * should  take  place in the protected method 'run()' which must
         * be implemented in inheriting classes.
         */
-        inline void stop() noexcept
-        {
-            if (is_running())
-            {
-                m_is_running.store(false);
-                ms_active_threads_count--;
-            }
-        }
+        void stop() noexcept;
 
 
         //---   Threads counting   ------------------------------------------
@@ -228,6 +191,7 @@ export namespace avt::mtmp
         {
             return ms_active_threads_count.load();
         }
+
 
         //---   Specific Exceptions   ---------------------------------------
         /** @brief Exception on erroneous instantiation of this class. */
@@ -257,12 +221,11 @@ export namespace avt::mtmp
 
         //--- Internal processing stuff   -----------------------------------
         /** @brief The internal inits to be done before calling '.run()'. */
-        inline void _prepare_run() noexcept
+        void _prepare_run() noexcept
         {
             m_is_running.store(true);
             m_already_started.store(true);
             ms_active_threads_count++;
-            std::cout << "in _prepare_run(), active threads count = " << ms_active_threads_count.load() << std::endl;
         }
 
         /** @brief The internal running method.

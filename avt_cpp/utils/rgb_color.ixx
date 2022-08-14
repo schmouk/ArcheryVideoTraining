@@ -36,6 +36,7 @@ module;
 
 #include "utils/types.h"
 
+
 export module utils.rgb_color;
 
 import utils;
@@ -120,7 +121,19 @@ export namespace avt::utils
         /** @brief Casts this RGB color to a cv::Vec3b instance. */
         inline operator cv::Vec3b()
         {
-            return cv::Vec3b(bgr);
+            return cv::Vec3b(b, g, r);
+        }
+
+        /** @brief Casts this RGB color to a const cv::Vec3b instance. */
+        inline operator cv::Vec3b() const
+        {
+            return cv::Vec3b(b, g, r);
+        }
+
+        /** @brief Creates an instance of cv::Vec3b. */
+        inline cv::Vec3b to_cv_vec3b() const
+        {
+            return cv::Vec3b(b, g, r);
         }
 
         /** @brief Casts this RGB color to a cv::Scalar (i.e. 4 doubles, the fourth one being 255.0). */
@@ -131,6 +144,12 @@ export namespace avt::utils
 
         /** @brief Casts this RGB color to a cv::Scalar_<avt::Byte> (i.e. 4 bytes, the fourth one being 255). */
         virtual inline operator avt::CVScalarByte()
+        {
+            return avt::CVScalarByte(b, g, r, avt::Byte(255));
+        }
+
+        /** @brief Casts this RGB color to a cv::Scalar_<avt::Byte> (i.e. 4 bytes, the fourth one being 255). */
+        virtual inline operator avt::CVScalarByte() const
         {
             return avt::CVScalarByte(b, g, r, avt::Byte(255));
         }
@@ -186,6 +205,13 @@ export namespace avt::utils
             return *this;
         }
 
+        /** @brief Assignment operator (cv::Vec3b). */
+        inline RGBColor& operator= (const cv::Vec3b & vec) noexcept
+        {
+            set(vec);
+            return *this;
+        }
+
 
         //---   Set color   -------------------------------------------------
         /** @brief Sets this color to BLACK. */
@@ -212,14 +238,6 @@ export namespace avt::utils
             b = _clipped(b_);
         }
 
-        /** @brief Sets color (one 3-bytes buffer). */
-        template<typename T>
-            requires std::is_arithmetic_v<T>
-        inline void set(const T buffer[3]) noexcept
-        {
-            set(buffer[0], buffer[1], buffer[2]);
-        }
-
         /** @brief Sets color (std::vector). */
         template<typename T>
             requires std::is_arithmetic_v<T>
@@ -235,6 +253,12 @@ export namespace avt::utils
         inline void set(const std::array<T, 3>& arr) noexcept
         {
             set(arr[0], arr[1], arr[2]);
+        }
+
+        /** @brief Sets color (cv::Vec3b). */
+        inline void set (const cv::Vec3b & vec) noexcept
+        {
+            set(vec[2], vec[1], vec[0]);
         }
 
 
@@ -254,16 +278,40 @@ export namespace avt::utils
 
 
         //---   Comparisons   -----------------------------------------------
-        /** @brief Returns true if each component of both colors are the same at the same place. */
+        /** @brief Returns true if each component of both colors are the same at the same place (RGBColor). */
         inline const bool operator== (const RGBColor& rhs) const
         {
             return r == rhs.r && g == rhs.g && b == rhs.b;
         }
 
-        /** @brief Returns true if any components are not the same at the same place. */
+        /** @brief Returns true if each component of both colors are the same at the same place (cv::Vec3b - right). */
+        inline const bool operator== (const cv::Vec3b& rhs) const
+        {
+            return r == rhs[2] && g == rhs[1] && b == rhs[0];
+        }
+
+        /** @brief Returns true if each component of both colors are the same at the same place (cv::Vec3b - left). */
+        friend inline const bool operator== (const cv::Vec3b& lhs, const avt::utils::RGBColor& rhs)
+        {
+            return rhs == lhs;
+        }
+
+        /** @brief Returns true if any components are not the same at the same place (RGBColor). */
         inline const bool operator!= (const RGBColor& rhs) const
         {
             return !(*this == rhs);
+        }
+
+        /** @brief Returns true if any components are not the same at the same place (cv::Vec3b - right). */
+        inline const bool operator!= (const cv::Vec3b& rhs) const
+        {
+            return !(*this == rhs);
+        }
+
+        /** @brief Returns true if any components are not the same at the same place (cv::Vec3b - left). */
+        friend inline const bool operator!= (const cv::Vec3b& lhs, const avt::utils::RGBColor& rhs)
+        {
+            return !(rhs == lhs);
         }
 
 
@@ -579,7 +627,7 @@ export namespace avt::utils
             return RGBColor(rhs._div(value, rhs.r), rhs._div(value, rhs.g), rhs._div(value, rhs.b));
         }
 
-        /** @brief Divides RGBColor * one std::vector. */
+        /** @brief Divides RGBColor / one std::vector. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (RGBColor lhs, const std::vector<T>& rhs) noexcept(false)
@@ -588,7 +636,7 @@ export namespace avt::utils
             return lhs /= rhs;
         }
 
-        /** @brief Divides one std::vector * RGBColor. */
+        /** @brief Divides one std::vector / RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (const std::vector<T>& lhs, RGBColor rhs) noexcept(false)
@@ -597,7 +645,7 @@ export namespace avt::utils
             return RGBColor(rhs._div(lhs[0], rhs.r), rhs._div(lhs[1], rhs.g), rhs._div(lhs[2], rhs.b));
         }
 
-        /** @brief Divides RGBColor * one std::array. */
+        /** @brief Divides RGBColor / one std::array. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (RGBColor lhs, const std::array<T, 3>& rhs) noexcept(false)
@@ -605,7 +653,7 @@ export namespace avt::utils
             return lhs /= rhs;
         }
 
-        /** @brief Divides one std::array * RGBColor. */
+        /** @brief Divides one std::array / RGBColor. */
         template<typename T>
             requires std::is_arithmetic_v<T>
         friend inline RGBColor operator/ (const std::array<T, 3>& lhs, RGBColor rhs) noexcept(false)
@@ -631,6 +679,8 @@ export namespace avt::utils
 
         //---   Predefined colors   -----------------------------------------
         static const RGBColor
+            NULL_COLOR,
+
             ANTHRACITE,
             BLACK,
             BLUE,
@@ -681,6 +731,8 @@ export namespace avt::utils
     };
 
     //-----------------------------------------------------------------------
+    const RGBColor RGBColor::NULL_COLOR       {};
+
     const RGBColor RGBColor::ANTHRACITE       {  31,  31,  31 };
     const RGBColor RGBColor::BLACK            {   0,   0,   0 };
     const RGBColor RGBColor::BLUE             {   0,   0, 255 };

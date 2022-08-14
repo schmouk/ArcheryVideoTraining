@@ -88,6 +88,8 @@ export namespace avt::unit_tests::gui::shapes
         assert(s4.y == 111);
         assert(s4.color == avt::utils::RGBAColor(44, 55, 66));
 
+        /**/
+
         s4.move(std::vector<double>{11.4, 12.8, 13.0});
         assert(s4.x == 191);
         assert(s4.y == 124);
@@ -122,7 +124,7 @@ export namespace avt::unit_tests::gui::shapes
         assert(s2.x == 195);
         assert(s2.y == 83);
         assert(s2.color == avt::utils::RGBAColor(48, 61, 73, 255));
-
+        /**/
 
         std::cout << "   All tests OK\n\n";
     }

@@ -24,8 +24,6 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <algorithm>
-
 #include <Windows.h>
 #include <timeapi.h>
 
@@ -34,7 +32,7 @@ export module mtmp.scheduler;
 
 
 //===========================================================================
-namespace mtmp
+namespace avt::mtmp
 {
     //=======================================================================
     /** @brief The class of mutexes, with timeout processing if needed. */
@@ -87,26 +85,10 @@ namespace mtmp
         static unsigned int _MIN_TIME_SLICE_ms;
         static unsigned int _MAX_TIME_SLICE_ms;
 
-        static const unsigned int _clamp(const unsigned int time_slice_ms) noexcept
-        {
-            if (!_already_inited) {
-                TIMECAPS device_caps;  // win32 structure
-                if (timeGetDevCaps(&device_caps, sizeof(device_caps)) == MMSYSERR_NOERROR) {  // win32 function and const
-                    _MIN_TIME_SLICE_ms = device_caps.wPeriodMin;
-                    _MAX_TIME_SLICE_ms = device_caps.wPeriodMax;
-                }
-                else {
-                    _MIN_TIME_SLICE_ms = 3;
-                    _MAX_TIME_SLICE_ms = 24;
-                }
-                _already_inited = true;
-            }
-
-            return std::clamp<unsigned int>(time_slice_ms, _MIN_TIME_SLICE_ms, _MAX_TIME_SLICE_ms);
-        }
+        static const unsigned int _clamp(const unsigned int time_slice_ms) noexcept;
     };
 
-     unsigned int mtmp::Scheduler::_MIN_TIME_SLICE_ms;
-     unsigned int mtmp::Scheduler::_MAX_TIME_SLICE_ms;
+    unsigned int mtmp::Scheduler::_MIN_TIME_SLICE_ms;
+    unsigned int mtmp::Scheduler::_MAX_TIME_SLICE_ms;
 
 }

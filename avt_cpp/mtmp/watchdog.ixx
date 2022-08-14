@@ -23,20 +23,19 @@ module;
 
 #include <atomic>
 #include <chrono>
+#include <cstring>
 #include <thread>
 
 
-export module avt.mtmp.watchdog;
+export module mtmp.watchdog;
 
-import avt.mtmp.thread;
-import avt.mtmp.timer;
+import mtmp.thread;
+import mtmp.timer;
 
 
 //===========================================================================
 export namespace avt::mtmp
 {
-    export class Watchdog;
-
     //=======================================================================
     /** @brief The base class for Watch Dogs.
     *
@@ -68,11 +67,7 @@ export namespace avt::mtmp
     public:
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Constructor. */
-        inline Watchdog(const double time_countdown_ms, const char name) noexcept
-            : mp_timer{ nullptr },
-              m_time_countdown_ms{ time_countdown_ms },
-              m_name{ name }
-        {}
+        Watchdog(const double time_countdown_ms, const std::string& name) noexcept;
 
         /** @brief Default Copy constructor. */
         Watchdog(const Watchdog&) = delete;
@@ -95,49 +90,16 @@ export namespace avt::mtmp
 
         //---   Watchdog operations   ---------------------------------------
         /** @brief Resets the time count-down for this watchdog. */
-        inline void reset() noexcept(false)
-        {
-            if (mp_timer != nullptr) {
-                mp_timer->b_reset.store(true);
-            }
-                
-            start();
-        }
+        void reset() noexcept(false);
 
         /** @brief Starts this watchdog. */
-        virtual void start() noexcept(false)
-        {
-            if (mp_timer != nullptr)
-                stop();
-
-            mp_timer = new _Timer(this, (const double)m_time_countdown_ms);
-
-            if (mp_timer == nullptr)
-                throw avt::mtmp::Watchdog::StartException();
-            else {
-                mp_timer->start();
-            }
-        }
+        virtual void start() noexcept(false);
 
         /** @brief Stops this watchdog. */
-        void stop() noexcept
-        {
-            if (mp_timer != nullptr) {
-                mp_timer->stop();
-                mp_timer->join();
-                delete mp_timer;
-                mp_timer = nullptr;
-            }
-        }
+        void stop() noexcept;
 
         /** @brief Modifies the time down-count for this watchdog. */
-        void set_time_countdown_ms(const double time_countdown_ms) noexcept(false)
-        {
-            if (time_countdown_ms < 0.5)
-                throw avt::mtmp::Watchdog::TimeCountdownException();
-            m_time_countdown_ms = time_countdown_ms;
-            reset();
-        }
+        void set_time_countdown_ms(const double time_countdown_ms) noexcept(false);
 
 
         //---   Specific Exceptions   ---------------------------------------
@@ -169,25 +131,12 @@ export namespace avt::mtmp
         //---   Internal implementation   -----------------------------------
         class _Timer : public avt::mtmp::Timer {
         public:
-            inline _Timer(Watchdog* parent_watchdog,
-                          const double time_countdown_ms) noexcept
-                : mp_parent{ parent_watchdog },
-                  avt::mtmp::Timer(time_countdown_ms, 1, true)  //false)  // 
-            {
-                b_reset.store(false);
-            }
+            inline _Timer(Watchdog* parent_watchdog, const double time_countdown_ms) noexcept;
 
             std::atomic_bool b_reset;
 
         protected:
-            virtual void _run() noexcept
-            {
-                std::chrono::system_clock::time_point start_time = std::chrono::system_clock::now();
-                std::this_thread::sleep_until(start_time + m_period_ms);
-                _prepare_run();
-                run();
-                _terminate_run();
-            }
+            virtual void _run() noexcept;
 
             virtual inline void run() override
             {
@@ -201,9 +150,9 @@ export namespace avt::mtmp
 
 
         //---   Attributes   ------------------------------------------------
-        _Timer* mp_timer;
-        double  m_time_countdown_ms;
-        char    m_name;
+        double      m_time_countdown_ms;
+        std::string m_name;
+        _Timer*     mp_timer;
     };
 
 }

@@ -22,9 +22,9 @@ SOFTWARE.
 */
 
 //===========================================================================
-export module avt.mtmp.guarded_block;
+export module mtmp.guarded_block;
 
-import avt.mtmp.mutex;
+import mtmp.mutex;
 
 
 //===========================================================================
