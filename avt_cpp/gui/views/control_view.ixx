@@ -515,11 +515,11 @@ export namespace avt::gui::views
 
             static inline Icon   _ICON_PAUSE_OFF{ "controls/pause-25-off.png" };
             static inline Icon   _ICON_PAUSE_ON{ "controls/pause-25-on.png" };
-            static inline Icon   _ICON_PAUSE_DISABLED{ "controls/pause-25.png" };
+            static inline Icon   _ICON_PAUSE_DISABLED{ "controls/pause-25-disabled.png" };
 
             static inline Icon   _ICON_PLAY_OFF{ "controls/play-25-off.png" };
             static inline Icon   _ICON_PLAY_ON{ "controls/play-25-on.png" };
-            static inline Icon   _ICON_PLAY_DISABLED{ "controls/play-25.png" };
+            static inline Icon   _ICON_PLAY_DISABLED{ "controls/play-25-disabled.png" };
 
             static inline Icon   _ICON_STEP_BW_OFF{ "controls/step-bw-25-off.png" };
             static inline Icon   _ICON_STEP_BW_ON{ "controls/step-bw-25-on.png" };
