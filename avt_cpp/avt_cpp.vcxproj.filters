@@ -207,13 +207,16 @@
     <ClCompile Include="unit_tests\gui\items\test_picture.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="devices\cameras\camera.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="devices\cameras\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="unit_tests\devices\cameras\test_camera.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\cameras\cameras_pool.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\cameras\cameras_pool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

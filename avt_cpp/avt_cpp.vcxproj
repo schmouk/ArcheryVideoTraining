@@ -159,7 +159,8 @@
   <ItemGroup>
     <ClCompile Include="avt.cpp" />
     <ClCompile Include="devices\cameras\camera.cpp" />
-    <ClCompile Include="devices\cameras\camera.ixx" />
+    <ClCompile Include="devices\cameras\cameras_pool.cpp" />
+    <ClCompile Include="devices\cameras\cameras_pool.ixx" />
     <ClCompile Include="devices\displays\display_monitor.cpp" />
     <ClCompile Include="devices\displays\display_monitor.ixx" />
     <ClCompile Include="devices\displays\monitors_list.ixx" />
