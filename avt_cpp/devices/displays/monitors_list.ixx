@@ -48,7 +48,6 @@ export namespace avt::devices::diplays
     class MonitorsList : public std::vector<avt::devices::displays::DisplayMonitor>
     {
     public:
-
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Default Constructor. */
         inline MonitorsList() noexcept

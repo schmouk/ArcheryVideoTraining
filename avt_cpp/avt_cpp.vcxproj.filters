@@ -207,9 +207,24 @@
     <ClCompile Include="unit_tests\gui\items\test_picture.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="devices\cameras\camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\devices\cameras\test_camera.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\cameras\cameras_pool.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\cameras\cameras_pool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="devices\cameras\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
