@@ -50,13 +50,14 @@ SOFTWARE.
 //import unit_tests.gui.views.test_view;
 //import unit_tests.gui.test_avt_window;
 //import unit_tests.gui.items.test_picture;
-import unit_tests.devices.cameras.test_camera;
+//import unit_tests.devices.cameras.test_camera;
+import unit_tests.devices.cameras.test_cameras_pool;
 
 
 //===========================================================================
 int main()
 {
-    cv::utils::logging::setLogLevel(cv::utils::logging::LogLevel::LOG_LEVEL_SILENT);
+    cv::utils::logging::setLogLevel(cv::utils::logging::LogLevel::LOG_LEVEL_ERROR);  // LOG_LEVEL_SILENT);
 
     std::cout << "\n===================================================";
     std::cout << "\n=====   UNIT TESTS - Archery Video Training   =====";
@@ -78,7 +79,8 @@ int main()
     //avt::unit_tests::gui::views::test_view();
     //avt::unit_tests::gui::test_main_window();
     //avt::unit_tests::gui::items::test_picture();
-    avt::unit_tests::devices::cameras::test_camera();
+    //avt::unit_tests::devices::cameras::test_camera();
+    avt::unit_tests::devices::cameras::test_cameras_pool();
 
 
     std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";

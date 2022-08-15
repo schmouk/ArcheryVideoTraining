@@ -28,6 +28,8 @@ module;
 #include <format>
 #include <thread>
 
+#include <opencv2/highgui.hpp>
+
 #include "devices/cameras/camera.h"
 #include "utils/types.h"
 
@@ -55,13 +57,17 @@ namespace avt::devices::cameras
                 if (!console_window.empty()) {
                     avt::config::AVTConsoleFont.draw_text(std::format("testing connection of camera #{}: ok ", p_camera->get_id()),
                                                           (avt::ImageType&)console_window, x, y);
+                    cv::imshow("AVT console", console_window);
+                    cv::waitKey(1);
                 }
                 push_back(p_camera);
             }
             else {
                 if (!console_window.empty()) {
                     avt::config::AVTConsoleFont.draw_text(std::format("camera #{} not connected or not found", p_camera->get_id()),
-                                                          (avt::ImageType&)console_window, x, y + y_offset);
+                                                          (avt::ImageType&)console_window, x, y);
+                    cv::imshow("AVT console", console_window);
+                    cv::waitKey(1);
                     std::this_thread::sleep_for(std::chrono::milliseconds(1250));
                 }
                 break;
