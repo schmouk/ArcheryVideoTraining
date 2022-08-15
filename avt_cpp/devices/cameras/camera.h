@@ -1,3 +1,4 @@
+#pragma once
 /*
 MIT License
 
@@ -22,21 +23,16 @@ SOFTWARE.
 */
 
 //===========================================================================
-module;
-
 #include <opencv2/videoio.hpp>
 
 #include "utils/types.h"
-
-
-export module devices.cameras.camera;
 
 import utils.size;
 import utils;
 
 
 //===========================================================================
-export namespace avt::devices::cameras
+namespace avt::devices::cameras
 {
     //=======================================================================
     // This module defines:
@@ -57,11 +53,11 @@ export namespace avt::devices::cameras
         *
         * @arg cam_id: int
         *   The identifier of this camera. Identifiers are integers, as
-        *   specified by OpenCV,  that start with index 0 (embedded web 
-        *   cam on laptops, for instance)  and grows up.  Providing  an 
+        *   specified by OpenCV,  that start with index 0 (embedded web
+        *   cam on laptops, for instance)  and grows up.  Providing  an
         *   index  for  which  no  hardware  video  capturing device is
-        *   connected  leads to  a  faulty  camera  mode  whose  status  
-        *   'is_ok()'  returns  False.   Connected  cameras  get  their 
+        *   connected  leads to  a  faulty  camera  mode  whose  status
+        *   'is_ok()'  returns  False.   Connected  cameras  get  their
         *   ok-status as being True.
         */
         inline Camera(const int cam_id) noexcept
@@ -75,11 +71,11 @@ export namespace avt::devices::cameras
         *
         * @arg cam_id: int
         *   The identifier of this camera. Identifiers are integers, as
-        *   specified by OpenCV,  that start with index 0 (embedded web 
-        *   cam on laptops, for instance)  and grows up.  Providing  an 
+        *   specified by OpenCV,  that start with index 0 (embedded web
+        *   cam on laptops, for instance)  and grows up.  Providing  an
         *   index  for  which  no  hardware  video  capturing device is
-        *   connected  leads to  a  faulty  camera  mode  whose  status  
-        *   'is_ok()'  returns  False.   Connected  cameras  get  their 
+        *   connected  leads to  a  faulty  camera  mode  whose  status
+        *   'is_ok()'  returns  False.   Connected  cameras  get  their
         *   ok-status as being True.*
         * @arg width: int
         *   The wished width for the acquired  frames.  Captured frames
@@ -89,7 +85,7 @@ export namespace avt::devices::cameras
         *   will be resized to this width before being delivered.
         */
         template<typename W, typename H>
-            requires std::is_arithmetic_v<W> && std::is_arithmetic_v<H>
+            requires std::is_arithmetic_v<W>&& std::is_arithmetic_v<H>
         inline Camera(const int cam_id, const W width, const H height) noexcept
         {
             m_create_camera(cam_id);
@@ -181,43 +177,12 @@ export namespace avt::devices::cameras
             cv_cam_handle.set(cv::CAP_PROP_FRAME_HEIGHT, hw_default_height);
         }
 
-        /** @brief Sets the wished size for captured frames.
-        *
-        * Captured frames will be resized to this size before being delivered.
-        */
-        inline void set_frames_size(const avt::DimsType width, const avt::DimsType height) noexcept
-        {
-            frame_width  = width;
-            frame_height = height;
-        }
-
-        /** @brief Sets the physical dimensions of captured frames (2 scalar dimensions). */
-        template<typename W, typename H>
-            requires std::is_arithmetic_v<W> && std::is_arithmetic_v<H>
-        void set_hw_dims(const W width, const H height) noexcept
-        {
-            cv_cam_handle.set(cv::CAP_PROP_FRAME_WIDTH , avt::utils::clamp_us(width ));
-            cv_cam_handle.set(cv::CAP_PROP_FRAME_HEIGHT, avt::utils::clamp_us(height));
-            m_set_hw_size();  // this call is mandatory because passed arguments may be wrong according to the device H/W
-        }
-
-        /** @brief Sets the physical dimensions of captured frames (1 size). */
-        inline void set_hw_dims(const avt::utils::Size& size) noexcept
-        {
-            set_hw_dims(size.width, size.height);
-        }
-
-        /** @brief Sets the physical dimensions of captured frames (1 2D-container size). */
-        template<typename P>
-            requires avt::is_pair_type_v<P>
-        inline void set_hw_dims(const P& size) noexcept
-        {
-            set_hw_dims(size[0], size[1]);
-        }
-
 
         //---   Accessors / Mutators   -------------------------------------
-        /** @brief Gets the frames-per-second rate of capturing for this camera. */
+        /** @brief Gets the frames-per-second rate of capturing for this camera.
+        *
+        * Notice: always returns 0.0 on webcams in OpenCV.
+        */
         inline const double get_fps() const noexcept
         {
             try {
@@ -227,7 +192,7 @@ export namespace avt::devices::cameras
                 return 0.0f;
             }
         }
-        
+
         /** @brief Gets the height of captured frames as set in the H/W device. */
         inline const int get_hw_height() const noexcept
         {
@@ -256,7 +221,11 @@ export namespace avt::devices::cameras
             return cam_id + 1;
         }
 
-        /** @brief Gets the elapsed period of time between two successive captures of frames. */
+        /** @brief Gets the elapsed period of time between two successive captures of frames.
+        *
+        * Notice: get_fps() always returns 0.0 on webcams in OpenCV,
+        * so this method actually always returns 0.0.
+        */
         inline const double get_period() const noexcept
         {
             try {
@@ -271,6 +240,40 @@ export namespace avt::devices::cameras
         inline const bool is_ok() const noexcept
         {
             return get_hw_width() != 0;
+        }
+
+        /** @brief Sets the wished size for captured frames.
+        *
+        * Captured frames will be resized to this size before being delivered.
+        */
+        inline void set_frames_size(const avt::DimsType width, const avt::DimsType height) noexcept
+        {
+            frame_width = width;
+            frame_height = height;
+        }
+
+        /** @brief Sets the physical dimensions of captured frames (2 scalar dimensions). */
+        template<typename W, typename H>
+            requires std::is_arithmetic_v<W>&& std::is_arithmetic_v<H>
+        void set_hw_dims(const W width, const H height) noexcept
+        {
+            cv_cam_handle.set(cv::CAP_PROP_FRAME_WIDTH, double(width));
+            cv_cam_handle.set(cv::CAP_PROP_FRAME_HEIGHT, double(height));
+            m_set_hw_size();  // this call is mandatory because passed arguments may be wrong according to the device H/W
+        }
+
+        /** @brief Sets the physical dimensions of captured frames (1 size). */
+        inline void set_hw_dims(const avt::utils::Size& size) noexcept
+        {
+            set_hw_dims(size.width, size.height);
+        }
+
+        /** @brief Sets the physical dimensions of captured frames (1 2D-container size). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline void set_hw_dims(const P& size) noexcept
+        {
+            set_hw_dims(size[0], size[1]);
         }
 
 
@@ -291,6 +294,9 @@ export namespace avt::devices::cameras
             cam_id = cam_id_;
             cv_cam_handle = cv::VideoCapture{ cam_id_ };
         }
+
+        /** @brief Resizes the passe image according to previously set dimensions. */
+        avt::ImageType m_resize(avt::ImageType& frame) noexcept;
 
         /** @brief Evaluates the H/W default size of frames that are captured by this camera. */
         void m_set_hw_size() noexcept

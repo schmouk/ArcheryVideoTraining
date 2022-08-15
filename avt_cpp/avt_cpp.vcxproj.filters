@@ -213,9 +213,15 @@
     <ClCompile Include="devices\cameras\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="unit_tests\devices\cameras\test_camera.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="devices\cameras\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

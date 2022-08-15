@@ -22,35 +22,57 @@ SOFTWARE.
 */
 
 //===========================================================================
-module;
-
+#include <opencv2/imgproc.hpp>
 #include <opencv2/videoio.hpp>
 
+#include "devices/cameras/camera.h"
 #include "utils/types.h"
 
-
-module devices.cameras.camera;
-
+import avt.config;
 import utils.size;
 
 
 //===========================================================================
 namespace avt::devices::cameras
 {
-    /** @brief Gets next available frame. */
+    /** Gets next available frame. */
     avt::ImageType& Camera::read() noexcept
     {
+        avt::ImageType frame;
+        bool ok;
         try {
-            avt::ImageType frame;
-            const bool ok = cv_cam_handle.read(frame);
-            if (ok)
-                last_frame = frame;
+            ok = cv_cam_handle.read(frame);
         }
         catch (...) {
+        }
+
+        if (ok) {
+            last_frame = m_resize(frame);
+        }
+        else {
+            if (last_frame.empty())
+                last_frame = avt::ImageType(std::max(frame_height, 480),
+                                            std::max(frame_width, 640),
+                                            avt::config::DEFAULT_BACKGROUND);
+            else
+                last_frame = avt::config::DEFAULT_BACKGROUND;
         }
 
         return last_frame;
     }
 
+
+    /** @brief Resizes the passe image according to previously set dimensions. */
+    avt::ImageType Camera::m_resize(avt::ImageType& frame) noexcept
+    {
+        if (frame.rows != frame_height || frame.cols != frame_width)
+        {
+            avt::ImageType frame_res;
+            cv::resize(frame, frame_res, cv::Size(frame_width, frame_height), 0.0, 0.0, cv::INTER_CUBIC);
+            return frame_res;
+        }
+        else
+            return frame;
+    }
 }
 
