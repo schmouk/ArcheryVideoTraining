@@ -268,7 +268,6 @@ namespace avt::gui::fonts
         }
 
 
-    protected:
         //---   Attributes   ------------------------------------------------
         RGBColor color;
         RGBColor bg_color;

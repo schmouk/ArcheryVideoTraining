@@ -56,8 +56,8 @@ export namespace avt::gui::views
     //=======================================================================
     /** @brief The class of Control Views.
     *
-    * Control views are the views within which all graphical control items
-    * are displayed for the controlling of application AVT.
+    * Control views are the views within which all graphical control
+    * items are displayed for the controlling of application AVT.
     */
     class ControlView : public avt::gui::views::View, public avt::mtmp::Timer
     {
@@ -103,9 +103,9 @@ export namespace avt::gui::views
 
 
         //---   Exceptions   ------------------------------------------------
-        class NullParentException
+        class NullParentException : public std::exception
         {
-            const char* what()
+            const char* what() noexcept
             {
                 return "!!! ERROR: The Control View is not attached to any parent window.";
             }
@@ -121,7 +121,6 @@ export namespace avt::gui::views
         {
             draw();
         }
-
 
 
     private:
@@ -148,7 +147,7 @@ export namespace avt::gui::views
             /** @brief Value Constructor (2 coordinates). */
             template<typename X, typename Y>
                 requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
-            _CtrlBase(const X x_, const Y y_, const bool enabled_ = true, const bool active_ = false) noexcept
+            inline _CtrlBase(const X x_, const Y y_, const bool enabled_ = true, const bool active_ = false) noexcept
                 : x{ avt::utils::clamp_s(x_) },
                   y{ avt::utils::clamp_s(y_) },
                   enabled{ enabled_ },
@@ -158,13 +157,25 @@ export namespace avt::gui::views
             }
 
             /** @brief Value Constructor (1 position). */
-            _CtrlBase(const avt::utils::Coords2D& pos, const bool enabled_ = true, const bool active_ = false) noexcept
+            inline _CtrlBase(const avt::utils::Coords2D& pos, const bool enabled_ = true, const bool active_ = false) noexcept
                 : x{ pos.x },
                   y{ pos.y },
                   enabled{ enabled_ },
                   active{ active_ }
             {
                 text_pos = avt::utils::Coords2D(pos.x, pos.y + ControlView::ICON_HEIGHT + _FONT_SIZE);
+            }
+
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlBase(const P& pos, const bool enabled_ = true, const bool active_ = false) noexcept
+                : x{ pos[0] },
+                  y{ pos[1]},
+                  enabled{ enabled_ },
+                  active{ active_ }
+            {
+                text_pos = avt::utils::Coords2D(pos[0], pos[1] + ControlView::ICON_HEIGHT + _FONT_SIZE);
             }
 
             /** @brief Default Empty Constructor. */
@@ -206,7 +217,7 @@ export namespace avt::gui::views
             /** @brief Value Constructor (2 coordinates). */
             template<typename X, typename Y>
                 requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
-            _CtrlCamera( /*avt::cameras::Camera& camera, */const X x, const Y y)
+            inline _CtrlCamera( /*avt::cameras::Camera& camera, */const X x, const Y y) noexcept
                 : //camera{ camera },
                   _CtrlBase{ x, y }
             {
@@ -214,7 +225,17 @@ export namespace avt::gui::views
             }
 
             /** @brief Value Constructor (1 position). */
-            _CtrlCamera( /*avt::cameras::Camera& camera, */const avt::utils::Coords2D& pos)
+            inline _CtrlCamera( /*avt::cameras::Camera& camera, */const avt::utils::Coords2D& pos) noexcept
+                : //camera{ camera },
+                  _CtrlBase{ pos }
+            {
+                //is_on = camera.is_ok();
+            }
+
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlCamera( /*avt::cameras::Camera& camera, */const P& pos) noexcept
                 : //camera{ camera },
                   _CtrlBase{ pos }
             {
@@ -268,6 +289,15 @@ export namespace avt::gui::views
 
             /** @brief Value Constructor (1 position). */
             inline _CtrlDelay(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {
+                m_create_slider(x, y);  // remember: x and y are base class attributes
+            }
+
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlDelay( /*avt::cameras::Camera& camera, */const P& pos) noexcept
                 : _CtrlBase{ pos, enabled, active }
             {
                 m_create_slider(x, y);  // remember: x and y are base class attributes
@@ -340,6 +370,13 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Value Constructor (1 2D-coordinates position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlLines(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
             /** @brief Default Destructor. */
             virtual ~_CtrlLines() noexcept = default;
 
@@ -369,6 +406,13 @@ export namespace avt::gui::views
 
             /** @brief Value Constructor (1 position). */
             inline _CtrlMatch(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            /** @brief Value Constructor (1 2D-coordinates position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlMatch(const P& pos, const bool enabled = true, const bool active = false) noexcept
                 : _CtrlBase{ pos, enabled, active }
             {}
 
@@ -406,6 +450,13 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlOverlays(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
             /** @brief Default Destructor. */
             virtual ~_CtrlOverlays() noexcept = default;
 
@@ -439,6 +490,15 @@ export namespace avt::gui::views
 
             /** @brief Value Constructor (1 position). */
             inline _CtrlRecord(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {
+                m_create_slider();
+            }
+
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlRecord(const P& pos, const bool enabled = true, const bool active = false) noexcept
                 : _CtrlBase{ pos, enabled, active }
             {
                 m_create_slider();
@@ -493,6 +553,13 @@ export namespace avt::gui::views
 
             /** @brief Value Constructor (1 position). */
             inline _CtrlReplay(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlReplay(const P& pos, const bool enabled = true, const bool active = false) noexcept
                 : _CtrlBase{ pos, enabled, active }
             {}
 
@@ -551,6 +618,13 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlTarget(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
             /** @brief Default Destructor. */
             virtual ~_CtrlTarget() noexcept = default;
 
@@ -585,6 +659,15 @@ export namespace avt::gui::views
             /** @brief Value Constructor (1 position). */
             inline _CtrlTime(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
                 : _CtrlBase{ pos, false, true }
+            {
+                m_create_labels();
+            }
+
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlTime(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
             {
                 m_create_labels();
             }
@@ -627,6 +710,13 @@ export namespace avt::gui::views
 
             /** @brief Value Constructor (1 position). */
             inline _CtrlTimer(const avt::utils::Coords2D& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlTimer(const P& pos, const bool enabled = true, const bool active = false) noexcept
                 : _CtrlBase{ pos, enabled, active }
             {}
 

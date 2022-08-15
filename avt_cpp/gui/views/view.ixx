@@ -58,8 +58,8 @@ export namespace avt::gui::views
     public:
         //---   Wrappers   --------------------------------------------------
         using MyBaseType = avt::ImageType;        //!< wrapper to the base class
-        using PosType = avt::utils::Coords2D;  //!< wrapper to the Coords2D class
-        using SizeType = avt::utils::Size;      //!< wrapper to the Size class
+        using PosType    = avt::utils::Coords2D;  //!< wrapper to the Coords2D class
+        using SizeType   = avt::utils::Size;      //!< wrapper to the Size class
 
 
         //---   Constructors / Destructors   --------------------------------
@@ -137,6 +137,15 @@ export namespace avt::gui::views
 
 
         //---   Operations   ------------------------------------------------
+        /** @brief Draws this view into the parent view.
+        *
+        * Caution: this is not thread safe.
+        */
+        inline void draw() noexcept
+        {
+            draw(*p_parent_view);
+        }
+
         /** @brief Draws this view into the specified image.
         *
         * Caution: this is not thread safe.
@@ -265,7 +274,7 @@ export namespace avt::gui::views
 
         //---   Attributes   ------------------------------------------------
         PosType pos;            //!< the position in the parent view of this view's top-left corner 
-        View* p_parent_view;  //!< a pointer to this view's parent view
+        View*   p_parent_view;  //!< a pointer to this view's parent view
 
 
     private:

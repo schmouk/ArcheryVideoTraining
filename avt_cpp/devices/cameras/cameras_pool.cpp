@@ -48,7 +48,7 @@ namespace avt::devices::cameras
 
         int x = 20;
         int y = 40;
-        int y_offset = 24;
+        int y_offset = avt::config::AVTConsoleFont.size + 9;
 
         for (int camera_index = 0; camera_index < avt::config::CAMERAS_MAX_COUNT; ++camera_index) {
 
