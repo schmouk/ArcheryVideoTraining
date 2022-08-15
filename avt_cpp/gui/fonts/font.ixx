@@ -238,7 +238,7 @@ namespace avt::gui::fonts
         /** @brief Sets the size for this font (forced to be greater than 5). */
         inline void set_size(const int size_) noexcept
         {
-            size = std::min(6, size_);
+            size = std::max(6, size_);
             font_scale = cv::getFontScaleFromHeight(cv_font, size, thickness);
         }
 

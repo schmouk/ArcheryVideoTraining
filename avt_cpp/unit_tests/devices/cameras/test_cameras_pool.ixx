@@ -25,45 +25,37 @@ SOFTWARE.
 module;
 
 #include <cassert>
-#include <chrono>
+#include <format>
 #include <iostream>
 
 #include <opencv2/highgui.hpp>
+#include <opencv2/core/mat.hpp>
 
 #include "devices/cameras/camera.h"
+#include "utils/types.h"
 
-export module unit_tests.devices.cameras.test_camera;
+export module unit_tests.devices.cameras.test_cameras_pool;
+
+import devices.cameras.cameras_pool;
+import utils.rgb_color;
 
 
 //===========================================================================
 namespace avt::unit_tests::devices::cameras
 {
     //=======================================================================
-    export void test_camera()
+    export void test_cameras_pool()
     {
         std::cout << "-- TEST avt::devices::cameras::Camera\n";
 
-        avt::devices::cameras::Camera cam0(0, 640*1.5f, 480*1.5f);
-        std::cout << "camera 0, H/W size = " << cam0.get_hw_width() << " x " << cam0.get_hw_height() << std::endl;
+        
+        avt::ImageType console( 400, 600, (cv::Vec3b)avt::utils::RGBColor::DEEP_GRAY );
+        avt::devices::cameras::CamerasPool cameras_pool(console);
 
-        avt::devices::cameras::Camera cam1(1);
-        std::cout << "camera 1, H/W size = " << cam1.get_hw_width() << " x " << cam1.get_hw_height() << std::endl;
 
-        avt::devices::cameras::Camera cam2(2);
-        std::cout << "camera 2, H/W size = " << cam2.get_hw_width() << " x " << cam2.get_hw_height() << std::endl;
-
-        avt::devices::cameras::NullCamera nullcam(2);
-        assert(!nullcam.is_ok());
-
-        auto last_time_point = std::chrono::steady_clock::now();
         while (true) {
-            cv::imshow("camera 0", cam0.read());
-            cv::imshow("camera 1", cam1.read());
-            cv::imshow("camera 2", cam2.read());
-
-            const auto time_point = std::chrono::steady_clock::now();
-            std::cout << std::chrono::duration_cast<std::chrono::milliseconds>(time_point - last_time_point).count() << std::endl;
-            last_time_point = time_point;
+            for (auto p_cam: cameras_pool)
+                cv::imshow(std::format("camera #{}", p_cam->get_id()), p_cam->read());
 
             if (cv::waitKey(1) == 27)
                 break;

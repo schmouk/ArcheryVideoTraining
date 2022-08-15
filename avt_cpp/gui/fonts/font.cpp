@@ -64,7 +64,7 @@ namespace avt::gui::fonts
         if (b_italic_)
             cv_font |= cv::FONT_ITALIC;
         set_color(color_);
-        set_size(size);
+        set_size(size_);
     }
 
     /** Value Constructor with specified color and background color. */
@@ -88,7 +88,7 @@ namespace avt::gui::fonts
         if (b_italic_)
             cv_font |= cv::FONT_ITALIC;
         set_color(color_);
-        set_size(size);
+        set_size(size_);
     }
 
     /** Draws specified text with this font. */
