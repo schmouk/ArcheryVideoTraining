@@ -28,6 +28,7 @@ SOFTWARE.
 //===========================================================================
 #include <iostream>
 #include <opencv2/highgui.hpp>
+#include "opencv2/core/utils/logger.hpp"
 
 //import unit_tests.utils.test_gray_color;
 //import unit_tests.utils.test_rgb_color;
@@ -47,13 +48,16 @@ SOFTWARE.
 //import gui.fonts.italic_font;
 //import gui.fonts.bold_italic_font;
 //import unit_tests.gui.views.test_view;
-
 //import unit_tests.gui.test_avt_window;
+//import unit_tests.gui.items.test_picture;
+import unit_tests.devices.cameras.test_camera;
 
 
 //===========================================================================
 int main()
 {
+    cv::utils::logging::setLogLevel(cv::utils::logging::LogLevel::LOG_LEVEL_SILENT);
+
     std::cout << "\n===================================================";
     std::cout << "\n=====   UNIT TESTS - Archery Video Training   =====";
     std::cout << "\n===================================================\n\n";
@@ -73,6 +77,8 @@ int main()
     //avt::unit_tests::gui::shapes::test_rect();
     //avt::unit_tests::gui::views::test_view();
     //avt::unit_tests::gui::test_main_window();
+    //avt::unit_tests::gui::items::test_picture();
+    avt::unit_tests::devices::cameras::test_camera();
 
 
     std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";

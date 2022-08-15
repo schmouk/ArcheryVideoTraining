@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -158,10 +158,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="avt.cpp" />
-    <ClCompile Include="devices\display_monitor.cpp" />
-    <ClCompile Include="devices\display_monitor.ixx" />
-    <ClCompile Include="devices\monitors_list.cpp" />
-    <ClCompile Include="devices\monitors_list.ixx" />
+    <ClCompile Include="devices\cameras\camera.cpp" />
+    <ClCompile Include="devices\cameras\cameras_pool.cpp" />
+    <ClCompile Include="devices\cameras\cameras_pool.ixx" />
+    <ClCompile Include="devices\displays\display_monitor.cpp" />
+    <ClCompile Include="devices\displays\display_monitor.ixx" />
+    <ClCompile Include="devices\displays\monitors_list.ixx" />
     <ClCompile Include="avt_config.ixx" />
     <ClCompile Include="gui\avt_window.cpp" />
     <ClCompile Include="gui\avt_window.ixx" />
@@ -171,6 +173,7 @@
     <ClCompile Include="gui\fonts\font.ixx" />
     <ClCompile Include="gui\fonts\italic_font.ixx" />
     <ClCompile Include="gui\items\cursor.ixx" />
+    <ClCompile Include="gui\items\picture.ixx" />
     <ClCompile Include="gui\views\control_view.cpp" />
     <ClCompile Include="gui\views\control_view.ixx" />
     <ClCompile Include="gui\views\view.cpp" />
@@ -196,6 +199,8 @@
     <ClCompile Include="gui\shapes\point.ixx" />
     <ClCompile Include="gui\shapes\rect.ixx" />
     <ClCompile Include="gui\shapes\shape.ixx" />
+    <ClCompile Include="unit_tests\devices\cameras\test_camera.ixx" />
+    <ClCompile Include="unit_tests\gui\items\test_picture.ixx" />
     <ClCompile Include="unit_tests\gui\views\test_view.ixx" />
     <ClCompile Include="unit_tests\gui\test_avt_window.ixx" />
     <ClCompile Include="unit_tests\mtmp\test_barrier.ixx" />
@@ -222,6 +227,7 @@
     <ClCompile Include="video\frame.ixx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="devices\cameras\camera.h" />
     <ClInclude Include="utils\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

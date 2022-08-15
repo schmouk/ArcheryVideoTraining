@@ -95,7 +95,7 @@ namespace avt::gui::fonts
     void Font::draw_text(const std::string&          text,
                          avt::ImageType&             image,
                          const avt::utils::Coords2D& pos,
-                         const bool                  b_shadow)
+                         const bool                  b_shadow) noexcept
     {
         if (b_force_bgcolor) {
             // let's put text over a background solid color

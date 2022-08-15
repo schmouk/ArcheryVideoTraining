@@ -24,35 +24,46 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <cstdlib>
+#include <array>
+#include <cassert>
+#include <iostream>
+#include <vector>
 
-#include <windows.h>
+#include <opencv2/highgui.hpp>
+
+#include "utils/types.h"
 
 
-module devices.monitors_list;
+export module unit_tests.gui.items.test_picture;
 
-import devices.display_monitor;
+import types.pair;
+import gui.items.picture;
+import utils.rgb_color;
+import gui.views.view;
 
 
 //===========================================================================
-namespace avt::devices
+export namespace avt::unit_tests::gui::items
 {
-    /** @brief the internal initialization callback. */
-    BOOL CALLBACK MonitorsList::m_init_callback(HMONITOR monitor_handle, HDC dc_handle, LPRECT monitor_display_rect, LPARAM params)
+    //=======================================================================
+    void test_picture()
     {
-        MonitorsList* monitors = reinterpret_cast<MonitorsList*>(params);
+        std::cout << "-- TEST avt::gui::items::Picture\n";
 
-        monitors->push_back(
-            DisplayMonitor(
-                monitor_handle,
-                dc_handle,
-                monitor_display_rect->left,
-                monitor_display_rect->top,
-                std::abs(monitor_display_rect->right - monitor_display_rect->left),
-                std::abs(monitor_display_rect->bottom - monitor_display_rect->top)
-            )
-        );
+        avt::ImageType test_image( 200, 300, avt::utils::RGBColor::ANTHRACITE );
+        cv::imshow("AVT-test-picture", test_image);
+        cv::waitKey(0);
 
-        return true;
+        avt::gui::items::Picture icon{ "controls/delay-on.png" };
+        icon.draw(20, 10, test_image);
+        cv::imshow("AVT-test-picture", test_image);
+        cv::waitKey(0);
+
+        icon.load("controls/timer-on.png");
+        icon.draw({ 200.5f, 150.9f }, test_image);
+        cv::imshow("AVT-test-picture", test_image);
+        cv::waitKey(0);
+
+        std::cout << "   All tests OK\n\n";
     }
 }

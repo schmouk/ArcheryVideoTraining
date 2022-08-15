@@ -30,11 +30,11 @@ module;
 #include <cmath>
 
 
-export module devices.display_monitor;
+export module devices.displays.display_monitor;
 
 
 //===========================================================================
-export namespace avt::devices
+export namespace avt::devices::displays
 {
     //=======================================================================
     /** @brief The class of Display Monitors (Windows specific).
@@ -77,14 +77,14 @@ export namespace avt::devices
                        const int      height = 0) noexcept;
 
 
-        DisplayMonitor(const DisplayMonitor&) = default;
-        DisplayMonitor(DisplayMonitor&&) = default;
-        virtual ~DisplayMonitor() = default;
+        DisplayMonitor(const DisplayMonitor&) noexcept = default;
+        DisplayMonitor(DisplayMonitor&&) noexcept = default;
+        virtual ~DisplayMonitor() noexcept = default;
 
 
         //---   Assignments   -----------------------------------------------
-        DisplayMonitor& operator= (const DisplayMonitor&) = default;
-        DisplayMonitor& operator= (DisplayMonitor&&) = default;
+        DisplayMonitor& operator= (const DisplayMonitor&) noexcept = default;
+        DisplayMonitor& operator= (DisplayMonitor&&) noexcept = default;
 
 
         //---   Miscelaneous   ----------------------------------------------
@@ -95,7 +95,7 @@ export namespace avt::devices
         }
 
         /** @brief Sets Windows additional features associated with this display monitor. */
-        void set_system_data();
+        void set_system_data() noexcept;
     };
 
 }

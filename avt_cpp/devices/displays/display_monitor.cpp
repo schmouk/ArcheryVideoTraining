@@ -30,19 +30,19 @@ module;
 #include <cmath>
 
 
-module devices.display_monitor;
+module devices.displays.display_monitor;
 
 
 //===========================================================================
-namespace avt::devices
+namespace avt::devices::displays
 {
     /** Value constructor. */
-    DisplayMonitor:: DisplayMonitor(const HMONITOR monitor_handle,
-                                    const HDC      display_context_handle,
-                                    const int      left_x,
-                                    const int      top_y,
-                                    const int      width,
-                                    const int      height) noexcept
+    DisplayMonitor::DisplayMonitor(const HMONITOR monitor_handle,
+                                   const HDC      display_context_handle,
+                                   const int      left_x,
+                                   const int      top_y,
+                                   const int      width,
+                                   const int      height) noexcept
         : win_handle(monitor_handle),
           win_dc_handle(display_context_handle),
           x(left_x),
@@ -55,7 +55,7 @@ namespace avt::devices
         }
 
     /** Sets Windows additional features associated with this display monitor. */
-    void DisplayMonitor::set_system_data()
+    void DisplayMonitor::set_system_data() noexcept
     {
         MONITORINFO my_info;
         my_info.cbSize = sizeof(my_info);

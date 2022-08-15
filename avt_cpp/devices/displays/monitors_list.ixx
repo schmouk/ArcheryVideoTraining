@@ -29,36 +29,41 @@ module;
 #include <vector>
 
 
-export module devices.monitors_list;
+export module devices.displays.monitors_list;
 
-import devices.display_monitor;
+import devices.displays.display_monitor;
 
 
 //===========================================================================
-export namespace avt::devices
+export namespace avt::devices::diplays
 {
     //=======================================================================
+    // This module defines :
+    //  - class MonitorsList;
+    //  - MonitorsList monitors_list;
+    //
+    
+    //=======================================================================
     /** @brief The class of lists of display monitors. */
-    class MonitorsList : public std::vector<DisplayMonitor>
+    class MonitorsList : public std::vector<avt::devices::displays::DisplayMonitor>
     {
     public:
-
         //---   Constructors / Destructor   ---------------------------------
         /** @brief Default Constructor. */
         inline MonitorsList() noexcept
-            : std::vector<DisplayMonitor>()
+            : std::vector<avt::devices::displays::DisplayMonitor>()
         {
             EnumDisplayMonitors(nullptr, nullptr, m_init_callback, (LPARAM)this);  // Windows function
         }
 
         /** @brief Deleted Copy constructor. */
-        MonitorsList(const DisplayMonitor&) = delete;
+        MonitorsList(const avt::devices::displays::DisplayMonitor&) = delete;
 
         /** @brief Deleted Move constructor. */
-        MonitorsList(DisplayMonitor&&) = delete;
+        MonitorsList(avt::devices::displays::DisplayMonitor&&) = delete;
 
         /** @brief Default Destructor. */
-        ~MonitorsList() = default;
+        ~MonitorsList() noexcept = default;
 
 
         //---   Assignments   -----------------------------------------------
@@ -71,7 +76,23 @@ export namespace avt::devices
 
     private:
         /** @brief the internal initialization callback. */
-        static BOOL CALLBACK m_init_callback(HMONITOR monitor_handle, HDC dc_handle, LPRECT monitor_display_rect, LPARAM params);
+        static BOOL CALLBACK m_init_callback(HMONITOR monitor_handle, HDC dc_handle, LPRECT monitor_display_rect, LPARAM params)
+        {
+            MonitorsList* monitors = reinterpret_cast<MonitorsList*>(params);
+
+            monitors->push_back(
+                avt::devices::displays::DisplayMonitor(
+                    monitor_handle,
+                    dc_handle,
+                    monitor_display_rect->left,
+                    monitor_display_rect->top,
+                    std::abs(monitor_display_rect->right - monitor_display_rect->left),
+                    std::abs(monitor_display_rect->bottom - monitor_display_rect->top)
+                )
+            );
+
+            return true;
+        }
     };
 
 
