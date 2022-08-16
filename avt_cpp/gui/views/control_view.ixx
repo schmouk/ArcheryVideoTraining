@@ -185,7 +185,7 @@ export namespace avt::gui::views
                 text_pos = avt::utils::Coords2D(pos[0], pos[1] + ControlView::ICON_HEIGHT + _FONT_SIZE);
             }
 
-            /** @brief Default Empty Constructor. */
+            /** @brief Default Constructor. */
             _CtrlBase() noexcept = default;
 
             /** @brief Default Destructor. */
@@ -206,8 +206,7 @@ export namespace avt::gui::views
             bool active;                    //!< true if this control is currently active, or false otherwise
 
 
-        protected:
-            //--- Constants -------------------------------------------------
+            //--- Class Attributes   ----------------------------------------
             static constexpr int  _FONT_SIZE = 14;
             static inline Font    _FONT_ACTIVE{ _FONT_SIZE, RGBColor::YELLOW };
             static inline Font    _FONT_DISABLED{ _FONT_SIZE, RGBColor::DEEP_GRAY };
@@ -249,6 +248,9 @@ export namespace avt::gui::views
                 is_on = camera.is_ok();
             }
 
+            /** @brief Default Constructor. */
+            _CtrlCamera() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlCamera() noexcept = default;
 
@@ -267,15 +269,15 @@ export namespace avt::gui::views
             bool   is_on{ true };  //!< true if this camera control-switch os ON, or false if it is OFF
 
 
-        protected:
-            static inline BoldFont _FONT_NOT_OK{ 13, RGBColor::ANTHRACITE };
-            static inline BoldFont _FONT_OFF{ 13, RGBColor::GRAY };
-            static inline BoldFont _FONT_ON{ 13, RGBColor::YELLOW };
-            static inline Icon     _ICON_OFF{ "controls/switch-off.png" };
-            static inline Icon     _ICON_ON{ "controls/switch-on.png" };
-            static inline Icon     _ICON_DISABLED{ "controls/switch-disabled.png" };
-            static inline int WIDTH  = _ICON_ON.width();
-            static inline int HEIGHT = _ICON_ON.height();
+            //--- Class Attributes   ----------------------------------------
+            static inline BoldFont FONT_NOT_OK{ 13, RGBColor::ANTHRACITE };
+            static inline BoldFont FONT_OFF{ 13, RGBColor::GRAY };
+            static inline BoldFont FONT_ON{ 13, RGBColor::YELLOW };
+            static inline Icon     ICON_OFF{ "controls/switch-off.png" };
+            static inline Icon     ICON_ON{ "controls/switch-on.png" };
+            static inline Icon     ICON_DISABLED{ "controls/switch-disabled.png" };
+            static inline int WIDTH  = ICON_ON.width();
+            static inline int HEIGHT = ICON_ON.height();
         };
 
         //===================================================================
@@ -310,6 +312,9 @@ export namespace avt::gui::views
                 m_create_slider(x, y);  // remember: x and y are base class attributes
             }
 
+            /** @brief Default Constructor. */
+            _CtrlDelay() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlDelay() noexcept = default;
 
@@ -321,7 +326,7 @@ export namespace avt::gui::views
             //avt::gui::items::Slider slider;
 
 
-        protected:
+            //--- Class Attributes   ----------------------------------------
             static inline Icon   _ICON_OFF{ "controls/delay-off.png" };
             static inline Icon   _ICON_ON{ "controls/delay-on.png" };
             static inline Icon   _ICON_DISABLED{ "controls/delay-disabled.png" };
@@ -345,6 +350,9 @@ export namespace avt::gui::views
             /** @brief Value Constructor. */
             _CtrlExit(const int view_width, const int view_height) noexcept;
 
+            /** @brief Default Constructor. */
+            _CtrlExit() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlExit() noexcept = default;
 
@@ -353,7 +361,7 @@ export namespace avt::gui::views
             void draw(avt::ImageType& image) noexcept;
 
 
-        protected:
+            //--- Class Attributes   ----------------------------------------
             static inline Icon _ICON_EXIT{ "controls/exit-48.png" };
         };
 
@@ -383,6 +391,9 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Default Constructor. */
+            _CtrlLines() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlLines() noexcept = default;
 
@@ -391,7 +402,7 @@ export namespace avt::gui::views
             void draw(avt::ImageType& image) noexcept;
 
 
-        protected:
+            //--- Class Attributes   ----------------------------------------
             static constexpr int _LINE_LENGTH    = 35;
             static constexpr int _LINE_THICKNESS =  7;
         };
@@ -422,6 +433,9 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Default Constructor. */
+            _CtrlMatch() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlMatch() noexcept = default;
 
@@ -430,7 +444,7 @@ export namespace avt::gui::views
             void draw(avt::ImageType& image) noexcept;
 
 
-        protected:
+            //--- Class Attributes   ----------------------------------------
             static inline Icon _ICON_OFF{ "controls/match-off.png" };
             static inline Icon _ICON_ON{ "controls/match-on.png" };
             static inline Icon _ICON_DISABLED{ "controls/match-disabled.png" };
@@ -463,6 +477,9 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Default Constructor. */
+            _CtrlOverlays() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlOverlays() noexcept = default;
 
@@ -471,11 +488,11 @@ export namespace avt::gui::views
             void draw(avt::ImageType& image) noexcept;
 
 
-        protected:
+            //--- Class Attributes   ----------------------------------------
             static inline Icon _ICON_OFF{ "controls/overlays-off.png" };
             static inline Icon _ICON_ON{ "controls/overlays-on.png" };
             static inline Icon _ICON_DISABLED{ "controls/overlays-disabled.png" };
-            static inline int _SIZE = _ICON_ON.width();
+            static inline int  _SIZE = _ICON_ON.width();
         };
 
         //===================================================================
@@ -510,6 +527,9 @@ export namespace avt::gui::views
                 m_create_slider();
             }
 
+            /** @brief Default Constructor. */
+            _CtrlRecord() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlRecord() noexcept = default;
 
@@ -521,7 +541,7 @@ export namespace avt::gui::views
             //FloatSlider slider{};
 
 
-        protected:
+            //--- Class Attributes   ----------------------------------------
             static inline Icon   _ICON_OFF{ "controls/record-off.png" };
             static inline Icon   _ICON_ON{ "controls/record-on.png" };
             static inline Icon   _ICON_DISABLED{ "controls/record-disabled.png" };
@@ -569,6 +589,9 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Default Constructor. */
+            _CtrlReplay() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlReplay() noexcept = default;
 
@@ -577,7 +600,7 @@ export namespace avt::gui::views
             void draw(avt::ImageType& image) noexcept;
 
 
-        protected:
+            //--- Class Attributes   ----------------------------------------
             static inline Icon _ICON_FBW_OFF{ "controls/fbw-25-off.png" };
             static inline Icon _ICON_FBW_ON{ "controls/fbw-25-on.png" };
             static inline Icon _ICON_FBW_DISABLED{ "controls/fbw-25-disabled.png" };
@@ -631,6 +654,9 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Default Constructor. */
+            _CtrlTarget() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlTarget() noexcept = default;
 
@@ -639,7 +665,7 @@ export namespace avt::gui::views
             void draw(avt::ImageType& image) noexcept;
 
 
-        protected:
+            //--- Class Attributes   ----------------------------------------
             static inline Icon _ICON_OFF{ "controls/target-off.png" };
             static inline Icon _ICON_ON{ "controls/target-on.png" };
             static inline Icon _ICON_DISABLED{ "controls/target-disabled.png" };
@@ -678,6 +704,9 @@ export namespace avt::gui::views
                 m_create_labels();
             }
 
+            /** @brief Default Constructor. */
+            _CtrlTime() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlTime() noexcept = default;
 
@@ -686,7 +715,7 @@ export namespace avt::gui::views
             void draw(avt::ImageType& image) noexcept;
 
 
-        protected:
+            //--- Class Attributes   ----------------------------------------
             //static inline gui::items::Label duration_label;
             //static inline gui::items::Label time_label;
             static constexpr int _DURATION_TEXT_SIZE = 11;
@@ -726,6 +755,9 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Default Constructor. */
+            _CtrlTimer() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlTimer() noexcept = default;
 
@@ -734,7 +766,7 @@ export namespace avt::gui::views
             void draw(avt::ImageType& image) noexcept;
 
 
-        protected:
+            //--- Class Attributes   ----------------------------------------
             static inline Icon _ICON_OFF{ "controls/timer-off.png" };
             static inline Icon _ICON_ON{ "controls/timer-on.png" };
             static inline Icon _ICON_DISABLED{ "controls/timer-disabled.png" };
@@ -744,6 +776,17 @@ export namespace avt::gui::views
 
         //---   Attributes   ------------------------------------------------
         std::vector<_CtrlCamera> m_cameras_ctrls;
+        std::vector<_CtrlBase>   m_controls_list;
+        _CtrlDelay               m_delay_ctrl;
+        _CtrlExit                m_exit_ctrl;
+        _CtrlLines               m_lines_ctrl;
+        _CtrlMatch               m_match_ctrl;
+        _CtrlOverlays            m_overlays_ctrl;
+        _CtrlRecord              m_record_ctrl;
+        _CtrlReplay              m_replay_ctrl;
+        _CtrlTarget              m_target_ctrl;
+        _CtrlTime                m_time_ctrl;
+        _CtrlTimer               m_timer_ctrl;
 
     };
 

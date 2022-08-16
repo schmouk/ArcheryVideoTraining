@@ -163,10 +163,10 @@ namespace avt::gui::fonts
         template<typename X, typename Y>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
         inline void draw_text(const std::string& text,
-            avt::ImageType& image,
-            const X            x,
-            const Y            y,
-            const bool         b_shadow = false) noexcept
+                              avt::ImageType&    image,
+                              const X            x,
+                              const Y            y,
+                              const bool         b_shadow) noexcept
         {
             draw_text(text, image, avt::utils::Coords2D{ x, y }, b_shadow);
         }
@@ -184,12 +184,12 @@ namespace avt::gui::fonts
         *   The absolute (x, y) position of the text in the specified view.
         * @arg b_shadow: bool
         *   Set  this  to  true to get a shadowing of the text,  or set it to
-        *   false otherwise. Defaults to true.
+        *   false otherwise.
         */
         void draw_text(const std::string&          text,
                        avt::ImageType&             image,
                        const avt::utils::Coords2D& pos,
-                       const bool                  b_shadow = false) noexcept;
+                       const bool                  b_shadow) noexcept;
 
         /** @brief Draws specified text with this font (1 2D-container for position).
         *
@@ -204,14 +204,14 @@ namespace avt::gui::fonts
         *   The absolute (x, y) position of the text in the specified view.
         * @arg b_shadow: bool
         *   Set  this  to  true to get a shadowing of the text,  or set it to
-        *   false otherwise. Defaults to true.
+        *   false otherwise.
         */
         template<typename P>
             requires avt::is_pair_type_v<P>
         inline void draw_text(const std::string& text,
                               avt::ImageType&    image,
                               const P&           pos,
-                              const bool         b_shadow = false) noexcept
+                              const bool         b_shadow) noexcept
         {
             draw_text(text, image, avt::utils::Coords2D{ pos[0], pos[1] }, b_shadow);
         }

@@ -56,7 +56,7 @@ namespace avt::devices::cameras
             if (camera.is_ok()) {
                 if (!console_window.empty()) {
                     avt::config::AVTConsoleFont.draw_text(std::format("testing connection of camera #{}: ok ", camera.get_id()),
-                                                          (avt::ImageType&)console_window, x, y);
+                                                          (avt::ImageType&)console_window, x, y, false);
                     cv::imshow("AVT console", console_window);
                     cv::waitKey(1);
                 }
@@ -65,7 +65,7 @@ namespace avt::devices::cameras
             else {
                 if (!console_window.empty()) {
                     avt::config::AVTConsoleFont.draw_text(std::format("camera #{} not connected or not found", camera.get_id()),
-                                                          (avt::ImageType&)console_window, x, y);
+                                                          (avt::ImageType&)console_window, x, y, false);
                     cv::imshow("AVT console", console_window);
                     cv::waitKey(1);
                     std::this_thread::sleep_for(std::chrono::milliseconds(1250));

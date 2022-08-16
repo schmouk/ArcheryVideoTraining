@@ -117,6 +117,12 @@ export namespace avt::gui::items
         }
 
 
+        //---   Casting Operations   ----------------------------------------
+        inline operator avt::ImageType() noexcept
+        {
+            return content;
+        }
+
         //---   Accessors   -------------------------------------------------
         /** @brief Returns the height of this picture. */
         inline const int height() const noexcept

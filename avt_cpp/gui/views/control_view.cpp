@@ -77,64 +77,79 @@ namespace avt::gui::views
     /** Internally creates all the controls that are embedded in this Control View. */
     void ControlView::m_create_controls(const CamerasPool& cameras_pool) noexcept
     {
-        int y = 15 + ICON_PADDING;
+        int y = 15 + ControlView::ICON_PADDING;
 
+        // Cameras controls
         m_cameras_ctrls.clear();
+
         for (Camera camera : cameras_pool) {
-            m_cameras_ctrls.push_back(_CtrlCamera(camera, ControlView::CENTER, y + ControlView::ICON_HEIGHT * camera.cam_id));
+            m_cameras_ctrls.push_back(
+                ControlView::_CtrlCamera(camera,
+                                         ControlView::CENTER,
+                                         y + ControlView::ICON_HEIGHT * camera.cam_id)
+            );
         }
-        /*** /
-        y = 15 + self.ICON_PADDING
 
-        self.cameras_ctrls = [ self._CtrlCamera(camera,
-                                                None,
-                                                y + self.ICON_HEIGHT*camera.cam_id) for camera in cameras_pool ]
-        for cam_id in range( len(cameras_pool), AVTConfig.CAMERAS_MAX_COUNT ):
-            self.cameras_ctrls.append( self._CtrlCamera( NullCamera( cam_id ),
-                                                         None,
-                                                         y + self.ICON_HEIGHT*cam_id ) )
+        for (int cam_id = int(m_cameras_ctrls.size()); cam_id < avt::config::CAMERAS_MAX_COUNT; ++cam_id) {
+            avt::devices::cameras::NullCamera null_cam{ cam_id };
+            m_cameras_ctrls.push_back(
+                ControlView::_CtrlCamera(null_cam,
+                                         ControlView::CENTER,
+                                         y + ControlView::ICON_HEIGHT * cam_id)
+            );
+        }
+        
+        for (auto cam_ctrl : m_cameras_ctrls)
+            m_controls_list.push_back(cam_ctrl);
 
-        y += AVTConfig.CAMERAS_MAX_COUNT * self.ICON_HEIGHT + 6
-        self.target_ctrl = self._CtrlTarget( 5, y, False, False )
+        // Targets control
+        y += avt::config::CAMERAS_MAX_COUNT * ControlView::ICON_HEIGHT + 6;
+        m_target_ctrl = ControlView::_CtrlTarget(5, y, false, false);
+        m_controls_list.push_back(m_target_ctrl);
 
-        y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
-        self.lines_ctrl = self._CtrlLines( 5, y, False, False )
+        // Lines controls
+        y += 2 * ControlView::ICON_PADDING + ControlView::ICON_HEIGHT;
+        m_lines_ctrl = ControlView::_CtrlLines(5, y, false, false);
+        m_controls_list.push_back(m_lines_ctrl);
 
-        y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
-        self.delay_ctrl = self._CtrlDelay( 5, y , False, False )
+        // Delay control
+        y += 2 * ControlView::ICON_PADDING + ControlView::ICON_HEIGHT;
+        m_delay_ctrl = ControlView::_CtrlDelay(5, y, false, false);
+        m_controls_list.push_back(m_delay_ctrl);
 
-        y += self.ICON_PADDING * 2 + self.ICON_HEIGHT
-        self.record_ctrl= self._CtrlRecord( 5, y, False, False )
+        // Record controls
+        y += ControlView::ICON_PADDING * 2 + ControlView::ICON_HEIGHT;
+        m_record_ctrl = ControlView::_CtrlRecord(5, y, false, false);
+        m_controls_list.push_back(m_record_ctrl);
 
-        y += self.ICON_PADDING + self.ICON_HEIGHT
-        self.replay_ctrl = self._CtrlReplay(5, y, False, False )
+        // Replay controls
+        y += ControlView::ICON_PADDING + ControlView::ICON_HEIGHT;
+        m_replay_ctrl = ControlView::_CtrlReplay(5, y, false, false);
+        m_controls_list.push_back(m_replay_ctrl);
 
-        y += 2 * self.ICON_PADDING + self.ICON_HEIGHT + 20
-        self.overlays_ctrl = self._CtrlOverlays( 5, y, False, False )
+        // Overlays control
+        y += 2 * ControlView::ICON_PADDING + ControlView::ICON_HEIGHT + 20;
+        m_overlays_ctrl = ControlView::_CtrlOverlays(5, y, false, false);
+        m_controls_list.push_back(m_overlays_ctrl);
 
-        y += (self.overlays_ctrl._SIZE - self.ICON_HEIGHT) + self.ICON_PADDING + self.ICON_HEIGHT
-        self.timer_ctrl = self._CtrlTimer( 5, y, False, False )
+        // Timer control
+        y += (ControlView::_CtrlOverlays::_SIZE - ControlView::ICON_HEIGHT) + ControlView::ICON_PADDING + ControlView::ICON_HEIGHT;
+        m_timer_ctrl = ControlView::_CtrlTimer(5, y, false, false);
+        m_controls_list.push_back(m_timer_ctrl);
 
-        y += self.ICON_PADDING + self.ICON_HEIGHT
-        self.match_ctrl = self._CtrlMatch( 5, y, False, False )
+        // Match control
+        y += ControlView::ICON_PADDING + ControlView::ICON_HEIGHT;
+        m_match_ctrl = ControlView::_CtrlMatch(5, y, false, false);
+        m_controls_list.push_back(m_match_ctrl);
 
-        y += 2 * self.ICON_PADDING + self.ICON_HEIGHT
-        self.time_ctrl = self._CtrlTime( 5, y )
+        // Time controls
+        y += 2 * ControlView::ICON_PADDING + ControlView::ICON_HEIGHT;
+        m_time_ctrl = ControlView::_CtrlTime(5, y);
+        m_controls_list.push_back(m_time_ctrl);
 
-        self.exit_ctrl = self._CtrlExit( self.width, self.height )
-
-        self.controls_list = [ *self.cameras_ctrls,
-                                self.target_ctrl  ,
-                                self.delay_ctrl   ,
-                                self.record_ctrl  ,
-                                self.replay_ctrl  ,
-                                self.overlays_ctrl,
-                                self.lines_ctrl   ,
-                                self.timer_ctrl   ,
-                                self.match_ctrl   ,
-                                self.time_ctrl    ,
-                                self.exit_ctrl      ]
-        /***/
+        // Exit control
+        m_exit_ctrl = ControlView::_CtrlExit(ControlView::width(), ControlView::height());
+        m_controls_list.push_back(m_exit_ctrl);
     }
 
     /** @brief Draws lines on this view borders. */
@@ -194,29 +209,36 @@ namespace avt::gui::views
     /** Draws a control in its embedding content - Camera Controls. */
     void ControlView::_CtrlCamera::draw(avt::ImageType& image) noexcept
     {
-        try {
-            /*** /
-                if self.camera.is_ok():
-                    if self.is_on:
-                        img = self._ICON_ON
-                        font = self._FONT_ON
-                        x_id = ControlView.WIDTH // 2 - 5
-                    else:
-                        img = self._ICON_OFF
-                        font = self._FONT_OFF
-                        x_id = ControlView.WIDTH // 2 - 9
-                else:
-                    img = self._ICON_DISABLED
-                    font = self._FONT_NOT_OK
-                    x_id = ControlView.WIDTH // 2 - 9
+        avt::ImageType img;
+        Font           font;
+        int            x_id;
 
-                view.content[ self.y:self.y+self._HEIGHT,
-                              self.x:self.x+self._WIDTH , : ] = img[ :, :, : ]
-                font.draw_text( view,
-                                Point(x_id, self.y + self._HEIGHT//2 + font.size//2),
-                                str(self.camera.get_id()),
-                                b_shadow=self.camera.is_ok() )
-            /***/
+        try {
+            if (camera.is_ok()) {
+                if (is_on) {
+                    img = ControlView::_CtrlCamera::ICON_ON;
+                    font = ControlView::_CtrlCamera::FONT_ON;
+                    x_id = ControlView::WIDTH / 2 - 5;
+                }
+                else {
+                    img = ControlView::_CtrlCamera::ICON_OFF;
+                    font = ControlView::_CtrlCamera::FONT_OFF;
+                    x_id = ControlView::WIDTH / 2 - 9;
+                }
+            }
+            else {
+                img = ControlView::_CtrlCamera::ICON_DISABLED;
+                font = ControlView::_CtrlCamera::FONT_NOT_OK;
+                x_id = ControlView::WIDTH / 2 - 9;
+            }
+
+            img.copyTo(image(cv::Range(y, y + ControlView::_CtrlCamera::HEIGHT),
+                             cv::Range(x, x + ControlView::_CtrlCamera::WIDTH)));
+            font.draw_text(std::format("{:d}", camera.get_id()),
+                           image,
+                           x_id,
+                           y + (ControlView::_CtrlCamera::HEIGHT + font.size) / 2,
+                           camera.is_ok());
         }
         catch (...) {}
     }
