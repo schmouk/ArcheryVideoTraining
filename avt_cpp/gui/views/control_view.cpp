@@ -34,11 +34,13 @@ module;
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
 
+#include "devices/cameras/camera.h"
 #include "utils/types.h"
 
 
 module gui.views.control_view;
 
+import devices.cameras.cameras_pool;
 import avt.config;
 import utils.coords2d;
 import gui.items.cursor;
@@ -52,14 +54,15 @@ import gui.views.view;
 namespace avt::gui::views
 {
     /** Value Constructor. */
-    ControlView::ControlView(ViewType* p_parent_view) noexcept(false) //, const avt::cameras::CamerasPool& cameras_pool) noexcept(false)
+    ControlView::ControlView(ViewType* p_parent_view, const CamerasPool& cameras_pool) noexcept(false)
         : ViewType{ p_parent_view,
                     0, p_parent_view->width() - WIDTH, // i.e. position in main window
                     WIDTH, p_parent_view->height() },  // i.e. size of this view in main window
           ThreadType{ "controls-thrd", 1000 }
     {
-        m_create_controls();  //(cameras_pool);
+        m_create_controls(cameras_pool);
     }
+
 
     /** @brief Draws this view content within the parent window. */
     void ControlView::draw() noexcept
@@ -72,8 +75,14 @@ namespace avt::gui::views
 
 
     /** Internally creates all the controls that are embedded in this Control View. */
-    void ControlView::m_create_controls() noexcept  // (const avt::cameras::CamerasPool& cameras_pool) noexcept
+    void ControlView::m_create_controls(const CamerasPool& cameras_pool) noexcept
     {
+        int y = 15 + ICON_PADDING;
+
+        m_cameras_ctrls.clear();
+        for (Camera camera : cameras_pool) {
+            m_cameras_ctrls.push_back(_CtrlCamera(camera, ControlView::CENTER, y + ControlView::ICON_HEIGHT * camera.cam_id));
+        }
         /*** /
         y = 15 + self.ICON_PADDING
 

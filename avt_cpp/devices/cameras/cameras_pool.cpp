@@ -52,19 +52,19 @@ namespace avt::devices::cameras
 
         for (int camera_index = 0; camera_index < avt::config::CAMERAS_MAX_COUNT; ++camera_index) {
 
-            avt::devices::cameras::Camera* p_camera = new avt::devices::cameras::Camera{ camera_index };
-            if (p_camera->is_ok()) {
+            avt::devices::cameras::Camera camera{ camera_index };
+            if (camera.is_ok()) {
                 if (!console_window.empty()) {
-                    avt::config::AVTConsoleFont.draw_text(std::format("testing connection of camera #{}: ok ", p_camera->get_id()),
+                    avt::config::AVTConsoleFont.draw_text(std::format("testing connection of camera #{}: ok ", camera.get_id()),
                                                           (avt::ImageType&)console_window, x, y);
                     cv::imshow("AVT console", console_window);
                     cv::waitKey(1);
                 }
-                push_back(p_camera);
+                push_back(camera);
             }
             else {
                 if (!console_window.empty()) {
-                    avt::config::AVTConsoleFont.draw_text(std::format("camera #{} not connected or not found", p_camera->get_id()),
+                    avt::config::AVTConsoleFont.draw_text(std::format("camera #{} not connected or not found", camera.get_id()),
                                                           (avt::ImageType&)console_window, x, y);
                     cv::imshow("AVT console", console_window);
                     cv::waitKey(1);

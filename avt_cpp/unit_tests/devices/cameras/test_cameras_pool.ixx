@@ -54,8 +54,8 @@ namespace avt::unit_tests::devices::cameras
 
 
         while (true) {
-            for (auto p_cam: cameras_pool)
-                cv::imshow(std::format("camera #{}", p_cam->get_id()), p_cam->read());
+            for (auto cam: cameras_pool)
+                cv::imshow(std::format("camera #{}", cam.get_id()), cam.read());
 
             if (cv::waitKey(1) == 27)
                 break;
