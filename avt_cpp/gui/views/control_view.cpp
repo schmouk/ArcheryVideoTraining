@@ -133,7 +133,7 @@ namespace avt::gui::views
         m_controls_list.push_back(m_overlays_ctrl);
 
         // Timer control
-        y += (ControlView::_CtrlOverlays::_SIZE - ControlView::ICON_HEIGHT) + ControlView::ICON_PADDING + ControlView::ICON_HEIGHT;
+        y += (ControlView::_CtrlOverlays::SIZE - ControlView::ICON_HEIGHT) + ControlView::ICON_PADDING + ControlView::ICON_HEIGHT;
         m_timer_ctrl = ControlView::_CtrlTimer(5, y, false, false);
         m_controls_list.push_back(m_timer_ctrl);
 
@@ -198,9 +198,9 @@ namespace avt::gui::views
         avt::gui::fonts::Font font;
         try {
             if (enabled)
-                font = active ? _FONT_ACTIVE : _FONT_ENABLED;
+                font = active ? FONT_ACTIVE : FONT_ENABLED;
             else
-                font = _FONT_DISABLED;
+                font = FONT_DISABLED;
             font.draw_text(typeid(*this).name(), image, text_pos, false);
         }
         catch(...) {}
@@ -321,16 +321,16 @@ namespace avt::gui::views
         x_       = x + 13;
         y_       = y + ControlView::ICON_HEIGHT / 2;
         start_pt = { x_, y_ };
-        end_pt   = { x_ + _LINE_LENGTH, y_ };
-        cv::line(image, start_pt + diagonal_offset, end_pt + diagonal_offset, color / 2, _LINE_THICKNESS, cv::LINE_AA);
-        cv::line(image, start_pt, end_pt, color, _LINE_THICKNESS, cv::LINE_AA);
+        end_pt   = { x_ + LINE_LENGTH, y_ };
+        cv::line(image, start_pt + diagonal_offset, end_pt + diagonal_offset, color / 2, LINE_THICKNESS, cv::LINE_AA);
+        cv::line(image, start_pt, end_pt, color, LINE_THICKNESS, cv::LINE_AA);
 
-        x_       = (ControlView::WIDTH + x_ + _LINE_LENGTH) / 2;
-        y_       = (y + ControlView::ICON_HEIGHT - _LINE_LENGTH) / 2;
+        x_       = (ControlView::WIDTH + x_ + LINE_LENGTH) / 2;
+        y_       = (y + ControlView::ICON_HEIGHT - LINE_LENGTH) / 2;
         start_pt = { x_, y_ };
-        end_pt   = { x_ + _LINE_LENGTH, y_ };
-        cv::line(image, start_pt + diagonal_offset, end_pt + diagonal_offset, color / 2, _LINE_THICKNESS, cv::LINE_AA);
-        cv::line(image, start_pt, end_pt, color, _LINE_THICKNESS, cv::LINE_AA);
+        end_pt   = { x_ + LINE_LENGTH, y_ };
+        cv::line(image, start_pt + diagonal_offset, end_pt + diagonal_offset, color / 2, LINE_THICKNESS, cv::LINE_AA);
+        cv::line(image, start_pt, end_pt, color, LINE_THICKNESS, cv::LINE_AA);
     }
 
     /** Draws a control in its embedding content - Match Control. */

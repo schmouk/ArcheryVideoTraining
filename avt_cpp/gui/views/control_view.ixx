@@ -160,7 +160,7 @@ export namespace avt::gui::views
                   enabled{ enabled_ },
                   active{ active_ }
             {
-                text_pos = avt::utils::Coords2D(x_, y_ + ControlView::ICON_HEIGHT + _FONT_SIZE);
+                text_pos = avt::utils::Coords2D(x_, y_ + ControlView::ICON_HEIGHT + FONT_SIZE);
             }
 
             /** @brief Value Constructor (1 position). */
@@ -170,7 +170,7 @@ export namespace avt::gui::views
                   enabled{ enabled_ },
                   active{ active_ }
             {
-                text_pos = avt::utils::Coords2D(pos.x, pos.y + ControlView::ICON_HEIGHT + _FONT_SIZE);
+                text_pos = avt::utils::Coords2D(pos.x, pos.y + ControlView::ICON_HEIGHT + FONT_SIZE);
             }
 
             /** @brief Value Constructor (1 2D-container position). */
@@ -182,7 +182,7 @@ export namespace avt::gui::views
                   enabled{ enabled_ },
                   active{ active_ }
             {
-                text_pos = avt::utils::Coords2D(pos[0], pos[1] + ControlView::ICON_HEIGHT + _FONT_SIZE);
+                text_pos = avt::utils::Coords2D(pos[0], pos[1] + ControlView::ICON_HEIGHT + FONT_SIZE);
             }
 
             /** @brief Default Constructor. */
@@ -207,10 +207,10 @@ export namespace avt::gui::views
 
 
             //--- Class Attributes   ----------------------------------------
-            static constexpr int  _FONT_SIZE = 14;
-            static inline Font    _FONT_ACTIVE{ _FONT_SIZE, RGBColor::YELLOW };
-            static inline Font    _FONT_DISABLED{ _FONT_SIZE, RGBColor::DEEP_GRAY };
-            static inline Font    _FONT_ENABLED{ _FONT_SIZE, RGBColor::LIGHT_GRAY };
+            static constexpr int  FONT_SIZE = 14;
+            static inline Font    FONT_ACTIVE{ FONT_SIZE, RGBColor::YELLOW };
+            static inline Font    FONT_DISABLED{ FONT_SIZE, RGBColor::DEEP_GRAY };
+            static inline Font    FONT_ENABLED{ FONT_SIZE, RGBColor::LIGHT_GRAY };
         };
 
         //===================================================================
@@ -327,12 +327,12 @@ export namespace avt::gui::views
 
 
             //--- Class Attributes   ----------------------------------------
-            static inline Icon   _ICON_OFF{ "controls/delay-off.png" };
-            static inline Icon   _ICON_ON{ "controls/delay-on.png" };
-            static inline Icon   _ICON_DISABLED{ "controls/delay-disabled.png" };
-            static inline int    _SIZE = _ICON_ON.width();
-            static constexpr int _TICKS_FONT_SIZE = 8;
-            static inline Font   _TICKS_FONT_ENABLED{ _TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
+            static inline Icon   ICON_OFF{ "controls/delay-off.png" };
+            static inline Icon   ICON_ON{ "controls/delay-on.png" };
+            static inline Icon   ICON_DISABLED{ "controls/delay-disabled.png" };
+            static inline int    SIZE = ICON_ON.width();
+            static constexpr int TICKS_FONT_SIZE = 8;
+            static inline Font   TICKS_FONT_ENABLED{ TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
 
 
         private:
@@ -362,7 +362,7 @@ export namespace avt::gui::views
 
 
             //--- Class Attributes   ----------------------------------------
-            static inline Icon _ICON_EXIT{ "controls/exit-48.png" };
+            static inline Icon ICON_EXIT{ "controls/exit-48.png" };
         };
 
         //===================================================================
@@ -403,8 +403,8 @@ export namespace avt::gui::views
 
 
             //--- Class Attributes   ----------------------------------------
-            static constexpr int _LINE_LENGTH    = 35;
-            static constexpr int _LINE_THICKNESS =  7;
+            static constexpr int LINE_LENGTH    = 35;
+            static constexpr int LINE_THICKNESS =  7;
         };
 
         //===================================================================
@@ -445,10 +445,10 @@ export namespace avt::gui::views
 
 
             //--- Class Attributes   ----------------------------------------
-            static inline Icon _ICON_OFF{ "controls/match-off.png" };
-            static inline Icon _ICON_ON{ "controls/match-on.png" };
-            static inline Icon _ICON_DISABLED{ "controls/match-disabled.png" };
-            static inline int _SIZE = _ICON_ON.width();
+            static inline Icon ICON_OFF{ "controls/match-off.png" };
+            static inline Icon ICON_ON{ "controls/match-on.png" };
+            static inline Icon ICON_DISABLED{ "controls/match-disabled.png" };
+            static inline int  SIZE = ICON_ON.width();
         };
 
         //===================================================================
@@ -489,10 +489,10 @@ export namespace avt::gui::views
 
 
             //--- Class Attributes   ----------------------------------------
-            static inline Icon _ICON_OFF{ "controls/overlays-off.png" };
-            static inline Icon _ICON_ON{ "controls/overlays-on.png" };
-            static inline Icon _ICON_DISABLED{ "controls/overlays-disabled.png" };
-            static inline int  _SIZE = _ICON_ON.width();
+            static inline Icon ICON_OFF{ "controls/overlays-off.png" };
+            static inline Icon ICON_ON{ "controls/overlays-on.png" };
+            static inline Icon ICON_DISABLED{ "controls/overlays-disabled.png" };
+            static inline int  SIZE = ICON_ON.width();
         };
 
         //===================================================================
@@ -542,20 +542,20 @@ export namespace avt::gui::views
 
 
             //--- Class Attributes   ----------------------------------------
-            static inline Icon   _ICON_OFF{ "controls/record-off.png" };
-            static inline Icon   _ICON_ON{ "controls/record-on.png" };
-            static inline Icon   _ICON_DISABLED{ "controls/record-disabled.png" };
-            static inline int    _SIZE = _ICON_ON.width();
-            static constexpr int _FONT_3_SIZE = 8;
-            static constexpr int _FONT_2_SIZE = 11;
-            static inline Font   _FONT_3_DISABLED   { _FONT_3_SIZE, RGBColor::GRAY };
-            static inline Font   _FONT_3_OFF        { _FONT_3_SIZE, RGBColor::LIGHT_GRAY };
-            static inline Font   _FONT_3_ON         { _FONT_3_SIZE, RGBColor::YELLOW };
-            static inline Font   _FONT_2_DISABLED   { _FONT_2_SIZE, RGBColor::GRAY };
-            static inline Font   _FONT_2_OFF        { _FONT_2_SIZE, RGBColor::LIGHT_GRAY };
-            static inline Font   _FONT_2_ON         { _FONT_2_SIZE, RGBColor::YELLOW };
-            static constexpr int _TICKS_FONT_SIZE = 8;
-            static inline Font   _TICKS_FONT_ENABLED{ _TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
+            static inline Icon   ICON_OFF{ "controls/record-off.png" };
+            static inline Icon   ICON_ON{ "controls/record-on.png" };
+            static inline Icon   ICON_DISABLED{ "controls/record-disabled.png" };
+            static inline int    SIZE = ICON_ON.width();
+            static constexpr int FONT_3_SIZE = 8;
+            static constexpr int FONT_2_SIZE = 11;
+            static inline Font   FONT_3_DISABLED   { FONT_3_SIZE, RGBColor::GRAY };
+            static inline Font   FONT_3_OFF        { FONT_3_SIZE, RGBColor::LIGHT_GRAY };
+            static inline Font   FONT_3_ON         { FONT_3_SIZE, RGBColor::YELLOW };
+            static inline Font   FONT_2_DISABLED   { FONT_2_SIZE, RGBColor::GRAY };
+            static inline Font   FONT_2_OFF        { FONT_2_SIZE, RGBColor::LIGHT_GRAY };
+            static inline Font   FONT_2_ON         { FONT_2_SIZE, RGBColor::YELLOW };
+            static constexpr int TICKS_FONT_SIZE = 8;
+            static inline Font   TICKS_FONT_ENABLED{ TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
 
 
         private:
@@ -601,31 +601,31 @@ export namespace avt::gui::views
 
 
             //--- Class Attributes   ----------------------------------------
-            static inline Icon _ICON_FBW_OFF{ "controls/fbw-25-off.png" };
-            static inline Icon _ICON_FBW_ON{ "controls/fbw-25-on.png" };
-            static inline Icon _ICON_FBW_DISABLED{ "controls/fbw-25-disabled.png" };
+            static inline Icon ICON_FBW_OFF{ "controls/fbw-25-off.png" };
+            static inline Icon ICON_FBW_ON{ "controls/fbw-25-on.png" };
+            static inline Icon ICON_FBW_DISABLED{ "controls/fbw-25-disabled.png" };
 
-            static inline Icon _ICON_FFW_OFF{ "controls/ffw-25-off.png" };
-            static inline Icon _ICON_FFW_ON{ "controls/ffw-25-on.png" };
-            static inline Icon _ICON_FFW_DISABLED{ "controls/ffw-25-disabled.png" };
+            static inline Icon ICON_FFW_OFF{ "controls/ffw-25-off.png" };
+            static inline Icon ICON_FFW_ON{ "controls/ffw-25-on.png" };
+            static inline Icon ICON_FFW_DISABLED{ "controls/ffw-25-disabled.png" };
 
-            static inline Icon _ICON_PAUSE_OFF{ "controls/pause-25-off.png" };
-            static inline Icon _ICON_PAUSE_ON{ "controls/pause-25-on.png" };
-            static inline Icon _ICON_PAUSE_DISABLED{ "controls/pause-25-disabled.png" };
+            static inline Icon ICON_PAUSE_OFF{ "controls/pause-25-off.png" };
+            static inline Icon ICON_PAUSE_ON{ "controls/pause-25-on.png" };
+            static inline Icon ICON_PAUSE_DISABLED{ "controls/pause-25-disabled.png" };
 
-            static inline Icon _ICON_PLAY_OFF{ "controls/play-25-off.png" };
-            static inline Icon _ICON_PLAY_ON{ "controls/play-25-on.png" };
-            static inline Icon _ICON_PLAY_DISABLED{ "controls/play-25-disabled.png" };
+            static inline Icon ICON_PLAY_OFF{ "controls/play-25-off.png" };
+            static inline Icon ICON_PLAY_ON{ "controls/play-25-on.png" };
+            static inline Icon ICON_PLAY_DISABLED{ "controls/play-25-disabled.png" };
 
-            static inline Icon _ICON_STEP_BW_OFF{ "controls/step-bw-25-off.png" };
-            static inline Icon _ICON_STEP_BW_ON{ "controls/step-bw-25-on.png" };
-            static inline Icon _ICON_STEP_BW_DISABLED{ "controls/step-bw-25-disabled.png" };
+            static inline Icon ICON_STEP_BW_OFF{ "controls/step-bw-25-off.png" };
+            static inline Icon ICON_STEP_BW_ON{ "controls/step-bw-25-on.png" };
+            static inline Icon ICON_STEP_BW_DISABLED{ "controls/step-bw-25-disabled.png" };
 
-            static inline Icon _ICON_STEP_FW_OFF{ "controls/step-fw-25-off.png" };
-            static inline Icon _ICON_STEP_FW_ON{ "controls/step-fw-25-on.png" };
-            static inline Icon _ICON_STEP_FW_DISABLED{ "controls/step-fw-25-disabled.png" };
+            static inline Icon ICON_STEP_FW_OFF{ "controls/step-fw-25-off.png" };
+            static inline Icon ICON_STEP_FW_ON{ "controls/step-fw-25-on.png" };
+            static inline Icon ICON_STEP_FW_DISABLED{ "controls/step-fw-25-disabled.png" };
 
-            static inline int _SIZE = 25; //_ICON_PLAY_ON.rows;
+            static inline int SIZE = 25; //_ICON_PLAY_ON.rows;
         };
 
         //===================================================================
@@ -666,10 +666,10 @@ export namespace avt::gui::views
 
 
             //--- Class Attributes   ----------------------------------------
-            static inline Icon _ICON_OFF{ "controls/target-off.png" };
-            static inline Icon _ICON_ON{ "controls/target-on.png" };
-            static inline Icon _ICON_DISABLED{ "controls/target-disabled.png" };
-            static inline int  _SIZE = _ICON_ON.width();
+            static inline Icon ICON_OFF{ "controls/target-off.png" };
+            static inline Icon ICON_ON{ "controls/target-on.png" };
+            static inline Icon ICON_DISABLED{ "controls/target-disabled.png" };
+            static inline int  SIZE = ICON_ON.width();
         };
 
         //===================================================================
@@ -718,10 +718,10 @@ export namespace avt::gui::views
             //--- Class Attributes   ----------------------------------------
             //static inline gui::items::Label duration_label;
             //static inline gui::items::Label time_label;
-            static constexpr int _DURATION_TEXT_SIZE = 11;
-            static constexpr int _PADDING            = 11;
-            static constexpr int _TIME_TEXT_SIZE     = 15;
-            static constexpr int _FULL_HEIGHT        = _TIME_TEXT_SIZE + _PADDING + _DURATION_TEXT_SIZE;
+            static constexpr int DURATION_TEXT_SIZE = 11;
+            static constexpr int PADDING            = 11;
+            static constexpr int TIME_TEXT_SIZE     = 15;
+            static constexpr int FULL_HEIGHT        = TIME_TEXT_SIZE + PADDING + DURATION_TEXT_SIZE;
 
 
         private:
@@ -767,10 +767,10 @@ export namespace avt::gui::views
 
 
             //--- Class Attributes   ----------------------------------------
-            static inline Icon _ICON_OFF{ "controls/timer-off.png" };
-            static inline Icon _ICON_ON{ "controls/timer-on.png" };
-            static inline Icon _ICON_DISABLED{ "controls/timer-disabled.png" };
-            static inline int  _SIZE = _ICON_ON.width();
+            static inline Icon ICON_OFF{ "controls/timer-off.png" };
+            static inline Icon ICON_ON{ "controls/timer-on.png" };
+            static inline Icon ICON_DISABLED{ "controls/timer-disabled.png" };
+            static inline int  SIZE = ICON_ON.width();
         };
 
 
