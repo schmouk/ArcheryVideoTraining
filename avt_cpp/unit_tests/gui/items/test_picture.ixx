@@ -50,17 +50,17 @@ export namespace avt::unit_tests::gui::items
     {
         std::cout << "-- TEST avt::gui::items::Picture\n";
 
-        avt::ImageType test_image( 200, 300, avt::utils::RGBColor::ANTHRACITE );
+        avt::ImageType test_image( 200, 300, avt::utils::RGBColor::ANTHRACITE);
         cv::imshow("AVT-test-picture", test_image);
         cv::waitKey(0);
 
         avt::gui::items::Picture icon{ "controls/delay-on.png" };
-        icon.draw(20, 10, test_image);
+        icon.draw(test_image, 20, 10);
         cv::imshow("AVT-test-picture", test_image);
         cv::waitKey(0);
 
         icon.load("controls/timer-on.png");
-        icon.draw({ 200.5f, 150.9f }, test_image);
+        icon.draw(test_image, { 200.5f, 150.9f });
         cv::imshow("AVT-test-picture", test_image);
         cv::waitKey(0);
 

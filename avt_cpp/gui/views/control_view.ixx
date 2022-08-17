@@ -35,6 +35,7 @@ module;
 #include <opencv2/highgui.hpp>
 
 #include "devices/cameras/camera.h"
+#include "gui/items/icon.h"
 #include "utils/types.h"
 
 
@@ -196,7 +197,7 @@ export namespace avt::gui::views
             *
             * This method SHOULD BE overwritten in inheriting classes.
             */
-            virtual void draw(avt::ImageType& image) noexcept;
+            virtual void draw(avt::ImageType& view_image) noexcept;
 
             //--- Attributes ------------------------------------------------
             avt::utils::Coords2D text_pos;  //!< Position of text associated with this control
@@ -256,7 +257,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            virtual void draw(avt::ImageType& image) noexcept;
+            virtual void draw(avt::ImageType& view_image) noexcept;
 
             //--- Other operations ------------------------------------------
             inline void toggle_switch() noexcept
@@ -320,7 +321,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            virtual void draw(avt::ImageType& image) noexcept;
+            virtual void draw(avt::ImageType& view_image) noexcept;
 
             //--- Attributes ------------------------------------------------
             //avt::gui::items::Slider slider;
@@ -358,11 +359,15 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
             static inline Icon ICON_EXIT{ "controls/exit-48.png" };
+            static inline int WIDTH  = ICON_EXIT.width();
+            static inline int HEIGHT = ICON_EXIT.height();
+            int x;
+            int y;
         };
 
         //===================================================================
@@ -399,7 +404,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -441,7 +446,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -485,7 +490,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -535,7 +540,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
             //--- Attributes ------------------------------------------------
             //FloatSlider slider{};
@@ -545,7 +550,7 @@ export namespace avt::gui::views
             static inline Icon   ICON_OFF{ "controls/record-off.png" };
             static inline Icon   ICON_ON{ "controls/record-on.png" };
             static inline Icon   ICON_DISABLED{ "controls/record-disabled.png" };
-            static inline int    SIZE = ICON_ON.width();
+            static inline int    ICON_SIZE = ICON_ON.width();
             static constexpr int FONT_3_SIZE = 8;
             static constexpr int FONT_2_SIZE = 11;
             static inline Font   FONT_3_DISABLED   { FONT_3_SIZE, RGBColor::GRAY };
@@ -597,7 +602,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -662,7 +667,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -712,7 +717,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -763,7 +768,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
