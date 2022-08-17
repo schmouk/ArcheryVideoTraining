@@ -86,27 +86,35 @@ export namespace avt::gui::items
         };
 
 
+        //---   Assignments   -----------------------------------------------
+        /** @brief Default Copy assignment. */
+        Picture& operator= (const Picture&) noexcept = default;
+
+        /** @brief Default Move assignment. */
+        Picture& operator = (Picture&&) noexcept = default;
+
+
         //---   Operations   ------------------------------------------------
         /** @brief Draws this picture into an Image (2 scalar coordinates). */
         template<typename X, typename Y>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
-        inline void draw(const X x, const Y y, avt::ImageType& image) noexcept
+        inline void draw(avt::ImageType& image, const X x, const Y y) noexcept
         {
             content.copyTo(cv::Mat3b(image, cv::Rect{ x, y, width(), height() }));
         }
 
         /** @brief Draws this picture into an Image (1 2D-coords position). */
-        inline void draw(const avt::utils::Coords2D pos, avt::ImageType& image) noexcept
+        inline void draw(avt::ImageType& image, const avt::utils::Coords2D pos) noexcept
         {
-            draw(pos.x, pos.y, image);
+            draw(image, pos.x, pos.y);
         }
 
         /** @brief Draws this picture into an Image (1 pair/container as position). */
         template<typename P>
             requires avt::is_pair_type_v<P>
-        inline void draw(const P& pos, avt::ImageType& image) noexcept
+        inline void draw(avt::ImageType& image, const P& pos) noexcept
         {
-            draw(pos[0], pos[1], image);
+            draw(image, pos[0], pos[1]);
         }
 
         /** @brief Loads this picture from file. */
@@ -140,10 +148,5 @@ export namespace avt::gui::items
         //---   Attributes   ------------------------------------------------
         avt::ImageType content{};  //!< the content of this picture.
     };
-
-
-    //=======================================================================
-    /** @brief The class of Icons. */
-    using Icon = Picture;
 
 }

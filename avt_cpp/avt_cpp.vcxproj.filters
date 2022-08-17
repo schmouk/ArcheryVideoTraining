@@ -236,5 +236,8 @@
     <ClInclude Include="devices\cameras\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="gui\items\icon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

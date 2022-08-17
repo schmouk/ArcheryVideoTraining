@@ -231,6 +231,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="devices\cameras\camera.h" />
+    <ClInclude Include="gui\items\icon.h" />
     <ClInclude Include="utils\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
