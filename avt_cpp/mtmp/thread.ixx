@@ -23,7 +23,7 @@ module;
 
 #include <atomic>
 #include <exception>
-#include <cstring>
+#include <string>
 #include <thread>
 
 #include <windows.h>
