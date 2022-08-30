@@ -210,6 +210,12 @@
     <ClCompile Include="unit_tests\gui\items\test_picture.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gui\items\target.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\items\target.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

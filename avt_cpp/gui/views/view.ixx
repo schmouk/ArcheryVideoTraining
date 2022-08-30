@@ -58,8 +58,8 @@ export namespace avt::gui::views
     public:
         //---   Wrappers   --------------------------------------------------
         using MyBaseType = avt::ImageType;        //!< wrapper to the base class
-        using PosType = avt::utils::Coords2D;  //!< wrapper to the Coords2D class
-        using SizeType = avt::utils::Size;      //!< wrapper to the Size class
+        using PosType    = avt::utils::Coords2D;  //!< wrapper to the Coords2D class
+        using SizeType   = avt::utils::Size;      //!< wrapper to the Size class
 
 
         //---   Constructors / Destructors   --------------------------------
@@ -67,12 +67,13 @@ export namespace avt::gui::views
         template<typename X, typename Y, typename H, typename W>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y> && std::is_arithmetic_v<H> && std::is_arithmetic_v<W>
         inline View(View* p_parent_view,
-                    const X x,
-                    const Y y,
-                    const W width,
-                    const H height,
-                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+            const X x,
+            const Y y,
+            const W width,
+            const H height,
+            const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(height, width, (cv::Vec3b)bg_color),
+              bg_color{ bg_color },
               p_parent_view(p_parent_view),
               pos(x, y)
         {}
@@ -83,6 +84,7 @@ export namespace avt::gui::views
                     const avt::utils::Size& size,
                     const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(size.height, size.width, (cv::Vec3b)bg_color),
+              bg_color{ bg_color },
               p_parent_view(p_parent_view),
               pos(top_left)
         {}
@@ -92,6 +94,7 @@ export namespace avt::gui::views
                     const avt::CVRect& rect,
                     const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(rect.height, rect.width, (cv::Vec3b)bg_color),
+              bg_color{ bg_color },
               p_parent_view(p_parent_view),
               pos(rect.tl())
         {}
@@ -103,6 +106,7 @@ export namespace avt::gui::views
                     const H height,
                     const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(height, width, (cv::Vec3b)bg_color),
+              bg_color{ bg_color },
               p_parent_view(nullptr),
               pos(0, 0)
         {}
@@ -111,6 +115,7 @@ export namespace avt::gui::views
         inline View(const avt::utils::Size& size,
                     const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(size.height, size.width, (cv::Vec3b)bg_color),
+              bg_color{ bg_color },
               p_parent_view(nullptr),
               pos(0, 0)
         {}
@@ -137,6 +142,12 @@ export namespace avt::gui::views
 
 
         //---   Operations   ------------------------------------------------
+        /** @brief Fills this view background with its background color. */
+        inline void clear() noexcept
+        {
+            cv::rectangle(*this, cv::Rect(0, 0, width(), height()), cv::Vec3b(bg_color), cv::FILLED);
+        }
+
         /** @brief Draws this view into the specified image.
         *
         * Caution: this is not thread safe.
@@ -264,8 +275,9 @@ export namespace avt::gui::views
 
 
         //---   Attributes   ------------------------------------------------
-        PosType pos;            //!< the position in the parent view of this view's top-left corner 
-        View* p_parent_view;  //!< a pointer to this view's parent view
+        RGBColor bg_color;       //!< the background color for this view.
+        PosType  pos;            //!< the position in the parent view of this view's top-left corner 
+        View*    p_parent_view;  //!< a pointer to this view's parent view
 
 
     private:
