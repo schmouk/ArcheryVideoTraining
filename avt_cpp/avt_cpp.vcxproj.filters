@@ -36,10 +36,10 @@
     <ClCompile Include="unit_tests\utils\test_size.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="devices\display_monitor.ixx">
+    <ClCompile Include="devices\displays\display_monitor.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="devices\monitors_list.ixx">
+    <ClCompile Include="devices\displays\monitors_list.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="mtmp\thread.ixx">
@@ -180,10 +180,7 @@
     <ClCompile Include="gui\fonts\font.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="devices\display_monitor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="devices\monitors_list.cpp">
+    <ClCompile Include="devices\displays\display_monitor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gui\views\view.cpp">
@@ -216,9 +213,27 @@
     <ClCompile Include="gui\items\target.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="devices\cameras\camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\devices\cameras\test_camera.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\cameras\cameras_pool.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="devices\cameras\cameras_pool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="unit_tests\devices\cameras\test_cameras_pool.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="devices\cameras\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -64,7 +64,7 @@ namespace avt::gui::fonts
         if (b_italic_)
             cv_font |= cv::FONT_ITALIC;
         set_color(color_);
-        set_size(size);
+        set_size(size_);
     }
 
     /** Value Constructor with specified color and background color. */
@@ -88,14 +88,14 @@ namespace avt::gui::fonts
         if (b_italic_)
             cv_font |= cv::FONT_ITALIC;
         set_color(color_);
-        set_size(size);
+        set_size(size_);
     }
 
     /** Draws specified text with this font. */
     void Font::draw_text(const std::string&          text,
                          avt::ImageType&             image,
                          const avt::utils::Coords2D& pos,
-                         const bool                  b_shadow)
+                         const bool                  b_shadow) noexcept
     {
         if (b_force_bgcolor) {
             // let's put text over a background solid color

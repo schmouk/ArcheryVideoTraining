@@ -30,7 +30,6 @@ module;
 export module gui.shapes.shape;
 
 import utils.coords2d;
-import video.frame;
 import utils.rgba_color;
 import utils;
 
@@ -104,7 +103,7 @@ export namespace avt::gui::shapes
         * In this base class, no drawing takes place. This
         * method MUST BE overriden in inheriting classes.
         */
-        virtual inline void draw(avt::video::Frame&)
+        virtual inline void draw(avt::ImageType&)
         {}
 
 

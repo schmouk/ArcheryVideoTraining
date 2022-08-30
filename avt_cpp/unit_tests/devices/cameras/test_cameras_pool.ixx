@@ -24,35 +24,43 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <cstdlib>
+#include <cassert>
+#include <format>
+#include <iostream>
 
-#include <windows.h>
+#include <opencv2/highgui.hpp>
+#include <opencv2/core/mat.hpp>
 
+#include "devices/cameras/camera.h"
+#include "utils/types.h"
 
-module devices.monitors_list;
+export module unit_tests.devices.cameras.test_cameras_pool;
 
-import devices.display_monitor;
+import devices.cameras.cameras_pool;
+import utils.rgb_color;
 
 
 //===========================================================================
-namespace avt::devices
+namespace avt::unit_tests::devices::cameras
 {
-    /** @brief the internal initialization callback. */
-    BOOL CALLBACK MonitorsList::m_init_callback(HMONITOR monitor_handle, HDC dc_handle, LPRECT monitor_display_rect, LPARAM params)
+    //=======================================================================
+    export void test_cameras_pool()
     {
-        MonitorsList* monitors = reinterpret_cast<MonitorsList*>(params);
+        std::cout << "-- TEST avt::devices::cameras::Camera\n";
 
-        monitors->push_back(
-            DisplayMonitor(
-                monitor_handle,
-                dc_handle,
-                monitor_display_rect->left,
-                monitor_display_rect->top,
-                std::abs(monitor_display_rect->right - monitor_display_rect->left),
-                std::abs(monitor_display_rect->bottom - monitor_display_rect->top)
-            )
-        );
+        
+        avt::ImageType console( 400, 600, (cv::Vec3b)avt::utils::RGBColor::DEEP_GRAY );
+        avt::devices::cameras::CamerasPool cameras_pool(console);
 
-        return true;
+
+        while (true) {
+            for (auto p_cam: cameras_pool)
+                cv::imshow(std::format("camera #{}", p_cam->get_id()), p_cam->read());
+
+            if (cv::waitKey(1) == 27)
+                break;
+        }
+
+        std::cout << "   All tests OK\n\n";
     }
 }

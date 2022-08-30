@@ -40,7 +40,7 @@ import utils;
 export namespace avt::utils
 {
     //=======================================================================
-    using SizeValueType = unsigned short;  //!< wrapper to the type of dimensions
+    using SizeValueType = avt::DimsType;  //!< wrapper to the type of dimensions
 
 
     //=======================================================================
