@@ -147,6 +147,15 @@ export namespace avt::gui::views
         {
             cv::rectangle(*this, cv::Rect(0, 0, width(), height()), cv::Vec3b(bg_color), cv::FILLED);
         }
+        
+        /** @brief Draws this view into the parent view.
+        *
+        * Caution: this is not thread safe.
+        */
+        inline void draw() noexcept
+        {
+            draw(*p_parent_view);
+        }
 
         /** @brief Draws this view into the specified image.
         *

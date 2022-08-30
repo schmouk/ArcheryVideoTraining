@@ -29,16 +29,20 @@ module;
 #include <cstring>
 #include <exception>
 #include <format>
+#include <vector>
 
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/highgui.hpp>
 
+#include "devices/cameras/camera.h"
+#include "gui/items/icon.h"
 #include "utils/types.h"
 
 
 export module gui.views.control_view;
 
 import gui.fonts.bold_font;
+import devices.cameras.cameras_pool;
 import avt.config;
 import utils.coords2d;
 import gui.items.cursor;
@@ -56,16 +60,18 @@ export namespace avt::gui::views
     //=======================================================================
     /** @brief The class of Control Views.
     *
-    * Control views are the views within which all graphical control items
-    * are displayed for the controlling of application AVT.
+    * Control views are the views within which all graphical control
+    * items are displayed for the controlling of application AVT.
     */
     class ControlView : public avt::gui::views::View, public avt::mtmp::Timer
     {
     private:
-        using BoldFont = avt::gui::fonts::BoldFont; //!< internal wrapper to the class of bolded fonts.
-        using Font     = avt::gui::fonts::Font;     //!< internal wrapper to the class of fonts.
-        using Icon     = avt::gui::items::Icon;     //!< internal wrapper to the class of Icons.
-        using RGBColor = avt::utils::RGBColor;      //!< internal wrapper to the class of colors.
+        using BoldFont    = avt::gui::fonts::BoldFont;
+        using Camera      = avt::devices::cameras::Camera;
+        using CamerasPool = avt::devices::cameras::CamerasPool;
+        using Font        = avt::gui::fonts::Font;
+        using Icon        = avt::gui::items::Icon;
+        using RGBColor    = avt::utils::RGBColor;
 
 
     public:
@@ -75,6 +81,7 @@ export namespace avt::gui::views
 
 
         //---   Configuration constants   -----------------------------------
+        static constexpr int CENTER       = -1;
         static constexpr int ICON_HEIGHT  = 40;
         static constexpr int ICON_PADDING = ICON_HEIGHT / 2;
         static constexpr int WIDTH        = 96;
@@ -82,7 +89,7 @@ export namespace avt::gui::views
 
         //---   Constructors / Destructors   --------------------------------
         /** @brief Value Constructor. */
-        ControlView(ViewType* p_parent_view) noexcept(false);  //, const avt::cameras::CamerasPool& cameras_pool) noexcept(false);
+        ControlView(ViewType* p_parent_view, const CamerasPool& cameras_pool) noexcept(false);
 
         /** @brief Deleted Copy constructor. */
         ControlView(const ControlView&) = delete;
@@ -103,9 +110,9 @@ export namespace avt::gui::views
 
 
         //---   Exceptions   ------------------------------------------------
-        class NullParentException
+        class NullParentException : public std::exception
         {
-            const char* what()
+            const char* what() noexcept
             {
                 return "!!! ERROR: The Control View is not attached to any parent window.";
             }
@@ -123,16 +130,16 @@ export namespace avt::gui::views
         }
 
 
-
     private:
         /** @brief Internally creates all the controls that are embedded in this Control View. */
-        void m_create_controls() noexcept;  // (const avt::cameras::CamerasPool& cameras_pool) noexcept;
+        void m_create_controls(const CamerasPool& cameras_pool) noexcept;
 
         /** @brief Draws lines on this view borders. */
         void m_draw_borders() noexcept;
 
         /** @brief Draws all controls in this control view. */
         void m_draw_controls() noexcept;
+
 
         //===================================================================
         //---   Base class for all controls types   -------------------------
@@ -148,26 +155,38 @@ export namespace avt::gui::views
             /** @brief Value Constructor (2 coordinates). */
             template<typename X, typename Y>
                 requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y>
-            _CtrlBase(const X x_, const Y y_, const bool enabled_ = true, const bool active_ = false) noexcept
+            inline _CtrlBase(const X x_, const Y y_, const bool enabled_ = true, const bool active_ = false) noexcept
                 : x{ avt::utils::clamp_s(x_) },
                   y{ avt::utils::clamp_s(y_) },
                   enabled{ enabled_ },
                   active{ active_ }
             {
-                text_pos = avt::utils::Coords2D(x_, y_ + ControlView::ICON_HEIGHT + _FONT_SIZE);
+                text_pos = avt::utils::Coords2D(x_, y_ + ControlView::ICON_HEIGHT + FONT_SIZE);
             }
 
             /** @brief Value Constructor (1 position). */
-            _CtrlBase(const avt::utils::Coords2D& pos, const bool enabled_ = true, const bool active_ = false) noexcept
+            inline _CtrlBase(const avt::utils::Coords2D& pos, const bool enabled_ = true, const bool active_ = false) noexcept
                 : x{ pos.x },
                   y{ pos.y },
                   enabled{ enabled_ },
                   active{ active_ }
             {
-                text_pos = avt::utils::Coords2D(pos.x, pos.y + ControlView::ICON_HEIGHT + _FONT_SIZE);
+                text_pos = avt::utils::Coords2D(pos.x, pos.y + ControlView::ICON_HEIGHT + FONT_SIZE);
             }
 
-            /** @brief Default Empty Constructor. */
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlBase(const P& pos, const bool enabled_ = true, const bool active_ = false) noexcept
+                : x{ pos[0] },
+                  y{ pos[1]},
+                  enabled{ enabled_ },
+                  active{ active_ }
+            {
+                text_pos = avt::utils::Coords2D(pos[0], pos[1] + ControlView::ICON_HEIGHT + FONT_SIZE);
+            }
+
+            /** @brief Default Constructor. */
             _CtrlBase() noexcept = default;
 
             /** @brief Default Destructor. */
@@ -178,7 +197,7 @@ export namespace avt::gui::views
             *
             * This method SHOULD BE overwritten in inheriting classes.
             */
-            virtual void draw(avt::ImageType& image) noexcept;
+            virtual void draw(avt::ImageType& view_image) noexcept;
 
             //--- Attributes ------------------------------------------------
             avt::utils::Coords2D text_pos;  //!< Position of text associated with this control
@@ -188,12 +207,11 @@ export namespace avt::gui::views
             bool active;                    //!< true if this control is currently active, or false otherwise
 
 
-        protected:
-            //--- Constants -------------------------------------------------
-            static constexpr int  _FONT_SIZE = 14;
-            static inline Font    _FONT_ACTIVE{ _FONT_SIZE, RGBColor::YELLOW };
-            static inline Font    _FONT_DISABLED{ _FONT_SIZE, RGBColor::DEEP_GRAY };
-            static inline Font    _FONT_ENABLED{ _FONT_SIZE, RGBColor::LIGHT_GRAY };
+            //--- Class Attributes   ----------------------------------------
+            static constexpr int  FONT_SIZE = 14;
+            static inline Font    FONT_ACTIVE{ FONT_SIZE, RGBColor::YELLOW };
+            static inline Font    FONT_DISABLED{ FONT_SIZE, RGBColor::DEEP_GRAY };
+            static inline Font    FONT_ENABLED{ FONT_SIZE, RGBColor::LIGHT_GRAY };
         };
 
         //===================================================================
@@ -206,27 +224,40 @@ export namespace avt::gui::views
             /** @brief Value Constructor (2 coordinates). */
             template<typename X, typename Y>
                 requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
-            _CtrlCamera( /*avt::cameras::Camera& camera, */const X x, const Y y)
-                : //camera{ camera },
-                  _CtrlBase{ x, y }
+            inline _CtrlCamera( Camera& camera, const X x, const Y y) noexcept
+                : camera{ camera },
+                  _CtrlBase(x != ControlView::CENTER ? x : (ControlView::WIDTH - _CtrlCamera::WIDTH) / 2, y)
             {
-                //is_on = camera.is_ok();
+                is_on = camera.is_ok();
             }
 
             /** @brief Value Constructor (1 position). */
-            _CtrlCamera( /*avt::cameras::Camera& camera, */const avt::utils::Coords2D& pos)
-                : //camera{ camera },
+            inline _CtrlCamera( Camera& camera, const avt::utils::Coords2D& pos) noexcept
+                : camera{ camera },
                   _CtrlBase{ pos }
             {
-                //is_on = camera.is_ok();
+                is_on = camera.is_ok();
             }
+
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlCamera( Camera& camera, const P& pos) noexcept
+                : camera{ camera },
+                  _CtrlBase{ pos }
+            {
+                is_on = camera.is_ok();
+            }
+
+            /** @brief Default Constructor. */
+            _CtrlCamera() noexcept = default;
 
             /** @brief Default Destructor. */
             virtual ~_CtrlCamera() noexcept = default;
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            virtual void draw(avt::ImageType& image) noexcept;
+            virtual void draw(avt::ImageType& view_image) noexcept;
 
             //--- Other operations ------------------------------------------
             inline void toggle_switch() noexcept
@@ -235,19 +266,19 @@ export namespace avt::gui::views
             }
 
             //--- Attributes ------------------------------------------------
-            //avt::cameras::Camera camera;  //!< reference to the related camera
-            bool is_on{ true };               //!< true if this camera control-switch os ON, or false if it is OFF
+            Camera camera;         //!< reference to the related camera
+            bool   is_on{ true };  //!< true if this camera control-switch os ON, or false if it is OFF
 
 
-        protected:
-            static inline BoldFont _FONT_NOT_OK{ 13, RGBColor::ANTHRACITE };
-            static inline BoldFont _FONT_OFF{ 13, RGBColor::GRAY };
-            static inline BoldFont _FONT_ON{ 13, RGBColor::YELLOW };
-            static inline Icon     _ICON_OFF{ "controls/switch-off.png" };
-            static inline Icon     _ICON_ON{ "controls/switch-on.png" };
-            static inline Icon     _ICON_DISABLED{ "controls/switch-disabled.png" };
-            int WIDTH  = _ICON_ON.width();
-            int HEIGHT = _ICON_ON.height();
+            //--- Class Attributes   ----------------------------------------
+            static inline BoldFont FONT_NOT_OK{ 13, RGBColor::ANTHRACITE };
+            static inline BoldFont FONT_OFF{ 13, RGBColor::GRAY };
+            static inline BoldFont FONT_ON{ 13, RGBColor::YELLOW };
+            static inline Icon     ICON_OFF{ "controls/switch-off.png" };
+            static inline Icon     ICON_ON{ "controls/switch-on.png" };
+            static inline Icon     ICON_DISABLED{ "controls/switch-disabled.png" };
+            static inline int WIDTH  = ICON_ON.width();
+            static inline int HEIGHT = ICON_ON.height();
         };
 
         //===================================================================
@@ -273,24 +304,36 @@ export namespace avt::gui::views
                 m_create_slider(x, y);  // remember: x and y are base class attributes
             }
 
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlDelay( /*avt::cameras::Camera& camera, */const P& pos) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {
+                m_create_slider(x, y);  // remember: x and y are base class attributes
+            }
+
+            /** @brief Default Constructor. */
+            _CtrlDelay() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlDelay() noexcept = default;
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            virtual void draw(avt::ImageType& image) noexcept;
+            virtual void draw(avt::ImageType& view_image) noexcept;
 
             //--- Attributes ------------------------------------------------
             //avt::gui::items::Slider slider;
 
 
-        protected:
-            static inline Icon   _ICON_OFF{ "controls/delay-off.png" };
-            static inline Icon   _ICON_ON{ "controls/delay-on.png" };
-            static inline Icon   _ICON_DISABLED{ "controls/delay-disabled.png" };
-            int _SIZE = _ICON_ON.width();
-            static constexpr int _TICKS_FONT_SIZE = 8;
-            static inline Font   _TICKS_FONT_ENABLED{ _TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
+            //--- Class Attributes   ----------------------------------------
+            static inline Icon   ICON_OFF{ "controls/delay-off.png" };
+            static inline Icon   ICON_ON{ "controls/delay-on.png" };
+            static inline Icon   ICON_DISABLED{ "controls/delay-disabled.png" };
+            static inline int    SIZE = ICON_ON.width();
+            static constexpr int TICKS_FONT_SIZE = 8;
+            static inline Font   TICKS_FONT_ENABLED{ TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
 
 
         private:
@@ -308,17 +351,23 @@ export namespace avt::gui::views
             /** @brief Value Constructor. */
             _CtrlExit(const int view_width, const int view_height) noexcept;
 
+            /** @brief Default Constructor. */
+            _CtrlExit() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlExit() noexcept = default;
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
-        protected:
-            //static inline avt::Image _ICON_EXIT = cv2.imread( '../picts/controls/exit-48.png' );
-            static inline Icon _ICON_EXIT{ "controls/exit-48.png" };
+            //--- Class Attributes   ----------------------------------------
+            static inline Icon ICON_EXIT{ "controls/exit-48.png" };
+            static inline int WIDTH  = ICON_EXIT.width();
+            static inline int HEIGHT = ICON_EXIT.height();
+            int x;
+            int y;
         };
 
         //===================================================================
@@ -340,17 +389,27 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Value Constructor (1 2D-coordinates position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlLines(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            /** @brief Default Constructor. */
+            _CtrlLines() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlLines() noexcept = default;
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
-        protected:
-            static constexpr int _LINE_LENGTH = 35;
-            static constexpr int _LINE_THICKNESS = 7;
+            //--- Class Attributes   ----------------------------------------
+            static constexpr int LINE_LENGTH    = 35;
+            static constexpr int LINE_THICKNESS =  7;
         };
 
         //===================================================================
@@ -372,19 +431,29 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Value Constructor (1 2D-coordinates position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlMatch(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            /** @brief Default Constructor. */
+            _CtrlMatch() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlMatch() noexcept = default;
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
-        protected:
-            static inline Icon _ICON_OFF{ "controls/match-off.png" };
-            static inline Icon _ICON_ON{ "controls/match-on.png" };
-            static inline Icon _ICON_DISABLED{ "controls/match-disabled.png" };
-            int _SIZE = _ICON_ON.width();
+            //--- Class Attributes   ----------------------------------------
+            static inline Icon ICON_OFF{ "controls/match-off.png" };
+            static inline Icon ICON_ON{ "controls/match-on.png" };
+            static inline Icon ICON_DISABLED{ "controls/match-disabled.png" };
+            static inline int  SIZE = ICON_ON.width();
         };
 
         //===================================================================
@@ -406,19 +475,29 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlOverlays(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            /** @brief Default Constructor. */
+            _CtrlOverlays() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlOverlays() noexcept = default;
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
-        protected:
-            static inline Icon _ICON_OFF{ "controls/overlays-off.png" };
-            static inline Icon _ICON_ON{ "controls/overlays-on.png" };
-            static inline Icon _ICON_DISABLED{ "controls/overlays-disabled.png" };
-            int _SIZE = _ICON_ON.width();
+            //--- Class Attributes   ----------------------------------------
+            static inline Icon ICON_OFF{ "controls/overlays-off.png" };
+            static inline Icon ICON_ON{ "controls/overlays-on.png" };
+            static inline Icon ICON_DISABLED{ "controls/overlays-disabled.png" };
+            static inline int  SIZE = ICON_ON.width();
         };
 
         //===================================================================
@@ -444,32 +523,44 @@ export namespace avt::gui::views
                 m_create_slider();
             }
 
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlRecord(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {
+                m_create_slider();
+            }
+
+            /** @brief Default Constructor. */
+            _CtrlRecord() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlRecord() noexcept = default;
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
             //--- Attributes ------------------------------------------------
             //FloatSlider slider{};
 
 
-        protected:
-            static inline Icon   _ICON_OFF{ "controls/record-off.png" };
-            static inline Icon   _ICON_ON{ "controls/record-on.png" };
-            static inline Icon   _ICON_DISABLED{ "controls/record-disabled.png" };
-            int _SIZE = _ICON_ON.width();
-            static constexpr int _FONT_3_SIZE = 8;
-            static constexpr int _FONT_2_SIZE = 11;
-            static inline Font   _FONT_3_DISABLED   { _FONT_3_SIZE, RGBColor::GRAY };
-            static inline Font   _FONT_3_OFF        { _FONT_3_SIZE, RGBColor::LIGHT_GRAY };
-            static inline Font   _FONT_3_ON         { _FONT_3_SIZE, RGBColor::YELLOW };
-            static inline Font   _FONT_2_DISABLED   { _FONT_2_SIZE, RGBColor::GRAY };
-            static inline Font   _FONT_2_OFF        { _FONT_2_SIZE, RGBColor::LIGHT_GRAY };
-            static inline Font   _FONT_2_ON         { _FONT_2_SIZE, RGBColor::YELLOW };
-            static constexpr int _TICKS_FONT_SIZE = 8;
-            static inline Font   _TICKS_FONT_ENABLED{ _TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
+            //--- Class Attributes   ----------------------------------------
+            static inline Icon   ICON_OFF{ "controls/record-off.png" };
+            static inline Icon   ICON_ON{ "controls/record-on.png" };
+            static inline Icon   ICON_DISABLED{ "controls/record-disabled.png" };
+            static inline int    ICON_SIZE = ICON_ON.width();
+            static constexpr int FONT_3_SIZE = 8;
+            static constexpr int FONT_2_SIZE = 11;
+            static inline Font   FONT_3_DISABLED   { FONT_3_SIZE, RGBColor::GRAY };
+            static inline Font   FONT_3_OFF        { FONT_3_SIZE, RGBColor::LIGHT_GRAY };
+            static inline Font   FONT_3_ON         { FONT_3_SIZE, RGBColor::YELLOW };
+            static inline Font   FONT_2_DISABLED   { FONT_2_SIZE, RGBColor::GRAY };
+            static inline Font   FONT_2_OFF        { FONT_2_SIZE, RGBColor::LIGHT_GRAY };
+            static inline Font   FONT_2_ON         { FONT_2_SIZE, RGBColor::YELLOW };
+            static constexpr int TICKS_FONT_SIZE = 8;
+            static inline Font   TICKS_FONT_ENABLED{ TICKS_FONT_SIZE, RGBColor::YELLOW / 1.33 };
 
 
         private:
@@ -496,40 +587,50 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlReplay(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            /** @brief Default Constructor. */
+            _CtrlReplay() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlReplay() noexcept = default;
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
-        protected:
-            static inline Icon   _ICON_FBW_OFF{ "controls/fbw-25-off.png" };
-            static inline Icon   _ICON_FBW_ON{ "controls/fbw-25-on.png" };
-            static inline Icon   _ICON_FBW_DISABLED{ "controls/fbw-25-disabled.png" };
+            //--- Class Attributes   ----------------------------------------
+            static inline Icon ICON_FBW_OFF{ "controls/fbw-25-off.png" };
+            static inline Icon ICON_FBW_ON{ "controls/fbw-25-on.png" };
+            static inline Icon ICON_FBW_DISABLED{ "controls/fbw-25-disabled.png" };
 
-            static inline Icon   _ICON_FFW_OFF{ "controls/ffw-25-off.png" };
-            static inline Icon   _ICON_FFW_ON{ "controls/ffw-25-on.png" };
-            static inline Icon   _ICON_FFW_DISABLED{ "controls/ffw-25-disabled.png" };
+            static inline Icon ICON_FFW_OFF{ "controls/ffw-25-off.png" };
+            static inline Icon ICON_FFW_ON{ "controls/ffw-25-on.png" };
+            static inline Icon ICON_FFW_DISABLED{ "controls/ffw-25-disabled.png" };
 
-            static inline Icon   _ICON_PAUSE_OFF{ "controls/pause-25-off.png" };
-            static inline Icon   _ICON_PAUSE_ON{ "controls/pause-25-on.png" };
-            static inline Icon   _ICON_PAUSE_DISABLED{ "controls/pause-25-disabled.png" };
+            static inline Icon ICON_PAUSE_OFF{ "controls/pause-25-off.png" };
+            static inline Icon ICON_PAUSE_ON{ "controls/pause-25-on.png" };
+            static inline Icon ICON_PAUSE_DISABLED{ "controls/pause-25-disabled.png" };
 
-            static inline Icon   _ICON_PLAY_OFF{ "controls/play-25-off.png" };
-            static inline Icon   _ICON_PLAY_ON{ "controls/play-25-on.png" };
-            static inline Icon   _ICON_PLAY_DISABLED{ "controls/play-25-disabled.png" };
+            static inline Icon ICON_PLAY_OFF{ "controls/play-25-off.png" };
+            static inline Icon ICON_PLAY_ON{ "controls/play-25-on.png" };
+            static inline Icon ICON_PLAY_DISABLED{ "controls/play-25-disabled.png" };
 
-            static inline Icon   _ICON_STEP_BW_OFF{ "controls/step-bw-25-off.png" };
-            static inline Icon   _ICON_STEP_BW_ON{ "controls/step-bw-25-on.png" };
-            static inline Icon   _ICON_STEP_BW_DISABLED{ "controls/step-bw-25-disabled.png" };
+            static inline Icon ICON_STEP_BW_OFF{ "controls/step-bw-25-off.png" };
+            static inline Icon ICON_STEP_BW_ON{ "controls/step-bw-25-on.png" };
+            static inline Icon ICON_STEP_BW_DISABLED{ "controls/step-bw-25-disabled.png" };
 
-            static inline Icon   _ICON_STEP_FW_OFF{ "controls/step-fw-25-off.png" };
-            static inline Icon   _ICON_STEP_FW_ON{ "controls/step-fw-25-on.png" };
-            static inline Icon   _ICON_STEP_FW_DISABLED{ "controls/step-fw-25-disabled.png" };
+            static inline Icon ICON_STEP_FW_OFF{ "controls/step-fw-25-off.png" };
+            static inline Icon ICON_STEP_FW_ON{ "controls/step-fw-25-on.png" };
+            static inline Icon ICON_STEP_FW_DISABLED{ "controls/step-fw-25-disabled.png" };
 
-            static inline int _SIZE = 25; //_ICON_PLAY_ON.rows;
+            static inline int SIZE = 25; //_ICON_PLAY_ON.rows;
         };
 
         //===================================================================
@@ -551,19 +652,29 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlTarget(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            /** @brief Default Constructor. */
+            _CtrlTarget() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlTarget() noexcept = default;
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
-        protected:
-            static inline Icon   _ICON_OFF{ "controls/target-off.png" };
-            static inline Icon   _ICON_ON{ "controls/target-on.png" };
-            static inline Icon   _ICON_DISABLED{ "controls/target-disabled.png" };
-            int _SIZE = _ICON_ON.width();
+            //--- Class Attributes   ----------------------------------------
+            static inline Icon ICON_OFF{ "controls/target-off.png" };
+            static inline Icon ICON_ON{ "controls/target-on.png" };
+            static inline Icon ICON_DISABLED{ "controls/target-disabled.png" };
+            static inline int  SIZE = ICON_ON.width();
         };
 
         //===================================================================
@@ -589,21 +700,33 @@ export namespace avt::gui::views
                 m_create_labels();
             }
 
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlTime(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {
+                m_create_labels();
+            }
+
+            /** @brief Default Constructor. */
+            _CtrlTime() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlTime() noexcept = default;
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
-        protected:
+            //--- Class Attributes   ----------------------------------------
             //static inline gui::items::Label duration_label;
             //static inline gui::items::Label time_label;
-            static constexpr int _DURATION_TEXT_SIZE = 11;
-            static constexpr int _PADDING            = 11;
-            static constexpr int _TIME_TEXT_SIZE     = 15;
-            static constexpr int _FULL_HEIGHT        = _TIME_TEXT_SIZE + _PADDING + _DURATION_TEXT_SIZE;
+            static constexpr int DURATION_TEXT_SIZE = 11;
+            static constexpr int PADDING            = 11;
+            static constexpr int TIME_TEXT_SIZE     = 15;
+            static constexpr int FULL_HEIGHT        = TIME_TEXT_SIZE + PADDING + DURATION_TEXT_SIZE;
 
 
         private:
@@ -630,20 +753,45 @@ export namespace avt::gui::views
                 : _CtrlBase{ pos, enabled, active }
             {}
 
+            /** @brief Value Constructor (1 2D-container position). */
+            template<typename P>
+                requires avt::is_pair_type_v<P>
+            inline _CtrlTimer(const P& pos, const bool enabled = true, const bool active = false) noexcept
+                : _CtrlBase{ pos, enabled, active }
+            {}
+
+            /** @brief Default Constructor. */
+            _CtrlTimer() noexcept = default;
+
             /** @brief Default Destructor. */
             virtual ~_CtrlTimer() noexcept = default;
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& image) noexcept;
+            void draw(avt::ImageType& view_image) noexcept;
 
 
-        protected:
-            static inline Icon _ICON_OFF{ "controls/timer-off.png" };
-            static inline Icon _ICON_ON{ "controls/timer-on.png" };
-            static inline Icon _ICON_DISABLED{ "controls/timer-disabled.png" };
-            int _SIZE = _ICON_ON.width();
+            //--- Class Attributes   ----------------------------------------
+            static inline Icon ICON_OFF{ "controls/timer-off.png" };
+            static inline Icon ICON_ON{ "controls/timer-on.png" };
+            static inline Icon ICON_DISABLED{ "controls/timer-disabled.png" };
+            static inline int  SIZE = ICON_ON.width();
         };
+
+
+        //---   Attributes   ------------------------------------------------
+        std::vector<_CtrlCamera> m_cameras_ctrls;
+        std::vector<_CtrlBase>   m_controls_list;
+        _CtrlDelay               m_delay_ctrl;
+        _CtrlExit                m_exit_ctrl;
+        _CtrlLines               m_lines_ctrl;
+        _CtrlMatch               m_match_ctrl;
+        _CtrlOverlays            m_overlays_ctrl;
+        _CtrlRecord              m_record_ctrl;
+        _CtrlReplay              m_replay_ctrl;
+        _CtrlTarget              m_target_ctrl;
+        _CtrlTime                m_time_ctrl;
+        _CtrlTimer               m_timer_ctrl;
 
     };
 

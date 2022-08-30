@@ -136,11 +136,11 @@ namespace avt::devices::cameras
             set_frames_size(size[0], size[1]);
         }
 
-        /** @brief Deleted Copy constructor. */
-        Camera(const Camera&) noexcept = delete;
+        /** @brief Default Copy constructor. */
+        Camera(const Camera&) noexcept = default;
 
-        /** @brief Deleted Move constructor. */
-        Camera(Camera&&) noexcept = delete;
+        /** @brief Default Move constructor. */
+        Camera(Camera&&) noexcept = default;
 
         /** @brief Destructor. */
         inline virtual ~Camera() noexcept
@@ -150,11 +150,11 @@ namespace avt::devices::cameras
 
 
         //---   Assignments   -----------------------------------------------
-        /** @brief Deleted Copy assignment. */
-        Camera& operator= (const Camera&) noexcept = delete;
+        /** @brief Default Copy assignment. */
+        Camera& operator= (const Camera&) noexcept = default;
 
-        /** @brief Deleted Move assignment. */
-        Camera& operator= (Camera&&) noexcept = delete;
+        /** @brief Default Move assignment. */
+        Camera& operator= (Camera&&) noexcept = default;
 
 
         //---   Operations   -----------------------------------------------
