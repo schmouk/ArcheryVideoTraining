@@ -43,8 +43,8 @@ export namespace avt::config
     constexpr long        CAMERAS_MAX_COUNT = 4; //!< AVT will not manage more than this count of input cameras
     avt::utils::RGBColor  DEFAULT_BACKGROUND = avt::utils::RGBColor::ANTHRACITE; //!< default background is very dark
 
-    avt::gui::fonts::Font AVTConsoleFont = avt::gui::fonts::Font(13, avt::utils::RGBColor::YELLOW - 16); //!< small console font for AVT
-    avt::gui::fonts::Font AVTDefaultFont = avt::gui::fonts::BoldFont(20, avt::utils::RGBColor::YELLOW);  //!< default font for every AVT text duisplay
+    avt::gui::fonts::Font AVTConsoleFont = avt::gui::fonts::Font(11, avt::utils::RGBColor::YELLOW - 16); //!< small console font for AVT
+    avt::gui::fonts::Font AVTDefaultFont = avt::gui::fonts::BoldFont(20, avt::utils::RGBColor::YELLOW);  //!< default font for every AVT text display
 
     std::filesystem::path PICTURES_DIR{ "../picts" };
 }

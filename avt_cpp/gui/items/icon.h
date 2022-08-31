@@ -1,3 +1,4 @@
+#pragma once
 /*
 MIT License
 
@@ -9,6 +10,7 @@ in the Software without restriction,  including without limitation the  rights
 to use,  copy,  modify,  merge,  publish,  distribute, sublicense, and/or sell
 copies of the Software,  and  to  permit  persons  to  whom  the  Software  is
 furnished to do so, subject to the following conditions:
+
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -22,45 +24,14 @@ SOFTWARE.
 */
 
 //===========================================================================
-module;
-
-#include <cassert>
-#include <format>
-#include <iostream>
-
-#include <opencv2/highgui.hpp>
-#include <opencv2/core/mat.hpp>
-
-#include "devices/cameras/camera.h"
-#include "utils/types.h"
-
-export module unit_tests.devices.cameras.test_cameras_pool;
-
-import devices.cameras.cameras_pool;
-import utils.rgb_color;
+import gui.items.picture;
 
 
 //===========================================================================
-namespace avt::unit_tests::devices::cameras
+namespace avt::gui::items
 {
     //=======================================================================
-    export void test_cameras_pool()
-    {
-        std::cout << "-- TEST avt::devices::cameras::Camera\n";
+    /** @brief The class of Icons. */
+    using Icon = Picture;
 
-        
-        avt::ImageType console( 400, 600, (cv::Vec3b)avt::utils::RGBColor::DEEP_GRAY );
-        avt::devices::cameras::CamerasPool cameras_pool(console);
-
-
-        while (true) {
-            for (auto cam: cameras_pool)
-                cv::imshow(std::format("camera #{}", cam.get_id()), cam.read());
-
-            if (cv::waitKey(1) == 27)
-                break;
-        }
-
-        std::cout << "   All tests OK\n\n";
-    }
 }

@@ -228,12 +228,33 @@
     <ClCompile Include="unit_tests\devices\cameras\test_cameras_pool.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="gui\views\camera_view.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\views\camera_view.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\views\viewprop.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\views\viewprop.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\views\target_view.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\views\target_view.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="devices\cameras\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\items\icon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

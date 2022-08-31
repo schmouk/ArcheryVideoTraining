@@ -176,10 +176,16 @@
     <ClCompile Include="gui\items\picture.ixx" />
     <ClCompile Include="gui\items\target.cpp" />
     <ClCompile Include="gui\items\target.ixx" />
+    <ClCompile Include="gui\views\camera_view.cpp" />
+    <ClCompile Include="gui\views\camera_view.ixx" />
     <ClCompile Include="gui\views\control_view.cpp" />
     <ClCompile Include="gui\views\control_view.ixx" />
+    <ClCompile Include="gui\views\target_view.cpp" />
+    <ClCompile Include="gui\views\target_view.ixx" />
     <ClCompile Include="gui\views\view.cpp" />
     <ClCompile Include="gui\views\view.ixx" />
+    <ClCompile Include="gui\views\viewprop.cpp" />
+    <ClCompile Include="gui\views\viewprop.ixx" />
     <ClCompile Include="interactions\app_automaton.ixx" />
     <ClCompile Include="interactions\mouse_control.cpp" />
     <ClCompile Include="interactions\mouse_control.ixx" />
@@ -231,6 +237,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="devices\cameras\camera.h" />
+    <ClInclude Include="gui\items\icon.h" />
     <ClInclude Include="utils\types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

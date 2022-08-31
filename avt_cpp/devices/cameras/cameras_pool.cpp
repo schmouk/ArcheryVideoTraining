@@ -48,24 +48,24 @@ namespace avt::devices::cameras
 
         int x = 20;
         int y = 40;
-        int y_offset = 24;
+        int y_offset = avt::config::AVTConsoleFont.size + 9;
 
         for (int camera_index = 0; camera_index < avt::config::CAMERAS_MAX_COUNT; ++camera_index) {
 
-            avt::devices::cameras::Camera* p_camera = new avt::devices::cameras::Camera{ camera_index };
-            if (p_camera->is_ok()) {
+            avt::devices::cameras::Camera camera{ camera_index };
+            if (camera.is_ok()) {
                 if (!console_window.empty()) {
-                    avt::config::AVTConsoleFont.draw_text(std::format("testing connection of camera #{}: ok ", p_camera->get_id()),
-                                                          (avt::ImageType&)console_window, x, y);
+                    avt::config::AVTConsoleFont.draw_text(std::format("testing connection of camera #{}: ok ", camera.get_id()),
+                                                          (avt::ImageType&)console_window, x, y, false);
                     cv::imshow("AVT console", console_window);
                     cv::waitKey(1);
                 }
-                push_back(p_camera);
+                push_back(camera);
             }
             else {
                 if (!console_window.empty()) {
-                    avt::config::AVTConsoleFont.draw_text(std::format("camera #{} not connected or not found", p_camera->get_id()),
-                                                          (avt::ImageType&)console_window, x, y);
+                    avt::config::AVTConsoleFont.draw_text(std::format("camera #{} not connected or not found", camera.get_id()),
+                                                          (avt::ImageType&)console_window, x, y, false);
                     cv::imshow("AVT console", console_window);
                     cv::waitKey(1);
                     std::this_thread::sleep_for(std::chrono::milliseconds(1250));

@@ -33,6 +33,8 @@ module;
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/highgui.hpp>
 
+#include "utils/types.h"
+
 
 export module gui.avt_window;
 
@@ -197,6 +199,20 @@ export namespace avt::gui
         inline void set_title(const std::string& new_title) noexcept
         {
             cv::setWindowTitle(window_id, new_title);
+        }
+
+
+        //---   Accessors   -------------------------------------------------
+        /** @brief Returns the current height of this window. */
+        inline const avt::CoordsType height() const noexcept
+        {
+            return size.height;
+        }
+
+        /** @brief Returns the current width of this window. */
+        inline const avt::CoordsType width() const noexcept
+        {
+            return size.width;
         }
 
 

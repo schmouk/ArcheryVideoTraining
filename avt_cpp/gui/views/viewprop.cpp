@@ -9,6 +9,7 @@ in the Software without restriction,  including without limitation the  rights
 to use,  copy,  modify,  merge,  publish,  distribute, sublicense, and/or sell
 copies of the Software,  and  to  permit  persons  to  whom  the  Software  is
 furnished to do so, subject to the following conditions:
+
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
@@ -24,43 +25,42 @@ SOFTWARE.
 //===========================================================================
 module;
 
-#include <cassert>
 #include <format>
-#include <iostream>
+#include <stdexcept>
 
-#include <opencv2/highgui.hpp>
-#include <opencv2/core/mat.hpp>
+#include <opencv2/core/types.hpp>
 
-#include "devices/cameras/camera.h"
-#include "utils/types.h"
 
-export module unit_tests.devices.cameras.test_cameras_pool;
+module gui.views.view_prop;
 
-import devices.cameras.cameras_pool;
+import avt.config;
 import utils.rgb_color;
+import gui.views.view;
 
 
 //===========================================================================
-namespace avt::unit_tests::devices::cameras
+namespace avt::gui::views
 {
-    //=======================================================================
-    export void test_cameras_pool()
+    ViewProp::ViewProp(const avt::gui::views::View& parent_view,
+                       const float                  x,
+                       const float                  y,
+                       const float                  width,
+                       const float                  height,
+                       const avt::utils::RGBColor&  bg_color) noexcept(false)
+        : parent_view{ parent_view },
+          prop_x{ x },
+          prop_y{ y },
+          prop_width{ width },
+          prop_height{ height },
+          bg_color{ bg_color }
     {
-        std::cout << "-- TEST avt::devices::cameras::Camera\n";
-
-        
-        avt::ImageType console( 400, 600, (cv::Vec3b)avt::utils::RGBColor::DEEP_GRAY );
-        avt::devices::cameras::CamerasPool cameras_pool(console);
-
-
-        while (true) {
-            for (auto cam: cameras_pool)
-                cv::imshow(std::format("camera #{}", cam.get_id()), cam.read());
-
-            if (cv::waitKey(1) == 27)
-                break;
-        }
-
-        std::cout << "   All tests OK\n\n";
+        if (x < 0.0 || x > 1.0)
+            throw std::invalid_argument(std::format(m_ERR_FORMAT, "x-position", x));
+        if (y < 0.0 || y > 1.0)
+            throw std::invalid_argument(std::format(m_ERR_FORMAT, "y-position", y));
+        if (width < 0.0 || width > 1.0)
+            throw std::invalid_argument(std::format(m_ERR_FORMAT, "width", width));
+        if (height < 0.0 || height > 1.0)
+            throw std::invalid_argument(std::format(m_ERR_FORMAT, "height", height));
     }
 }
