@@ -116,6 +116,13 @@ export namespace avt::gui::items
         avt::ImageType get_resized(const float ratio) noexcept(false);
 
 
+        /** @brief Returns true if the picture associated with this target is not empty. */
+        inline const bool is_ok() const noexcept
+        {
+            return !picture.empty();
+        }
+
+
         //---   Exceptions   ------------------------------------------------
         /** @brief Target picture cannot be loaded from file. */
         class TargetPictureLoadException : std::exception

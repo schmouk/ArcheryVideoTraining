@@ -180,6 +180,8 @@
     <ClCompile Include="gui\views\camera_view.ixx" />
     <ClCompile Include="gui\views\control_view.cpp" />
     <ClCompile Include="gui\views\control_view.ixx" />
+    <ClCompile Include="gui\views\target_view.cpp" />
+    <ClCompile Include="gui\views\target_view.ixx" />
     <ClCompile Include="gui\views\view.cpp" />
     <ClCompile Include="gui\views\view.ixx" />
     <ClCompile Include="gui\views\viewprop.cpp" />

@@ -163,6 +163,12 @@ export namespace avt::gui::views
         */
         void draw(avt::ImageType& image) noexcept;
 
+        /** @brief Fills the whole backgrounf of this view. */
+        inline void fill_background() noexcept
+        {
+            cv::rectangle(*this, cv::Rect(0, 0, width(), height()), bg_color, cv::FILLED);
+        }
+
         /** @brief Returns the absolute position of this view in the root View. */
         inline avt::utils::Coords2D get_absolute_pos() const noexcept
         {
