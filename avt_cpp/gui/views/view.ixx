@@ -67,11 +67,11 @@ export namespace avt::gui::views
         template<typename X, typename Y, typename H, typename W>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y> && std::is_arithmetic_v<H> && std::is_arithmetic_v<W>
         inline View(View* p_parent_view,
-            const X x,
-            const Y y,
-            const W width,
-            const H height,
-            const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+                    const X x,
+                    const Y y,
+                    const W width,
+                    const H height,
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(height, width, (cv::Vec3b)bg_color),
               bg_color{ bg_color },
               p_parent_view(p_parent_view),
@@ -145,7 +145,7 @@ export namespace avt::gui::views
         /** @brief Fills this view background with its background color. */
         inline void clear() noexcept
         {
-            cv::rectangle(*this, cv::Rect(0, 0, width(), height()), cv::Vec3b(bg_color), cv::FILLED);
+            cv::rectangle(*this, cv::Rect(0, 0, width(), height()), bg_color, cv::FILLED);
         }
         
         /** @brief Draws this view into the parent view.
@@ -162,6 +162,12 @@ export namespace avt::gui::views
         * Caution: this is not thread safe.
         */
         void draw(avt::ImageType& image) noexcept;
+
+        /** @brief Fills the whole backgrounf of this view. */
+        inline void fill_background() noexcept
+        {
+            cv::rectangle(*this, cv::Rect(0, 0, width(), height()), bg_color, cv::FILLED);
+        }
 
         /** @brief Returns the absolute position of this view in the root View. */
         inline avt::utils::Coords2D get_absolute_pos() const noexcept
