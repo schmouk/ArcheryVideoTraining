@@ -145,7 +145,7 @@ export namespace avt::gui::views
         /** @brief Fills this view background with its background color. */
         inline void clear() noexcept
         {
-            cv::rectangle(*this, cv::Rect(0, 0, width(), height()), cv::Vec3b(bg_color), cv::FILLED);
+            cv::rectangle(*this, cv::Rect(0, 0, width(), height()), bg_color, cv::FILLED);
         }
         
         /** @brief Draws this view into the parent view.
