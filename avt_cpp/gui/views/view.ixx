@@ -67,11 +67,11 @@ export namespace avt::gui::views
         template<typename X, typename Y, typename H, typename W>
             requires std::is_arithmetic_v<X> && std::is_arithmetic_v<Y> && std::is_arithmetic_v<H> && std::is_arithmetic_v<W>
         inline View(View* p_parent_view,
-            const X x,
-            const Y y,
-            const W width,
-            const H height,
-            const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
+                    const X x,
+                    const Y y,
+                    const W width,
+                    const H height,
+                    const RGBColor& bg_color = avt::config::DEFAULT_BACKGROUND) noexcept
             : MyBaseType(height, width, (cv::Vec3b)bg_color),
               bg_color{ bg_color },
               p_parent_view(p_parent_view),
