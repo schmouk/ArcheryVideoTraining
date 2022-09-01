@@ -234,16 +234,25 @@
     <ClCompile Include="gui\views\camera_view.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gui\views\viewprop.cpp">
+    <ClCompile Include="gui\views\view_prop.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gui\views\viewprop.ixx">
+    <ClCompile Include="gui\views\view_prop.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gui\views\target_view.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="gui\views\target_view.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\items\label.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\items\control_base.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\items\control_base.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -172,7 +172,10 @@
     <ClCompile Include="gui\fonts\font.cpp" />
     <ClCompile Include="gui\fonts\font.ixx" />
     <ClCompile Include="gui\fonts\italic_font.ixx" />
+    <ClCompile Include="gui\items\control_base.cpp" />
+    <ClCompile Include="gui\items\control_base.ixx" />
     <ClCompile Include="gui\items\cursor.ixx" />
+    <ClCompile Include="gui\items\label.ixx" />
     <ClCompile Include="gui\items\picture.ixx" />
     <ClCompile Include="gui\items\target.cpp" />
     <ClCompile Include="gui\items\target.ixx" />
@@ -184,8 +187,8 @@
     <ClCompile Include="gui\views\target_view.ixx" />
     <ClCompile Include="gui\views\view.cpp" />
     <ClCompile Include="gui\views\view.ixx" />
-    <ClCompile Include="gui\views\viewprop.cpp" />
-    <ClCompile Include="gui\views\viewprop.ixx" />
+    <ClCompile Include="gui\views\view_prop.cpp" />
+    <ClCompile Include="gui\views\view_prop.ixx" />
     <ClCompile Include="interactions\app_automaton.ixx" />
     <ClCompile Include="interactions\mouse_control.cpp" />
     <ClCompile Include="interactions\mouse_control.ixx" />
