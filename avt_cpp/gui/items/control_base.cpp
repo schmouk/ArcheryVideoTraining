@@ -28,7 +28,7 @@ module;
 #include "utils/types.h"
 
 
-module gui.views.control_base;
+module gui.items.control_base;
 
 
 import utils.coords2d;
@@ -40,15 +40,16 @@ import gui.views.view;
 namespace avt::gui::items
 {
     /** Value Constructor (x, y, width, height). */
-    ControlBase::ControlBase(const avt::CoordsType x,
-                             const avt::CoordsType y,
-                             const avt::DimsType   width,
-                             const avt::DimsType   height,
-                             const bool            b_visible,
-                             const bool            b_enabled,
-                             const bool            b_active) noexcept
-    
-        : pos(x, y),
+    ControlBase::ControlBase(const avt::gui::views::View& parent_view,
+                             const avt::CoordsType        x,
+                             const avt::CoordsType        y,
+                             const avt::DimsType          width,
+                             const avt::DimsType          height,
+                             const bool                   b_visible,
+                             const bool                   b_enabled,
+                             const bool                   b_active) noexcept
+        : parent_view{ parent_view },
+          pos(x, y),
           width{ width },
           height{ height },
           b_visible{ b_visible },
@@ -59,12 +60,14 @@ namespace avt::gui::items
 
 
     /** Value Constructor (pos, size). */
-    ControlBase::ControlBase(const avt::utils::Coords2D pos,
-                             const avt::utils::Size     size,
-                             const bool                 b_visible,
-                             const bool                 b_enabled,
-                             const bool                 b_active) noexcept
-        : pos{ pos },
+    ControlBase::ControlBase(const avt::gui::views::View& parent_view,
+                             const avt::utils::Coords2D&  pos,
+                             const avt::utils::Size&      size,
+                             const bool                   b_visible,
+                             const bool                   b_enabled,
+                             const bool                   b_active) noexcept
+        : parent_view{ parent_view },
+          pos{ pos },
           width{ size.width },
           height{ size.height },
           b_visible{ b_visible },
@@ -72,5 +75,20 @@ namespace avt::gui::items
           b_active{ b_active },
           b_refresh{ false }
     {}
+
+    /** Draws this control in the specified view (forced position). */
+    void ControlBase::draw(avt::gui::views::View& view,
+                           const int              x,
+                           const int              y,
+                           const bool             b_forced) noexcept
+    {
+        if (b_visible && (b_forced || b_refresh)) {
+            avt::utils::Coords2D mem_pos{ pos };
+            pos.move_at(x, y);
+            _draw(view);
+            pos = mem_pos;
+            b_refresh = false;
+        }
+    }
 
 }

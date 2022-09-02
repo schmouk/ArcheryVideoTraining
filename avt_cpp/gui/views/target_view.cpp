@@ -27,22 +27,10 @@ module;
 
 #include <filesystem>
 
-/*
-#include <algorithm>
-
-#include <opencv2/imgproc.hpp>
-#include <opencv2/core/mat.hpp>
-#include <opencv2/core/types.hpp>
-
-#include "utils/types.h"
-*/
 
 module gui.views.target_view;
 
-
 import avt.config;
-
-
 import utils.rgb_color;
 import gui.items.target;
 import gui.views.view;
@@ -57,7 +45,7 @@ namespace avt::gui::views
                            const float                  y,
                            const float                  width,
                            const float                  height,
-                           const avt::utils::RGBColor& bg_color) noexcept(false)
+                           const avt::utils::RGBColor&  bg_color) noexcept(false)
         : MyBaseClass(parent_view, x, y, width, height, bg_color),
           target{},
           simulated_dist{ 0.0f },

@@ -130,6 +130,14 @@ namespace avt::gui::fonts
             cv::LINE_AA);
     }
 
+    /** Returns the baseline (in pixels) associated with the specified text when drawn with this font. */
+    int Font::get_text_baseline(const std::string& text) noexcept
+    {
+        int baseline;
+        get_text_size(text, &baseline);
+        return baseline + thickness;
+    }
+
     /** Returns the width and height (in pixels) associated with the specified text when drawn with this font. */
     avt::utils::Size Font::get_text_size(const std::string& text, int* baseline) noexcept
     {
@@ -138,6 +146,19 @@ namespace avt::gui::fonts
         if (baseline != nullptr)
             *baseline = the_baseline + thickness;
         return avt::utils::Size(the_size);
+    }
+
+    /** Returns true if fonts are the same, or false otherwise. */
+    const bool Font::operator== (const avt::gui::fonts::Font& other) const noexcept
+    {
+        return color == other.color &&
+                bg_color == other.bg_color &&
+                font_scale == other.font_scale &&
+                size == other.size &&
+                thickness == other.thickness &&
+                cv_font == other.cv_font &&
+                b_bold == other.b_bold &&
+                b_italic == other.b_italic;
     }
 
 }

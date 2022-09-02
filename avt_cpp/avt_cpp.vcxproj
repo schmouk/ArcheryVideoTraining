@@ -175,6 +175,7 @@
     <ClCompile Include="gui\items\control_base.cpp" />
     <ClCompile Include="gui\items\control_base.ixx" />
     <ClCompile Include="gui\items\cursor.ixx" />
+    <ClCompile Include="gui\items\label.cpp" />
     <ClCompile Include="gui\items\label.ixx" />
     <ClCompile Include="gui\items\picture.ixx" />
     <ClCompile Include="gui\items\target.cpp" />

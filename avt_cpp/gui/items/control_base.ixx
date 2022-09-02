@@ -28,7 +28,7 @@ module;
 #include "utils/types.h"
 
 
-export module gui.views.control_base;
+export module gui.items.control_base;
 
 
 import utils.coords2d;
@@ -46,20 +46,22 @@ export namespace avt::gui::items
     public:
         //---   Constructors / Destructors   --------------------------------
         /** @brief Value Constructor (x, y, width, height). */
-        ControlBase(const avt::CoordsType x,
-                    const avt::CoordsType y,
-                    const avt::DimsType   width,
-                    const avt::DimsType   height,
-                    const bool            b_visible = true,
-                    const bool            b_enables = true,
-                    const bool            b_active  = true) noexcept;
+        ControlBase(const avt::gui::views::View& parent_view,
+                    const avt::CoordsType        x,
+                    const avt::CoordsType        y,
+                    const avt::DimsType          width     = 0,
+                    const avt::DimsType          height    = 0,
+                    const bool                   b_visible = true,
+                    const bool                   b_enables = true,
+                    const bool                   b_active  = true) noexcept;
 
         /** @brief Value Constructor (pos, size). */
-        ControlBase(const avt::utils::Coords2D pos,
-                    const avt::utils::Size     size,
-                    const bool                 b_visible = true,
-                    const bool                 b_enables = true,
-                    const bool                 b_active = true) noexcept;
+        ControlBase(const avt::gui::views::View& parent_view,
+                    const avt::utils::Coords2D&  pos,
+                    const avt::utils::Size&      size = avt::utils::Size{},
+                    const bool                   b_visible = true,
+                    const bool                   b_enables = true,
+                    const bool                   b_active  = true) noexcept;
 
         /** @brief Default Contructor. */
         ControlBase() noexcept = default;
@@ -113,12 +115,29 @@ export namespace avt::gui::items
             refresh();
         }
 
+        /** @brief Draws this control in the parent view.
+        *
+        * This method internally calls protected method '_draw()' which must
+        * be implemented in inheriting classes.
+        *
+        * @sa related method '_draw()'.
+        *
+        * @param b_forced: bool
+        *   Set this to True to get this control drawn whatever its  refresh
+        *   status is. Set it to false to get this control drawn only if its
+        *   refresh status is true. Defaults to false.
+        */
+        inline void draw(const bool b_forced = false) noexcept
+        {
+            draw(parent_view);
+        }
+
         /** @brief Draws this control in the specified view.
         * 
         * This method internally calls protected method '_draw()' which must 
         * be implemented in inheriting classes.
         * 
-        * See related method '_draw()'.
+        * @sa related method '_draw()'.
         * 
         * @param view: View
         *   A reference to the embedding view.
@@ -133,6 +152,92 @@ export namespace avt::gui::items
                 _draw(view);
                 b_refresh = false;
             }
+        }
+
+        /** @brief Draws this control in the parent view (forced position).
+        *
+        * The position set at contruction time is not modified.
+        *
+        * @sa related method '_draw()'.
+        *
+        * @param x: int
+        *   The x-left position of the drawing in the view.
+        * @param y: int
+        *   The y-top position of the drawing in the view.
+        * @param b_forced: bool
+        *   Set this to True to get this control drawn whatever its  refresh
+        *   status is. Set it to false to get this control drawn only if its
+        *   refresh status is true. Defaults to false.
+        */
+        inline void draw(const int x, const int y, const bool b_forced = false) noexcept
+        {
+            draw(parent_view, x, y, b_forced);
+        }
+
+        /** @brief Draws this control in the parent view (forced position).
+        *
+        * The position set at contruction time is not modified.
+        * This method internally calls protected method '_draw()' which must
+        * be implemented in inheriting classes.
+        *
+        * @sa related method '_draw()'.
+        *
+        * @param pos: avt::utils::Coords2D
+        *   The position of the drawing in the view.
+        * @param b_forced: bool
+        *   Set this to True to get this control drawn whatever its  refresh
+        *   status is. Set it to false to get this control drawn only if its
+        *   refresh status is true. Defaults to false.
+        */
+        inline void draw(const avt::utils::Coords2D& pos, const bool b_forced = false) noexcept
+        {
+            draw(parent_view, pos, b_forced);
+        }
+
+        /** @brief Draws this control in the specified view (forced position).
+        *
+        * This method internally calls protected method '_draw()' which must
+        * be implemented in inheriting classes.
+        *
+        * @sa related method '_draw()'.
+        *
+        * @param view: View
+        *   A reference to the embedding view.
+        * @param x: int
+        *   The x-left position of the drawing in the view.
+        * @param y: int
+        *   The y-top position of the drawing in the view.
+        * @param b_forced: bool
+        *   Set this to True to get this control drawn whatever its  refresh
+        *   status is. Set it to false to get this control drawn only if its
+        *   refresh status is true. Defaults to false.
+        */
+        void draw(avt::gui::views::View& view,
+                  const int              x,
+                  const int              y,
+                  const bool             b_forced = false) noexcept;
+
+        /** @brief Draws this control in the specified view (forced position).
+        *
+        * This method internally calls protected method '_draw()' which must
+        * be implemented in inheriting classes.
+        *
+        * @sa related method '_draw()'.
+        *
+        * @param view: View
+        *   A reference to the embedding view.
+        * @param pos: avt::utils::Coords2D
+        *   The position of the drawing in the view.
+        * @param b_forced: bool
+        *   Set this to True to get this control drawn whatever its  refresh
+        *   status is. Set it to false to get this control drawn only if its
+        *   refresh status is true. Defaults to false.
+        */
+        inline void draw(avt::gui::views::View&      view,
+                         const avt::utils::Coords2D& pos,
+                         const bool                  b_forced = false) noexcept
+        {
+            draw(view, pos.x, pos.y, b_forced);
         }
 
         /** @brief Makes this control enabled.
@@ -174,14 +279,62 @@ export namespace avt::gui::items
             refresh();
         }
 
+
+        //---   Moving   ----------------------------------------------------
+        /** @brief Relative move of this control position (two scalar offsets). */
+        template<typename X, typename Y>
+            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+        inline void move(const X dx, const Y dy) noexcept
+        {
+            pos.move(dx, dy);
+        }
+
+        /** @brief Relative move of this control position (one Coords2D offset). */
+        inline void move(const avt::utils::Coords2D& offset) noexcept
+        {
+            pos.move(offset);
+        }
+
+        /** @brief Relative move of this control position (one 2-D container offset). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline void move(const P& offset) noexcept
+        {
+            pos.move(offset);
+        }
+
+        /** @brief Absolute move of this control position (two scalar new coordinates). */
+        template<typename X, typename Y>
+            requires std::is_arithmetic_v<X>&& std::is_arithmetic_v<Y>
+        inline void move_at(const X new_x, const Y new_y)
+        {
+            pos.move_at(new_x, new_y);
+        }
+
+        /** @brief Absolute move of this position (one Coords2D offset). */
+        inline void move_at(const avt::utils::Coords2D& offset) noexcept
+        {
+            pos.move_at(offset);
+        }
+
+        /** @brief Absolute move of this position (one 2-D container offset). */
+        template<typename P>
+            requires avt::is_pair_type_v<P>
+        inline void move_at(const P& offset) noexcept
+        {
+            pos.move_at(offset);
+        }
+
+
         //---   Attributes   ------------------------------------------------
-        avt::utils::Coords2D pos;
-        avt::DimsType        height;
-        avt::DimsType        width;
-        bool                 b_active;
-        bool                 b_enabled;
-        bool                 b_refresh;
-        bool                 b_visible;
+        avt::gui::views::View parent_view;
+        avt::utils::Coords2D  pos;
+        avt::DimsType         height;
+        avt::DimsType         width;
+        bool                  b_active;
+        bool                  b_enabled;
+        bool                  b_refresh;
+        bool                  b_visible;
 
 
     protected:

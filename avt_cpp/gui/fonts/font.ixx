@@ -129,7 +129,7 @@ namespace avt::gui::fonts
         Font(const Font&) noexcept = default;
 
         /** @brief Default Move constructor. */
-        Font(Font&&) noexcept = default;
+        //Font(Font&&) noexcept = default;
 
         /** @brief Default destructor. */
         virtual ~Font() noexcept = default;
@@ -140,7 +140,7 @@ namespace avt::gui::fonts
         Font& operator= (const Font&) = default;
 
         /** @brief Default Move assignment. */
-        Font& operator= (Font&&) = default;
+        //Font& operator= (Font&&) = default;
 
 
         //---   Drawing text   ----------------------------------------------
@@ -216,6 +216,7 @@ namespace avt::gui::fonts
             draw_text(text, image, avt::utils::Coords2D{ pos[0], pos[1] }, b_shadow);
         }
 
+
         //---   Operations on colors   --------------------------------------
         /** @brief Suppresses the background color (i.e. no background filling under displayed text. */
         inline void clear_bg_color() noexcept
@@ -245,12 +246,7 @@ namespace avt::gui::fonts
 
         //---   Operations on Text sizes   ----------------------------------
         /** @brief Returns the baseline (in pixels) associated with the specified text when drawn with this font. */
-        inline int get_text_baseline(const std::string& text) noexcept
-        {
-            int baseline;
-            get_text_size(text, &baseline);
-            return baseline + thickness;
-        }
+        inline int get_text_baseline(const std::string& text) noexcept;
 
         /** @brief Returns the height (in pixels) of specified text when drawn with this font. */
         inline int get_text_height(const std::string& text) noexcept
@@ -265,6 +261,17 @@ namespace avt::gui::fonts
         inline int get_text_width(const std::string& text) noexcept
         {
             return get_text_size(text).width;
+        }
+
+
+        //---   Comparisons   -----------------------------------------------
+        /** @brief Returns true if fonts are the same, or false otherwise. */
+        const bool operator== (const avt::gui::fonts::Font& other) const noexcept;
+
+        /** @brief Returns true if fonts are NOT the same, or false otherwise. */
+        inline const bool operator!= (const avt::gui::fonts::Font& other) const noexcept
+        {
+            return !(*this == other);
         }
 
 
