@@ -99,15 +99,17 @@ namespace avt::gui::fonts
     {
         if (b_force_bgcolor) {
             // let's put text over a background solid color
-            cv::Size text_size = get_text_size(text);
+            int baseline;
+            cv::Size text_size = get_text_size(text, &baseline);
+            text_size.height += baseline;
             cv::Point final_pos = pos;
-            final_pos.y -= thickness;
+            final_pos.y -= text_size.height - baseline / 2 - thickness; // thickness + baseline;  // 
             cv::rectangle(image, cv::Rect(final_pos, text_size), cv::Scalar(bg_color), cv::FILLED);
         }
         else {
             // let's draw shadow artifact, if asked for
             if (b_shadow) {
-                RGBColor shadow_color{ color * 0.6f };
+                avt::utils::RGBColor shadow_color{ color * 0.6f };
                 cv::putText(image,
                     text,
                     pos + avt::utils::Coords2D{ 1, 1 },
@@ -138,11 +140,11 @@ namespace avt::gui::fonts
         return baseline + thickness;
     }
 
-    /** Returns the width and height (in pixels) associated with the specified text when drawn with this font. */
+    /** Returns the width and height (in pixels) associated with the specified text when drawn with this font (2/2). */
     avt::utils::Size Font::get_text_size(const std::string& text, int* baseline) noexcept
     {
         int the_baseline;
-        cv::Size the_size = cv::getTextSize(text, cv_font, font_scale, thickness, &the_baseline);
+        const cv::Size the_size = cv::getTextSize(text, cv_font, font_scale, thickness, &the_baseline);
         if (baseline != nullptr)
             *baseline = the_baseline + thickness;
         return avt::utils::Size(the_size);

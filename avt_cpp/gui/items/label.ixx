@@ -38,6 +38,7 @@ import gui.items.control_base;
 import utils.coords2d;
 import gui.fonts.font;
 import utils.rgb_color;
+import utils.size;
 import gui.views.view;
 
 
@@ -157,6 +158,53 @@ export namespace avt::gui::items
               const int                   font_size,
               const bool                  font_shadow = false) noexcept;
 
+        /** @brief Default Constructor. */
+        Label() noexcept = default;
+
+        /** @brief Default Copy constructor. */
+        Label(const Label&) noexcept = default;
+
+        /** @brief Default Move constructor. */
+        Label(Label&&) noexcept = default;
+
+        /** @brief Default Destructor. */
+        virtual ~Label() noexcept = default;
+
+
+        //---   Assignments   -----------------------------------------------
+        /** @brief Default Copy assignment. */
+        Label& operator= (const Label&) noexcept = default;
+
+        /** @brief Default move assignment. */
+        Label& operator= (Label&&) noexcept = default;
+
+        /** @brief New color assignment. */
+        inline Label& operator= (const avt::utils::RGBColor& new_color) noexcept
+        {
+            set_color(new_color);
+            return *this;
+        }
+
+        /** @brief New font assignment. */
+        inline Label& operator= (const avt::gui::fonts::Font& new_font) noexcept
+        {
+            set_font(new_font);
+            return *this;
+        }
+
+        /** @brief New text assignment (char*). */
+        inline Label& operator= (const char* new_text) noexcept
+        {
+            return operator=(std::string{ new_text });
+        }
+
+        /** @brief New text assignment (std::string). */
+        inline Label& operator= (const std::string& new_text) noexcept
+        {
+            set_text(new_text);
+            return *this;
+        }
+
 
         //---   Operations   ------------------------------------------------
         /** @brief Modifies the background color of this label - no display change. */
@@ -174,8 +222,7 @@ export namespace avt::gui::items
         /** @brief Modifies the size of the font used for this label - no display change. */
         void set_font_size(const int new_size) noexcept;
 
-        /** @brief Modifies the text of this label - no display change.
-        */
+        /** @brief Modifies the text of this label - no display change. */
         void set_text(const std::string& new_text) noexcept;
 
 
@@ -198,7 +245,7 @@ export namespace avt::gui::items
         */
         virtual void _draw(avt::gui::views::View& view) noexcept override
         {
-            _font.draw_text(_text, view, pos, _b_font_shadow);
+            _font.draw_text(_text, view, pos, _b_font_shadow);  // notice: pos is inherited from base class ControlBase
         }
 
 
@@ -216,8 +263,9 @@ export namespace avt::gui::items
         /** @brief Evaluates width and height of text. */
         inline void m_evaluate_text_dims() noexcept
         {
-            width  = _font.get_text_width(_text);
-            height = _font.get_text_height(_text);
+            const avt::utils::Size size = _font.get_text_size(_text);
+            width  = size.width;
+            height = size.height;
         }
     };
 

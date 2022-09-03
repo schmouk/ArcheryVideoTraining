@@ -222,12 +222,14 @@ namespace avt::gui::fonts
         inline void clear_bg_color() noexcept
         {
             bg_color = RGBColor::NULL_COLOR;
+            b_force_bgcolor = false;
         }
 
         /** @brief Modifies the background color for this font. */
         inline void set_bg_color(const RGBColor& new_bg_color) noexcept
         {
             bg_color = new_bg_color;
+            b_force_bgcolor = true;
         }
 
         /** @brief Modifies the text color for this font. */
@@ -254,8 +256,14 @@ namespace avt::gui::fonts
             return get_text_size(text).height;
         }
 
-        /** @brief Returns the width and height (in pixels) associated with the specified text when drawn with this font. */
-        avt::utils::Size get_text_size(const std::string& text, int* baseline = nullptr) noexcept;
+        /** @brief Returns the width and height (in pixels) associated with the specified text when drawn with this font (1/2). */
+        avt::utils::Size get_text_size(const std::string& text) noexcept
+        {
+            return get_text_size(text, nullptr);
+        }
+
+        /** @brief Returns the width and height (in pixels) associated with the specified text when drawn with this font (2/2). */
+        avt::utils::Size get_text_size(const std::string& text, int* baseline) noexcept;
 
         /** @brief Returns the width (in pixels) of specified text when drawn with this font. */
         inline int get_text_width(const std::string& text) noexcept

@@ -54,9 +54,10 @@ namespace avt::gui::items
         : MyBaseClass(parent_view, x, y),
           _text{ text },
           _font{ font },
-          _font_size{ Label::_DEFAULT_FONT_SIZE },
+          _font_size{},
           _b_font_shadow{ font_shadow }
     {
+        _font_size = font.size;
         m_evaluate_text_dims();
     }
 
@@ -72,9 +73,10 @@ namespace avt::gui::items
         : MyBaseClass(parent_view, x, y),
           _text{ text },
           _font{ font },
-          _font_size{ font_size },
+          _font_size{},
           _b_font_shadow{ font_shadow }
     {
+        set_font_size(font_size);
         m_evaluate_text_dims();
     }
 
@@ -88,9 +90,10 @@ namespace avt::gui::items
         : MyBaseClass(parent_view, pos),
           _text{ text },
           _font{ font },
-          _font_size{ Label::_DEFAULT_FONT_SIZE },
+          _font_size{},
           _b_font_shadow{ font_shadow }
     {
+        _font_size = font.size;
         m_evaluate_text_dims();
     }
 
@@ -105,39 +108,40 @@ namespace avt::gui::items
         : MyBaseClass(parent_view, pos),
           _text{ text },
           _font{ font },
-          _font_size{ font_size },
+          _font_size{},
           _b_font_shadow{ font_shadow }
     {
+        set_font_size(font_size);
         m_evaluate_text_dims();
     }
 
 
-    /** Modifies the background color of this label. */
+    /** Modifies the background color of this label - no display change. */
     void Label::set_bg_color(const avt::utils::RGBColor& bg_color) noexcept
     {
         if (bg_color != _font.bg_color) {
-            _font.bg_color = bg_color;
-            b_refresh = true;
+            _font.set_bg_color(bg_color);
+            refresh();
         }
     }
 
 
-    /** Modifies the color of this label text. */
+    /** Modifies the color of this label text - no display change. */
     void Label::set_color(const avt::utils::RGBColor& color) noexcept
     {
         if (color != _font.color) {
             _font.color = color;
-            b_refresh = true;
+            refresh();
         }
     }
 
 
-    /** Modifies the text of this label. */
-    inline void Label::set_text(const std::string& new_text) noexcept
+    /** Modifies the text of this label - no display change. */
+    void Label::set_text(const std::string& new_text) noexcept
     {
         _text = new_text;
         m_evaluate_text_dims();
-        b_refresh = true;
+        refresh();
     }
 
 
@@ -147,7 +151,7 @@ namespace avt::gui::items
         if (new_font != _font) {
             _font = new_font;
             m_evaluate_text_dims();
-            b_refresh = true;
+            refresh();
         }
     }
 
@@ -164,8 +168,9 @@ namespace avt::gui::items
     void Label::set_font_size(const int new_size) noexcept
     {
         if (new_size != _font.size) {
+            _font_size = new_size;
             _font.set_size(new_size);
-            b_refresh = true;
+            refresh();
         }
     }
 

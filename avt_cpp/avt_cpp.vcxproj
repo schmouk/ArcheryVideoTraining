@@ -213,6 +213,7 @@
     <ClCompile Include="gui\shapes\shape.ixx" />
     <ClCompile Include="unit_tests\devices\cameras\test_camera.ixx" />
     <ClCompile Include="unit_tests\devices\cameras\test_cameras_pool.ixx" />
+    <ClCompile Include="unit_tests\gui\items\test_label.ixx" />
     <ClCompile Include="unit_tests\gui\items\test_picture.ixx" />
     <ClCompile Include="unit_tests\gui\views\test_view.ixx" />
     <ClCompile Include="unit_tests\gui\test_avt_window.ixx" />
