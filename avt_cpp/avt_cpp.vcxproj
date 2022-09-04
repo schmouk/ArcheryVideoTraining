@@ -230,6 +230,7 @@
     <ClCompile Include="unit_tests\utils\test_size.ixx" />
     <ClCompile Include="unit_tests\utils\test_gray_color.ixx" />
     <ClCompile Include="unit_tests\utils\test_rgb_color.ixx" />
+    <ClCompile Include="unit_tests\utils\test_time.ixx" />
     <ClCompile Include="utils\coords2d.ixx" />
     <ClCompile Include="utils\gray_color.ixx" />
     <ClCompile Include="utils\pair.ixx" />
@@ -237,6 +238,8 @@
     <ClCompile Include="utils\rgba_color.ixx" />
     <ClCompile Include="utils\rgb_color.ixx" />
     <ClCompile Include="utils\size.ixx" />
+    <ClCompile Include="utils\time.cpp" />
+    <ClCompile Include="utils\time.ixx" />
     <ClCompile Include="utils\utils.ixx" />
     <ClCompile Include="video\frame.ixx" />
   </ItemGroup>

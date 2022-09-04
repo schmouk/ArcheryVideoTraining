@@ -52,7 +52,8 @@ SOFTWARE.
 //import unit_tests.gui.items.test_picture;
 //import unit_tests.devices.cameras.test_camera;
 //import unit_tests.devices.cameras.test_cameras_pool;
-import unit_tests.gui.items.test_label;
+//import unit_tests.gui.items.test_label;
+import unit_tests.utils.test_time;
 
 
 //===========================================================================
@@ -82,7 +83,8 @@ int main()
     //avt::unit_tests::gui::items::test_picture();
     //avt::unit_tests::devices::cameras::test_camera();
     //avt::unit_tests::devices::cameras::test_cameras_pool();
-    avt::unit_tests::gui::items::test_label();
+    //avt::unit_tests::gui::items::test_label();
+    avt::unit_tests::utils::test_time();
 
 
     std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";
