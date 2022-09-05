@@ -27,7 +27,6 @@ module;
 
 #include <chrono>
 #include <ctime>
-#include <format>
 #include <string>
 
 
@@ -40,7 +39,8 @@ namespace avt::utils::time
    /** Returns the full "ctime" string related to local current date and time. */
     std::string now() noexcept
     {
-        const std::time_t current_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+        using _clock = std::chrono::system_clock;
+        const std::time_t current_time = _clock::to_time_t(_clock::now());
         constexpr rsize_t BUFFER_SIZE{ 32 };
         char time_buffer[BUFFER_SIZE]{ char(0) };
         ctime_s(time_buffer, BUFFER_SIZE, &current_time);
@@ -84,14 +84,6 @@ namespace avt::utils::time
         catch (...) {
             return "00:00:00";
         }
-
-        /*
-        const std::string current{avt::utils::time::now()};
-        const std::string hours{ current.substr(11, 2) };
-        const std::string minutes{ current.substr(14, 2) };
-        const std::string seconds{ current.substr(17, 2) };
-        return std::format("{:02d}:{:02d}:{:02d}", std::stoi(hours), std::stoi(minutes), std::stoi(seconds));
-        */
     }
 
 
