@@ -26,6 +26,7 @@ SOFTWARE.
 module;
 
 #include <atomic>
+#include <chrono>
 #include <cstring>
 #include <exception>
 #include <format>
@@ -47,6 +48,7 @@ import avt.config;
 import utils.coords2d;
 import gui.items.cursor;
 import gui.fonts.font;
+import gui.items.label;
 import gui.items.picture;
 import utils.rgb_color;
 import mtmp.timer;
@@ -71,7 +73,9 @@ export namespace avt::gui::views
         using CamerasPool = avt::devices::cameras::CamerasPool;
         using Font        = avt::gui::fonts::Font;
         using Icon        = avt::gui::items::Icon;
+        using Label       = avt::gui::items::Label;
         using RGBColor    = avt::utils::RGBColor;
+        using View        = avt::gui::views::View;
 
 
     public:
@@ -145,7 +149,7 @@ export namespace avt::gui::views
         //---   Base class for all controls types   -------------------------
         /** @brief The base class for all internal controls.
         *
-        * \sa _CtrlCamera,  _CtrlDelay,   _CtrlExit,   _CtrlLines, _CtrlMatch,
+        * @sa _CtrlCamera,  _CtrlDelay,   _CtrlExit,   _CtrlLines, _CtrlMatch,
         *     _Ctrl_Record, _Ctrl_Replay, _CtrlTarget, _CtrlTime,  _CtrlTimer.
         */
         class _CtrlBase
@@ -197,7 +201,7 @@ export namespace avt::gui::views
             *
             * This method SHOULD BE overwritten in inheriting classes.
             */
-            virtual void draw(avt::ImageType& view_image) noexcept;
+            virtual void draw(View& view_image) noexcept;
 
             //--- Attributes ------------------------------------------------
             avt::utils::Coords2D text_pos;  //!< Position of text associated with this control
@@ -257,7 +261,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            virtual void draw(avt::ImageType& view_image) noexcept;
+            virtual void draw(View& view_image) noexcept;
 
             //--- Other operations ------------------------------------------
             inline void toggle_switch() noexcept
@@ -321,7 +325,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            virtual void draw(avt::ImageType& view_image) noexcept;
+            virtual void draw(View& view_image) noexcept;
 
             //--- Attributes ------------------------------------------------
             //avt::gui::items::Slider slider;
@@ -359,7 +363,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& view_image) noexcept;
+            void draw(View& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -404,7 +408,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& view_image) noexcept;
+            void draw(View& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -446,7 +450,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& view_image) noexcept;
+            void draw(View& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -490,7 +494,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& view_image) noexcept;
+            void draw(View& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -540,7 +544,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& view_image) noexcept;
+            void draw(View& view_image) noexcept;
 
             //--- Attributes ------------------------------------------------
             //FloatSlider slider{};
@@ -602,7 +606,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& view_image) noexcept;
+            void draw(View& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -667,7 +671,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& view_image) noexcept;
+            void draw(View& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
@@ -717,16 +721,23 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& view_image) noexcept;
+            void draw(View& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------
-            //static inline gui::items::Label duration_label;
-            //static inline gui::items::Label time_label;
-            static constexpr int DURATION_TEXT_SIZE = 11;
-            static constexpr int PADDING            = 11;
-            static constexpr int TIME_TEXT_SIZE     = 15;
-            static constexpr int FULL_HEIGHT        = TIME_TEXT_SIZE + PADDING + DURATION_TEXT_SIZE;
+            using _clock = std::chrono::steady_clock;
+
+            static constexpr int   DURATION_TEXT_SIZE   { 11 };
+            static constexpr int   PADDING              { 11 };
+            static constexpr int   TIME_TEXT_SIZE       { 15 };
+            static constexpr int   FULL_HEIGHT          { TIME_TEXT_SIZE + PADDING + DURATION_TEXT_SIZE };
+            static inline Font     DURATION_FONT        { DURATION_TEXT_SIZE, RGBColor::YELLOW };
+            static inline BoldFont TIME_FONT            { TIME_TEXT_SIZE, RGBColor::YELLOW - 32 };
+
+            static inline Label    duration_label       {};
+            static inline Label    time_label           {};
+
+            static inline _clock::time_point  start_time{ _clock::now() };
 
 
         private:
@@ -768,7 +779,7 @@ export namespace avt::gui::views
 
             //--- Drawing operation -----------------------------------------
             /** @brief Draws a control in its embedding content. */
-            void draw(avt::ImageType& view_image) noexcept;
+            void draw(View& view_image) noexcept;
 
 
             //--- Class Attributes   ----------------------------------------

@@ -23,9 +23,12 @@ module;
 
 #include <array>
 #include <atomic>
+#include <chrono>
 #include <cstring>
+#include <ctime>
 #include <exception>
 #include <format>
+#include "time.h"
 
 #include <opencv2/core/cvstd.hpp>
 #include <opencv2/highgui.hpp>
@@ -38,13 +41,16 @@ module;
 
 module gui.views.control_view;
 
+import gui.fonts.bold_font;
 import devices.cameras.cameras_pool;
 import avt.config;
 import utils.coords2d;
 import gui.items.cursor;
 import gui.fonts.font;
+import gui.items.label;
 import gui.items.picture;
 import utils.rgb_color;
+import utils.time;
 import gui.views.view;
 
 
@@ -56,7 +62,7 @@ namespace avt::gui::views
         : ViewType{ p_parent_view,
                     0, p_parent_view->width() - WIDTH, // i.e. position in main window
                     WIDTH, p_parent_view->height() },  // i.e. size of this view in main window
-        ThreadType{ "controls-thrd", 1000 }
+          ThreadType{ "controls-thrd", 1000 }
     {
         m_create_controls(cameras_pool);
     }
@@ -167,6 +173,9 @@ namespace avt::gui::views
     /** @brief Draws all controls in this control view. */
     void ControlView::m_draw_controls() noexcept
     {
+        for (ControlView::_CtrlBase& ctrl : m_controls_list)
+            ctrl.draw(*this);
+        /*** /
         try {
             for (ControlView::_CtrlBase& ctrl : m_controls_list) {
                 try {
@@ -176,10 +185,11 @@ namespace avt::gui::views
             }
         }
         catch (...) {}
+        /***/
     }
 
     /** Draws a control in its embedding content - Controls Base class. */
-    void ControlView::_CtrlBase::draw(avt::ImageType& view_image) noexcept
+    void ControlView::_CtrlBase::draw(View& view_image) noexcept
     {
         avt::gui::fonts::Font font;
         try {
@@ -193,7 +203,7 @@ namespace avt::gui::views
     }
 
     /** Draws a control in its embedding content - Camera Controls. */
-    void ControlView::_CtrlCamera::draw(avt::ImageType& view_image) noexcept
+    void ControlView::_CtrlCamera::draw(View& view_image) noexcept
     {
         avt::ImageType img;
         Font           font;
@@ -230,7 +240,7 @@ namespace avt::gui::views
     }
 
     /** Draws a control in its embedding content - Delay Control. */
-    void ControlView::_CtrlDelay::draw(avt::ImageType& view_image) noexcept
+    void ControlView::_CtrlDelay::draw(View& view_image) noexcept
     {
         /***/
         avt::ImageType img;
@@ -244,7 +254,7 @@ namespace avt::gui::views
         img.copyTo(avt::ImageType(view_image, cv::Rect(x_, y_, SIZE, SIZE)));
 
         //##font.draw_text( view, Point(self.x + 5, self.y + self._FONT_SIZE), "Delay" );
-        //slider.draw(*this);
+        //slider.draw(view_image);
 
     }
 
@@ -277,7 +287,7 @@ namespace avt::gui::views
     {}
 
     /** Draws a control in its embedding content - Exit Control. */
-    void ControlView::_CtrlExit::draw(avt::ImageType& view_image) noexcept
+    void ControlView::_CtrlExit::draw(View& view_image) noexcept
     {
         try {
             ICON_EXIT.draw(view_image, x, y);
@@ -293,7 +303,7 @@ namespace avt::gui::views
     }
 
     /** Draws a control in its embedding content - Lines Control. */
-    void ControlView::_CtrlLines::draw(avt::ImageType& view_image) noexcept
+    void ControlView::_CtrlLines::draw(View& view_image) noexcept
     {
         const avt::utils::Coords2D diagonal_offset{ 1, 1 };
         avt::utils::Coords2D       start_pt;
@@ -323,7 +333,7 @@ namespace avt::gui::views
     }
 
     /** Draws a control in its embedding content - Match Control. */
-    void ControlView::_CtrlMatch::draw(avt::ImageType& view_image) noexcept
+    void ControlView::_CtrlMatch::draw(View& view_image) noexcept
     {
         avt::ImageType img;
         if (enabled)
@@ -346,7 +356,7 @@ namespace avt::gui::views
     }
 
     /** Draws a control in its embedding content - Overlays Control. */
-    void ControlView::_CtrlOverlays::draw(avt::ImageType& view_image) noexcept
+    void ControlView::_CtrlOverlays::draw(View& view_image) noexcept
     {
         Icon img;
         if (enabled)
@@ -369,7 +379,7 @@ namespace avt::gui::views
     }
 
     /** Draws a control in its embedding content - Record Control. */
-    void ControlView::_CtrlRecord::draw(avt::ImageType& view_image) noexcept
+    void ControlView::_CtrlRecord::draw(View& view_image) noexcept
     {
         Icon img;
         Font font;
@@ -429,7 +439,7 @@ namespace avt::gui::views
     }
 
     /** Draws a control in its embedding content - Replay Control. */
-    void ControlView::_CtrlReplay::draw(avt::ImageType& image_view) noexcept
+    void ControlView::_CtrlReplay::draw(View& image_view) noexcept
     {
         std::array<Icon, 5> icons;
         if (enabled) {
@@ -468,7 +478,7 @@ namespace avt::gui::views
     }
 
     /** Draws a control in its embedding content - Target Control. */
-    void ControlView::_CtrlTarget::draw(avt::ImageType& view_image) noexcept
+    void ControlView::_CtrlTarget::draw(View& view_image) noexcept
     {
         /*** /
         x = (ControlView.WIDTH  - self._SIZE) // 2
@@ -482,47 +492,40 @@ namespace avt::gui::views
     }
 
     /** Draws a control in its embedding content - Time Control. */
-    void ControlView::_CtrlTime::draw(avt::ImageType& view_image) noexcept
+    void ControlView::_CtrlTime::draw(View& view_image) noexcept
     {
-        /*** /
-        date = time.localtime()
-        self.time_label.text = f"{date.tm_hour:02d}:{date.tm_min:02d}"
-        time_label_width = self.time_label.get_text_width()
-        duration = time.perf_counter()
-        hr = int( duration // 3600 )
-        mn = int( (duration - 3600 * hr) // 60 )
-        sc = int( duration % 60 )
-        self.duration_label.text = f"({hr:d}:{mn:02d}:{sc:02d})"
-        duration_label_width = self.duration_label.get_text_width()
-        cv2.rectangle( view.content,
-                        (self.x, self.y-3),
-                        (view.width-self.x-2, self.y+self._FULL_HEIGHT + 3),
-                        AVTConfig.DEFAULT_BACKGROUND.color,
-                        -1 )
-        self.time_label.draw_at( (view.width - time_label_width) // 2,
-                                    self.time_label.pos.y,
-                                    view )
-        self.duration_label.draw_at( (view.width - duration_label_width) // 2,
-                                        self.duration_label.pos.y,
-                                        view )
-        /***/
+        cv::rectangle(view_image,
+            cv::Point(x, y - 3),
+            cv::Point(view_image.width() - x - 2, y + FULL_HEIGHT + 3),
+            avt::config::DEFAULT_BACKGROUND,
+            cv::FILLED);
+
+        time_label = avt::utils::time::time();
+        time_label.draw(view_image,
+                        (view_image.width() - time_label.text_width()) / 2,
+                        time_label.pos.y);
+
+        const std::chrono::steady_clock::time_point current_time{ std::chrono::steady_clock::now() };
+        const int duration = int(std::chrono::duration_cast<std::chrono::seconds>(current_time - start_time).count());
+        const int hr = duration / 3600;
+        const int mn = (duration - 3600 * hr) / 60;
+        const int sc = duration % 60;
+        duration_label = std::format("{:d}:{:02d}:{:02d}", hr, mn, sc);
+        duration_label.draw(view_image,
+                            (view_image.width() - duration_label.text_width()) / 2,
+                            duration_label.pos.y);
     }
 
     /** Creates the labels that are associated with the Time control. */
     void ControlView::_CtrlTime::m_create_labels() noexcept
     {
-        /*** /
-        self.time_label = Label( x=x,
-                                y=y+self._TIME_TEXT_SIZE,
-                                text_font=Font(self._TIME_TEXT_SIZE, YELLOW-32, bold=True) )
-        self.duration_label = Label( x=x,
-                                    y=y+self._FULL_HEIGHT,
-                                    text_font=Font(self._DURATION_TEXT_SIZE, YELLOW) )
-        /***/
+        avt::gui::views::View empty_view{};
+        time_label = Label{ empty_view, x, y + TIME_TEXT_SIZE, "", TIME_FONT };
+        duration_label = Label{ empty_view, x, y + FULL_HEIGHT, "", DURATION_FONT };
     }
 
     /** Draws a control in its embedding content - Time Control. */
-    void ControlView::_CtrlTimer::draw(avt::ImageType& view_image) noexcept
+    void ControlView::_CtrlTimer::draw(View& view_image) noexcept
     {
         Icon img;
         if (enabled)
