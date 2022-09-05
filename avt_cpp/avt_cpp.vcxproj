@@ -231,6 +231,7 @@
     <ClCompile Include="unit_tests\utils\test_gray_color.ixx" />
     <ClCompile Include="unit_tests\utils\test_rgb_color.ixx" />
     <ClCompile Include="unit_tests\utils\test_time.ixx" />
+    <ClCompile Include="utils\circular_buffer.ixx" />
     <ClCompile Include="utils\coords2d.ixx" />
     <ClCompile Include="utils\gray_color.ixx" />
     <ClCompile Include="utils\pair.ixx" />
