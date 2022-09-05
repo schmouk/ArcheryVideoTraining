@@ -36,8 +36,10 @@ module;
 
 module gui.views.camera_view;
 
+import avt.config;
 import utils.coords2d;
-//import gui.items.label;
+//import devices.fps_frame_rate;
+import gui.items.label;
 import utils.rgb_color;
 import utils.size;
 import gui.views.view;
@@ -50,7 +52,7 @@ namespace avt::gui::views
     void CameraView::draw() noexcept
     {
         m_draw_fps();
-        //label.draw();
+        label.draw();
         m_draw_borders();
         MyBaseType::draw();
     }
@@ -97,8 +99,8 @@ namespace avt::gui::views
     void CameraView::m_create_view() noexcept
     {
         view_name = std::format("Cam-{}", camera.get_id());
-        //label = Label(*this, view_name, 20, 40);
-        //fps_label = Label(*this, "", 20, 70, NULL, Font(14, avt::utils::RGBColor::YELLOW));
+        label     = Label{ *this, 20, 40, view_name, avt::config::AVTDefaultFont };
+        fps_label = Label{ *this, 20, 70, "", Font{14, avt::utils::RGBColor::YELLOW} };
         //fps_frame_rate = FPSFrameRate(15);
         _CAM_VIEWS_COUNT++;
         draw();
@@ -163,7 +165,8 @@ namespace avt::gui::views
         self.content[ 3, 3:-2 ]  = (bg_color / 2).color
         self.content[ 4:-3, 3 ]  = (bg_color / 2).color
         self.content[ -4, 4:-2 ] = (bg_color * 1.5).color
-        self.content[ 4:-3, -3 ] = (bg_color * 1.5).color        /***/
+        self.content[ 4:-3, -3 ] = (bg_color * 1.5).color
+        /***/
     }
 
 

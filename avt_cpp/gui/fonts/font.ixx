@@ -248,25 +248,25 @@ namespace avt::gui::fonts
 
         //---   Operations on Text sizes   ----------------------------------
         /** @brief Returns the baseline (in pixels) associated with the specified text when drawn with this font. */
-        inline int get_text_baseline(const std::string& text) noexcept;
+        inline const int get_text_baseline(const std::string& text) const noexcept;
 
         /** @brief Returns the height (in pixels) of specified text when drawn with this font. */
-        inline int get_text_height(const std::string& text) noexcept
+        inline const int get_text_height(const std::string& text) const noexcept
         {
             return get_text_size(text).height;
         }
 
         /** @brief Returns the width and height (in pixels) associated with the specified text when drawn with this font (1/2). */
-        avt::utils::Size get_text_size(const std::string& text) noexcept
+        inline const avt::utils::Size get_text_size(const std::string& text) const noexcept
         {
             return get_text_size(text, nullptr);
         }
 
         /** @brief Returns the width and height (in pixels) associated with the specified text when drawn with this font (2/2). */
-        avt::utils::Size get_text_size(const std::string& text, int* baseline) noexcept;
+        const avt::utils::Size get_text_size(const std::string& text, int* baseline) const noexcept;
 
         /** @brief Returns the width (in pixels) of specified text when drawn with this font. */
-        inline int get_text_width(const std::string& text) noexcept
+        inline const int get_text_width(const std::string& text) const noexcept
         {
             return get_text_size(text).width;
         }

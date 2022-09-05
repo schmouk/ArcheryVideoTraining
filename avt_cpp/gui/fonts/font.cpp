@@ -133,7 +133,7 @@ namespace avt::gui::fonts
     }
 
     /** Returns the baseline (in pixels) associated with the specified text when drawn with this font. */
-    int Font::get_text_baseline(const std::string& text) noexcept
+    const int Font::get_text_baseline(const std::string& text) const noexcept
     {
         int baseline;
         get_text_size(text, &baseline);
@@ -141,7 +141,7 @@ namespace avt::gui::fonts
     }
 
     /** Returns the width and height (in pixels) associated with the specified text when drawn with this font (2/2). */
-    avt::utils::Size Font::get_text_size(const std::string& text, int* baseline) noexcept
+    const avt::utils::Size Font::get_text_size(const std::string& text, int* baseline) const noexcept
     {
         int the_baseline;
         const cv::Size the_size = cv::getTextSize(text, cv_font, font_scale, thickness, &the_baseline);

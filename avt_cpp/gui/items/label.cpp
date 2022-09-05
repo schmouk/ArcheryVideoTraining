@@ -46,11 +46,11 @@ namespace avt::gui::items
 {
     /** Value Constructor (1/4) */
     Label::Label(avt::gui::views::View& parent_view,
-                 const int              x,
-                 const int              y,
-                 const std::string&     text,
-                 avt::gui::fonts::Font& font,
-                 const bool             font_shadow) noexcept
+                 const int                    x,
+                 const int                    y,
+                 const std::string&           text,
+                 const avt::gui::fonts::Font& font,
+                 const bool                   font_shadow) noexcept
         : MyBaseClass(parent_view, x, y),
           _text{ text },
           _font{ font },
@@ -64,12 +64,12 @@ namespace avt::gui::items
 
     /** Value Constructor (2/4). */
     Label::Label(avt::gui::views::View& parent_view,
-                 const int              x,
-                 const int              y,
-                 const std::string&     text,
-                 avt::gui::fonts::Font& font,
-                 const int              font_size,
-                 const bool             font_shadow) noexcept
+                 const int                    x,
+                 const int                    y,
+                 const std::string&           text,
+                 const avt::gui::fonts::Font& font,
+                 const int                    font_size,
+                 const bool                   font_shadow) noexcept
         : MyBaseClass(parent_view, x, y),
           _text{ text },
           _font{ font },
@@ -82,11 +82,11 @@ namespace avt::gui::items
 
 
     /** Value Constructor (3/4). */
-    Label::Label(avt::gui::views::View&      parent_view,
-                 const avt::utils::Coords2D& pos,
-                 const std::string&          text,
-                 avt::gui::fonts::Font&      font,
-                 const bool                  font_shadow) noexcept
+    Label::Label(avt::gui::views::View&       parent_view,
+                 const avt::utils::Coords2D&  pos,
+                 const std::string&           text,
+                 const avt::gui::fonts::Font& font,
+                 const bool                   font_shadow) noexcept
         : MyBaseClass(parent_view, pos),
           _text{ text },
           _font{ font },
@@ -99,12 +99,12 @@ namespace avt::gui::items
 
 
     /** Value Constructor (4/4). */
-    Label::Label(avt::gui::views::View&      parent_view,
-                 const avt::utils::Coords2D& pos,
-                 const std::string&          text,
-                 avt::gui::fonts::Font&      font,
-                 const int                   font_size,
-                 const bool                  font_shadow) noexcept
+    Label::Label(avt::gui::views::View&       parent_view,
+                 const avt::utils::Coords2D&  pos,
+                 const std::string&           text,
+                 const avt::gui::fonts::Font& font,
+                 const int                    font_size,
+                 const bool                   font_shadow) noexcept
         : MyBaseClass(parent_view, pos),
           _text{ text },
           _font{ font },

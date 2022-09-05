@@ -35,7 +35,7 @@ export module gui.views.camera_view;
 import utils.coords2d;
 import gui.fonts.font;
 //import devices.fps_frame_rate;
-//import gui.items.label;
+import gui.items.label;
 import utils.size;
 import gui.views.view;
 
@@ -57,7 +57,7 @@ export namespace avt::gui::views
         using Camera        = avt::devices::cameras::Camera;
         using Font          = avt::gui::fonts::Font;
         //using FPSFrameRate  = avt::devices::FPSFrameRate;
-        //using Label         = avt::gui::items::Label;
+        using Label         = avt::gui::items::Label;
         using ViewType      = avt::gui::views::View;
 
 
@@ -139,9 +139,9 @@ export namespace avt::gui::views
 
         //---   Attributes   ------------------------------------------------
         std::string   view_name;
-        Camera        camera;  //!< a reference to the camera that is associated with this CameraView
-        //Label         label;
-        //Label         fps_label;
+        Camera        camera;
+        Label         label;
+        Label         fps_label;
         //FPSFrameRate  fps_frame_rate;
         bool          b_flip_image{ false };
         

@@ -72,12 +72,12 @@ export namespace avt::gui::items
         *   The shadowing mode of the  text.  Defaults  to 
         * false.
         */
-        Label(avt::gui::views::View& parent_view,
-              const int              x,
-              const int              y,
-              const std::string&     text,
-              avt::gui::fonts::Font& font,
-              const bool             font_shadow = false) noexcept;
+        Label(avt::gui::views::View&       parent_view,
+              const int                    x,
+              const int                    y,
+              const std::string&           text,
+              const avt::gui::fonts::Font& font,
+              const bool                   font_shadow = false) noexcept;
 
         /** @brief Value Constructor (2/4).
         *
@@ -99,13 +99,13 @@ export namespace avt::gui::items
         *   The shadowing mode of the  text.  Defaults  to
         * false.
         */
-        Label(avt::gui::views::View& parent_view,
-              const int              x,
-              const int              y,
-              const std::string&     text,
-              avt::gui::fonts::Font& font,
-              const int              font_size,
-              const bool             font_shadow = false) noexcept;
+        Label(avt::gui::views::View&       parent_view,
+              const int                    x,
+              const int                    y,
+              const std::string&           text,
+              const avt::gui::fonts::Font& font,
+              const int                    font_size,
+              const bool                   font_shadow = false) noexcept;
 
         /** @brief Value Constructor (3/4).
         *
@@ -125,11 +125,11 @@ export namespace avt::gui::items
         *   The shadowing mode of the  text.  Defaults  to
         * false.
         */
-        Label(avt::gui::views::View&      parent_view,
-              const avt::utils::Coords2D& pos,
-              const std::string&          text,
-              avt::gui::fonts::Font&      font,
-              const bool                  font_shadow = false) noexcept;
+        Label(avt::gui::views::View&       parent_view,
+              const avt::utils::Coords2D&  pos,
+              const std::string&           text,
+              const avt::gui::fonts::Font& font,
+              const bool                   font_shadow = false) noexcept;
 
         /** @brief Value Constructor (4/4).
         *
@@ -151,12 +151,12 @@ export namespace avt::gui::items
         *   The shadowing mode of the  text.  Defaults  to
         * false.
         */
-        Label(avt::gui::views::View&      parent_view,
-              const avt::utils::Coords2D& pos,
-              const std::string&          text,
-              avt::gui::fonts::Font&      font,
-              const int                   font_size,
-              const bool                  font_shadow = false) noexcept;
+        Label(avt::gui::views::View&       parent_view,
+              const avt::utils::Coords2D&  pos,
+              const std::string&           text,
+              const avt::gui::fonts::Font& font,
+              const int                    font_size,
+              const bool                   font_shadow = false) noexcept;
 
         /** @brief Default Constructor. */
         Label() noexcept = default;
@@ -224,6 +224,20 @@ export namespace avt::gui::items
 
         /** @brief Modifies the text of this label - no display change. */
         void set_text(const std::string& new_text) noexcept;
+
+
+        //---   Accessors   -------------------------------------------------
+        /** @brief Returns the height of this label text. */
+        inline const int text_height() const noexcept
+        {
+            return _font.get_text_height(_text);
+        }
+
+        /** @brief Returns the width of this label text. */
+        inline const int text_width() const noexcept
+        {
+            return _font.get_text_width(_text);
+        }
 
 
     protected:
