@@ -273,6 +273,9 @@
     <ClCompile Include="utils\circular_buffer.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="unit_tests\utils\test_circular_buffer.ixx">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils\types.h">

@@ -36,7 +36,7 @@ import mtmp.mutex;
 
 
 //===========================================================================
-namespace avt::utils::buffers
+namespace avt::utils
 {
     //=======================================================================
     /** @brief The class of Circular Buffers.
@@ -52,10 +52,14 @@ namespace avt::utils::buffers
     class CircularBuffer
     {
     public:
+        //---   Wrappers   --------------------------------------------------
+        static inline constexpr int MAX_SIZE = SIZE;
+
+
         //---   Constructors / Destructors   --------------------------------
         /** @brief Constructor. */
         inline CircularBuffer() noexcept
-            : m_mutex{}, buffer {}, index{ 0 }, count{ 0 }
+            : m_mutex{}, buffer{}, index{ 0 }, count{ 0 }
         {}
 
         /** @brief Default Copy constructor. */
@@ -92,13 +96,13 @@ namespace avt::utils::buffers
         }
 
         /** @brief Returns the latest item stored in this buffer. */
-        inline TItem& get_latest() const noexcept
+        inline TItem& get_latest() noexcept
         {
             return (*this)[-1];
         }
 
         /** @brief Returns the oldest item stored in this buffer. */
-        inline TItem& get_oldest() const noexcept
+        inline TItem& get_oldest() noexcept
         {
             return (*this)[0];
         }
@@ -172,7 +176,7 @@ namespace avt::utils::buffers
         TItem& operator[] (const int index_) noexcept(false)
         {
             if (-SIZE <= index_ && index_ < SIZE)
-                return buffer[(index_ + index) % SIZE];
+                return buffer[(index_ + index + SIZE) % SIZE];
             else
                 throw std::invalid_argument("!!! Error: index out of range");
         }

@@ -227,6 +227,7 @@
     <ClCompile Include="unit_tests\gui\shapes\test_point.ixx" />
     <ClCompile Include="unit_tests\gui\shapes\test_rect.ixx" />
     <ClCompile Include="unit_tests\gui\shapes\test_shape.ixx" />
+    <ClCompile Include="unit_tests\utils\test_circular_buffer.ixx" />
     <ClCompile Include="unit_tests\utils\test_size.ixx" />
     <ClCompile Include="unit_tests\utils\test_gray_color.ixx" />
     <ClCompile Include="unit_tests\utils\test_rgb_color.ixx" />
