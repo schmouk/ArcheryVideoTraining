@@ -29,7 +29,7 @@ module;
 
 export module unit_tests.utils.test_circular_buffer;
 
-import utils.buffers;
+import utils.circular_buffer;
 
 
 //===========================================================================

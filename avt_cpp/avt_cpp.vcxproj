@@ -240,6 +240,7 @@
     <ClCompile Include="utils\rgba_color.ixx" />
     <ClCompile Include="utils\rgb_color.ixx" />
     <ClCompile Include="utils\size.ixx" />
+    <ClCompile Include="utils\summed_circular_buffer.ixx" />
     <ClCompile Include="utils\time.cpp" />
     <ClCompile Include="utils\time.ixx" />
     <ClCompile Include="utils\utils.ixx" />

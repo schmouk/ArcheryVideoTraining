@@ -29,14 +29,14 @@ module;
 #include <stdexcept>
 
 
-export module utils.buffers;
+export module utils.circular_buffer;
 
 import mtmp.guarded_block;
 import mtmp.mutex;
 
 
 //===========================================================================
-namespace avt::utils
+export namespace avt::utils
 {
     //=======================================================================
     /** @brief The class of Circular Buffers.
@@ -47,7 +47,7 @@ namespace avt::utils
     * 
     * Notice: this class is thread safe.
     */
-    export template<typename TItem, const int SIZE>
+    template<typename TItem, const int SIZE>
         requires (SIZE > 1)
     class CircularBuffer
     {
@@ -78,11 +78,11 @@ namespace avt::utils
         * If this buffer is full, the oldest item is removed from it.
         * @sa operator+=
         *
-        * @param new_item : TItem
+        * @param new_item : const TItem&
         *   A reference to the new item to be stored in this buffer.
         * @return A reference to this circular buffer.
         */
-        CircularBuffer& append(const TItem& new_item) noexcept
+        virtual CircularBuffer& append(const TItem& new_item) noexcept
         {
             avt::mtmp::GuardedBlock{ &m_mutex };
 
@@ -102,7 +102,7 @@ namespace avt::utils
         }
 
         /** @brief Returns the oldest item stored in this buffer. */
-        inline TItem& get_oldest() noexcept
+        virtual inline TItem& get_oldest() noexcept
         {
             return (*this)[0];
         }
