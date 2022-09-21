@@ -42,20 +42,20 @@ export namespace avt::utils
     * Summed buffers are circular buffers Which contain scalar values or 
     * objects for which scalar casting operators are defined.
     * 
-    * The 'sum 'of these values is maintained at any time. The 'mean' of 
-    * this sum is also available at any time. These are an attribute for 
-    * one of them and a property of this class for the  other,  so  they 
-    * both  can be directly accessed as attributes.
+    * The 'sum' of these values is maintained at any time. The 'mean' of 
+    * this sum is also available at any time and is provided as a method
+    * of this class.
     *
     * Notice: currently this class is not thread safe.
     */
     export template<typename TItem, const int SIZE>
-        requires (SIZE > 1) && std::is_arithmetic_v<TItem>
+        requires std::is_arithmetic_v<TItem> && (SIZE > 1)
     class SummedCircularBuffer : public CircularBuffer<TItem, SIZE>
     {
     public:
         //---   Wrappers   --------------------------------------------------
         using MyBaseType = CircularBuffer<TItem, SIZE>;
+        static inline constexpr int MAX_SIZE = SIZE;
 
 
         //---   Constructors / Destructors   --------------------------------
@@ -90,13 +90,13 @@ export namespace avt::utils
             }
             sum += value;
 
-            return MyBaseType::append(value);
+            return dynamic_cast<SummedCircularBuffer&>(MyBaseType::append(value));
         }
 
         /** @brief Evaluates the current mean on this summed circular buffer. */
         inline const double mean() const noexcept
         {
-            return (MyBaseType::count == 0) ? 0.0 : double(sum) / double(MyBaseType::count);
+            return (this->count == 0) ? 0.0 : double(sum) / double(this->count);
         }
 
 

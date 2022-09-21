@@ -54,7 +54,8 @@ SOFTWARE.
 //import unit_tests.devices.cameras.test_cameras_pool;
 //import unit_tests.gui.items.test_label;
 //import unit_tests.utils.test_time;
-import unit_tests.utils.test_circular_buffer;
+//import unit_tests.utils.test_circular_buffer;
+import unit_tests.utils.test_summed_circular_buffer;
 
 
 //===========================================================================
@@ -86,7 +87,8 @@ int main()
     //avt::unit_tests::devices::cameras::test_cameras_pool();
     //avt::unit_tests::gui::items::test_label();
     //avt::unit_tests::utils::test_time();
-    avt::unit_tests::utils::test_circular_buffer();
+    //avt::unit_tests::utils::test_circular_buffer();
+    avt::unit_tests::utils::test_summed_circular_buffer();
 
 
     std::cout << "\n >>>>>>>>>>   EVERYTHING WENT FINE   <<<<<<<<<<\n\n";
